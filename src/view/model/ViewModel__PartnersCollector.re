@@ -40,7 +40,7 @@ let currentPartners = ({partners}) =>
 let getPartnerProcess = (processId, {partnerProcesses}) =>
   partnerProcesses |. Map.get(processId);
 
-let prospectsPendingApproval = ({partnerProcesses}) =>
+let processesPendingApproval = ({partnerProcesses}) =>
   partnerProcesses
   |. Map.valuesToArray
   |> List.fromArray
@@ -49,6 +49,12 @@ let prospectsPendingApproval = ({partnerProcesses}) =>
        | PendingApproval => true
        | _ => false
        }
+     )
+  |. List.reduceReverseU(
+       ([], []), (. (additions, removals), process: partnerProcess) =>
+       process.data.processType == Addition ?
+         ([process, ...additions], removals) :
+         (additions, [process, ...removals])
      );
 
 let hasUserLoggedIn = (pubKey, userId) =>

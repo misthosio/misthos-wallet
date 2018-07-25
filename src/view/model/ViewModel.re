@@ -409,7 +409,7 @@ let viewIncomeModal = ViewIncomeView.fromViewModelState;
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
-  type prospect = PartnersCollector.partnerProcess;
+  type partnerProcess = PartnersCollector.partnerProcess;
   type txType = TransactionCollector.txType;
   type txStatus = TransactionCollector.txStatus;
   type txData = TransactionCollector.txData;
@@ -425,7 +425,8 @@ module SelectedVentureView = {
     ventureName: string,
     readOnly: bool,
     partners: list(partner),
-    prospects: list(prospect),
+    proposedAdditions: list(partnerProcess),
+    proposedRemovals: list(partnerProcess),
     unconfirmedTxs: list(txData),
     confirmedTxs: list(txData),
     payoutsPendingBroadcast: list(payoutProcess),
@@ -453,6 +454,8 @@ module SelectedVentureView = {
         |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
         |> BTC.minus(reserved),
     };
+    let (proposedAdditions, proposedRemovals) =
+      partnersCollector |> PartnersCollector.processesPendingApproval;
     {
       ventureId,
       ventureName,
@@ -473,8 +476,8 @@ module SelectedVentureView = {
              }
            ),
       partners: partnersCollector.partners,
-      prospects:
-        partnersCollector |> PartnersCollector.prospectsPendingApproval,
+      proposedAdditions,
+      proposedRemovals,
       payoutsPendingBroadcast:
         txDetailsCollector |> TxDetailsCollector.payoutsPendingBroadcast,
       confirmedTxs: transactionCollector.confirmedTxs,

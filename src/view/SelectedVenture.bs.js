@@ -116,7 +116,7 @@ function make(viewData, _) {
                   return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */1, "PENDING", /* array */[]));
                 }
               };
-              var alerts = Belt_List.keepMap(viewData[/* prospects */5], (function (prospect) {
+              var alerts = Belt_List.keepMap(Belt_List.concat(viewData[/* proposedAdditions */5], viewData[/* proposedRemovals */6]), (function (prospect) {
                       var match = prospect[/* canVote */3];
                       if (match) {
                         var match$1 = prospect[/* data */5][/* processType */1];
@@ -136,7 +136,18 @@ function make(viewData, _) {
                         return /* None */0;
                       }
                     }));
-              var prospects = Belt_List.map(viewData[/* prospects */5], (function (partner) {
+              var additions = Belt_List.map(viewData[/* proposedAdditions */5], (function (partner) {
+                      var partial_arg_000 = viewData[/* ventureId */0];
+                      var partial_arg_001 = /* Partner */Block.__(0, [partner[/* processId */0]]);
+                      var partial_arg = /* Venture */Block.__(0, [
+                          partial_arg_000,
+                          partial_arg_001
+                        ]);
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0]) + "-prospect"], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, /* Some */[false])], /* Some */[(function (param) {
+                                          return Router.clickToRoute(partial_arg, param);
+                                        })], /* None */0, /* array */[]));
+                    }));
+              var removals = Belt_List.map(viewData[/* proposedRemovals */6], (function (partner) {
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [partner[/* processId */0]]);
                       var partial_arg = /* Venture */Block.__(0, [
@@ -165,15 +176,19 @@ function make(viewData, _) {
                         /* [] */0
                       ];
               };
-              var showHeaders = Belt_List.length(prospects) !== 0;
+              var showAdditionsHeader = Belt_List.length(additions) !== 0;
+              var showRemovalsHeader = Belt_List.length(removals) !== 0;
+              var match$2 = showAdditionsHeader || showRemovalsHeader;
               var partners = Belt_List.toArray(Belt_List.concatMany(/* array */[
                         alerts,
-                        showHeaders ? stickyHeader(/* Some */[true], "Pending Approval") : /* [] */0,
-                        prospects,
-                        showHeaders ? stickyHeader(/* None */0, "Current") : /* [] */0,
+                        showAdditionsHeader ? stickyHeader(/* Some */[true], "Proposed Addition") : /* [] */0,
+                        additions,
+                        showRemovalsHeader ? stickyHeader(/* Some */[!showAdditionsHeader], "Proposed Removal") : /* [] */0,
+                        removals,
+                        match$2 ? stickyHeader(/* None */0, "Current") : /* [] */0,
                         currentPartners
                       ]));
-              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingBroadcast */8], (function (param) {
+              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingBroadcast */9], (function (param) {
                           var processId = param[/* processId */0];
                           var partial_arg_000 = viewData[/* ventureId */0];
                           var partial_arg_001 = /* Payout */Block.__(1, [processId]);
@@ -185,8 +200,8 @@ function make(viewData, _) {
                                             return Router.clickToRoute(partial_arg, param);
                                           }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */1][/* spentWithFees */2]) + " BTC")), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))], /* array */[]));
                         })));
-              var unconfirmed = viewData[/* unconfirmedTxs */6];
-              var confirmed = viewData[/* confirmedTxs */7];
+              var unconfirmed = viewData[/* unconfirmedTxs */7];
+              var confirmed = viewData[/* confirmedTxs */8];
               var transactions = Belt_List.toArray(Belt_List.concatMany(/* array */[
                         Belt_List.mapWithIndex(unconfirmed, (function (iter, tx) {
                                 var match = tx[/* txType */0];
@@ -217,14 +232,14 @@ function make(viewData, _) {
                                                   })], /* array */[]));
                               }))
                       ]));
-              var match$2 = viewData[/* atRiskWarning */1];
+              var match$3 = viewData[/* atRiskWarning */1];
               var partial_arg_000 = viewData[/* ventureId */0];
               var partial_arg = /* Venture */Block.__(0, [
                   partial_arg_000,
                   /* Addresses */4
                 ]);
-              var match$3 = viewData[/* atRiskWarning */1];
-              var match$4 = viewData[/* readOnly */3];
+              var match$4 = viewData[/* atRiskWarning */1];
+              var match$5 = viewData[/* readOnly */3];
               var partial_arg_000$1 = viewData[/* ventureId */0];
               var partial_arg$1 = /* Venture */Block.__(0, [
                   partial_arg_000$1,
@@ -232,10 +247,10 @@ function make(viewData, _) {
                 ]);
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Partners")], /* Some */[ViewCommon.text("Transactions")], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text(viewData[/* ventureName */2]),
-                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[match$2 ? atRiskAddressButtonIcon : addressesButtonIcon], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[match$3 ? atRiskAddressButtonIcon : addressesButtonIcon], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                                           return Router.clickToRoute(partial_arg, param);
-                                                        })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[match$3 ? Icons.alert : Icons.arrowUpCircle]))
-                                          ])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */9][/* currentSpendable */0], /* Some */[viewData[/* balance */9][/* reserved */1]], /* array */[])))], /* Some */[React.createElement("div", {
+                                                        })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[match$4 ? Icons.alert : Icons.arrowUpCircle]))
+                                          ])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */10][/* currentSpendable */0], /* Some */[viewData[/* balance */10][/* reserved */1]], /* array */[])))], /* Some */[React.createElement("div", {
                                     className: Css.style(/* :: */[
                                           Css.display(/* flex */-1010954439),
                                           /* [] */0
@@ -253,7 +268,7 @@ function make(viewData, _) {
                                               /* CreatePayout */2
                                             ]), /* array */[ViewCommon.text("PAY OUT")])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
-                                  }, match$4 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
+                                  }, match$5 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
                                                 return Router.clickToRoute(partial_arg$1, param);
                                               })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Add or Remove Partners")])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles

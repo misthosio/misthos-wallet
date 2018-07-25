@@ -19,10 +19,34 @@ function getPartnerProcess(processId, param) {
   return Belt_Map.get(param[/* partnerProcesses */2], processId);
 }
 
-function prospectsPendingApproval(param) {
-  return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* partnerProcesses */2])), (function (prospect) {
-                var match = prospect[/* status */1];
-                return match === 0;
+function processesPendingApproval(param) {
+  return Belt_List.reduceReverseU(Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* partnerProcesses */2])), (function (prospect) {
+                    var match = prospect[/* status */1];
+                    return match === 0;
+                  })), /* tuple */[
+              /* [] */0,
+              /* [] */0
+            ], (function (param, $$process) {
+                var removals = param[1];
+                var additions = param[0];
+                var match = $$process[/* data */5][/* processType */1] === /* Addition */1;
+                if (match) {
+                  return /* tuple */[
+                          /* :: */[
+                            $$process,
+                            additions
+                          ],
+                          removals
+                        ];
+                } else {
+                  return /* tuple */[
+                          additions,
+                          /* :: */[
+                            $$process,
+                            removals
+                          ]
+                        ];
+                }
               }));
 }
 
@@ -233,7 +257,7 @@ function isPartner(id, param) {
 
 exports.currentPartners = currentPartners;
 exports.getPartnerProcess = getPartnerProcess;
-exports.prospectsPendingApproval = prospectsPendingApproval;
+exports.processesPendingApproval = processesPendingApproval;
 exports.hasUserLoggedIn = hasUserLoggedIn;
 exports.make = make;
 exports.apply = apply;

@@ -282,6 +282,7 @@ function fromViewModelState$6(param) {
     balance_000,
     /* reserved */reserved
   ];
+  var match = ViewModel__PartnersCollector.processesPendingApproval(partnersCollector);
   return /* record */[
           /* ventureId */param[/* ventureId */1],
           /* atRiskWarning */Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
@@ -296,7 +297,8 @@ function fromViewModelState$6(param) {
           /* ventureName */param[/* ventureName */3],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
           /* partners */partnersCollector[/* partners */1],
-          /* prospects */ViewModel__PartnersCollector.prospectsPendingApproval(partnersCollector),
+          /* proposedAdditions */match[0],
+          /* proposedRemovals */match[1],
           /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */2],
           /* confirmedTxs */transactionCollector[/* confirmedTxs */3],
           /* payoutsPendingBroadcast */ViewModel__TxDetailsCollector.payoutsPendingBroadcast(param[/* txDetailsCollector */8]),

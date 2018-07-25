@@ -75,8 +75,8 @@ let make = (~viewData: ViewData.t, _children) => {
       | (true, true, _) => ReasonReact.null
       };
     let alerts =
-      viewData.prospects
-      |. List.keepMap((prospect: ViewData.prospect) =>
+      List.concat(viewData.proposedAdditions, viewData.proposedRemovals)
+      |. List.keepMap((prospect: ViewData.partnerProcess) =>
            prospect.canVote ?
              Some(
                <AlertListItem
@@ -117,9 +117,29 @@ let make = (~viewData: ViewData.t, _children) => {
              ) :
              None
          );
-    let prospects =
-      viewData.prospects
-      |. List.map((partner: ViewData.prospect) =>
+    let additions =
+      viewData.proposedAdditions
+      |. List.map((partner: ViewData.partnerProcess) =>
+           <Partner
+             key=(UserId.toString(partner.data.userId) ++ "-prospect")
+             partnerId=partner.data.userId
+             onClick=(
+               Router.clickToRoute(
+                 Venture(viewData.ventureId, Partner(partner.processId)),
+               )
+             )
+             status=(
+               getPartnerStatusChip(
+                 ~endorsed=false,
+                 ~joinedWallet=false,
+                 ~hasLoggedIn=Some(false),
+               )
+             )
+           />
+         );
+    let removals =
+      viewData.proposedRemovals
+      |. List.map((partner: ViewData.partnerProcess) =>
            <Partner
              key=(UserId.toString(partner.data.userId) ++ "-prospect")
              partnerId=partner.data.userId
@@ -162,14 +182,21 @@ let make = (~viewData: ViewData.t, _children) => {
       <MListSubheader first> (header |> text) </MListSubheader>,
     ];
     let partners = {
-      let showHeaders = List.length(prospects) != 0;
+      let showAdditionsHeader = List.length(additions) != 0;
+      let showRemovalsHeader = List.length(removals) != 0;
       ReasonReact.array(
         List.toArray(
           List.concatMany([|
             alerts,
-            showHeaders ? stickyHeader(~first=true, "Pending Approval") : [],
-            prospects,
-            showHeaders ? stickyHeader("Current") : [],
+            showAdditionsHeader ?
+              stickyHeader(~first=true, "Proposed Addition") : [],
+            additions,
+            showRemovalsHeader ?
+              stickyHeader(~first=! showAdditionsHeader, "Proposed Removal") :
+              [],
+            removals,
+            showAdditionsHeader || showRemovalsHeader ?
+              stickyHeader("Current") : [],
             currentPartners,
           |]),
         ),
