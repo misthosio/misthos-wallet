@@ -27,6 +27,7 @@ let make = (~index, _children) => {
             fullWidth=true onClick=(Router.clickToRoute(CreateVenture))>
             ("Create a Venture" |> text)
           </MButton>
+          <ContactUsShoutOut />
         </div>
       }
     />,

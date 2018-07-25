@@ -61,6 +61,7 @@ let make =
           <MButton fullWidth=true onClick=(_e => send(CreateVenture))>
             ("create venture" |> text)
           </MButton>
+          <ContactUsShoutOut />
           <CommandExecutor.Status action=CreateVenture cmdStatus />
         </div>
       }
