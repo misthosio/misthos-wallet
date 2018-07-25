@@ -18,33 +18,48 @@ var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
         BreakPoints.md(/* :: */[
-              Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". title title .\"\n           \". sub button .\"\n           \". . . .\"\n           "),
+              Css.height(/* `vh */[
+                    26418,
+                    90.0
+                  ]),
               /* :: */[
-                Css.unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
+                Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". title title .\"\n           \". sub button .\"\n           \". . . .\"\n           "),
                 /* :: */[
-                  Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content auto"),
-                  /* [] */0
+                  Css.unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
+                  /* :: */[
+                    Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content auto"),
+                    /* [] */0
+                  ]
                 ]
               ]
             ]),
         /* :: */[
           BreakPoints.sm(/* :: */[
-                Css.unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]"),
+                Css.height(/* `vh */[
+                      26418,
+                      90.0
+                    ]),
                 /* :: */[
-                  Css.gridGap(Css.px(Theme.space(5))),
-                  /* [] */0
+                  Css.unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]"),
+                  /* :: */[
+                    Css.gridGap(Css.px(Theme.space(5))),
+                    /* [] */0
+                  ]
                 ]
               ]),
           /* :: */[
             BreakPoints.xs(/* :: */[
-                  Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
+                  Css.height(/* auto */-1065951377),
                   /* :: */[
-                    Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". title .\"\n           \". sub .\"\n           \". button .\"\n           \". . .\"\n           "),
+                    Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
                     /* :: */[
-                      Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content min-content auto"),
+                      Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". title .\"\n           \". sub .\"\n           \". button .\"\n           \". . .\"\n           "),
                       /* :: */[
-                        Css.gridGap(Css.px(Theme.space(2))),
-                        /* [] */0
+                        Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content min-content auto"),
+                        /* :: */[
+                          Css.gridGap(Css.px(Theme.space(2))),
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -55,14 +70,8 @@ var grid = Css.style(/* :: */[
                     100.0
                   ]),
               /* :: */[
-                Css.height(/* `vh */[
-                      26418,
-                      90.0
-                    ]),
-                /* :: */[
-                  Css.alignItems(/* flexEnd */924268066),
-                  /* [] */0
-                ]
+                Css.alignItems(/* flexEnd */924268066),
+                /* [] */0
               ]
             ]
           ]

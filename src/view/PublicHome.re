@@ -10,6 +10,7 @@ module Styles = {
     style([
       display(grid),
       md([
+        height(`vh(90.0)),
         unsafe(
           "gridTemplateAreas",
           {|
@@ -26,10 +27,12 @@ module Styles = {
         ),
       ]),
       sm([
+        height(`vh(90.0)),
         unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]"),
         gridGap(px(Theme.space(5))),
       ]),
       xs([
+        height(`auto),
         unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
         unsafe(
           "gridTemplateAreas",
@@ -48,7 +51,6 @@ module Styles = {
         gridGap(px(Theme.space(2))),
       ]),
       width(`percent(100.0)),
-      height(`vh(90.0)),
       alignItems(`flexEnd),
     ]);
   let logo =
