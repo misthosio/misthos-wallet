@@ -170,9 +170,9 @@ function make$1(cmdStatus, action, _) {
                   case 1 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
-                            return message(/* Error */1, "Error joining venture. Perhaps you have not been accepted yet,\n          or if this was your first time logging in to Misthos,\n          the Venture will become available after the inviting partner has logged in again.");
+                            return message(/* Error */1, "Error joining venture. Please contact us if this problem persists.");
                         case 1 : 
-                            return message(/* Error */1, "Error loading venture");
+                            return message(/* Error */1, "Error loading venture. Please contact us if this problem persist");
                         case 2 : 
                             return message(/* Error */1, "The maximum number of partners we currently support in a venture has been reached");
                         case 3 : 

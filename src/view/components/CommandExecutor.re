@@ -165,11 +165,11 @@ module Status = {
         | PartnerAlreadyExists =>
           "User is already a partner of this venture" |> message(Error)
         | CouldNotJoinVenture =>
-          {|Error joining venture. Perhaps you have not been accepted yet,
-          or if this was your first time logging in to Misthos,
-          the Venture will become available after the inviting partner has logged in again.|}
+          "Error joining venture. Please contact us if this problem persists."
           |> message(Error)
-        | CouldNotLoadVenture => "Error loading venture" |> message(Error)
+        | CouldNotLoadVenture =>
+          "Error loading venture. Please contact us if this problem persist"
+          |> message(Error)
         }
       | Success(success) =>
         switch (success) {
