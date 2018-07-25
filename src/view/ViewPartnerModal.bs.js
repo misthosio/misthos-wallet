@@ -2,10 +2,12 @@
 'use strict';
 
 var Grid = require("./components/Grid.bs.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Voters = require("./components/Voters.bs.js");
 var Partner = require("./components/Partner.bs.js");
+var AlertBox = require("./components/AlertBox.bs.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -14,26 +16,45 @@ var WarningsText = require("./text/WarningsText.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
 
-var component = ReasonReact.statelessComponent("ViewPartner");
+var component = ReasonReact.reducerComponent("ViewPartner");
+
+function updateLoggedInStatus(partnerProcess, send) {
+  partnerProcess[/* data */5][/* hasLoggedIn */2].then((function (known) {
+          return Promise.resolve(Curry._1(send, /* SetHasLoggedIn */[known]));
+        }));
+  return /* () */0;
+}
 
 function make(viewData, commands, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */component[/* willReceiveProps */3],
-          /* didMount */component[/* didMount */4],
+          /* willReceiveProps */(function (param) {
+              updateLoggedInStatus(viewData[/* partnerProcess */0], param[/* send */3]);
+              return /* record */[
+                      /* viewData */viewData,
+                      /* loggedInStatus */param[/* state */1][/* loggedInStatus */1]
+                    ];
+            }),
+          /* didMount */(function (param) {
+              return updateLoggedInStatus(viewData[/* partnerProcess */0], param[/* send */3]);
+            }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function () {
-              var match = viewData[/* partnerProcess */0];
-              var match$1 = match[/* data */5];
-              var processType = match$1[/* processType */1];
-              var userId = match$1[/* userId */0];
-              var processId = match[/* processId */0];
-              var match$2 = processType ? /* tuple */[
+          /* render */(function (param) {
+              var match = param[/* state */1];
+              var loggedInStatus = match[/* loggedInStatus */1];
+              var viewData = match[/* viewData */0];
+              var match$1 = viewData[/* partnerProcess */0];
+              var match$2 = match$1[/* data */5];
+              var processType = match$2[/* processType */1];
+              var userId = match$2[/* userId */0];
+              var status = match$1[/* status */1];
+              var processId = match$1[/* processId */0];
+              var match$3 = processType ? /* tuple */[
                   (function () {
                       return Curry._1(commands[/* endorsePartner */2], processId);
                     }),
@@ -48,48 +69,128 @@ function make(viewData, commands, cmdStatus, _) {
                       return Curry._1(commands[/* rejectPartnerRemoval */6], processId);
                     })
                 ];
-              var processTypeString = processType ? "Addition" : "Removal";
-              var match$3;
-              switch (match[/* status */1]) {
+              var onboardingState;
+              if (processType) {
+                var match$4 = viewData[/* partnerProcess */0][/* data */5][/* joinedWallet */3];
+                var exit = 0;
+                if (status !== 1) {
+                  if (status !== 0) {
+                    onboardingState = /* None */4;
+                  } else {
+                    exit = 1;
+                  }
+                } else if (match$4) {
+                  onboardingState = /* FullyOnboarded */3;
+                } else if (loggedInStatus && !loggedInStatus[0]) {
+                  exit = 1;
+                } else {
+                  onboardingState = /* SyncRequired */2;
+                }
+                if (exit === 1) {
+                  onboardingState = match$4 || !(loggedInStatus && !loggedInStatus[0]) ? /* PendingApproval */1 : /* SignInRequired */0;
+                }
+                
+              } else {
+                onboardingState = /* None */4;
+              }
+              var onboardingStatusChip;
+              switch (onboardingState) {
                 case 0 : 
-                    match$3 = /* tuple */[
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
+                    break;
+                case 1 : 
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "PENDING APPROVAL", /* array */[]));
+                    break;
+                case 2 : 
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
+                    break;
+                case 3 : 
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Success */2, "ONBOARDED", /* array */[]));
+                    break;
+                case 4 : 
+                    onboardingStatusChip = null;
+                    break;
+                
+              }
+              var onboardingBody;
+              switch (onboardingState) {
+                case 0 : 
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, AlertBox.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */0][/* data */5][/* userId */0]) + " has not yet signed into Misthos and is therefore missing a\n                    public key. Please remind them to sign in to automatically\n                    expose a public key before joining the Venture.")]))]));
+                    break;
+                case 1 : 
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */0][/* data */5][/* userId */0]) + " has to be fully endorsed before onboarding can proceed.")]));
+                    break;
+                case 2 : 
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, AlertBox.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */0][/* data */5][/* userId */0]) + " has been fully endorsed and is ready to sync data with the\n                    Venture. Please send them the Venture sync URL to complete\n                    the process.")]))]));
+                    break;
+                case 3 : 
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */0][/* data */5][/* userId */0]) + " is fully onboarded to this Venture.")]));
+                    break;
+                case 4 : 
+                    onboardingBody = null;
+                    break;
+                
+              }
+              var onboarding = onboardingState >= 4 ? null : /* array */[
+                  ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Partner Onboarding")])),
+                  ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[
+                            ViewCommon.text("Status: "),
+                            onboardingStatusChip
+                          ])),
+                  onboardingBody
+                ];
+              var processTypeString = processType ? "Addition" : "Removal";
+              var match$5;
+              switch (status) {
+                case 0 : 
+                    match$5 = /* tuple */[
                       "Pending Approval",
                       /* Pending */0
                     ];
                     break;
                 case 1 : 
-                    match$3 = /* tuple */[
+                    match$5 = /* tuple */[
                       "Accepted",
                       /* Success */2
                     ];
                     break;
                 case 2 : 
-                    match$3 = /* tuple */[
+                    match$5 = /* tuple */[
                       "Denied",
                       /* Failure */1
                     ];
                     break;
                 case 3 : 
-                    match$3 = /* tuple */[
+                    match$5 = /* tuple */[
                       "Aborted",
                       /* Failure */1
                     ];
                     break;
                 
               }
-              var statusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$3[1], match$3[0], /* array */[]));
-              var match$4 = viewData[/* atRiskWarning */1];
-              var alertText = match$4 ? /* Some */[WarningsText.partnerRemovalRisk] : /* None */0;
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Proposed Partner " + processTypeString)], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match[/* proposedBy */2]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+              var statusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$5[1], match$5[0], /* array */[]));
+              var match$6 = viewData[/* atRiskWarning */1];
+              var alertText = match$6 ? /* Some */[WarningsText.partnerRemovalRisk] : /* None */0;
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Proposed Partner " + processTypeString)], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match$1[/* proposedBy */2]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text("Status: "),
                                             statusChip
-                                          ])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(match[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, alertText, "Reject Partner " + processTypeString, match[/* canVote */3], match$2[0], match$2[1], (function () {
+                                          ])), onboarding)], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(match$1[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, alertText, "Reject Partner " + processTypeString, match$1[/* canVote */3], match$3[0], match$3[1], (function () {
                                               return Curry._1(commands[/* reset */0], /* () */0);
                                             }), cmdStatus, /* array */[])))], /* None */0, /* None */0, /* array */[]));
             }),
-          /* initialState */component[/* initialState */10],
+          /* initialState */(function () {
+              return /* record */[
+                      /* viewData */viewData,
+                      /* loggedInStatus : None */0
+                    ];
+            }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
+          /* reducer */(function (action, state) {
+              return /* Update */Block.__(0, [/* record */[
+                          /* viewData */state[/* viewData */0],
+                          /* loggedInStatus : Some */[action[0]]
+                        ]]);
+            }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
@@ -105,5 +206,6 @@ exports.text = text;
 exports.extractString = extractString;
 exports.ViewData = ViewData;
 exports.component = component;
+exports.updateLoggedInStatus = updateLoggedInStatus;
 exports.make = make;
 /* component Not a pure module */

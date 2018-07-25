@@ -2,20 +2,31 @@ include ViewCommon;
 
 open PrimitiveTypes;
 
-[@bs.module] external remove : string = "../assets/img/remove-partner.svg";
-
 module ViewData = ViewModel.ViewPartnerView;
 
-type state =
-  | NoDecision
-  | ConfirmEndorse
-  | ConfirmReject;
+type state = {
+  viewData: ViewData.t,
+  loggedInStatus: option(bool),
+};
 
 type action =
-  | Endorse
-  | Reject;
+  | SetHasLoggedIn(bool);
 
-let component = ReasonReact.statelessComponent("ViewPartner");
+type onboardingState =
+  | SignInRequired
+  | PendingApproval
+  | SyncRequired
+  | FullyOnboarded
+  | None;
+
+let component = ReasonReact.reducerComponent("ViewPartner");
+
+let updateLoggedInStatus = (partnerProcess: ViewData.partnerProcess, send) =>
+  Js.Promise.(
+    partnerProcess.data.hasLoggedIn
+    |> then_(known => send(SetHasLoggedIn(known)) |> resolve)
+  )
+  |> ignore;
 
 let make =
     (
@@ -25,7 +36,18 @@ let make =
       _children,
     ) => {
   ...component,
-  render: _ => {
+  initialState: () => {viewData, loggedInStatus: None},
+  willReceiveProps: ({state, send}) => {
+    updateLoggedInStatus(viewData.partnerProcess, send);
+    {viewData, loggedInStatus: state.loggedInStatus};
+  },
+  reducer: (action, state) =>
+    switch (action) {
+    | SetHasLoggedIn(known) =>
+      ReasonReact.Update({...state, loggedInStatus: Some(known)})
+    },
+  didMount: ({send}) => updateLoggedInStatus(viewData.partnerProcess, send),
+  render: ({state: {viewData, loggedInStatus}}) => {
     let {
       proposedBy,
       processId,
@@ -45,6 +67,93 @@ let make =
           (() => commands.endorsePartnerRemoval(~processId)),
           (() => commands.rejectPartnerRemoval(~processId)),
         )
+      };
+    let onboardingState =
+      switch (processType) {
+      | Addition =>
+        switch (
+          status,
+          viewData.partnerProcess.data.joinedWallet,
+          loggedInStatus,
+        ) {
+        | (Accepted, true, _) => FullyOnboarded
+        | (PendingApproval | Accepted, false, Some(false)) => SignInRequired
+        | (PendingApproval, _, _) => PendingApproval
+        | (Accepted, false, Some(true)) => SyncRequired
+        | (Accepted, false, None) => SyncRequired
+        | (Aborted | Denied, _, _) => None
+        }
+      | Removal => None
+      };
+    let onboardingStatusChip =
+      switch (onboardingState) {
+      | SignInRequired =>
+        <StatusChip status=Pending label="SIGN IN REQUIRED" />
+      | PendingApproval =>
+        <StatusChip status=Pending label="PENDING APPROVAL" />
+      | SyncRequired => <StatusChip status=Pending label="SYNC REQUIRED" />
+      | FullyOnboarded => <StatusChip status=Success label="ONBOARDED" />
+      | None => ReasonReact.null
+      };
+    let onboardingBody =
+      switch (onboardingState) {
+      | SignInRequired =>
+        <AlertBox>
+          <MTypography variant=`Body1>
+            (
+              (viewData.partnerProcess.data.userId |> UserId.toString)
+              ++ {| has not yet signed into Misthos and is therefore missing a
+                    public key. Please remind them to sign in to automatically
+                    expose a public key before joining the Venture.|}
+              |> text
+            )
+          </MTypography>
+        </AlertBox>
+      | PendingApproval =>
+        <MTypography variant=`Body1>
+          (
+            (viewData.partnerProcess.data.userId |> UserId.toString)
+            ++ {| has to be fully endorsed before onboarding can proceed.|}
+            |> text
+          )
+        </MTypography>
+      | SyncRequired =>
+        <AlertBox>
+          <MTypography variant=`Body1>
+            (
+              (viewData.partnerProcess.data.userId |> UserId.toString)
+              ++ {| has been fully endorsed and is ready to sync data with the
+                    Venture. Please send them the Venture sync URL to complete
+                    the process.|}
+              |> text
+            )
+          </MTypography>
+        </AlertBox>
+      | FullyOnboarded =>
+        <MTypography variant=`Body1>
+          (
+            (viewData.partnerProcess.data.userId |> UserId.toString)
+            ++ {| is fully onboarded to this Venture.|}
+            |> text
+          )
+        </MTypography>
+      | None => ReasonReact.null
+      };
+    let onboarding =
+      switch (onboardingState) {
+      | None => ReasonReact.null
+      | _ =>
+        [|
+          <MTypography gutterTop=true gutterBottom=true variant=`Title>
+            ("Partner Onboarding" |> text)
+          </MTypography>,
+          <MTypography gutterBottom=true variant=`Body2>
+            ("Status: " |> text)
+            onboardingStatusChip
+          </MTypography>,
+          onboardingBody,
+        |]
+        |> ReasonReact.array
       };
     let processTypeString =
       switch (processType) {
@@ -78,6 +187,7 @@ let make =
             ("Status: " |> text)
             statusChip
           </MTypography>
+          onboarding
         </div>
       }
       area4={
