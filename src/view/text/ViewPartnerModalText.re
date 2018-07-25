@@ -6,9 +6,10 @@ module AlertBox = {
                         not yet possible. Please remind them to sign in to
                         automatically expose a public key before joining the
                         Venture.|};
-  let syncRequired = {| has been accepted and is ready to sync data with
-                      the Venture. Please send them the Venture sync URL to
-                      complete the process.|};
+  let syncRequiredPart1 = {| has been accepted and is ready to sync data with
+                      the Venture. Please send them the |};
+  let syncRequiredVentureUrl = "Venture sync URL";
+  let syncRequiredPart2 = " to complete the process.";
   let pendingApproval = {| has to be accepted before onboarding can proceed.|};
   let fullyOnboarded = {| is fully onboarded to this Venture.|};
 };

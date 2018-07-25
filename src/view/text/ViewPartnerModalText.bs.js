@@ -4,7 +4,9 @@
 
 var AlertBox = /* module */[
   /* signInRequired */" has not yet signed into Misthos and therefore\n                        reading their public key (for encrypting data) is\n                        not yet possible. Please remind them to sign in to\n                        automatically expose a public key before joining the\n                        Venture.",
-  /* syncRequired */" has been accepted and is ready to sync data with\n                      the Venture. Please send them the Venture sync URL to\n                      complete the process.",
+  /* syncRequiredPart1 */" has been accepted and is ready to sync data with\n                      the Venture. Please send them the ",
+  /* syncRequiredVentureUrl */"Venture sync URL",
+  /* syncRequiredPart2 */" to complete the process.",
   /* pendingApproval */" has to be accepted before onboarding can proceed.",
   /* fullyOnboarded */" is fully onboarded to this Venture."
 ];

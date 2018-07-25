@@ -8,6 +8,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
+var Colors = require("./Colors.bs.js");
 var Voters = require("./components/Voters.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
@@ -18,6 +19,7 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WarningsText = require("./text/WarningsText.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var MaterialUi_Tooltip = require("@jsiebern/bs-material-ui/src/MaterialUi_Tooltip.bs.js");
 var ViewPartnerModalText = require("./text/ViewPartnerModalText.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
 
@@ -36,9 +38,24 @@ var sendButton = Css.style(/* :: */[
       /* [] */0
     ]);
 
+var ventureLink = Css.style(/* :: */[
+      Css.textDecoration(Css.underline),
+      /* :: */[
+        Css.color(/* currentColor */292050538),
+        /* :: */[
+          Css.hover(/* :: */[
+                Css.color(Colors.misthosTeal),
+                /* [] */0
+              ]),
+          /* [] */0
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* sendIcon */sendIcon,
-  /* sendButton */sendButton
+  /* sendButton */sendButton,
+  /* ventureLink */ventureLink
 ];
 
 function updateLoggedInStatus(partnerProcess, send) {
@@ -71,6 +88,13 @@ function make(viewData, commands, cmdStatus, _) {
               var match = param[/* state */1];
               var loggedInStatus = match[/* loggedInStatus */1];
               var viewData = match[/* viewData */0];
+              var copyButton = function (element, $staropt$star, _) {
+                var className = $staropt$star ? $staropt$star[0] : "";
+                return React.cloneElement(element, {
+                            "data-clipboard-text": viewData[/* joinVentureUrl */4],
+                            className: "copy-btn " + className
+                          });
+              };
               var match$1 = viewData[/* partnerProcess */2];
               var match$2 = match$1[/* data */5];
               var processType = match$2[/* processType */1];
@@ -150,11 +174,22 @@ function make(viewData, commands, cmdStatus, _) {
                             ]));
                     break;
                 case 1 : 
-                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* pendingApproval */2])]));
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* pendingApproval */4])]));
                     break;
                 case 2 : 
+                    var element = React.createElement("a", {
+                          href: viewData[/* joinVentureUrl */4],
+                          onClick: (function (prim) {
+                              prim.preventDefault();
+                              return /* () */0;
+                            })
+                        }, ViewCommon.text(ViewPartnerModalText.AlertBox[/* syncRequiredVentureUrl */2]));
                     onboardingBody = ReasonReact.element(/* None */0, /* None */0, AlertBox.make(/* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* syncRequired */1])])),
+                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                        ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* syncRequiredPart1 */1]),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi_Tooltip.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["venter-url-label"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Bottom */437082891], /* None */0, /* None */0, ViewCommon.text("Copy to Clipboard"), /* None */0, /* None */0, /* array */[copyButton(element, /* Some */[ventureLink], /* () */0)])),
+                                        ViewCommon.text(ViewPartnerModalText.AlertBox[/* syncRequiredPart2 */3])
+                                      ])),
                               ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* syncRequired */1](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* joinVentureUrl */4])], /* None */0, /* array */[
                                         ViewCommon.text("SHARE THE SYNC URL"),
                                         sendIcon$1
@@ -162,7 +197,7 @@ function make(viewData, commands, cmdStatus, _) {
                             ]));
                     break;
                 case 3 : 
-                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* fullyOnboarded */3])]));
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* fullyOnboarded */5])]));
                     break;
                 case 4 : 
                     onboardingBody = null;

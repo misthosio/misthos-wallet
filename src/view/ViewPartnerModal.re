@@ -26,6 +26,12 @@ module Styles = {
   open Css;
   let sendIcon = style([marginLeft(px(4)), width(px(Theme.space(2)))]);
   let sendButton = style([unsafe("alignSelf", "flex-end")]);
+  let ventureLink =
+    style([
+      textDecoration(underline),
+      color(`currentColor),
+      hover([color(Colors.misthosTeal)]),
+    ]);
 };
 
 let updateLoggedInStatus = (partnerProcess: ViewData.partnerProcess, send) =>
@@ -55,6 +61,15 @@ let make =
     },
   didMount: ({send}) => updateLoggedInStatus(viewData.partnerProcess, send),
   render: ({state: {viewData, loggedInStatus}}) => {
+    let copyButton = (~element, ~className="", ()) =>
+      ReasonReact.cloneElement(
+        element,
+        ~props={
+          "data-clipboard-text": viewData.joinVentureUrl,
+          "className": "copy-btn" ++ " " ++ className,
+        },
+        [||],
+      );
     let {
       proposedBy,
       processId,
@@ -144,9 +159,24 @@ let make =
           <MTypography variant=`Body1>
             (
               (viewData.partnerProcess.data.userId |> UserId.toString)
-              ++ Text.AlertBox.syncRequired
+              ++ Text.AlertBox.syncRequiredPart1
               |> text
             )
+            <MaterialUi.Tooltip
+              id="venter-url-label"
+              title=("Copy to Clipboard" |> text)
+              placement=`Bottom>
+              {
+                let element =
+                  <a
+                    href=viewData.joinVentureUrl
+                    onClick=ReactEventRe.Synthetic.preventDefault>
+                    (Text.AlertBox.syncRequiredVentureUrl |> text)
+                  </a>;
+                copyButton(~element, ~className=Styles.ventureLink, ());
+              }
+            </MaterialUi.Tooltip>
+            (Text.AlertBox.syncRequiredPart2 |> text)
           </MTypography>
           <MButton
             className=Styles.sendButton
