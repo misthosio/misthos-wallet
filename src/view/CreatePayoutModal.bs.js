@@ -562,10 +562,13 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ignoreEvent = ViewCommon.ignoreEvent;
+
 var View = 0;
 
 exports.text = text;
 exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.View = View;
 exports.component = component;
 exports.Styles = Styles;

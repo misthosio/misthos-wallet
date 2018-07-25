@@ -3,7 +3,6 @@
 
 var Belt = require("bs-platform/lib/js/belt.js");
 var Grid = require("./components/Grid.bs.js");
-var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var TACText = require("./text/TACText.bs.js");
@@ -16,9 +15,8 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var component = ReasonReact.statelessComponent("ViewIncomeModal");
 
 function make(signTAC, _) {
-  var onAggree = function ($$event) {
-    $$event.preventDefault();
-    return Curry._1(signTAC, /* () */0);
+  var onAggree = function (param) {
+    return ViewCommon.ignoreEvent(signTAC, param);
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -55,10 +53,6 @@ function make(signTAC, _) {
         ];
 }
 
-var text = ViewCommon.text;
-
-var extractString = ViewCommon.extractString;
-
 var Id = Belt.Id;
 
 var $$Array = Belt.$$Array;
@@ -91,8 +85,12 @@ var Result = Belt.Result;
 
 var Debug = Belt.Debug;
 
-exports.text = text;
-exports.extractString = extractString;
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+var ignoreEvent = ViewCommon.ignoreEvent;
+
 exports.Id = Id;
 exports.$$Array = $$Array;
 exports.SortArray = SortArray;
@@ -109,6 +107,9 @@ exports.HashMap = HashMap;
 exports.Option = Option;
 exports.Result = Result;
 exports.Debug = Debug;
+exports.text = text;
+exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

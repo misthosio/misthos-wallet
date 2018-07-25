@@ -1,13 +1,11 @@
-include ViewCommon;
 include Belt;
+
+include ViewCommon;
 
 let component = ReasonReact.statelessComponent("ViewIncomeModal");
 
 let make = (~signTAC, _children) => {
-  let onAggree = event => {
-    ReactEventRe.Synthetic.preventDefault(event);
-    signTAC();
-  };
+  let onAggree = ignoreEvent(signTAC);
   {
     ...component,
     render: _ =>

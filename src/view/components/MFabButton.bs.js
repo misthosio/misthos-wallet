@@ -5,6 +5,7 @@ var Css = require("bs-css/src/Css.js");
 var Theme = require("../Theme.bs.js");
 var Colors = require("../Colors.bs.js");
 var Router = require("../Router.bs.js");
+var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 
@@ -61,9 +62,10 @@ function make(variant, route, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var href = Router.Config[/* routeToUrl */1](route);
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(variant)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Fab */3502759], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function ($$event) {
-                                  $$event.preventDefault();
-                                  return ReasonReact.Router[/* push */0](href);
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(variant)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Fab */3502759], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+                                  return ViewCommon.ignoreEvent((function () {
+                                                return ReasonReact.Router[/* push */0](href);
+                                              }), param);
                                 })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
@@ -74,6 +76,15 @@ function make(variant, route, children) {
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+var ignoreEvent = ViewCommon.ignoreEvent;
+
+exports.text = text;
+exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

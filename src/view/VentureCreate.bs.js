@@ -86,8 +86,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ignoreEvent = ViewCommon.ignoreEvent;
+
 exports.text = text;
 exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

@@ -1,3 +1,5 @@
+include ViewCommon;
+
 let component = ReasonReact.statelessComponent("MFabButton");
 
 type variant =
@@ -37,12 +39,7 @@ let make = (~variant, ~route, children) => {
     <MaterialUi.Button
       className=(Styles.button(variant))
       variant=`Fab
-      onClick=(
-        event => {
-          ReactEventRe.Synthetic.preventDefault(event);
-          ReasonReact.Router.push(href);
-        }
-      )>
+      onClick=(ignoreEvent(() => ReasonReact.Router.push(href)))>
       children
     </MaterialUi.Button>;
   },

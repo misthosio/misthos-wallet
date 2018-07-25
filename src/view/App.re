@@ -7,9 +7,8 @@ let component = ReasonReact.statelessComponent("App");
 let make = (~session, ~updateSession, ~signTAC, _children) => {
   let onSignIn = _e => updateSession(SessionStore.SignIn);
   let onSignOut = _e => updateSession(SessionStore.SignOut);
-  let onCloseModal = (ventureId, _e) =>
-    Router.Config.routeToUrl(Venture(ventureId, None))
-    |> ReasonReact.Router.push;
+  let onCloseModal = (ventureId, ()) =>
+    Router.goTo(Venture(ventureId, None));
   let mobileEnabled =
     switch (session) {
     | NotLoggedIn => true

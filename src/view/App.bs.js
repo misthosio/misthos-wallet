@@ -42,12 +42,6 @@ function make(session, updateSession, signTAC, _) {
   var onSignOut = function () {
     return Curry._1(updateSession, /* SignOut */1);
   };
-  var onCloseModal = function (ventureId, _) {
-    return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [
-                      ventureId,
-                      /* None */0
-                    ])));
-  };
   var mobileEnabled = typeof session === "number" ? session === 2 : false;
   var modal = function (selectedVenture, currentRoute) {
     if (typeof session === "number") {
@@ -87,8 +81,11 @@ function make(session, updateSession, signTAC, _) {
                                                             return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, /* array */[]));
                                                           })));
                                         }))),
-                              /* Some */[(function (param) {
-                                    return onCloseModal(selected, param);
+                              /* Some */[(function () {
+                                    return Router.goTo(/* Venture */Block.__(0, [
+                                                  selected,
+                                                  /* None */0
+                                                ]));
                                   })]
                             ]];
                   }
@@ -112,8 +109,11 @@ function make(session, updateSession, signTAC, _) {
                                           })], (function (commands, cmdStatus) {
                                           return ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), commands, cmdStatus, /* array */[]));
                                         }))),
-                              /* Some */[(function (param) {
-                                    return onCloseModal(selected, param);
+                              /* Some */[(function () {
+                                    return Router.goTo(/* Venture */Block.__(0, [
+                                                  selected,
+                                                  /* None */0
+                                                ]));
                                   })]
                             ]];
                   }
@@ -127,8 +127,11 @@ function make(session, updateSession, signTAC, _) {
                 } else {
                   return /* Some */[/* tuple */[
                             ReasonReact.element(/* None */0, /* None */0, ViewAddressesModal.make(ViewModel.viewAddressesModal(selectedVenture[1]), /* array */[])),
-                            /* Some */[(function (param) {
-                                  return onCloseModal(selected, param);
+                            /* Some */[(function () {
+                                  return Router.goTo(/* Venture */Block.__(0, [
+                                                selected,
+                                                /* None */0
+                                              ]));
                                 })]
                           ]];
                 }
@@ -142,8 +145,11 @@ function make(session, updateSession, signTAC, _) {
                   } else {
                     return /* Some */[/* tuple */[
                               ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[2], /* array */[])),
-                              /* Some */[(function (param) {
-                                    return onCloseModal(selected, param);
+                              /* Some */[(function () {
+                                    return Router.goTo(/* Venture */Block.__(0, [
+                                                  selected,
+                                                  /* None */0
+                                                ]));
                                   })]
                             ]];
                   }
@@ -173,8 +179,11 @@ function make(session, updateSession, signTAC, _) {
                     }
                     return /* Some */[/* tuple */[
                               tmp,
-                              /* Some */[(function (param) {
-                                    return onCloseModal(selected, param);
+                              /* Some */[(function () {
+                                    return Router.goTo(/* Venture */Block.__(0, [
+                                                  selected,
+                                                  /* None */0
+                                                ]));
                                   })]
                             ]];
                   }
@@ -200,8 +209,11 @@ function make(session, updateSession, signTAC, _) {
                     }
                     return /* Some */[/* tuple */[
                               tmp$1,
-                              /* Some */[(function (param) {
-                                    return onCloseModal(selected, param);
+                              /* Some */[(function () {
+                                    return Router.goTo(/* Venture */Block.__(0, [
+                                                  selected,
+                                                  /* None */0
+                                                ]));
                                   })]
                             ]];
                   }
@@ -218,8 +230,11 @@ function make(session, updateSession, signTAC, _) {
                     var match$9 = ViewModel.viewIncomeModal(match[0], venture$4);
                     return /* Some */[/* tuple */[
                               match$9 ? ReasonReact.element(/* None */0, /* None */0, ViewIncomeModal.make(match$9[0], /* array */[])) : ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Income */1, /* array */[])),
-                              /* Some */[(function (param) {
-                                    return onCloseModal(selected, param);
+                              /* Some */[(function () {
+                                    return Router.goTo(/* Venture */Block.__(0, [
+                                                  selected,
+                                                  /* None */0
+                                                ]));
                                   })]
                             ]];
                   }
@@ -374,8 +389,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ignoreEvent = ViewCommon.ignoreEvent;
+
 exports.text = text;
 exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

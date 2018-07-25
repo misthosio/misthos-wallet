@@ -92,8 +92,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ignoreEvent = ViewCommon.ignoreEvent;
+
 exports.text = text;
 exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.terms = terms;
 exports.hash = hash;
 /* hash Not a pure module */

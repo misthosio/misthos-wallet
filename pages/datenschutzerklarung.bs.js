@@ -168,10 +168,13 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ignoreEvent = ViewCommon.ignoreEvent;
+
 var T = 0;
 
 exports.text = text;
 exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.component = component;
 exports.line = line;
 exports.paragraph = paragraph;

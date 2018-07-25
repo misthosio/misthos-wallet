@@ -11,6 +11,7 @@ var React = require("react");
 var Header = require("./Header.bs.js");
 var Router = require("./Router.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var ViewCommon = require("./ViewCommon.bs.js");
 var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Modal = require("@jsiebern/bs-material-ui/src/MaterialUi_Modal.bs.js");
@@ -182,12 +183,27 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
               var theme = Theme.toJsUnsafe(Theme.theme(/* None */0, /* () */0));
               var modalContainer = Js_option.getWithDefault(null, Utils.mapOption((function (param) {
                           var onClose = param[1];
+                          var onClick = Utils.mapOption((function (onClose) {
+                                  return (function (param) {
+                                      return ViewCommon.ignoreEvent(onClose, param);
+                                    });
+                                }), onClose);
+                          var onBackdropClick = Utils.mapOption((function (onClose) {
+                                  return (function (param) {
+                                      return ViewCommon.ignoreEvent(onClose, param);
+                                    });
+                                }), onClose);
+                          var onEscapeKeyDown = Utils.mapOption((function (onClose) {
+                                  return (function (param) {
+                                      return ViewCommon.ignoreEvent(onClose, param);
+                                    });
+                                }), onClose);
                           var inner = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_Paper.make(/* Some */[modal], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Toolbar.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                   React.createElement("div", {
                                                         className: flex_
                                                       }),
-                                                  onClose ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose[0]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.close])) : null
+                                                  onClick ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick[0]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.close])) : null
                                                 ])),
                                         React.createElement("div", {
                                               className: modalContent
@@ -195,7 +211,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                                       ])), {
                                 id: "modal"
                               });
-                          return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Modal.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClose, /* None */0, /* None */0, /* None */0, true, /* None */0, /* None */0, /* array */[inner]));
+                          return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Modal.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onBackdropClick, /* None */0, onEscapeKeyDown, /* None */0, true, /* None */0, /* None */0, /* array */[inner]));
                         }), modal$1));
               var match = header$1 ? /* tuple */[
                   React.createElement("div", {
@@ -251,6 +267,15 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+var ignoreEvent = ViewCommon.ignoreEvent;
+
+exports.text = text;
+exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

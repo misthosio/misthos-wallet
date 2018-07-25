@@ -481,8 +481,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ignoreEvent = ViewCommon.ignoreEvent;
+
 exports.text = text;
 exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.toBase64Encoding = toBase64Encoding;
 exports.asDataUrl = asDataUrl;
 exports.arrowRight = arrowRight;
