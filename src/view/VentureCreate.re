@@ -33,11 +33,13 @@ let make =
         ReasonReact.NoUpdate;
       }
     },
-  render: ({send, state}) =>
+  render: ({send, state}) => {
+    let onSubmit = ignoreEvent(() => send(CreateVenture));
+    let onClick = ignoreEvent(() => send(CreateVenture));
     <Grid
       title1=("Create a Venture" |> text)
       area3={
-        <div>
+        <form onSubmit>
           <MTypography variant=`Body2>
             (
               {js|
@@ -58,13 +60,14 @@ let make =
             autoFocus=true
             fullWidth=true
           />
-          <MButton fullWidth=true onClick=(_e => send(CreateVenture))>
+          <MButton fullWidth=true onClick submitBtn=true>
             ("create venture" |> text)
           </MButton>
           <ContactUsShoutOut />
           <CommandExecutor.Status action=CreateVenture cmdStatus />
-        </div>
+        </form>
       }
       area4={<VentureInfoBox />}
-    />,
+    />;
+  },
 };
