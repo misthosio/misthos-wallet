@@ -27,7 +27,11 @@ let make = (~onClickLogo=?, ~hrefLogo=?, ~onClickMenu=?, _children) => {
             switch (href) {
             | Some(href) => <a href> Icons.logoSolid </a>
             | None =>
-              <IconButton className=Styles.logo color=`Inherit ?onClick>
+              <IconButton
+                className=Styles.logo
+                color=`Inherit
+                ?onClick
+                disableRipple=true>
                 Icons.logoSolid
               </IconButton>
             };
