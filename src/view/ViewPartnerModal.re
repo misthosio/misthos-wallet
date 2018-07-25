@@ -60,6 +60,12 @@ let make =
       ReasonReact.Update({...state, loggedInStatus: Some(known)})
     },
   didMount: ({send}) => updateLoggedInStatus(viewData.partnerProcess, send),
+  subscriptions: _ => [
+    Sub(
+      () => Clipboard.make(".copy-btn", "modal"),
+      clipboard => clipboard |> Clipboard.destroy,
+    ),
+  ],
   render: ({state: {viewData, loggedInStatus}}) => {
     let copyButton = (~element, ~className="", ()) =>
       ReasonReact.cloneElement(

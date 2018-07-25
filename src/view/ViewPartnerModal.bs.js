@@ -13,6 +13,7 @@ var Voters = require("./components/Voters.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var AlertBox = require("./components/AlertBox.bs.js");
+var Clipboard = require("../ffi/Clipboard.bs.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -264,7 +265,20 @@ function make(viewData, commands, cmdStatus, _) {
                           /* loggedInStatus : Some */[action[0]]
                         ]]);
             }),
-          /* subscriptions */component[/* subscriptions */13],
+          /* subscriptions */(function () {
+              return /* :: */[
+                      /* Sub */[
+                        (function () {
+                            return Clipboard.make(".copy-btn", "modal");
+                          }),
+                        (function (clipboard) {
+                            clipboard.destroy();
+                            return /* () */0;
+                          })
+                      ],
+                      /* [] */0
+                    ];
+            }),
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
 }
