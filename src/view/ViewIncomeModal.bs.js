@@ -47,10 +47,10 @@ function make(viewData, _) {
           /* render */(function () {
               var match = status ? /* tuple */[
                   "Confirmed",
-                  /* Success */2
+                  /* Success */3
                 ] : /* tuple */[
                   "Unconfirmed",
-                  /* Pending */0
+                  /* Pending */1
                 ];
               var txStatus = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match[1], match[0], /* array */[]));
               var addresses$1 = Belt_SetString.reduce(addresses, "", (function (res, address) {

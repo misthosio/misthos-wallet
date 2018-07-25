@@ -213,6 +213,7 @@ module ViewPartnerView = {
     localUser: userId,
     ventureName: string,
     partnerProcess,
+    currentPartners: UserId.set,
     atRiskWarning: bool,
     joinVentureUrl: string,
     webDomain: string,
@@ -233,6 +234,8 @@ module ViewPartnerView = {
     |> PartnersCollector.getPartnerProcess(processId)
     |> Utils.mapOption(partnerProcess =>
          {
+           currentPartners:
+             partnersCollector |> PartnersCollector.currentPartners,
            localUser,
            ventureName,
            partnerProcess,
@@ -369,15 +372,21 @@ module ViewPayoutView = {
   type voter = ProcessCollector.voter;
   type payout = TxDetailsCollector.payoutProcess;
   type t = {
+    currentPartners: UserId.set,
     payout,
     collidesWith: ProcessId.set,
   };
   let fromViewModelState =
-      (processId, {txDetailsCollector, walletInfoCollector}) =>
+      (
+        processId,
+        {txDetailsCollector, walletInfoCollector, partnersCollector},
+      ) =>
     txDetailsCollector
     |> TxDetailsCollector.getPayout(processId)
     |> Utils.mapOption(payout =>
          {
+           currentPartners:
+             partnersCollector |> PartnersCollector.currentPartners,
            payout,
            collidesWith:
              walletInfoCollector

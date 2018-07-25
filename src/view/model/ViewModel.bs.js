@@ -164,6 +164,7 @@ var environment = Environment.get(/* () */0);
 
 function fromViewModelState$2(processId, param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
+  var partnersCollector = param[/* partnersCollector */6];
   var ventureName = param[/* ventureName */3];
   var ventureId = param[/* ventureId */1];
   var localUser = param[/* localUser */0];
@@ -173,6 +174,7 @@ function fromViewModelState$2(processId, param) {
                         /* localUser */localUser,
                         /* ventureName */ventureName,
                         /* partnerProcess */partnerProcess,
+                        /* currentPartners */ViewModel__PartnersCollector.currentPartners(partnersCollector),
                         /* atRiskWarning */match ? false : Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
                                   var addressStatus = param[/* addressStatus */4];
                                   var exit = 0;
@@ -196,7 +198,7 @@ function fromViewModelState$2(processId, param) {
                               ])),
                         /* webDomain */environment[/* webDomain */3]
                       ];
-              }), ViewModel__PartnersCollector.getPartnerProcess(processId, param[/* partnersCollector */6]));
+              }), ViewModel__PartnersCollector.getPartnerProcess(processId, partnersCollector));
 }
 
 var ViewPartnerView = /* module */[
@@ -252,8 +254,10 @@ var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$3
 
 function fromViewModelState$4(processId, param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
+  var partnersCollector = param[/* partnersCollector */6];
   return Utils.mapOption((function (payout) {
                 return /* record */[
+                        /* currentPartners */ViewModel__PartnersCollector.currentPartners(partnersCollector),
                         /* payout */payout,
                         /* collidesWith */WalletInfoCollector.collidingProcesses(WalletTypes.AccountIndex[/* default */11], processId, walletInfoCollector)
                       ];

@@ -35,6 +35,7 @@ let make =
       proposedBy,
       processId,
       voters,
+      status: processStatus,
       canVote,
       data: {explorerLink, summary, payoutStatus: status, txId, date},
     }: ViewData.payout =
@@ -144,7 +145,11 @@ let make =
       }
       area4={
         <div className=ScrollList.containerStyles>
-          <Voters voters />
+          <Voters
+            voters
+            currentPartners=viewData.currentPartners
+            processStatus
+          />
           <ProcessApprovalButtons
             endorseText="Endorse Payout"
             rejectText="Reject Payout"

@@ -103,17 +103,17 @@ function make(viewData, _) {
                   } else {
                     var exit = 0;
                     if (hasLoggedIn && !hasLoggedIn[0]) {
-                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
+                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */1, "SIGN IN REQUIRED", /* array */[]));
                     } else {
                       exit = 1;
                     }
                     if (exit === 1) {
-                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
+                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */1, "SYNC REQUIRED", /* array */[]));
                     }
                     
                   }
                 } else {
-                  return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "PENDING", /* array */[]));
+                  return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */1, "PENDING", /* array */[]));
                 }
               };
               var alerts = Belt_List.keepMap(viewData[/* prospects */5], (function (prospect) {

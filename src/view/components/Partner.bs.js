@@ -156,15 +156,17 @@ function make(partnerId, name, button, status, onClick, $staropt$star, _) {
                 ];
               var tmp;
               var exit = 0;
-              if (button || status || ex) {
+              if (button) {
+                exit = 1;
+              } else if (status) {
+                tmp = ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[status[0]]));
+              } else if (ex) {
                 exit = 1;
               } else {
                 tmp = null;
               }
               if (exit === 1) {
-                tmp = ex ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[exPartnerStatus], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("EX-PARTNER")])) : (
-                    button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[status[0]]))
-                  );
+                tmp = ex ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[exPartnerStatus], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("EX-PARTNER")])) : ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]]));
               }
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[onClick !== /* None */0], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
                                 /* SecondaryAction */Block.__(9, [secondaryAction(status)]),

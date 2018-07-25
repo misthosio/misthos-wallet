@@ -260,7 +260,11 @@ let make =
       }
       area4={
         <div>
-          <Voters voters />
+          <Voters
+            voters
+            currentPartners=viewData.currentPartners
+            processStatus=status
+          />
           <ProcessApprovalButtons
             endorseText=("Endorse Partner " ++ processTypeString)
             rejectText=("Reject Partner " ++ processTypeString)
