@@ -2,11 +2,18 @@
 'use strict';
 
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var UserInfo = require("../../application/UserInfo.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var ProcessCollector = require("./ProcessCollector.bs.js");
+
+function currentPartners(param) {
+  return Belt_List.reduceU(param[/* partners */1], PrimitiveTypes.UserId[/* emptySet */9], (function (set, param) {
+                return Belt_Set.add(set, param[/* userId */0]);
+              }));
+}
 
 function getPartnerProcess(processId, param) {
   return Belt_Map.get(param[/* partnerProcesses */2], processId);
@@ -224,6 +231,7 @@ function isPartner(id, param) {
               }));
 }
 
+exports.currentPartners = currentPartners;
 exports.getPartnerProcess = getPartnerProcess;
 exports.prospectsPendingApproval = prospectsPendingApproval;
 exports.hasUserLoggedIn = hasUserLoggedIn;

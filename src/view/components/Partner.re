@@ -86,13 +86,13 @@ let make =
         (
           switch (button, status, ex) {
           | (None, None, false) => ReasonReact.null
+          | (None, Some(action), _) =>
+            <ListItemSecondaryAction> action </ListItemSecondaryAction>
           | (_, _, true) =>
             <MTypography variant=`Body2 className=Styles.exPartnerStatus>
               ("EX-PARTNER" |> text)
             </MTypography>
           | (Some(action), _, _) =>
-            <ListItemSecondaryAction> action </ListItemSecondaryAction>
-          | (_, Some(action), _) =>
             <ListItemSecondaryAction> action </ListItemSecondaryAction>
           }
         )

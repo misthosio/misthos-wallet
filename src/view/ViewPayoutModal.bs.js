@@ -82,7 +82,7 @@ function make(viewData, commands, cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = viewData[/* payout */0];
+              var match = viewData[/* payout */1];
               var match$1 = match[/* data */5];
               var date = match$1[/* date */4];
               var txId = match$1[/* txId */3];
@@ -102,37 +102,37 @@ function make(viewData, commands, cmdStatus, _) {
                   case 0 : 
                       match$2 = /* tuple */[
                         "Pending Approval",
-                        /* Pending */0
+                        /* Pending */1
                       ];
                       break;
                   case 1 : 
                       match$2 = /* tuple */[
                         "Accepted",
-                        /* Success */2
+                        /* Success */3
                       ];
                       break;
                   case 2 : 
                       match$2 = /* tuple */[
                         "Denied",
-                        /* Failure */1
+                        /* Failure */2
                       ];
                       break;
                   case 3 : 
                       match$2 = /* tuple */[
                         "Aborted",
-                        /* Failure */1
+                        /* Failure */2
                       ];
                       break;
                   case 4 : 
                       match$2 = /* tuple */[
                         "Unconfirmed",
-                        /* Pending */0
+                        /* Pending */1
                       ];
                       break;
                   case 5 : 
                       match$2 = /* tuple */[
                         "Confirmed",
-                        /* Success */2
+                        /* Success */3
                       ];
                       break;
                   
@@ -140,7 +140,7 @@ function make(viewData, commands, cmdStatus, _) {
               } else {
                 match$2 = /* tuple */[
                   "Failed",
-                  /* Failure */1
+                  /* Failure */2
                 ];
               }
               var payoutStatus = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$2[1], match$2[0], /* array */[]));
@@ -180,13 +180,13 @@ function make(viewData, commands, cmdStatus, _) {
                                                 }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* Some */[total], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
                                           ])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
-                                  }, ReasonReact.element(/* None */0, /* None */0, Voters.make(match[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", /* None */0, "Reject Payout", match[/* canVote */3], (function () {
+                                  }, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* currentPartners */0], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", /* None */0, "Reject Payout", match[/* canVote */3], (function () {
                                               return Curry._1(commands[/* endorsePayout */8], processId);
                                             }), (function () {
                                               return Curry._1(commands[/* rejectPayout */9], processId);
                                             }), (function () {
                                               return Curry._1(commands[/* reset */0], /* () */0);
-                                            }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */1]) > 0 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_SnackbarContent.make(/* None */0, /* None */0, /* Some */[ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])) : null)], /* Some */[tmp], /* None */0, /* array */[]));
+                                            }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */2]) > 0 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_SnackbarContent.make(/* None */0, /* None */0, /* Some */[ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])) : null)], /* Some */[tmp], /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

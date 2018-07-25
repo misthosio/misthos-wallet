@@ -92,7 +92,7 @@ function make(viewData, commands, cmdStatus, _) {
               var copyButton = function (element, $staropt$star, _) {
                 var className = $staropt$star ? $staropt$star[0] : "";
                 return React.cloneElement(element, {
-                            "data-clipboard-text": viewData[/* joinVentureUrl */4],
+                            "data-clipboard-text": viewData[/* joinVentureUrl */5],
                             className: "copy-btn " + className
                           });
               };
@@ -144,16 +144,16 @@ function make(viewData, commands, cmdStatus, _) {
               var onboardingStatusChip;
               switch (onboardingState) {
                 case 0 : 
-                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */1, "SIGN IN REQUIRED", /* array */[]));
                     break;
                 case 1 : 
-                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "PENDING APPROVAL", /* array */[]));
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */1, "PENDING APPROVAL", /* array */[]));
                     break;
                 case 2 : 
-                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */1, "SYNC REQUIRED", /* array */[]));
                     break;
                 case 3 : 
-                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Success */2, "ONBOARDED", /* array */[]));
+                    onboardingStatusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Success */3, "ONBOARDED", /* array */[]));
                     break;
                 case 4 : 
                     onboardingStatusChip = null;
@@ -168,7 +168,7 @@ function make(viewData, commands, cmdStatus, _) {
                 case 0 : 
                     onboardingBody = ReasonReact.element(/* None */0, /* None */0, AlertBox.make(/* array */[
                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](userId) + ViewPartnerModalText.AlertBox[/* signInRequired */0])])),
-                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* signInRequired */0](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* webDomain */5])], /* None */0, /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* signInRequired */0](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* webDomain */6])], /* None */0, /* None */0, /* array */[
                                         ViewCommon.text("SEND A SIGN IN REMINDER"),
                                         sendIcon$1
                                       ]))
@@ -179,7 +179,7 @@ function make(viewData, commands, cmdStatus, _) {
                     break;
                 case 2 : 
                     var element = React.createElement("a", {
-                          href: viewData[/* joinVentureUrl */4],
+                          href: viewData[/* joinVentureUrl */5],
                           onClick: (function (prim) {
                               prim.preventDefault();
                               return /* () */0;
@@ -191,7 +191,7 @@ function make(viewData, commands, cmdStatus, _) {
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Tooltip.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["venter-url-label"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Bottom */437082891], /* None */0, /* None */0, ViewCommon.text("Copy to Clipboard"), /* None */0, /* None */0, /* array */[copyButton(element, /* Some */[ventureLink], /* () */0)])),
                                         ViewCommon.text(ViewPartnerModalText.AlertBox[/* syncRequiredPart2 */3])
                                       ])),
-                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* syncRequired */1](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* joinVentureUrl */4])], /* None */0, /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* syncRequired */1](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* joinVentureUrl */5])], /* None */0, /* None */0, /* array */[
                                         ViewCommon.text("SHARE THE SYNC URL"),
                                         sendIcon$1
                                       ]))
@@ -219,36 +219,36 @@ function make(viewData, commands, cmdStatus, _) {
                 case 0 : 
                     match$5 = /* tuple */[
                       "Pending Approval",
-                      /* Pending */0
+                      /* Pending */1
                     ];
                     break;
                 case 1 : 
                     match$5 = /* tuple */[
                       "Accepted",
-                      /* Success */2
+                      /* Success */3
                     ];
                     break;
                 case 2 : 
                     match$5 = /* tuple */[
                       "Denied",
-                      /* Failure */1
+                      /* Failure */2
                     ];
                     break;
                 case 3 : 
                     match$5 = /* tuple */[
                       "Aborted",
-                      /* Failure */1
+                      /* Failure */2
                     ];
                     break;
                 
               }
               var statusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$5[1], match$5[0], /* array */[]));
-              var match$6 = viewData[/* atRiskWarning */3];
+              var match$6 = viewData[/* atRiskWarning */4];
               var alertText = match$6 ? /* Some */[WarningsText.partnerRemovalRisk] : /* None */0;
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Proposed Partner " + processTypeString)], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match$1[/* proposedBy */2]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text("Status: "),
                                             statusChip
-                                          ])), onboarding)], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(match$1[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, alertText, "Reject Partner " + processTypeString, match$1[/* canVote */3], match$3[0], match$3[1], (function () {
+                                          ])), onboarding)], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* currentPartners */3], match$1[/* voters */4], status, /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, alertText, "Reject Partner " + processTypeString, match$1[/* canVote */3], match$3[0], match$3[1], (function () {
                                               return Curry._1(commands[/* reset */0], /* () */0);
                                             }), cmdStatus, /* array */[])))], /* None */0, /* None */0, /* array */[]));
             }),

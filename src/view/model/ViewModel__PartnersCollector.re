@@ -31,6 +31,12 @@ type t = {
   partnerPolicy: Policy.t,
 };
 
+let currentPartners = ({partners}) =>
+  partners
+  |. List.reduceU(UserId.emptySet, (. set, {userId}: partner) =>
+       set |. Set.add(userId)
+     );
+
 let getPartnerProcess = (processId, {partnerProcesses}) =>
   partnerProcesses |. Map.get(processId);
 

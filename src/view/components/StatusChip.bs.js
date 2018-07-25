@@ -14,12 +14,15 @@ function chip(status) {
   var tmp;
   switch (status) {
     case 0 : 
-        tmp = Css.rgba(245, 166, 35, 0.2);
+        tmp = Css.rgba(0, 0, 0, 0.2);
         break;
     case 1 : 
-        tmp = Css.rgba(255, 50, 83, 0.2);
+        tmp = Css.rgba(245, 166, 35, 0.2);
         break;
     case 2 : 
+        tmp = Css.rgba(255, 50, 83, 0.2);
+        break;
+    case 3 : 
         tmp = Css.rgba(2, 162, 180, 0.2);
         break;
     
@@ -27,12 +30,15 @@ function chip(status) {
   var tmp$1;
   switch (status) {
     case 0 : 
-        tmp$1 = Css.hex("f5a623");
+        tmp$1 = Css.hex("7f7f7f");
         break;
     case 1 : 
-        tmp$1 = Css.hex("ff3253");
+        tmp$1 = Css.hex("f5a623");
         break;
     case 2 : 
+        tmp$1 = Css.hex("ff3253");
+        break;
+    case 3 : 
         tmp$1 = Colors.misthosTeal;
         break;
     
