@@ -6,14 +6,12 @@ var Grid = require("./components/Grid.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
 var MInput = require("./components/MInput.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
-var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
@@ -32,15 +30,9 @@ var ProposeButton = require("./components/ProposeButton.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
-var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.js");
 var MaterialUi_Paper = require("@jsiebern/bs-material-ui/src/MaterialUi_Paper.bs.js");
 var MaterialUi_Radio = require("@jsiebern/bs-material-ui/src/MaterialUi_Radio.bs.js");
-var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Stepper.bs.js");
-var MaterialUi_Tooltip = require("@jsiebern/bs-material-ui/src/MaterialUi_Tooltip.bs.js");
 var MaterialUi_MenuItem = require("@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js");
-var MaterialUi_StepLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_StepLabel.bs.js");
-var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
-var MaterialUi_StepContent = require("@jsiebern/bs-material-ui/src/MaterialUi_StepContent.bs.js");
 var Match = require("autosuggest-highlight/match");
 var Parse = require("autosuggest-highlight/parse");
 
@@ -288,10 +280,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var send = param[/* send */3];
               var state = param[/* state */1];
               var inputs = state[/* inputs */4];
-              var viewData = state[/* viewData */0];
-              var activeStep;
-              activeStep = typeof proposeCmdStatus === "number" || proposeCmdStatus.tag !== 2 ? 0 : 1;
-              var partners = $$Array.of_list(Belt_List.keepMapU(viewData[/* partners */2], (function (partner) {
+              var partners = $$Array.of_list(Belt_List.keepMapU(state[/* viewData */0][/* partners */2], (function (partner) {
                           var match = partner[/* canProposeRemoval */3];
                           if (match) {
                             return /* Some */[ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */2], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Radio.make(/* Some */[/* `Bool */[
@@ -306,131 +295,28 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                             return /* None */0;
                           }
                         })));
-              var icon$1 = function (index) {
-                return React.createElement("svg", {
-                            height: "44",
-                            width: "44",
-                            viewBox: "0 0 44 44"
-                          }, React.createElement("defs", undefined, React.createElement("linearGradient", {
-                                    id: "a",
-                                    x1: "162.467%",
-                                    x2: "-41.102%",
-                                    y1: "29.557%",
-                                    y2: "66.287%"
-                                  }, React.createElement("stop", {
-                                        offset: "0%",
-                                        stopColor: "#05CFDB"
-                                      }), React.createElement("stop", {
-                                        offset: "100%",
-                                        stopColor: "#02A2B4"
-                                      }))), React.createElement("g", {
-                                fill: "none",
-                                fillRule: "evenodd",
-                                transform: "translate(1 1)"
-                              }, React.createElement("circle", {
-                                    cx: "21",
-                                    cy: "21",
-                                    r: "21",
-                                    stroke: "#000"
-                                  }), React.createElement("circle", {
-                                    cx: "21",
-                                    cy: "21",
-                                    fill: "url(#a)",
-                                    r: "18"
-                                  }), index < activeStep ? React.createElement("polyline", {
-                                      fill: "none",
-                                      points: "16 0 5 11 0 6",
-                                      stroke: "#000",
-                                      strokeLinecap: "round",
-                                      strokeLinejoin: "round",
-                                      strokeWidth: "2",
-                                      transform: "translate(12 16)"
-                                    }) : React.createElement("text", {
-                                      className: stepIconText,
-                                      textAnchor: "middle",
-                                      x: "21",
-                                      y: "27"
-                                    }, ViewCommon.text(String(index + 1 | 0)))));
-              };
-              var copyButton = function (element, $staropt$star, _) {
-                var className = $staropt$star ? $staropt$star[0] : "";
-                return React.cloneElement(element, {
-                            "data-clipboard-text": viewData[/* joinVentureUrl */4],
-                            className: "copy-btn " + className
-                          });
-              };
               var partial_arg = state[/* suggestions */5];
-              var element = React.createElement("a", {
-                    href: viewData[/* joinVentureUrl */4],
-                    onClick: (function (prim) {
-                        prim.preventDefault();
-                        return /* () */0;
-                      })
-                  }, ViewCommon.text("VENTURE URL"));
-              var element$1 = React.createElement("a", {
-                    href: viewData[/* joinVentureUrl */4],
-                    onClick: (function (prim) {
-                        prim.preventDefault();
-                        return /* () */0;
-                      })
-                  }, ViewCommon.text("private share link"));
-              var element$2 = ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy]));
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Addition Proposal")], /* Some */[ViewCommon.text("Removal Proposal")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
-                                              3654863,
-                                              activeStep
-                                            ]], /* None */0, /* Some */[stepper], /* None */0, /* None */0, /* Some */[/* Vertical */-1010337642], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                            ReasonReact.element(/* Some */["enter-id"], /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(0)], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
-                                                                  /* IconContainer */Block.__(9, [icon]),
-                                                                  /* [] */0
-                                                                ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* Some */[autoCompleteContianerOverflow], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                ReasonReact.element(/* None */0, /* None */0, Autosuggest.make({
-                                                                          container: autoCompleteContainer,
-                                                                          suggestionsContainerOpen: suggestionsContainerOpen,
-                                                                          suggestion: suggestion,
-                                                                          suggestionsList: suggestionsList
-                                                                        }, state[/* displayedSuggestions */6], (function (param) {
-                                                                            return onSuggestionsFetchRequested(send, partial_arg, param);
-                                                                          }), (function () {
-                                                                            return Curry._1(send, /* ClearSuggestions */0);
-                                                                          }), (function (s) {
-                                                                            return s;
-                                                                          }), (function (value) {
-                                                                            return value.trim().length > 2;
-                                                                          }), renderSuggestion, renderSuggestionsContainer, renderInputComponent, {
-                                                                          value: inputs[/* prospectId */0],
-                                                                          onChange: (function (_, change) {
-                                                                              return Curry._1(send, /* ChangeNewPartnerId */Block.__(2, [change.newValue]));
-                                                                            })
-                                                                        }, /* array */[])),
-                                                                ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", /* None */0, (function () {
-                                                                            return Curry._1(send, /* ProposePartner */1);
-                                                                          }), /* None */0, /* None */0, state[/* canSubmitProposal */2], /* Some */[false], proposeCmdStatus, /* array */[]))
-                                                              ]))
-                                                    ])),
-                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(1)], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
-                                                                  /* IconContainer */Block.__(9, [icon]),
-                                                                  /* [] */0
-                                                                ]], /* None */0, /* array */[
-                                                                ViewCommon.text("SHARE THE "),
-                                                                ReasonReact.element(/* None */0, /* None */0, MaterialUi_Tooltip.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["venter-url-label"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Bottom */437082891], /* None */0, /* None */0, ViewCommon.text("Copy to Clipboard"), /* None */0, /* None */0, /* array */[copyButton(element, /* Some */[ventureLink], /* () */0)]))
-                                                              ])),
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
-                                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                          ViewCommon.text("Share this Venture via a "),
-                                                                          copyButton(element$1, /* Some */[ventureLink], /* () */0),
-                                                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_Tooltip.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["venter-url-copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Bottom */437082891], /* None */0, /* None */0, ViewCommon.text("Copy to Clipboard"), /* None */0, /* None */0, /* array */[copyButton(element$2, /* None */0, /* () */0)]))
-                                                                        ])),
-                                                                ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["mailto:?subject=" + (subject(viewData[/* ventureName */0]) + ("&body=" + body(inputs[/* prospectId */0], viewData[/* ventureName */0], viewData[/* joinVentureUrl */4], PrimitiveTypes.UserId[/* toString */0](viewData[/* localUser */1]))))], /* None */0, /* array */[ViewCommon.text("Email the link ")])),
-                                                                ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                                              return Curry._1(send, /* AddAnother */3);
-                                                                            })], /* None */0, /* Some */[true], /* Some */[/* Flat */0], /* None */0, /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Propose another Partner")]))
-                                                              ]))
-                                                    ]))
-                                          ])))], /* Some */[React.createElement("div", {
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Addition Proposal")], /* Some */[ViewCommon.text("Removal Proposal")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Add a Blockstack ID")])), ReasonReact.element(/* None */0, /* None */0, Autosuggest.make({
+                                            container: autoCompleteContainer,
+                                            suggestionsContainerOpen: suggestionsContainerOpen,
+                                            suggestion: suggestion,
+                                            suggestionsList: suggestionsList
+                                          }, state[/* displayedSuggestions */6], (function (param) {
+                                              return onSuggestionsFetchRequested(send, partial_arg, param);
+                                            }), (function () {
+                                              return Curry._1(send, /* ClearSuggestions */0);
+                                            }), (function (s) {
+                                              return s;
+                                            }), (function (value) {
+                                              return value.trim().length > 2;
+                                            }), renderSuggestion, renderSuggestionsContainer, renderInputComponent, {
+                                            value: inputs[/* prospectId */0],
+                                            onChange: (function (_, change) {
+                                                return Curry._1(send, /* ChangeNewPartnerId */Block.__(2, [change.newValue]));
+                                              })
+                                          }, /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", /* None */0, (function () {
+                                              return Curry._1(send, /* ProposePartner */1);
+                                            }), /* None */0, /* None */0, state[/* canSubmitProposal */2], /* Some */[false], proposeCmdStatus, /* array */[])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a Partner from this Venture,\n               select his or her name below and submit your proposal.\n               When enough Partners endorse this proposal, the Partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose Partner Removal", state[/* alertText */1], (function () {
                                               return Curry._1(send, /* RemovePartner */2);
@@ -480,21 +366,17 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                       Utils.mapOption((function (partnerId) {
                               return Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], partnerId);
                             }), state[/* inputs */4][/* removePartnerId */1]);
-                      var init = state[/* inputs */4];
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* alertText : None */0,
                                   /* canSubmitProposal */state[/* canSubmitProposal */2],
                                   /* removeInputFrozen */state[/* removeInputFrozen */3],
-                                  /* inputs : record */[
-                                    /* prospectId */init[/* prospectId */0],
-                                    /* removePartnerId : None */0
-                                  ],
+                                  /* inputs */state[/* inputs */4],
                                   /* suggestions */state[/* suggestions */5],
                                   /* displayedSuggestions */state[/* displayedSuggestions */6]
                                 ]]);
                   case 3 : 
-                      var init$1 = state[/* inputs */4];
+                      var init = state[/* inputs */4];
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* viewData */state[/* viewData */0],
@@ -503,7 +385,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                   /* removeInputFrozen */state[/* removeInputFrozen */3],
                                   /* inputs : record */[
                                     /* prospectId */"",
-                                    /* removePartnerId */init$1[/* removePartnerId */1]
+                                    /* removePartnerId */init[/* removePartnerId */1]
                                   ],
                                   /* suggestions */state[/* suggestions */5],
                                   /* displayedSuggestions */state[/* displayedSuggestions */6]
@@ -565,7 +447,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                 ]]);
                   case 2 : 
                       var text = action[0];
-                      var init$2 = state[/* inputs */4];
+                      var init$1 = state[/* inputs */4];
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* alertText */state[/* alertText */1],
@@ -573,7 +455,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                   /* removeInputFrozen */state[/* removeInputFrozen */3],
                                   /* inputs : record */[
                                     /* prospectId */text,
-                                    /* removePartnerId */init$2[/* removePartnerId */1]
+                                    /* removePartnerId */init$1[/* removePartnerId */1]
                                   ],
                                   /* suggestions */state[/* suggestions */5],
                                   /* displayedSuggestions */state[/* displayedSuggestions */6]
@@ -601,7 +483,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                       }
                       if (exit === 1) {
                         var match$1 = Belt_Set.has(state[/* viewData */0][/* alertPartners */3], partner);
-                        var init$3 = state[/* inputs */4];
+                        var init$2 = state[/* inputs */4];
                         return /* UpdateWithSideEffects */Block.__(2, [
                                   /* record */[
                                     /* viewData */state[/* viewData */0],
@@ -609,7 +491,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                     /* canSubmitProposal */state[/* canSubmitProposal */2],
                                     /* removeInputFrozen */false,
                                     /* inputs : record */[
-                                      /* prospectId */init$3[/* prospectId */0],
+                                      /* prospectId */init$2[/* prospectId */0],
                                       /* removePartnerId : Some */[partner]
                                     ],
                                     /* suggestions */state[/* suggestions */5],

@@ -66,13 +66,24 @@ function make(session, updateSession, signTAC, _) {
                 } else {
                   var commands = selectedVenture[2];
                   var venture = selectedVenture[1];
+                  var ventureId = selectedVenture[0];
                   var match$1 = ViewModel.readOnly(venture);
                   if (match$1) {
                     return /* None */0;
                   } else {
                     return /* Some */[/* tuple */[
-                              ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* None */0, (function (proposePartnerCmds, proposeCmdStatus) {
-                                          return ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* None */0, (function (removePartnerCmds, removeCmdStatus) {
+                              ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* Some */[(function (processId) {
+                                            return Router.goTo(/* Venture */Block.__(0, [
+                                                          ventureId,
+                                                          /* Partner */Block.__(0, [processId])
+                                                        ]));
+                                          })], (function (proposePartnerCmds, proposeCmdStatus) {
+                                          return ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* Some */[(function (processId) {
+                                                              return Router.goTo(/* Venture */Block.__(0, [
+                                                                            ventureId,
+                                                                            /* Partner */Block.__(0, [processId])
+                                                                          ]));
+                                                            })], (function (removePartnerCmds, removeCmdStatus) {
                                                             return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, /* array */[]));
                                                           })));
                                         }))),
@@ -87,7 +98,7 @@ function make(session, updateSession, signTAC, _) {
                   return /* None */0;
                 } else {
                   var venture$1 = selectedVenture[1];
-                  var ventureId = selectedVenture[0];
+                  var ventureId$1 = selectedVenture[0];
                   var match$2 = ViewModel.readOnly(venture$1);
                   if (match$2) {
                     return /* None */0;
@@ -95,7 +106,7 @@ function make(session, updateSession, signTAC, _) {
                     return /* Some */[/* tuple */[
                               ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$1), /* Some */[(function (processId) {
                                             return Router.goTo(/* Venture */Block.__(0, [
-                                                          ventureId,
+                                                          ventureId$1,
                                                           /* Payout */Block.__(1, [processId])
                                                         ]));
                                           })], (function (commands, cmdStatus) {
