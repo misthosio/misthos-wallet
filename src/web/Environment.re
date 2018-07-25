@@ -5,6 +5,7 @@ type t = {
   webDomain: string,
   cookieDomain: string,
   network: Network.t,
+  monitoringEnvironment: string,
 };
 
 let get = () => {
@@ -20,6 +21,7 @@ let get = () => {
       webDomain: "",
       cookieDomain: "",
       network: Testnet,
+      monitoringEnvironment: "web",
     }
   | "localhost" => {
       redirectURI: "http://localhost:3000/",
@@ -28,6 +30,7 @@ let get = () => {
       webDomain: "http://localhost:3001",
       cookieDomain: "localhost",
       network: Testnet,
+      monitoringEnvironment: "dev",
     }
   | "staging.misthos.io"
   | "web-staging.misthos.io" => {
@@ -37,6 +40,7 @@ let get = () => {
       webDomain: "https://web-staging.misthos.io",
       cookieDomain: "misthos.io",
       network: Testnet,
+      monitoringEnvironment: "staging",
     }
   | "testnet.misthos.io"
   | "www.misthos.io"
@@ -47,6 +51,7 @@ let get = () => {
       webDomain: "https://www.misthos.io",
       cookieDomain: "misthos.io",
       network: Testnet,
+      monitoringEnvironment: "testnet",
     }
   | "app.misthos.io" => {
       redirectURI: "https://app.misthos.io/",
@@ -55,6 +60,7 @@ let get = () => {
       webDomain: "https://www.misthos.io",
       cookieDomain: "misthos.io",
       network: Mainnet,
+      monitoringEnvironment: "mainnet",
     }
   | _ => {
       redirectURI: Location.origin ++ "/",
@@ -63,6 +69,7 @@ let get = () => {
       webDomain: Location.origin,
       cookieDomain: "misthos.io",
       network: Testnet,
+      monitoringEnvironment: "unknown",
     }
   };
 };

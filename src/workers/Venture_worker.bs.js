@@ -4,6 +4,7 @@
 var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Raven = require("../ffi/Raven.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../web/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
@@ -17,6 +18,8 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
 
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
+
+Raven.initialize(/* () */0);
 
 function postMessage$1(correlationId, msg) {
   postMessage({
@@ -32,6 +35,7 @@ function logMessage(msg) {
 }
 
 function logError(error) {
+  Raven.captureException(error);
   console.error("[Venture Worker] - Encountered an unhandled exception");
   console.error(error);
   return /* () */0;

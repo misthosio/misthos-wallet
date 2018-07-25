@@ -18,7 +18,8 @@ function get() {
                 /* appDomain */"https://app.misthos.io",
                 /* webDomain */"https://www.misthos.io",
                 /* cookieDomain */"misthos.io",
-                /* network : Mainnet */2
+                /* network : Mainnet */2,
+                /* monitoringEnvironment */"mainnet"
               ];
     case "localhost" : 
         return /* record */[
@@ -27,7 +28,8 @@ function get() {
                 /* appDomain */"http://localhost:3000",
                 /* webDomain */"http://localhost:3001",
                 /* cookieDomain */"localhost",
-                /* network : Testnet */1
+                /* network : Testnet */1,
+                /* monitoringEnvironment */"dev"
               ];
     case "server" : 
         return /* record */[
@@ -36,7 +38,8 @@ function get() {
                 /* appDomain */"",
                 /* webDomain */"",
                 /* cookieDomain */"",
-                /* network : Testnet */1
+                /* network : Testnet */1,
+                /* monitoringEnvironment */"web"
               ];
     case "staging.misthos.io" : 
     case "web-staging.misthos.io" : 
@@ -46,7 +49,8 @@ function get() {
                 /* appDomain */"https://staging.misthos.io",
                 /* webDomain */"https://web-staging.misthos.io",
                 /* cookieDomain */"misthos.io",
-                /* network : Testnet */1
+                /* network : Testnet */1,
+                /* monitoringEnvironment */"staging"
               ];
     case "testnet.misthos.io" : 
     case "web-testnet.misthos.io" : 
@@ -57,7 +61,8 @@ function get() {
                 /* appDomain */"https://testnet.misthos.io",
                 /* webDomain */"https://www.misthos.io",
                 /* cookieDomain */"misthos.io",
-                /* network : Testnet */1
+                /* network : Testnet */1,
+                /* monitoringEnvironment */"testnet"
               ];
     default:
       return /* record */[
@@ -66,7 +71,8 @@ function get() {
               /* appDomain */location.origin,
               /* webDomain */location.origin,
               /* cookieDomain */"misthos.io",
-              /* network : Testnet */1
+              /* network : Testnet */1,
+              /* monitoringEnvironment */"unknown"
             ];
   }
 }
