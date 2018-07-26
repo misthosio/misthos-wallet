@@ -20,3 +20,8 @@ external byteLength : (Js.String.t, ~encoding: Js.String.t) => int =
   "Buffer.byteLength";
 
 [@bs.get] external length : t => int = "";
+
+[@bs.send] external readUInt32BE : (t, int) => int = "";
+
+[@bs.send.pipe: t] external slice : (int, int) => t = "";
+[@bs.send.pipe: t] external writeUInt8 : (int, int) => unit = "";

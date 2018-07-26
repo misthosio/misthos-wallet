@@ -31,7 +31,9 @@ let needsSigning = (idx, {inputs}) => {
   | [||] => true
   | sigs =>
     sigs
-    |. Array.someU((. sig_) => sig_ |> B.Script.isCanonicalSignature == false)
+    |. Array.someU((. sig_) =>
+         sig_ |> B.Script.isCanonicalScriptSignature == false
+       )
   };
 };
 
@@ -79,8 +81,8 @@ let sign =
   let signature =
     keyPair
     |> B.ECPair.sign(signatureHash)
-    |. B.ECSignature.toScriptSignature(B.Transaction.sighashAll);
-  let pubKey = keyPair |> B.ECPair.getPublicKeyBuffer;
+    |. B.Script.Signature.encode(B.Transaction.sighashAll);
+  let pubKey = keyPair |> B.ECPair.getPublicKey;
   let insert = pubKey |> pubKeyIndex(witnessBuf, nCustodians);
   let input = inputs |. Array.getExn(idx);
   let signatures =
@@ -118,7 +120,10 @@ let merge = ({tx, inputs}, {tx: otherTx, inputs: otherInputs}) => {
          | _ =>
            Array.reduceReverse2U(
              signatures, otherSigs, [], (. res, sigA, sigB) =>
-             [sigA |> B.Script.isCanonicalSignature ? sigA : sigB, ...res]
+             [
+               sigA |> B.Script.isCanonicalScriptSignature ? sigA : sigB,
+               ...res,
+             ]
            )
            |> List.toArray
          };
@@ -167,7 +172,7 @@ let finalize = (usedInputs, {tx, inputs}) =>
                (usedInputs |. Array.getExn(idx): Network.txInput).nCoSigners;
            let signatures =
              signatures
-             |. Array.keep(B.Script.isCanonicalSignature)
+             |. Array.keep(B.Script.isCanonicalScriptSignature)
              |. Array.slice(~offset=0, ~len=nCoSigners);
            if (signatures |> Array.length < nCoSigners) {
              raise(NotEnoughSignatures);

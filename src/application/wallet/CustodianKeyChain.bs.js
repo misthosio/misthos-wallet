@@ -7,6 +7,7 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var WalletTypes = require("./WalletTypes.bs.js");
+var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 
 function accountIdx($$public) {
@@ -23,7 +24,7 @@ function hdNode($$public) {
 
 function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
   var misthosKeyChain = masterKeyChain.deriveHardened(0);
-  var salt = Utils.hash(Utils.bufToHex(misthosKeyChain.getPublicKeyBuffer()));
+  var salt = Utils.hash(Utils.bufToHex(misthosKeyChain.publicKey));
   var custodianKeyChain = misthosKeyChain.deriveHardened(Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt))).deriveHardened(0).deriveHardened(WalletTypes.AccountIndex[/* toInt */0](accountIdx)).deriveHardened(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)).deriveHardened(45);
   return /* record */[
           /* accountIdx */accountIdx,
@@ -41,7 +42,9 @@ function toPublicKeyChain(keyChain) {
 }
 
 function getSigningKey(coSignerIdx, chainIdx, addressIdx, keyChain) {
-  return keyChain[/* hdNode */2].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).keyPair;
+  return BitcoinjsLib.ECPair.fromPrivateKey(keyChain[/* hdNode */2].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).privateKey, {
+              network: keyChain[/* hdNode */2].network
+            });
 }
 
 function encode(keyChain) {

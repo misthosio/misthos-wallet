@@ -26,8 +26,8 @@ module Coordinates = {
          )
       |> List.sort(((_, chainA), (_, chainB)) =>
            compare(
-             chainA |> Bitcoin.HDNode.getPublicKeyBuffer |> Utils.bufToHex,
-             chainB |> Bitcoin.HDNode.getPublicKeyBuffer |> Utils.bufToHex,
+             chainA |> Bitcoin.HDNode.getPublicKey |> Utils.bufToHex,
+             chainB |> Bitcoin.HDNode.getPublicKey |> Utils.bufToHex,
            )
          )
       |> List.mapi((i, (user, _)) =>
@@ -137,7 +137,7 @@ let make =
       coordinates,
       {custodianKeyChains, nCoSigners, sequence}: AccountKeyChain.t,
     ) => {
-  let keys =
+  let pubKeys =
     custodianKeyChains
     |> List.map(chain => chain |> snd |> CustodianKeyChain.hdNode)
     |> List.map(node =>
@@ -152,36 +152,40 @@ let make =
               Coordinates.addressIdx(coordinates) |> AddressIndex.toInt,
             )
        )
-    |> List.map(node => node##keyPair)
-    |> List.sort((pairA, pairB) =>
-         compare(
-           pairA |> ECPair.getPublicKeyBuffer |> Utils.bufToHex,
-           pairB |> ECPair.getPublicKeyBuffer |> Utils.bufToHex,
-         )
-       );
-  open Script;
+    |> List.map(node => node |> HDNode.getPublicKey)
+    |> List.sort((pubKeyA, pubKeyB) =>
+         compare(pubKeyA |> Utils.bufToHex, pubKeyB |> Utils.bufToHex)
+       )
+    |> Array.of_list;
+  let network =
+    custodianKeyChains
+    |> List.hd
+    |> snd
+    |> CustodianKeyChain.hdNode
+    |> HDNode.getNetwork;
+
   let witnessScript =
     switch (sequence) {
     | Some(sequence) =>
-      MultisigWithSequence.encode(
-        nCoSigners,
-        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
-        sequence,
-      )
-    | None =>
-      Multisig.Output.encode(
-        nCoSigners,
-        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
-      )
+      MultisigWithSequence.encode(nCoSigners, pubKeys, sequence)
+    | None => Payments.multisig({
+                "m": nCoSigners,
+                "pubkeys": pubKeys,
+                "network": network,
+              })##output
     };
-  let redeemScript =
-    WitnessScriptHash.Output.encode(Crypto.sha256FromBuffer(witnessScript));
-  let outputScript = ScriptHash.Output.encode(Crypto.hash160(redeemScript));
-  let displayAddress =
-    Address.fromOutputScript(
-      outputScript,
-      keys |> List.hd |> ECPair.getNetwork,
-    );
+  let redeemScript = Payments.witnessScriptHash({
+                       "redeem": {
+                         "output": witnessScript,
+                       },
+                       "network": network,
+                     })##output;
+  let displayAddress = Payments.scriptHash({
+                         "redeem": {
+                           "output": redeemScript,
+                         },
+                         "network": network,
+                       })##address;
   {
     nCoSigners,
     coordinates,

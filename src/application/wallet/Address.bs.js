@@ -26,7 +26,7 @@ function next(coSigner, usedCoordinates, chainIdx, param) {
                         return /* None */0;
                       }
                     }), List.sort((function (param, param$1) {
-                          return Caml_primitive.caml_string_compare(Utils.bufToHex(param[1].getPublicKeyBuffer()), Utils.bufToHex(param$1[1].getPublicKeyBuffer()));
+                          return Caml_primitive.caml_string_compare(Utils.bufToHex(param[1].publicKey), Utils.bufToHex(param$1[1].publicKey));
                         }), List.map((function (chain) {
                               return /* tuple */[
                                       chain[0],
@@ -214,23 +214,33 @@ function make(coordinates, param) {
   var custodianKeyChains = param[/* custodianKeyChains */4];
   var sequence = param[/* sequence */3];
   var nCoSigners = param[/* nCoSigners */2];
-  var keys = List.sort((function (pairA, pairB) {
-          return Caml_primitive.caml_string_compare(Utils.bufToHex(pairA.getPublicKeyBuffer()), Utils.bufToHex(pairB.getPublicKeyBuffer()));
-        }), List.map((function (node) {
-              return node.keyPair;
+  var pubKeys = $$Array.of_list(List.sort((function (pubKeyA, pubKeyB) {
+              return Caml_primitive.caml_string_compare(Utils.bufToHex(pubKeyA), Utils.bufToHex(pubKeyB));
             }), List.map((function (node) {
-                  return node.derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx(coordinates))).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx(coordinates))).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx(coordinates)));
-                }), List.map((function (chain) {
-                      return CustodianKeyChain.hdNode(chain[1]);
-                    }), custodianKeyChains))));
-  var witnessScript = sequence ? MultisigWithSequence.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
-                    return prim.getPublicKeyBuffer();
-                  }), keys)), sequence[0]) : BitcoinjsLib.script.multisig.output.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
-                    return prim.getPublicKeyBuffer();
-                  }), keys)));
-  var redeemScript = BitcoinjsLib.script.witnessScriptHash.output.encode(BitcoinjsLib.crypto.sha256(witnessScript));
-  var outputScript = BitcoinjsLib.script.scriptHash.output.encode(BitcoinjsLib.crypto.hash160(redeemScript));
-  var displayAddress = BitcoinjsLib.address.fromOutputScript(outputScript, List.hd(keys).getNetwork());
+                  return node.publicKey;
+                }), List.map((function (node) {
+                      return node.derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx(coordinates))).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx(coordinates))).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx(coordinates)));
+                    }), List.map((function (chain) {
+                          return CustodianKeyChain.hdNode(chain[1]);
+                        }), custodianKeyChains)))));
+  var network = CustodianKeyChain.hdNode(List.hd(custodianKeyChains)[1]).network;
+  var witnessScript = sequence ? MultisigWithSequence.encode(nCoSigners, pubKeys, sequence[0]) : BitcoinjsLib.payments.p2ms({
+          m: nCoSigners,
+          pubkeys: pubKeys,
+          network: network
+        }).output;
+  var redeemScript = BitcoinjsLib.payments.p2wsh({
+        redeem: {
+          output: witnessScript
+        },
+        network: network
+      }).output;
+  var displayAddress = BitcoinjsLib.payments.p2sh({
+        redeem: {
+          output: redeemScript
+        },
+        network: network
+      }).address;
   return /* record */[
           /* nCoSigners */nCoSigners,
           /* nPubKeys */List.length(custodianKeyChains),

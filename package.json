@@ -10,7 +10,7 @@
     "bignumber.js": "7.0.1",
     "bip39": "2.5.0",
     "bitcoin-ops": "1.4.1",
-    "bitcoinjs-lib": "3.3.2",
+    "bitcoinjs-lib": "4.0.1",
     "blockstack": "17.2.0",
     "bs-css": "7.0.1",
     "bs-fetch": "0.3.0",

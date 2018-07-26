@@ -13,21 +13,20 @@ module Crypto = {
 };
 
 module Networks = {
-  type t;
+  type pubKeyHash;
+  type t = {
+    .
+    "pubKeyHash": pubKeyHash,
+    "bip32": {
+      .
+      "public": int,
+      "private": int,
+    },
+  };
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
   external bitcoin : t = "";
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
   external testnet : t = "";
-  [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
-  external litecoin : t = "";
-  let all = [|bitcoin, testnet, litecoin|];
-};
-
-module Address = {
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
-  external toOutputScript : (string, Networks.t) => Node.buffer = "";
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
-  external fromOutputScript : (Node.buffer, Networks.t) => string = "";
 };
 
 module Transaction = {
@@ -67,16 +66,6 @@ module Transaction = {
     "";
 };
 
-module ECSignature = {
-  type t;
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECSignature"]
-  external fromDER : Node.buffer => t = "";
-  [@bs.send] external toDER : t => Node.buffer = "";
-  [@bs.send]
-  external toScriptSignature : (t, Transaction.sighashType) => Node.buffer =
-    "";
-};
-
 module ECPair = {
   type t;
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
@@ -87,41 +76,57 @@ module ECPair = {
   let makeRandomWithNetwork = network =>
     makeRandomWithOptions({"network": network});
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
-  external fromPublicKeyBuffer : Node.buffer => t = "";
+  external fromPrivateKey : (Node.buffer, {. "network": Networks.t}) => t =
+    "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
+  external fromPublicKey : Node.buffer => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIF : string => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIFWithNetwork : (string, Networks.t) => t = "fromWIF";
   [@bs.module "bitcoinjs-lib"] [@bs.new]
   external make : BigInteger.t => t = "ECPair";
-  [@bs.module "bitcoinjs-lib"] [@bs.new]
-  external makeWithOptions :
-    (BigInteger.t, [@bs.as {json|null|json}] _, {. "network": Networks.t}) =>
-    t =
-    "ECPair";
-  let makeWithNetwork = (key, network) =>
-    makeWithOptions(key, {"network": network});
   [@bs.send] external toWIF : t => string = "";
-  [@bs.send] external getAddress : t => string = "";
-  [@bs.send] external getNetwork : t => Networks.t = "";
-  [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
-  [@bs.send.pipe: t] external sign : Node.buffer => ECSignature.t = "";
-  [@bs.send.pipe: t]
-  external verify : (Node.buffer, ECSignature.t) => bool = "";
+  [@bs.get] external getNetwork : t => Networks.t = "network";
+  [@bs.get] external getPublicKey : t => Node.buffer = "publicKey";
+  [@bs.get] external getPrivateKey : t => Node.buffer = "privateKey";
+  [@bs.send.pipe: t] external sign : Node.buffer => Node.buffer = "";
+  [@bs.send.pipe: t] external verify : (Node.buffer, Node.buffer) => bool = "";
+};
+
+module Address = {
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
+  external _toBase58Check : (Node.buffer, Networks.pubKeyHash) => string =
+    "toBase58Check";
+  let toBase58Check = (hash, network) =>
+    _toBase58Check(hash, network##pubKeyHash);
+
+  let fromKeyPair = key =>
+    Crypto.hash160(key |> ECPair.getPublicKey)
+    |. toBase58Check(key |> ECPair.getNetwork);
+
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
+  external toOutputScript : (string, Networks.t) => Node.buffer = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
+  external fromOutputScript : (Node.buffer, Networks.t) => string = "";
 };
 
 module HDNode = {
-  type t = {. "keyPair": ECPair.t};
-  [@bs.module "bitcoinjs-lib"] [@bs.new]
-  external make : (ECPair.t, Node.buffer) => t = "HDNode";
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "HDNode"]
-  external fromBase58WithNetworks : (string, array(Networks.t)) => t =
-    "fromBase58";
-  let fromBase58 = base58 => fromBase58WithNetworks(base58, Networks.all);
+  type t;
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
+  external fromPrivateKey : (Node.buffer, Node.buffer, Networks.t) => t = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
+  external _fromBase58 : (string, Networks.t) => t = "fromBase58";
+  let fromBase58 = base58 =>
+    try (_fromBase58(base58, Networks.bitcoin)) {
+    | _ => _fromBase58(base58, Networks.testnet)
+    };
   [@bs.send.pipe: t] external derive : int => t = "";
   [@bs.send.pipe: t] external deriveHardened : int => t = "";
   [@bs.send.pipe: t] external derivePath : string => t = "";
-  [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
+  [@bs.get] external getPublicKey : t => Node.buffer = "publicKey";
+  [@bs.get] external getPrivateKey : t => Node.buffer = "privateKey";
+  [@bs.get] external getNetwork : t => Networks.t = "network";
   [@bs.send] external neutered : t => t = "";
   [@bs.send] external toBase58 : t => string = "";
 };
@@ -166,9 +171,46 @@ module Ops = {
   include BitcoinOps;
 };
 
+module Payments = {
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "payments"]
+  external multisig :
+    {
+      .
+      "m": int,
+      "pubkeys": array(Node.buffer),
+      "network": Networks.t,
+    } =>
+    {. "output": Node.buffer} =
+    "p2ms";
+
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "payments"]
+  external witnessScriptHash :
+    {
+      .
+      "redeem": {.. "output": Node.buffer},
+      "network": Networks.t,
+    } =>
+    {
+      .
+      "address": string,
+      "output": Node.buffer,
+    } =
+    "p2wsh";
+
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "payments"]
+  external scriptHash :
+    {
+      .
+      "redeem": {.. "output": Node.buffer},
+      "network": Networks.t,
+    } =>
+    {. "address": string} =
+    "p2sh";
+};
+
 module Script = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
-  external isCanonicalSignature : Node.buffer => bool = "";
+  external isCanonicalScriptSignature : Node.buffer => bool = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
   external compile : array(Ops.t) => Node.buffer = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
@@ -177,32 +219,18 @@ module Script = {
     [@bs.module "bitcoinjs-lib"] [@bs.scope ("script", "number")]
     external encode : int => Node.buffer = "";
   };
-  module Multisig = {
-    module Output = {
-      [@bs.module "bitcoinjs-lib"]
-      [@bs.scope ("script", "multisig", "output")]
-      external encode : (int, array(Node.buffer)) => Node.buffer = "";
-    };
-  };
-  module ScriptHash = {
-    module Output = {
-      [@bs.module "bitcoinjs-lib"]
-      [@bs.scope ("script", "scriptHash", "output")]
-      external encode : Node.buffer => Node.buffer = "";
-    };
-  };
-  module WitnessScriptHash = {
-    module Output = {
-      [@bs.module "bitcoinjs-lib"]
-      [@bs.scope ("script", "witnessScriptHash", "output")]
-      external encode : Node.buffer => Node.buffer = "";
-    };
-  };
-  module NullData = {
-    module Output = {
-      [@bs.module "bitcoinjs-lib"]
-      [@bs.scope ("script", "nullData", "output")]
-      external encode : Node.buffer => string = "";
-    };
+  module Signature = {
+    [@bs.module "bitcoinjs-lib"] [@bs.scope ("script", "signature")]
+    external encode : (Node.buffer, Transaction.sighashType) => Node.buffer =
+      "";
+    [@bs.module "bitcoinjs-lib"] [@bs.scope ("script", "signature")]
+    external decode :
+      Node.buffer =>
+      {
+        .
+        "signature": Node.buffer,
+        "hashType": Transaction.sighashType,
+      } =
+      "";
   };
 };

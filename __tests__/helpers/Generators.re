@@ -21,9 +21,12 @@ let userSession = id : SessionData.t => {
         ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair,
       ),
     masterKeyChain:
-      Bitcoin.HDNode.make(
-        issuerKeyPair,
-        appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
+      Bitcoin.(
+        HDNode.fromPrivateKey(
+          issuerKeyPair |> ECPair.getPrivateKey,
+          appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
+          issuerKeyPair |> ECPair.getNetwork,
+        )
       ),
     network: Regtest,
   };

@@ -18,7 +18,7 @@ function fromUserData(userData, network) {
               /* appPrivateKey */userData.appPrivateKey,
               /* issuerKeyPair */issuerKeyPair,
               /* storagePrefix */UserInfo.storagePrefix(Utils.publicKeyFromKeyPair(issuerKeyPair)),
-              /* masterKeyChain */new BitcoinjsLib.HDNode(issuerKeyPair, Utils.bufFromHex("c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb")),
+              /* masterKeyChain */BitcoinjsLib.bip32.fromPrivateKey(issuerKeyPair.privateKey, Utils.bufFromHex("c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"), issuerKeyPair.network),
               /* network */network
             ]];
   }

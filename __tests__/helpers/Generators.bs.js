@@ -37,7 +37,7 @@ function userSession(id) {
           /* appPrivateKey */appPrivateKey,
           /* issuerKeyPair */issuerKeyPair,
           /* storagePrefix */UserInfo.storagePrefix(Utils.publicKeyFromKeyPair(issuerKeyPair)),
-          /* masterKeyChain */new BitcoinjsLib.HDNode(issuerKeyPair, Utils.bufFromHex($$String.sub(appPubKey, 0, 64))),
+          /* masterKeyChain */BitcoinjsLib.bip32.fromPrivateKey(issuerKeyPair.privateKey, Utils.bufFromHex($$String.sub(appPubKey, 0, 64)), issuerKeyPair.network),
           /* network : Regtest */0
         ];
 }

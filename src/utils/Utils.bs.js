@@ -2,10 +2,8 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
-var Bigi = require("bigi");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Bitcoin = require("../ffi/Bitcoin.bs.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -23,23 +21,30 @@ function hexByteLength(param) {
 }
 
 function keyPairFromPrivateKey(network, key) {
-  return Bitcoin.ECPair[/* makeWithNetwork */1](Bigi.fromHex(key), network);
+  return BitcoinjsLib.ECPair.fromPrivateKey(bufFromHex(key), {
+              network: network
+            });
 }
 
 function publicKeyFromKeyPair(pair) {
-  return bufToHex(pair.getPublicKeyBuffer());
+  return bufToHex(pair.publicKey);
 }
 
 function keyFromPublicKey(key) {
-  return BitcoinjsLib.ECPair.fromPublicKeyBuffer(bufFromHex(key));
+  return BitcoinjsLib.ECPair.fromPublicKey(bufFromHex(key));
 }
 
-function signatureToString(ecSignature) {
-  return bufToHex(ecSignature.toDER());
+function signatureToDER(ecSignature) {
+  return bufToHex(BitcoinjsLib.script.signature.encode(ecSignature, BitcoinjsLib.Transaction.SIGHASH_ALL).slice(0, -1));
 }
 
-function signatureFromString(ecSignature) {
-  return BitcoinjsLib.ECSignature.fromDER(bufFromHex(ecSignature));
+function signatureFromDER(ecSignature) {
+  var sigHash = Buffer.alloc(1);
+  sigHash.writeUInt8(BitcoinjsLib.Transaction.SIGHASH_ALL, 0);
+  return BitcoinjsLib.script.signature.decode(Buffer.concat(/* array */[
+                  bufFromHex(ecSignature),
+                  sigHash
+                ])).signature;
 }
 
 function hash(s) {
@@ -91,8 +96,8 @@ exports.hexByteLength = hexByteLength;
 exports.keyPairFromPrivateKey = keyPairFromPrivateKey;
 exports.publicKeyFromKeyPair = publicKeyFromKeyPair;
 exports.keyFromPublicKey = keyFromPublicKey;
-exports.signatureToString = signatureToString;
-exports.signatureFromString = signatureFromString;
+exports.signatureToDER = signatureToDER;
+exports.signatureFromDER = signatureFromDER;
 exports.hash = hash;
 exports.hashCode = hashCode;
 exports.$great$great = $great$great;
@@ -101,4 +106,4 @@ exports.mapOption = mapOption;
 exports.andThen = andThen;
 exports.encodeFloat = encodeFloat;
 exports.decodeFloat = decodeFloat;
-/* bigi Not a pure module */
+/* bitcoinjs-lib Not a pure module */

@@ -36,7 +36,7 @@ function needsSigning(idx, param) {
   var sigs = input[/* signatures */0];
   if (sigs.length !== 0) {
     return Belt_Array.someU(sigs, (function (sig_) {
-                  return BitcoinjsLib.script.isCanonicalSignature(sig_) === false;
+                  return BitcoinjsLib.script.isCanonicalScriptSignature(sig_) === false;
                 }));
   } else {
     return true;
@@ -71,8 +71,8 @@ function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScri
   var witnessBuf = Utils.bufFromHex(witnessScript);
   tx.setInputScript(idx, BitcoinjsLib.script.compile(/* array */[Utils.bufFromHex(redeemScript)]));
   var signatureHash = tx.hashForWitnessV0(idx, witnessBuf, BTC.toSatoshisFloat(witnessValue), BitcoinjsLib.Transaction.SIGHASH_ALL);
-  var signature = keyPair.sign(signatureHash).toScriptSignature(BitcoinjsLib.Transaction.SIGHASH_ALL);
-  var pubKey = keyPair.getPublicKeyBuffer();
+  var signature = BitcoinjsLib.script.signature.encode(keyPair.sign(signatureHash), BitcoinjsLib.Transaction.SIGHASH_ALL);
+  var pubKey = keyPair.publicKey;
   var insert = pubKeyIndex(witnessBuf, nCustodians, pubKey);
   var input = Belt_Array.getExn(param[/* inputs */1], idx);
   var sigs = input[/* signatures */0];
@@ -106,7 +106,7 @@ function merge(param, param$1) {
           var otherSigs = Belt_Array.getExn(otherInputs, idx)[/* signatures */0];
           var signatures$1 = signatures.length !== 0 ? (
               otherSigs.length !== 0 ? Belt_List.toArray(Belt_Array.reduceReverse2U(signatures, otherSigs, /* [] */0, (function (res, sigA, sigB) {
-                            var match = BitcoinjsLib.script.isCanonicalSignature(sigA);
+                            var match = BitcoinjsLib.script.isCanonicalScriptSignature(sigA);
                             return /* :: */[
                                     match ? sigA : sigB,
                                     res
@@ -151,7 +151,7 @@ function finalize(usedInputs, param) {
             var match = param[/* sequence */1] !== BitcoinjsLib.Transaction.DEFAULT_SEQUENCE;
             var nCoSigners = match ? 1 : Belt_Array.getExn(usedInputs, idx)[/* nCoSigners */4];
             var signatures = Belt_Array.slice(Belt_Array.keep(param[/* signatures */0], (function (prim) {
-                        return BitcoinjsLib.script.isCanonicalSignature(prim);
+                        return BitcoinjsLib.script.isCanonicalScriptSignature(prim);
                       })), 0, nCoSigners);
             if (signatures.length < nCoSigners) {
               throw NotEnoughSignatures;

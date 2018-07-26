@@ -24,12 +24,12 @@ describe.skip("faucet", (function () {
         return Jest.testPromise(/* None */0, "Can fund an address", (function () {
                       return Helpers.faucet(/* :: */[
                                       /* tuple */[
-                                        keyA.getAddress(),
+                                        Bitcoin.Address[/* fromKeyPair */1](keyA),
                                         tenSats
                                       ],
                                       /* :: */[
                                         /* tuple */[
-                                          keyB.getAddress(),
+                                          Bitcoin.Address[/* fromKeyPair */1](keyB),
                                           tenSats
                                         ],
                                         /* [] */0
@@ -40,9 +40,9 @@ describe.skip("faucet", (function () {
                                                   /* rpcUser */"bitcoin",
                                                   /* rpcPassword */"bitcoin"
                                                 ], /* :: */[
-                                                  keyA.getAddress(),
+                                                  Bitcoin.Address[/* fromKeyPair */1](keyA),
                                                   /* :: */[
-                                                    keyB.getAddress(),
+                                                    Bitcoin.Address[/* fromKeyPair */1](keyB),
                                                     /* [] */0
                                                   ]
                                                 ]);

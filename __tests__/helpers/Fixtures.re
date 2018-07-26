@@ -10,7 +10,12 @@ let userSession = (userId, keyPair) : SessionData.t => {
     appPrivateKey: keyPair |> ECPair.toWIF,
     issuerKeyPair: keyPair,
     storagePrefix: UserInfo.storagePrefix(~appPubKey),
-    masterKeyChain: HDNode.make(keyPair, chainCode),
+    masterKeyChain:
+      HDNode.fromPrivateKey(
+        keyPair |> ECPair.getPrivateKey,
+        chainCode,
+        keyPair |> ECPair.getNetwork,
+      ),
     network: Regtest,
   };
 };

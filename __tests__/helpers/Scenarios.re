@@ -37,7 +37,7 @@ let run = (~checkIntegrity=false, scenarioName, scenarioTest) =>
     scenarioName,
     () => {
       let loadedLog = loadScenario(scenarioName);
-      if (! checkIntegrity) {
+      if (checkIntegrity) {
         test(
           "Integrity of "
           ++ string_of_int(loadedLog |> EventLog.length)

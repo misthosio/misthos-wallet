@@ -12,7 +12,7 @@ let faucetKey =
     Networks.testnet,
   );
 
-let faucetAddress = faucetKey |> ECPair.getAddress;
+let faucetAddress = faucetKey |> Address.fromKeyPair;
 
 let bitcoindConfig: BitcoindClient.config = {
   bitcoindUrl: "http://localhost:18322",
@@ -89,7 +89,7 @@ let fundAddress = (outputs, utxos) => {
   let remainder = totalIn |> BTC.minus(totalValues) |> BTC.minus(defaultFee);
   txB
   |> TxBuilder.addOutput(
-       faucetKey |> ECPair.getAddress,
+       faucetKey |> Address.fromKeyPair,
        remainder |> BTC.toSatoshisFloat,
      )
   |> ignore;
@@ -104,7 +104,10 @@ let fundAddress = (outputs, utxos) => {
 
 let faucet = outputs =>
   Js.Promise.(
-    BitcoindClient.getUTXOs(bitcoindConfig, [faucetKey |> ECPair.getAddress])
+    BitcoindClient.getUTXOs(
+      bitcoindConfig,
+      [faucetKey |> Address.fromKeyPair],
+    )
     |> then_(fundAddress(outputs))
   );
 
