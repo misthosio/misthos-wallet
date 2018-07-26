@@ -68,7 +68,7 @@ module Public = {
 let hasSignedTAC = (tacHash, userInfo: Public.t) =>
   switch (userInfo.termsAndConditions |. Map.String.get(tacHash)) {
   | Some(signature) =>
-    let signature = signature |> Utils.bufFromHex;
+    let signature = signature |> Utils.signatureFromDER;
     Utils.keyFromPublicKey(userInfo.appPubKey)
     |> Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature);
   | _ => false
@@ -83,7 +83,7 @@ let signTAC = (tacHash, privateKey, network, userInfo: Public.t) => {
   let signature =
     keyPair
     |> Bitcoin.ECPair.sign(tacHash |> Utils.bufFromHex)
-    |> Utils.bufToHex;
+    |> Utils.signatureToDER;
   {
     ...userInfo,
     termsAndConditions:
