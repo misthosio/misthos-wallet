@@ -150,13 +150,16 @@ let make =
           </MButton>
         </AlertBox>
       | PendingApproval =>
-        <MTypography variant=`Body1>
-          (
-            (viewData.partnerProcess.data.userId |> UserId.toString)
-            ++ Text.AlertBox.pendingApproval
-            |> text
-          )
-        </MTypography>
+        <AlertBox>
+          <MTypography variant=`Body1>
+            (
+              Text.AlertBox.pendingApproval(
+                ~userId=viewData.partnerProcess.data.userId |> UserId.toString,
+              )
+              |> text
+            )
+          </MTypography>
+        </AlertBox>
       | SyncRequired =>
         <AlertBox>
           <MTypography variant=`Body1>

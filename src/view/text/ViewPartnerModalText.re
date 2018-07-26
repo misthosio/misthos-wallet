@@ -10,7 +10,7 @@ module AlertBox = {
                       the Venture. Please send them the |};
   let syncRequiredVentureUrl = "Venture sync URL";
   let syncRequiredPart2 = " to complete the process.";
-  let pendingApproval = {| has to be accepted before onboarding can proceed.|};
+  let pendingApproval = (~userId) => {j|The proposal to add $userId has to be accepted before onboarding can proceed.|j};
   let fullyOnboarded = {| is fully onboarded to this Venture.|};
 };
 
