@@ -15,7 +15,13 @@ let initMasterKey = (sessionData: SessionData.t) => {
            {
              ...sessionData,
              masterKeyChain:
-               Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode),
+               Bitcoin.(
+                 HDNode.fromPrivateKey(
+                   sessionData.issuerKeyPair |> ECPair.getPrivateKey,
+                   chainCode,
+                   sessionData.issuerKeyPair |> ECPair.getNetwork,
+                 )
+               ),
            },
            userInfo,
          )

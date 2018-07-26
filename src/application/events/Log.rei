@@ -13,7 +13,7 @@ module Make:
       event: Event.t,
       hash: string,
       issuerPubKey: string,
-      signature: Bitcoin.ECSignature.t,
+      signature: Node.buffer,
     };
     let make: unit => t;
     let items: t => array(item);

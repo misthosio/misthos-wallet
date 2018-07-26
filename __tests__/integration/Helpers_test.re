@@ -21,13 +21,13 @@ let () = {
     testPromise("Can fund an address", () =>
       Js.Promise.(
         Helpers.faucet([
-          (keyA |> ECPair.getAddress, tenSats),
-          (keyB |> ECPair.getAddress, tenSats),
+          (keyA |> Address.fromKeyPair, tenSats),
+          (keyB |> Address.fromKeyPair, tenSats),
         ])
         |> then_(_ =>
              BitcoindClient.getUTXOs(
                config,
-               [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress],
+               [keyA |> Address.fromKeyPair, keyB |> Address.fromKeyPair],
              )
            )
         |> then_((utxos: list(utxo)) =>

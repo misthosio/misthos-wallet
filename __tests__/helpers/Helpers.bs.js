@@ -5,6 +5,7 @@ var BTC = require("../../src/application/wallet/BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var Bitcoin = require("../../src/ffi/Bitcoin.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -18,7 +19,7 @@ function enableHttpRequests() {
 
 var faucetKey = BitcoinjsLib.ECPair.fromWIF("92Qba5hnyWSn5Ffcka56yMQauaWY6ZLd91Vzxbi4a9CCetaHtYj", BitcoinjsLib.networks.testnet);
 
-var faucetAddress = faucetKey.getAddress();
+var faucetAddress = Bitcoin.Address[/* fromKeyPair */1](faucetKey);
 
 var bitcoindConfig = /* record */[
   /* bitcoindUrl */"http://localhost:18322",
@@ -110,7 +111,7 @@ function fundAddress(outputs, utxos) {
           return /* () */0;
         }), outputs);
   var remainder = totalIn.minus(totalValues).minus(defaultFee);
-  txB.addOutput(faucetKey.getAddress(), BTC.toSatoshisFloat(remainder));
+  txB.addOutput(Bitcoin.Address[/* fromKeyPair */1](faucetKey), BTC.toSatoshisFloat(remainder));
   List.iteri((function (i, _) {
           txB.sign(i, faucetKey);
           return /* () */0;
@@ -124,7 +125,7 @@ function fundAddress(outputs, utxos) {
 
 function faucet(outputs) {
   return BitcoindClient.getUTXOs(bitcoindConfig, /* :: */[
-                faucetKey.getAddress(),
+                Bitcoin.Address[/* fromKeyPair */1](faucetKey),
                 /* [] */0
               ]).then((function (param) {
                 return fundAddress(outputs, param);

@@ -123,7 +123,7 @@ function Make(funarg) {
                     /* :: */[
                       /* tuple */[
                         "signature",
-                        Utils.signatureToString(item$1[/* signature */3])
+                        Utils.signatureToDER(item$1[/* signature */3])
                       ],
                       /* [] */0
                     ]
@@ -141,7 +141,7 @@ function Make(funarg) {
               ]);
   };
   var ecSig = function (ecSig$1) {
-    return Utils.signatureFromString(Json_decode.string(ecSig$1));
+    return Utils.signatureFromDER(Json_decode.string(ecSig$1));
   };
   var item$1 = function (item$2) {
     return /* record */[

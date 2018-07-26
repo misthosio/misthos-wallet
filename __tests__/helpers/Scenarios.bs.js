@@ -48,7 +48,7 @@ function run($staropt$star, scenarioName, scenarioTest) {
   var checkIntegrity = $staropt$star ? $staropt$star[0] : false;
   describe(scenarioName, (function () {
           var loadedLog = loadScenario(scenarioName);
-          if (!checkIntegrity) {
+          if (checkIntegrity) {
             Jest.test("Integrity of " + (String(Curry._1(EventLog.length, loadedLog)) + " items is intact"), (function () {
                     var newItems = Curry._2(EventLog.findNewItems, loadedLog, Curry._1(EventLog.make, /* () */0));
                     return Jest.Expect[/* toEqual */12](Curry._1(EventLog.length, loadedLog), Jest.Expect[/* expect */0](newItems.length));

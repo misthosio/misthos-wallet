@@ -8,19 +8,9 @@ var BigInteger = /* module */[];
 
 var Crypto = /* module */[];
 
-var all = /* array */[
-  BitcoinjsLib.networks.bitcoin,
-  BitcoinjsLib.networks.testnet,
-  BitcoinjsLib.networks.litecoin
-];
-
-var Networks = /* module */[/* all */all];
-
-var Address = /* module */[];
+var Networks = /* module */[];
 
 var Transaction = /* module */[];
-
-var ECSignature = /* module */[];
 
 function makeRandomWithNetwork(network) {
   return BitcoinjsLib.ECPair.makeRandom({
@@ -28,19 +18,30 @@ function makeRandomWithNetwork(network) {
             });
 }
 
-function makeWithNetwork(key, network) {
-  return new BitcoinjsLib.ECPair(key, null, {
-              network: network
-            });
+var ECPair = /* module */[/* makeRandomWithNetwork */makeRandomWithNetwork];
+
+function toBase58Check(hash, network) {
+  return BitcoinjsLib.address.toBase58Check(hash, network.pubKeyHash);
 }
 
-var ECPair = /* module */[
-  /* makeRandomWithNetwork */makeRandomWithNetwork,
-  /* makeWithNetwork */makeWithNetwork
+function fromKeyPair(key) {
+  var network = key.network;
+  var hash = BitcoinjsLib.crypto.hash160(key.publicKey);
+  return BitcoinjsLib.address.toBase58Check(hash, network.pubKeyHash);
+}
+
+var Address = /* module */[
+  /* toBase58Check */toBase58Check,
+  /* fromKeyPair */fromKeyPair
 ];
 
 function fromBase58(base58) {
-  return BitcoinjsLib.HDNode.fromBase58(base58, all);
+  try {
+    return BitcoinjsLib.bip32.fromBase58(base58, BitcoinjsLib.networks.bitcoin);
+  }
+  catch (exn){
+    return BitcoinjsLib.bip32.fromBase58(base58, BitcoinjsLib.networks.testnet);
+  }
 }
 
 var HDNode = /* module */[/* fromBase58 */fromBase58];
@@ -49,41 +50,26 @@ var TxBuilder = /* module */[];
 
 var Ops = /* module */[/* numbers */BitcoinOps.numbers];
 
+var Payments = /* module */[];
+
 var $$Number = /* module */[];
 
-var Output = /* module */[];
-
-var Multisig = /* module */[/* Output */Output];
-
-var Output$1 = /* module */[];
-
-var ScriptHash = /* module */[/* Output */Output$1];
-
-var Output$2 = /* module */[];
-
-var WitnessScriptHash = /* module */[/* Output */Output$2];
-
-var Output$3 = /* module */[];
-
-var NullData = /* module */[/* Output */Output$3];
+var Signature = /* module */[];
 
 var Script = /* module */[
   /* Number */$$Number,
-  /* Multisig */Multisig,
-  /* ScriptHash */ScriptHash,
-  /* WitnessScriptHash */WitnessScriptHash,
-  /* NullData */NullData
+  /* Signature */Signature
 ];
 
 exports.BigInteger = BigInteger;
 exports.Crypto = Crypto;
 exports.Networks = Networks;
-exports.Address = Address;
 exports.Transaction = Transaction;
-exports.ECSignature = ECSignature;
 exports.ECPair = ECPair;
+exports.Address = Address;
 exports.HDNode = HDNode;
 exports.TxBuilder = TxBuilder;
 exports.Ops = Ops;
+exports.Payments = Payments;
 exports.Script = Script;
-/* all Not a pure module */
+/* BitcoinOps Not a pure module */

@@ -5,7 +5,7 @@ var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Scenarios = require("../helpers/Scenarios.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 
-Scenarios.run(/* Some */[true], "three-person-payout", (function (_, newItems) {
+Scenarios.run(/* None */0, "three-person-payout", (function (_, newItems) {
         Jest.test("There are 2 new Items", (function () {
                 return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](newItems.length));
               }));
@@ -17,7 +17,7 @@ Scenarios.run(/* Some */[true], "three-person-payout", (function (_, newItems) {
                     }));
       }));
 
-Scenarios.run(/* None */0, "four-person-payout", (function (_, newItems) {
+Scenarios.run(/* Some */[true], "four-person-payout", (function (_, newItems) {
         Jest.test("There are 2 new Items", (function () {
                 return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](newItems.length));
               }));

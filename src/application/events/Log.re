@@ -9,7 +9,7 @@ module Make = (Event: Encodable) => {
     event: Event.t,
     hash: string,
     issuerPubKey: string,
-    signature: Bitcoin.ECSignature.t,
+    signature: Node.buffer,
   };
   type t = array(item);
   type summary = {knownItems: Belt.Set.String.t};
@@ -97,7 +97,7 @@ module Make = (Event: Encodable) => {
         |> Belt.Set.String.fromArray,
     };
   module Encode = {
-    let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
+    let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToDER);
     let item = item =>
       Json.Encode.(
         object_([
@@ -112,8 +112,7 @@ module Make = (Event: Encodable) => {
   let encodeItem = Encode.item;
   let encode = Encode.log;
   module Decode = {
-    let ecSig = ecSig =>
-      ecSig |> Json.Decode.string |> Utils.signatureFromString;
+    let ecSig = ecSig => ecSig |> Json.Decode.string |> Utils.signatureFromDER;
     let item = item =>
       Json.Decode.{
         event: item |> field("event", Event.decode),

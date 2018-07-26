@@ -23,7 +23,7 @@ function userSession(userId, keyPair) {
           /* appPrivateKey */keyPair.toWIF(),
           /* issuerKeyPair */keyPair,
           /* storagePrefix */UserInfo.storagePrefix(appPubKey),
-          /* masterKeyChain */new BitcoinjsLib.HDNode(keyPair, chainCode),
+          /* masterKeyChain */BitcoinjsLib.bip32.fromPrivateKey(keyPair.privateKey, chainCode, keyPair.network),
           /* network : Regtest */0
         ];
 }

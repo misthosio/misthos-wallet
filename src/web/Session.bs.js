@@ -22,7 +22,7 @@ function initMasterKey(sessionData) {
                               /* appPrivateKey */sessionData[/* appPrivateKey */1],
                               /* issuerKeyPair */sessionData[/* issuerKeyPair */2],
                               /* storagePrefix */sessionData[/* storagePrefix */3],
-                              /* masterKeyChain */new BitcoinjsLib.HDNode(sessionData[/* issuerKeyPair */2], param[0][/* chainCode */0]),
+                              /* masterKeyChain */BitcoinjsLib.bip32.fromPrivateKey(sessionData[/* issuerKeyPair */2].privateKey, param[0][/* chainCode */0], sessionData[/* issuerKeyPair */2].network),
                               /* network */sessionData[/* network */5]
                             ],
                             param[1]
