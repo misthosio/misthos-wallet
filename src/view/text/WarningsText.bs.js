@@ -9,7 +9,7 @@ var ViewCommon = require("../ViewCommon.bs.js");
 var testnet = /* array */[
   ViewCommon.text("Warning! This is the testnet version of Misthos.  Get Testnet coins "),
   React.createElement("a", {
-        href: "https://testnet.manu.backend.hamburg/faucet",
+        href: "https://testnet.coinfaucet.eu/en/",
         target: "_blank"
       }, ViewCommon.text("here")),
   ViewCommon.text(" and get notified of our Mainnet release "),
