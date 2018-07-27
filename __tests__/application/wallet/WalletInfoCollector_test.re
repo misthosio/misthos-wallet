@@ -18,13 +18,9 @@ let constructState = log =>
 
 let () = {
   describe("WalletInfoCollector-addressInfo", () =>
-    F.withCached(
-      ~scope="WalletInfoCollector-addressInfo",
-      "classifies addresses",
-      () => G.withUserSessions(5),
-      sessions => {
-        let (user1, user2, user3, user4, user5) =
-          G.fiveUserSessionsFromArray(sessions);
+    describe("classifies addresses", () => {
+      let (user1, user2, user3, user4, user5) = G.fiveUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
@@ -69,77 +65,69 @@ let () = {
           |> withAccountKeyChainActivated(user2)
           |> withIncomeAddressExposed(user2)
         );
-      },
-      (sessions, log) => {
-        let testInfo =
-            (custodians, type_, status, info: WalletInfoCollector.addressInfo) =>
-          describe(
-            "AddressInfo of address " ++ info.address,
-            () => {
-              test("Custodians are correct", () =>
-                expect(
-                  info.custodians
-                  |> Set.eq(
-                       Set.mergeMany(
-                         UserId.emptySet,
-                         custodians
-                         |. Array.mapU((. u: SessionData.t) => u.userId),
-                       ),
+      let testInfo =
+          (custodians, type_, status, info: WalletInfoCollector.addressInfo) =>
+        describe(
+          "AddressInfo of address " ++ info.address,
+          () => {
+            test("Custodians are correct", () =>
+              expect(
+                info.custodians
+                |> Set.eq(
+                     Set.mergeMany(
+                       UserId.emptySet,
+                       custodians
+                       |. Array.mapU((. u: SessionData.t) => u.userId),
                      ),
-                )
-                |> toEqual(true)
-              );
-              test("addressType, addressStatus are correct", () => {
-                open WalletInfoCollector;
-                let {addressType, addressStatus} = info;
-                expect((addressType, addressStatus))
-                |> toEqual((type_, status));
-              });
-            },
-          );
-        let (user1, user2, user3, user4, user5) =
-          G.fiveUserSessionsFromArray(sessions);
-        let info =
-          log
-          |> constructState
-          |> WalletInfoCollector.addressInfos(AccountIndex.default);
-        switch (info) {
-        | [info0, info1, info2, info3, info4, info5, info6] =>
-          info0
-          |> testInfo(
-               [|user2, user4, user5|],
-               Income(user2.userId),
-               Accessible,
-             );
-          info1
-          |> testInfo(
-               [|user2, user4|],
-               Income(user2.userId),
-               OutdatedCustodians,
-             );
-          info2 |> testInfo([|user2|], Income(user2.userId), AtRisk);
-          info3 |> testInfo([|user2, user3|], Income(user2.userId), AtRisk);
-          info4
-          |> testInfo(
-               [|user1, user2, user3|],
-               Income(user1.userId),
-               TemporarilyInaccessible,
-             );
-          info5 |> testInfo([|user1, user2|], Income(user1.userId), AtRisk);
-          info6 |> testInfo([|user1|], Income(user1.userId), Inaccessible);
-        | _ => %assert
-               "WalletInfoCollector_test"
-        };
-      },
-    )
+                   ),
+              )
+              |> toEqual(true)
+            );
+            test("addressType, addressStatus are correct", () => {
+              open WalletInfoCollector;
+              let {addressType, addressStatus} = info;
+              expect((addressType, addressStatus))
+              |> toEqual((type_, status));
+            });
+          },
+        );
+      let info =
+        log
+        |> constructState
+        |> WalletInfoCollector.addressInfos(AccountIndex.default);
+      switch (info) {
+      | [info0, info1, info2, info3, info4, info5, info6] =>
+        info0
+        |> testInfo(
+             [|user2, user4, user5|],
+             Income(user2.userId),
+             Accessible,
+           );
+        info1
+        |> testInfo(
+             [|user2, user4|],
+             Income(user2.userId),
+             OutdatedCustodians,
+           );
+        info2 |> testInfo([|user2|], Income(user2.userId), AtRisk);
+        info3 |> testInfo([|user2, user3|], Income(user2.userId), AtRisk);
+        info4
+        |> testInfo(
+             [|user1, user2, user3|],
+             Income(user1.userId),
+             TemporarilyInaccessible,
+           );
+        info5 |> testInfo([|user1, user2|], Income(user1.userId), AtRisk);
+        info6 |> testInfo([|user1|], Income(user1.userId), Inaccessible);
+      | _ => %assert
+             "WalletInfoCollector_test"
+      };
+    })
   );
   describe("WalletInfoCollector", () =>
-    F.withCached(
-      ~scope="WalletInfoCollector",
-      "oldInputs",
-      () => G.withUserSessions(3),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+    describe("oldInputs", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
@@ -170,48 +158,41 @@ let () = {
           |> withIncomeDetected(~incomeAddress=2)
           |> withIncomeUnlocked(~income=0)
         );
-      },
-      (_sessions, log) => {
-        let info = log |> constructState;
-        test("1 input is unlocked", () =>
-          expect(
-            info
-            |> WalletInfoCollector.unlockedInputs(AccountIndex.default)
-            |> Set.size,
-          )
-          |> toEqual(1)
-        );
-        test("1 current input is unlocked", () =>
-          expect(
-            info
-            |> WalletInfoCollector.currentSpendableInputs(
-                 AccountIndex.default,
-               )
-            |. Set.reduceU(0, (. res, {unlocked}: Network.txInput) =>
-                 res + (unlocked ? 1 : 0)
-               ),
-          )
-          |> toEqual(1)
-        );
-        test("4 inputs are old", () =>
-          expect(
-            info
-            |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default)
-            |> Set.size,
-          )
-          |> toEqual(4)
-        );
-        test("3 inputs are current", () =>
-          expect(
-            info
-            |> WalletInfoCollector.currentSpendableInputs(
-                 AccountIndex.default,
-               )
-            |> Set.size,
-          )
-          |> toEqual(3)
-        );
-      },
-    )
+      let info = log |> constructState;
+      test("1 input is unlocked", () =>
+        expect(
+          info
+          |> WalletInfoCollector.unlockedInputs(AccountIndex.default)
+          |> Set.size,
+        )
+        |> toEqual(1)
+      );
+      test("1 current input is unlocked", () =>
+        expect(
+          info
+          |> WalletInfoCollector.currentSpendableInputs(AccountIndex.default)
+          |. Set.reduceU(0, (. res, {unlocked}: Network.txInput) =>
+               res + (unlocked ? 1 : 0)
+             ),
+        )
+        |> toEqual(1)
+      );
+      test("4 inputs are old", () =>
+        expect(
+          info
+          |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default)
+          |> Set.size,
+        )
+        |> toEqual(4)
+      );
+      test("3 inputs are current", () =>
+        expect(
+          info
+          |> WalletInfoCollector.currentSpendableInputs(AccountIndex.default)
+          |> Set.size,
+        )
+        |> toEqual(3)
+      );
+    })
   );
 };

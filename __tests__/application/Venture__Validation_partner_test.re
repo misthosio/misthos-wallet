@@ -8,52 +8,37 @@ open ValidationHelpers;
 
 let () = {
   describe("PartnerProposal", () => {
-    F.withCached(
-      ~scope="PartnerProposal",
-      "when proposing another partner",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
-        L.(createVenture(user1) |> withFirstPartner(user1));
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withPartnerProposed(~proposer=user1, ~prospect=user2)
-            |> lastItem
-          ),
-          Validation.Ok,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="PartnerProposal",
-      "when the prospect is already a partner",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+    describe("when proposing another partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~proposer=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when the prospect is already a partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withPartnerProposed(~proposer=user2, ~prospect=user1)
-            |> lastItem
-          ),
-          Validation.BadData("Partner already exists"),
-        );
-      },
-    );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~proposer=user2, ~prospect=user1)
+          |> lastItem
+        ),
+        Validation.BadData("Partner already exists"),
+      );
+    });
     describe("when the creator proposes themselves", () => {
       let user1 = G.userSession("user1" |> UserId.fromString);
       let log = L.createVenture(user1);
@@ -67,38 +52,29 @@ let () = {
         Validation.Ok,
       );
     });
-    F.withCached(
-      ~scope="PartnerProposal",
-      "when proposing a partner that was removed",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+    describe("when proposing a partner that was removed", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
           |> withPartnerRemoved(user2, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withPartnerProposed(~proposer=user1, ~prospect=user2)
-            |> lastItem
-          ),
-          Validation.Ok,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="PartnerProposal",
-      "when the partner was removed but the proposal doesn't show it",
-      () => G.withUserSessions(3),
-      sessions => {
-        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~proposer=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe(
+      "when the partner was removed but the proposal doesn't show it", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
@@ -106,184 +82,131 @@ let () = {
           |> withPartner(user3, ~supporters=[user1, user2])
           |> withPartnerRemoved(user2, ~supporters=[user1, user3])
         );
-      },
-      (sessions, log) => {
-        let (_user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withPartnerProposed(
-                 ~withLastRemoval=false,
-                 ~proposer=user3,
-                 ~prospect=user2,
-               )
-            |> lastItem
-          ),
-          Validation.BadData("Last removal doesn't match"),
-        );
-      },
-    );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~withLastRemoval=false,
+               ~proposer=user3,
+               ~prospect=user2,
+             )
+          |> lastItem
+        ),
+        Validation.BadData("Last removal doesn't match"),
+      );
+    });
   });
   describe("PartnerRemovalProposal", () => {
-    F.withCached(
-      ~scope="PartnerRemovalProposal",
-      "when proposing another partner",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+    describe("when proposing another partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withPartnerRemovalProposed(
-                 ~proposer=user1,
-                 ~toBeRemoved=user2,
-               )
-            |> lastItem
-          ),
-          Validation.Ok,
-        );
-      },
-    );
-    describe("validatePartnerRemovalData", () => {
-      F.withCached(
-        ~scope="PartnerRemovalProposal",
-        "when the prospect is not a partner",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
-          L.(createVenture(user1) |> withFirstPartner(user1));
-        },
-        (sessions, log) => {
-          let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
-          testDataValidation(
-            Validation.validatePartnerRemovalData,
-            log |> constructState,
-            Partner.Removal.Data.{
-              id: user2.userId,
-              lastPartnerProcess: ProcessId.make(),
-            },
-            Validation.BadData(
-              "Partner with Id '"
-              ++ UserId.toString(user2.userId)
-              ++ "' doesn't exist",
-            ),
-          );
-        },
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerRemovalProposed(~proposer=user1, ~toBeRemoved=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
       );
-      F.withCached(
-        ~scope="PartnerRemovalProposal",
-        "when lastPartnerProcess doesn't match",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+    });
+    describe("validatePartnerRemovalData", () => {
+      describe("when the prospect is not a partner", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log = L.(createVenture(user1) |> withFirstPartner(user1));
+        testDataValidation(
+          Validation.validatePartnerRemovalData,
+          log |> constructState,
+          Partner.Removal.Data.{
+            id: user2.userId,
+            lastPartnerProcess: ProcessId.make(),
+          },
+          Validation.BadData(
+            "Partner with Id '"
+            ++ UserId.toString(user2.userId)
+            ++ "' doesn't exist",
+          ),
+        );
+      });
+      describe("when lastPartnerProcess doesn't match", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
           L.(
             createVenture(user1)
             |> withFirstPartner(user1)
             |> withPartner(user2, ~supporters=[user1])
           );
-        },
-        (sessions, log) => {
-          let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
-          testDataValidation(
-            Validation.validatePartnerRemovalData,
-            log |> constructState,
-            Partner.Removal.Data.{
-              id: user2.userId,
-              lastPartnerProcess: ProcessId.make(),
-            },
-            Validation.BadData("lastPartnerProcess doesn't match"),
-          );
-        },
-      );
+        testDataValidation(
+          Validation.validatePartnerRemovalData,
+          log |> constructState,
+          Partner.Removal.Data.{
+            id: user2.userId,
+            lastPartnerProcess: ProcessId.make(),
+          },
+          Validation.BadData("lastPartnerProcess doesn't match"),
+        );
+      });
     });
   });
   describe("PartnerPubKeyAdded", () => {
-    F.withCached(
-      ~scope="PartnerPubKeyAdded",
-      "when everything is okay",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+    describe("when everything is okay", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          ~originId=user2.userId,
-          log |> constructState,
-          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
-          Validation.Ok,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="PartnerPubKeyAdded",
-      "when the partner submits an event",
-      () => G.withUserSessions(3),
-      sessions => {
-        let (user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+      testValidationResult(
+        ~originId=user2.userId,
+        log |> constructState,
+        L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+        Validation.Ok,
+      );
+    });
+    describe("when the partner submits an event", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
           |> withPartnerPubKeyAdded(user2)
         );
-      },
-      (sessions, log) => {
-        let (_user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState(~originId=user2.userId),
-          L.(
-            log
-            |> withPartnerProposed(~proposer=user2, ~prospect=user3)
-            |> lastItem
-          ),
-          Validation.Ok,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="PartnerPubKeyAdded",
-      "when syncing from another user",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+      testValidationResult(
+        log |> constructState(~originId=user2.userId),
+        L.(
+          log
+          |> withPartnerProposed(~proposer=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when syncing from another user", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          ~originId=user1.userId,
-          log |> constructState,
-          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
-          Validation.InvalidIssuer,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="PartnerPubKeyAdded",
-      "when the partner hasn't been accepted",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+      testValidationResult(
+        ~originId=user1.userId,
+        log |> constructState,
+        L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the partner hasn't been accepted", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
@@ -293,38 +216,27 @@ let () = {
                ~prospect=user2,
              )
         );
-      },
-      (sessions, log) => {
-        let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          ~originId=user2.userId,
-          log |> constructState,
-          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
-          Validation.InvalidIssuer,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="PartnerPubKeyAdded",
-      "when the pub key is already known",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+      testValidationResult(
+        ~originId=user2.userId,
+        log |> constructState,
+        L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the pub key is already known", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          ~originId=user2.userId,
-          log |> constructState,
-          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
-          Validation.BadData("Partner pub key is already known"),
-        );
-      },
-    );
+      testValidationResult(
+        ~originId=user2.userId,
+        log |> constructState,
+        L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+        Validation.BadData("Partner pub key is already known"),
+      );
+    });
   });
 };

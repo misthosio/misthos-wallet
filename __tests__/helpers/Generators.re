@@ -79,6 +79,14 @@ let fourUserSessions = () => (
   userSession("user4" |> UserId.fromString),
 );
 
+let fiveUserSessions = () => (
+  userSession("user1" |> UserId.fromString),
+  userSession("user2" |> UserId.fromString),
+  userSession("user3" |> UserId.fromString),
+  userSession("user4" |> UserId.fromString),
+  userSession("user5" |> UserId.fromString),
+);
+
 let custodianKeyChain =
     (
       ~accountIdx=AccountIndex.default,

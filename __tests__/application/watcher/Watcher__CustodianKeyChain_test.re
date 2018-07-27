@@ -13,128 +13,104 @@ let keyChainEq = (keyChainA, keyChainB) =>
 
 let () =
   describe("Watcher__CustodianKeyChain", () => {
-    F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
-      "Will create the initial keychain",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
+    describe("Will create the initial keychain", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
-        let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
-        let watcher =
-          CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
-        testWatcherHasEventPending(
-          "CustodianKeyChainUpdated",
-          watcher,
-          user1.issuerKeyPair,
-          fun
-          | CustodianKeyChainUpdated({
-              custodianApprovalProcess,
-              custodianId,
-              keyChain,
-            })
-              when
-                ProcessId.eq(custodianApprovalProcess, acceptance.processId)
-                && UserId.eq(custodianId, user1.userId) =>
-            keyChain
-            |> keyChainEq(
-                 G.custodianKeyChain(
-                   ~ventureId=log |> L.ventureId,
-                   ~keyChainIdx=0,
-                   user1,
-                 ),
-               )
-          | _ => false,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
-      "Is idle when the keychain has been updated",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
+      let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      let watcher =
+        CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
+      testWatcherHasEventPending(
+        "CustodianKeyChainUpdated",
+        watcher,
+        user1.issuerKeyPair,
+        fun
+        | CustodianKeyChainUpdated({
+            custodianApprovalProcess,
+            custodianId,
+            keyChain,
+          })
+            when
+              ProcessId.eq(custodianApprovalProcess, acceptance.processId)
+              && UserId.eq(custodianId, user1.userId) =>
+          keyChain
+          |> keyChainEq(
+               G.custodianKeyChain(
+                 ~ventureId=log |> L.ventureId,
+                 ~keyChainIdx=0,
+                 user1,
+               ),
+             )
+        | _ => false,
+      );
+    });
+    describe("Is idle when the keychain has been updated", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
-        let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
-        let watcher =
-          CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
-        let log = log |> L.withCustodianKeyChain(user1);
-        watcher#receive(log |> L.lastItem);
-        testWatcherHasNoEventPending(watcher);
-      },
-    );
-    F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
-      "Will update the keychain when a partner is removed",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
+      let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      let watcher =
+        CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
+      let log = log |> L.withCustodianKeyChain(user1);
+      watcher#receive(log |> L.lastItem);
+      testWatcherHasNoEventPending(watcher);
+    });
+    describe("Will update the keychain when a partner is removed", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
-        let log =
-          L.(
-            log
-            |> withCustodianKeyChain(user1)
-            |> withPartner(user2, ~supporters=[user1])
-            |> withPartnerRemoved(user2, ~supporters=[user1])
-          );
-        let watcher =
-          CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
-        testWatcherHasEventPending(
-          "CustodianKeyChainUpdated",
-          watcher,
-          user1.issuerKeyPair,
-          fun
-          | CustodianKeyChainUpdated({
-              custodianApprovalProcess,
-              custodianId,
-              keyChain,
-            })
-              when
-                ProcessId.eq(custodianApprovalProcess, acceptance.processId)
-                && UserId.eq(custodianId, user1.userId) =>
-            keyChain
-            |> keyChainEq(
-                 G.custodianKeyChain(
-                   ~ventureId=log |> L.ventureId,
-                   ~keyChainIdx=1,
-                   user1,
-                 ),
-               )
-          | _ => false,
+      let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      let log =
+        L.(
+          log
+          |> withCustodianKeyChain(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerRemoved(user2, ~supporters=[user1])
         );
-      },
-    );
-    F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
-      "Keeps increasing the index accross multiple removals",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+      let watcher =
+        CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
+      testWatcherHasEventPending(
+        "CustodianKeyChainUpdated",
+        watcher,
+        user1.issuerKeyPair,
+        fun
+        | CustodianKeyChainUpdated({
+            custodianApprovalProcess,
+            custodianId,
+            keyChain,
+          })
+            when
+              ProcessId.eq(custodianApprovalProcess, acceptance.processId)
+              && UserId.eq(custodianId, user1.userId) =>
+          keyChain
+          |> keyChainEq(
+               G.custodianKeyChain(
+                 ~ventureId=log |> L.ventureId,
+                 ~keyChainIdx=1,
+                 user1,
+               ),
+             )
+        | _ => false,
+      );
+    });
+    describe("Keeps increasing the index accross multiple removals", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
@@ -146,44 +122,55 @@ let () =
           |> withPartner(user1, ~supporters=[user2])
           |> withCustodian(user1, ~supporters=[user2, user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
+      let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      let watcher =
+        CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
+      testWatcherHasEventPending(
+        "CustodianKeyChainUpdated",
+        watcher,
+        user1.issuerKeyPair,
+        fun
+        | CustodianKeyChainUpdated({
+            custodianApprovalProcess,
+            custodianId,
+            keyChain,
+          })
+            when
+              ProcessId.eq(custodianApprovalProcess, acceptance.processId)
+              && UserId.eq(custodianId, user1.userId) =>
+          keyChain
+          |> keyChainEq(
+               G.custodianKeyChain(
+                 ~ventureId=log |> L.ventureId,
+                 ~keyChainIdx=1,
+                 user1,
+               ),
+             )
+        | _ => false,
+      );
+    });
+    describe("Completion", () => {
+      describe("when the custodian is a different user", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
+          L.(
+            createVenture(user1)
+            |> withFirstPartner(user1)
+            |> withAccount(~supporter=user1)
+            |> withCustodian(user1, ~supporters=[user1])
+            |> withPartner(user2, ~supporters=[user1])
+            |> withCustodian(user2, ~supporters=[user1, user2])
+          );
         let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+        let log =
+          L.(log |> withCustodianRemoved(user2, ~supporters=[user1]));
         let watcher =
           CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
-        testWatcherHasEventPending(
-          "CustodianKeyChainUpdated",
-          watcher,
-          user1.issuerKeyPair,
-          fun
-          | CustodianKeyChainUpdated({
-              custodianApprovalProcess,
-              custodianId,
-              keyChain,
-            })
-              when
-                ProcessId.eq(custodianApprovalProcess, acceptance.processId)
-                && UserId.eq(custodianId, user1.userId) =>
-            keyChain
-            |> keyChainEq(
-                 G.custodianKeyChain(
-                   ~ventureId=log |> L.ventureId,
-                   ~keyChainIdx=1,
-                   user1,
-                 ),
-               )
-          | _ => false,
-        );
-      },
-    );
-    describe("Completion", () => {
-      F.withCached(
-        ~scope="Watcher__CustodianKeyChain",
-        "when the custodian is a different user",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        testWatcherHasCompleted(watcher);
+      });
+      describe("when the custodian is removed", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
           L.(
             createVenture(user1)
             |> withFirstPartner(user1)
@@ -192,23 +179,16 @@ let () =
             |> withPartner(user2, ~supporters=[user1])
             |> withCustodian(user2, ~supporters=[user1, user2])
           );
-        },
-        (sessions, log) => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-          let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
-          let log =
-            L.(log |> withCustodianRemoved(user2, ~supporters=[user1]));
-          let watcher =
-            CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
-          testWatcherHasCompleted(watcher);
-        },
-      );
-      F.withCached(
-        ~scope="Watcher__CustodianKeyChain",
-        "when the custodian is removed",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+        let log =
+          L.(log |> withCustodianRemoved(user2, ~supporters=[user1]));
+        let watcher =
+          CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
+        testWatcherHasCompleted(watcher);
+      });
+      describe("when the partner is removed", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
           L.(
             createVenture(user1)
             |> withFirstPartner(user1)
@@ -217,48 +197,15 @@ let () =
             |> withPartner(user2, ~supporters=[user1])
             |> withCustodian(user2, ~supporters=[user1, user2])
           );
-        },
-        (sessions, log) => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-          let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
-          let log =
-            L.(log |> withCustodianRemoved(user2, ~supporters=[user1]));
-          let watcher =
-            CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
-          testWatcherHasCompleted(watcher);
-        },
-      );
-      F.withCached(
-        ~scope="Watcher__CustodianKeyChain",
-        "when the partner is removed",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-          L.(
-            createVenture(user1)
-            |> withFirstPartner(user1)
-            |> withAccount(~supporter=user1)
-            |> withCustodian(user1, ~supporters=[user1])
-            |> withPartner(user2, ~supporters=[user1])
-            |> withCustodian(user2, ~supporters=[user1, user2])
-          );
-        },
-        (sessions, log) => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-          let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
-          let log =
-            L.(log |> withPartnerRemoved(user2, ~supporters=[user1]));
-          let watcher =
-            CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
-          testWatcherHasCompleted(watcher);
-        },
-      );
-      F.withCached(
-        ~scope="Watcher__CustodianKeyChain",
-        "when the partner has no pubkey",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+        let log = L.(log |> withPartnerRemoved(user2, ~supporters=[user1]));
+        let watcher =
+          CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
+        testWatcherHasCompleted(watcher);
+      });
+      describe("when the partner has no pubkey", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
           L.(
             createVenture(user1)
             |> withFirstPartner(user1)
@@ -267,14 +214,10 @@ let () =
             |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
             |> withCustodian(user2, ~supporters=[user1, user2])
           );
-        },
-        (sessions, log) => {
-          let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
-          let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
-          let watcher =
-            CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
-          testWatcherHasNoEventPending(watcher);
-        },
-      );
+        let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+        let watcher =
+          CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
+        testWatcherHasNoEventPending(watcher);
+      });
     });
   });

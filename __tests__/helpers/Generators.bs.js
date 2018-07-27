@@ -106,6 +106,16 @@ function fourUserSessions() {
         ];
 }
 
+function fiveUserSessions() {
+  return /* tuple */[
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user1")),
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user2")),
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user3")),
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user4")),
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user5"))
+        ];
+}
+
 function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
   var accountIdx = $staropt$star ? $staropt$star[0] : WalletTypes.AccountIndex[/* default */11];
   return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
@@ -934,6 +944,7 @@ exports.fiveUserSessionsFromArray = fiveUserSessionsFromArray;
 exports.twoUserSessions = twoUserSessions;
 exports.threeUserSessions = threeUserSessions;
 exports.fourUserSessions = fourUserSessions;
+exports.fiveUserSessions = fiveUserSessions;
 exports.custodianKeyChain = custodianKeyChain;
 exports.accountKeyChainFrom = accountKeyChainFrom;
 exports.accountKeyChain = accountKeyChain;

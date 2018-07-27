@@ -10,12 +10,9 @@ open ValidationHelpers;
 
 let () =
   describe("CustodianProposed", () => {
-    F.withCached(
-      ~scope="CustodianProposed",
-      "when proposing a custodian",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+    describe("when proposing a custodian", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
@@ -23,26 +20,19 @@ let () =
           |> withCustodian(user1, ~supporters=[user1])
           |> withPartner(user2, ~supporters=[user1])
         );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withCustodianProposed(~proposer=user1, ~custodian=user2)
-            |> lastItem
-          ),
-          Validation.Ok,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="CustodianProposed",
-      "when proposing a custodian after removal",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withCustodianProposed(~proposer=user1, ~custodian=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when proposing a custodian after removal", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
@@ -52,114 +42,83 @@ let () =
           |> withCustodian(user2, ~supporters=[user1, user2])
           |> withCustodianRemoved(user2, ~supporters=[user1, user2])
         );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withCustodianProposed(~proposer=user1, ~custodian=user2)
-            |> lastItem
-          ),
-          Validation.Ok,
-        );
-      },
-    );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withCustodianProposed(~proposer=user1, ~custodian=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
     describe("validateCustodianData", () => {
-      F.withCached(
-        ~scope="CustodianProposed",
-        "when the custodian is not a partner",
-        () => G.withUserSessions(3),
-        sessions => {
-          let (user1, user2, _user3) =
-            G.threeUserSessionsFromArray(sessions);
+      describe("when the custodian is not a partner", () => {
+        let (user1, user2, user3) = G.threeUserSessions();
+        let log =
           L.(
             createVenture(user1)
             |> withFirstPartner(user1)
             |> withAccount(~supporter=user1)
             |> withPartner(user2, ~supporters=[user1])
           );
-        },
-        (sessions, log) => {
-          let (_user1, _user2, user3) =
-            G.threeUserSessionsFromArray(sessions);
-          let partnerApproval =
-            log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-          testDataValidation(
-            Validation.validateCustodianData,
-            log |> constructState,
-            Custodian.Data.{
-              lastCustodianRemovalProcess: None,
-              partnerId: user3.userId,
-              partnerApprovalProcess: partnerApproval.processId,
-              accountIdx: AccountIndex.default,
-            },
-            Validation.BadData(
-              "Partner approval process doesn't match user id",
-            ),
-          );
-        },
-      );
-      F.withCached(
-        ~scope="CustodianProposed",
-        "when the partner approval process reference is wrong",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        let partnerApproval =
+          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user3.userId,
+            partnerApprovalProcess: partnerApproval.processId,
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData(
+            "Partner approval process doesn't match user id",
+          ),
+        );
+      });
+      describe("when the partner approval process reference is wrong", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
           L.(
             createVenture(user1)
             |> withFirstPartner(user1)
             |> withAccount(~supporter=user1)
             |> withPartner(user2, ~supporters=[user1])
           );
-        },
-        (sessions, log) => {
-          let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
-          testDataValidation(
-            Validation.validateCustodianData,
-            log |> constructState,
-            Custodian.Data.{
-              lastCustodianRemovalProcess: None,
-              partnerId: user2.userId,
-              partnerApprovalProcess: ProcessId.make(),
-              accountIdx: AccountIndex.default,
-            },
-            Validation.BadData("partner approval process doesn't exist"),
-          );
-        },
-      );
-      F.withCached(
-        ~scope="CustodianProposed",
-        "when the account doesn't exist",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
-          L.(createVenture(user1) |> withFirstPartner(user1));
-        },
-        (sessions, log) => {
-          let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
-          let partnerApproval =
-            log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-          testDataValidation(
-            Validation.validateCustodianData,
-            log |> constructState,
-            Custodian.Data.{
-              lastCustodianRemovalProcess: None,
-              partnerId: user1.userId,
-              partnerApprovalProcess: partnerApproval.processId,
-              accountIdx: AccountIndex.default,
-            },
-            Validation.BadData("account doesn't exist"),
-          );
-        },
-      );
-      F.withCached(
-        ~scope="CustodianProposed",
-        "when lastCustodianRemovalProcess doesn't match",
-        () => G.withUserSessions(2),
-        sessions => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user2.userId,
+            partnerApprovalProcess: ProcessId.make(),
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData("partner approval process doesn't exist"),
+        );
+      });
+      describe("when the account doesn't exist", () => {
+        let (user1, _user2) = G.twoUserSessions();
+        let log = L.(createVenture(user1) |> withFirstPartner(user1));
+        let partnerApproval =
+          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user1.userId,
+            partnerApprovalProcess: partnerApproval.processId,
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData("account doesn't exist"),
+        );
+      });
+      describe("when lastCustodianRemovalProcess doesn't match", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
           L.(
             createVenture(user1)
             |> withFirstPartner(user1)
@@ -167,29 +126,25 @@ let () =
             |> withCustodian(user1, ~supporters=[user1])
             |> withPartner(user2, ~supporters=[user1])
           );
-        },
-        (sessions, log) => {
-          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-          let partnerApproval =
-            log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-          let log =
-            L.(
-              log
-              |> withCustodian(user2, ~supporters=[user1, user2])
-              |> withCustodianRemoved(user2, ~supporters=[user1])
-            );
-          testDataValidation(
-            Validation.validateCustodianData,
-            log |> constructState,
-            Custodian.Data.{
-              lastCustodianRemovalProcess: None,
-              partnerId: user2.userId,
-              partnerApprovalProcess: partnerApproval.processId,
-              accountIdx: AccountIndex.default,
-            },
-            Validation.BadData("Last removal doesn't match"),
+        let partnerApproval =
+          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
+        let log =
+          L.(
+            log
+            |> withCustodian(user2, ~supporters=[user1, user2])
+            |> withCustodianRemoved(user2, ~supporters=[user1])
           );
-        },
-      );
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user2.userId,
+            partnerApprovalProcess: partnerApproval.processId,
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData("Last removal doesn't match"),
+        );
+      });
     });
   });
