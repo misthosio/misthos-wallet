@@ -16,6 +16,24 @@ var section14P4 = React.createElement("p", undefined, ViewCommon.text("Ein gener
           target: "_blank"
         }, ViewCommon.text("http://www.youronlinechoices.com/")), ViewCommon.text(" erklärt werden. Des Weiteren kann die Speicherung von Cookies mittels deren Abschaltung in den Einstellungen des Browsers erreicht werden. Bitte beachten Sie, dass dann gegebenenfalls nicht alle Funktionen dieses Onlineangebotes genutzt werden können."));
 
+var section17P1 = React.createElement("p", undefined, ViewCommon.text("Wir setzen auf Grundlage unserer berechtigten Interessen (d.h. Interesse an der Analyse, Optimierung und wirtschaftlichem Betrieb unseres Onlineangebotes im Sinne des Art. 6 Abs. 1 lit. f. DSGVO) Google Analytics, einen Webanalysedienst der Google LLC („Google“) ein. Google verwendet Cookies. Die durch das Cookie erzeugten Informationen über Benutzung des Onlineangebotes durch die Nutzer werden in der Regel an einen Server von Google in den USA übertragen und dort gespeichert."), ViewCommon.text(". Google ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäisches Datenschutzniveau einzuhalten ("), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active",
+          target: "_blank"
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active")));
+
+var section17P4 = React.createElement("p", undefined, ViewCommon.text("Die von dem Browser des Nutzers übermittelte IP-Adresse wird nicht mit anderen Daten von Google zusammengeführt. Die Nutzer können die Speicherung der Cookies durch eine entsprechende Einstellung ihrer Browser-Software verhindern; die Nutzer können darüber hinaus die Erfassung der durch das Cookie erzeugten und auf ihre Nutzung des Onlineangebotes bezogenen Daten an Google sowie die Verarbeitung dieser Daten durch Google verhindern, indem sie das unter folgendem Link verfügbare Browser-Plugin herunterladen und installieren:"), React.createElement("a", {
+          href: " http://tools.google.com/dlpage/gaoptout?hl=de",
+          target: "_blank"
+        }, ViewCommon.text(" http://tools.google.com/dlpage/gaoptout?hl=de")));
+
+var section17P5 = React.createElement("p", undefined, ViewCommon.text("Weitere Informationen zur Datennutzung durch Google, Einstellungs- und Widerspruchsmöglichkeiten, erfahren Sie in der Datenschutzerklärung von Google "), React.createElement("a", {
+          href: " https://policies.google.com/technologies/ads",
+          target: "_blank"
+        }, ViewCommon.text("https://policies.google.com/technologies/ads")), ViewCommon.text("sowie in den Einstellungen für die Darstellung von Werbeeinblendungen durch Google"), React.createElement("a", {
+          href: " https://adssettings.google.com/authenticated",
+          target: "_blank"
+        }, ViewCommon.text("https://adssettings.google.com/authenticated")));
+
 var section19P1 = React.createElement("p", undefined, ViewCommon.text("Der Versand der Newsletter erfolgt mittels des Versanddienstleisters „MailChimp“, einer Newsletterversandplattform des US-Anbieters Rocket Science Group, LLC, 675 Ponce De Leon Ave NE #5000, Atlanta, GA 30308, USA. Die Datenschutzbestimmungen des Versanddienstleisters können Sie hier einsehen: "), React.createElement("a", {
           href: "https://mailchimp.com/legal/privacy/",
           target: "_blank"
@@ -24,40 +42,50 @@ var section19P1 = React.createElement("p", undefined, ViewCommon.text("Der Versa
           target: "_blank"
         }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000TO6hAAG&status=Active")), ViewCommon.text("). Der Versanddienstleister wird auf Grundlage unserer berechtigten Interessen gem. Art. 6 Abs. 1 lit. f DSGVO und eines Auftragsverarbeitungsvertrages gem. Art. 28 Abs. 3 S. 1 DSGVO eingesetzt."));
 
-var section22 = React.createElement("p", undefined, ViewCommon.text("Wir binden die Videos der Plattform “YouTube” des Anbieters Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, ein. Datenschutzerklärung: "), React.createElement("a", {
+var section20P7 = React.createElement("p", undefined, ViewCommon.text("Datenschutzerklärung: "), React.createElement("a", {
           href: "https://www.google.com/policies/privacy/",
           target: "_blank"
         }, ViewCommon.text("https://www.google.com/policies/privacy/")), ViewCommon.text(", Opt-Out: "), React.createElement("a", {
           href: "https://adssettings.google.com/authenticated",
           target: "_blank"
-        }, ViewCommon.text("https://adssettings.google.com/authenticated")), ViewCommon.text("."));
-
-var section23 = React.createElement("p", undefined, ViewCommon.text("Innerhalb unseres Onlineangebotes können Funktionen und Inhalte des Dienstes Twitter, angeboten durch die Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA, eingebunden werden. Hierzu können z.B. Inhalte wie Bilder, Videos oder Texte und Schaltflächen gehören, mit denen Nutzer Ihr Gefallen betreffend die Inhalte kundtun, den Verfassern der Inhalte oder unsere Beiträge abonnieren können. Sofern die Nutzer Mitglieder der Plattform Twitter sind, kann Twitter den Aufruf der o.g. Inhalte und Funktionen den dortigen Profilen der Nutzer zuordnen. Twitter ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten ("), React.createElement("a", {
-          href: "https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active",
+        }, ViewCommon.text("https://adssettings.google.com/authenticated")), ViewCommon.text("."), ViewCommon.text(", Privacy Shield:  "), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active",
           target: "_blank"
-        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active")), ViewCommon.text("). Datenschutzerklärung: "), React.createElement("a", {
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active")), ViewCommon.text("."));
+
+var section20P9 = React.createElement("p", undefined, ViewCommon.text("Datenschutzerklärung: "), React.createElement("a", {
           href: "https://twitter.com/de/privacy",
           target: "_blank"
         }, ViewCommon.text("https://twitter.com/de/privacy")), ViewCommon.text(", Opt-Out: "), React.createElement("a", {
           href: "https://twitter.com/personalization",
           target: "_blank"
-        }, ViewCommon.text("https://twitter.com/personalization")), ViewCommon.text("."));
+        }, ViewCommon.text("https://twitter.com/personalization")), ViewCommon.text(". Privacy Shield"), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active",
+          target: "_blank"
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active")));
 
-var section24 = React.createElement("p", undefined, ViewCommon.text("Innerhalb unseres Onlineangebotes können Funktionen und Inhalte des Dienstes LinkedIn, angeboten durch die inkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland, eingebunden werden. Hierzu können z.B. Inhalte wie Bilder, Videos oder Texte und Schaltflächen gehören, mit denen Nutzer Ihr Gefallen betreffend die Inhalte kundtun, den Verfassern der Inhalte oder unsere Beiträge abonnieren können. Sofern die Nutzer Mitglieder der Plattform LinkedIn sind, kann LinkedIn den Aufruf der o.g. Inhalte und Funktionen den dortigen Profilen der Nutzer zuordnen. Datenschutzerklärung von LinkedIn: "), React.createElement("a", {
-          href: "https://www.linkedin.com/legal/privacy-policy",
-          target: "_blank"
-        }, ViewCommon.text("https://www.linkedin.com/legal/privacy-policy")), ViewCommon.text(". LinkedIn ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten ("), React.createElement("a", {
-          href: "https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active",
-          target: "_blank"
-        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active")), ViewCommon.text("). Datenschutzerklärung: "), React.createElement("a", {
+var section20P11 = React.createElement("p", undefined, ViewCommon.text("Datenschutzerklärung: "), React.createElement("a", {
           href: "https://www.linkedin.com/legal/privacy-policy",
           target: "_blank"
         }, ViewCommon.text("https://www.linkedin.com/legal/privacy-policy")), ViewCommon.text(", Opt-Out: "), React.createElement("a", {
           href: "https://www.linkedin.com/psettings/guest-controls/retargeting-opt-out",
           target: "_blank"
-        }, ViewCommon.text("https://www.linkedin.com/psettings/guest-controls/retargeting-opt-out")), ViewCommon.text("."));
+        }, ViewCommon.text("https://www.linkedin.com/psettings/guest-controls/retargeting-opt-out")), ViewCommon.text(". Privacy Shield"), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active",
+          target: "_blank"
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active")));
 
-var section25 = React.createElement("p", undefined, React.createElement("a", {
+var section21P2 = React.createElement("p", undefined, ViewCommon.text("Zu diesen Zwecken setzen wir den Dienst Sentry von der Firma Functional Software, Inc. dba Sentry, 132 Hawthorne Street, San Francisco, CA 94107. Die Firma Functional Software ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten "), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO",
+          target: "_blank"
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO")));
+
+var section21P6 = React.createElement("p", undefined, ViewCommon.text("Weitere Informationen zur Verarbeitung personenbezogener Daten durch Sentry, erhalten Sie in der Datenschutzerklärung des Dienstes:"), React.createElement("a", {
+          href: "https://sentry.io/privacy/",
+          target: "_blank"
+        }, ViewCommon.text("https://sentry.io/privacy/")));
+
+var section22 = React.createElement("p", undefined, React.createElement("a", {
           href: "https://datenschutz-generator.de/",
           target: "_blank"
         }, ViewCommon.text("Erstellt mit Datenschutz-Generator.de von RA Dr. Thomas Schwenke")));
@@ -160,13 +188,13 @@ var section16P1 = "Bei der Kontaktaufnahme mit uns (z.B. per Kontaktformular, E-
 
 var section16P2 = "Wir löschen die Anfragen, sofern diese nicht mehr erforderlich sind. Wir überprüfen die Erforderlichkeit alle zwei Jahre; Ferner gelten die gesetzlichen Archivierungspflichten.";
 
-var section17Heading = "Registrierfunktion";
+var section17Heading = "Google Analytics";
 
-var section17P1 = "Nutzer können ein Nutzerkonto anlegen. Im Rahmen der Registrierung werden die erforderlichen Pflichtangaben den Nutzern mitgeteilt und auf Grundlage des Art. 6 Abs. 1 lit. b DSGVO zu Zwecken der Bereitstellung des Nutzerkontos verarbeitet. Zu den verarbeiteten Daten gehören insbesondere die Login-Informationen (Name, Passwort sowie eine E-Mailadresse). Die im Rahmen der Registrierung eingegebenen Daten werden für die Zwecke der Nutzung des Nutzerkontos und dessen Zwecks verwendet.";
+var section17P2 = "Google wird diese Informationen in unserem Auftrag benutzen, um die Nutzung unseres Onlineangebotes durch die Nutzer auszuwerten, um Reports über die Aktivitäten innerhalb dieses Onlineangebotes zusammenzustellen und um weitere, mit der Nutzung dieses Onlineangebotes und der Internetnutzung verbundene Dienstleistungen, uns gegenüber zu erbringen. Dabei können aus den verarbeiteten Daten pseudonyme Nutzungsprofile der Nutzer erstellt werden.";
 
-var section17P2 = "Die Nutzer können über Informationen, die für deren Nutzerkonto relevant sind, wie z.B. technische Änderungen, per E-Mail informiert werden. Wenn Nutzer ihr Nutzerkonto gekündigt haben, werden deren Daten im Hinblick auf das Nutzerkonto, vorbehaltlich einer gesetzlichen Aufbewahrungspflicht, gelöscht. Es obliegt den Nutzern, ihre Daten bei erfolgter Kündigung vor dem Vertragsende zu sichern. Wir sind berechtigt, sämtliche während der Vertragsdauer gespeicherten Daten des Nutzers unwiederbringlich zu löschen.";
+var section17P3 = "Wir setzen Google Analytics nur mit aktivierter IP-Anonymisierung ein. Das bedeutet, die IP-Adresse der Nutzer wird von Google innerhalb von Mitgliedstaaten der Europäischen Union oder in anderen Vertragsstaaten des Abkommens über den Europäischen Wirtschaftsraum gekürzt. Nur in Ausnahmefällen wird die volle IP-Adresse an einen Server von Google in den USA übertragen und dort gekürzt.\n";
 
-var section17P3 = "Im Rahmen der Inanspruchnahme unserer Registrierungs- und Anmeldefunktionen sowie der Nutzung des Nutzerkontos, speichern wird die IP-Adresse und den Zeitpunkt der jeweiligen Nutzerhandlung. Die Speicherung erfolgt auf Grundlage unserer berechtigten Interessen, als auch der Nutzer an Schutz vor Missbrauch und sonstiger unbefugter Nutzung. Eine Weitergabe dieser Daten an Dritte erfolgt grundsätzlich nicht, außer sie ist zur Verfolgung unserer Ansprüche erforderlich oder es besteht hierzu besteht eine gesetzliche Verpflichtung gem. Art. 6 Abs. 1 lit. c DSGVO. Die IP-Adressen werden spätestens nach 7 Tagen anonymisiert oder gelöscht.";
+var section17P6 = "Die personenbezogenen Daten der Nutzer werden nach 14 Monaten gelöscht oder anonymisiert.";
 
 var section18Heading = "Newsletter";
 
@@ -192,19 +220,27 @@ var section20Heading = "Onlinepräsenzen in sozialen Medien";
 
 var section20P1 = "Wir unterhalten Onlinepräsenzen innerhalb sozialer Netzwerke und Plattformen, um mit den dort aktiven Kunden, Interessenten und Nutzern kommunizieren und sie dort über unsere Leistungen informieren zu können. Beim Aufruf der jeweiligen Netzwerke und Plattformen gelten die Geschäftsbedingungen und die Datenverarbeitungsrichtlinien deren jeweiligen Betreiber.";
 
-var section20P2 = "Soweit nicht anders im Rahmen unserer Datenschutzerklärung angegeben, verarbeiten wir die Daten der Nutzer sofern diese mit uns innerhalb der sozialen Netzwerke und Plattformen kommunizieren, z.B. Beiträge auf unseren Onlinepräsenzen verfassen oder uns Nachrichten zusenden.";
+var section20P2 = "Wir weisen darauf hin, dass dabei Daten der Nutzer außerhalb des Raumes der Europäischen Union verarbeitet werden können. Hierdurch können sich für die Nutzer Risiken ergeben, weil so z.B. die Durchsetzung der Rechte der Nutzer erschwert werden könnte. Im Hinblick auf US-Anbieter die unter dem Privacy-Shield zertifiziert sind, weisen wir darauf hin, dass sie sich damit verpflichten, die Datenschutzstandards der EU einzuhalten.";
 
-var section21Heading = "Einbindung von Diensten und Inhalten Dritter";
+var section20P3 = "Die Verarbeitung der personenbezogenen Daten der Nutzer erfolgt auf Grundlage unserer berechtigten Interessen an einer effektiven Information der Nutzer und Kommunikation mit den Nutzern gem. Art. 6 Abs. 1 lit. f. DSGVO. Falls die Nutzer von den jeweiligen Anbietern um eine Einwilligung in die Datenverarbeitung gebeten werden (d.h. ihr Einverständnis z.B. über das Anhaken eines Kontrollkästchens oder Bestätigung einer Schaltfläche erklären) ist die Rechtsgrundlage der Verarbeitung Art. 6 Abs. 1 lit. a., Art. 7 DSGVO.\n";
 
-var section21P1 = "Wir setzen innerhalb unseres Onlineangebotes auf Grundlage unserer berechtigten Interessen (d.h. Interesse an der Analyse, Optimierung und wirtschaftlichem Betrieb unseres Onlineangebotes im Sinne des Art. 6 Abs. 1 lit. f. DSGVO) Inhalts- oder Serviceangebote von Drittanbietern ein, um deren Inhalte und Services, wie z.B. Videos oder Schriftarten einzubinden (nachfolgend einheitlich bezeichnet als “Inhalte”).";
+var section20P4 = "Für eine detaillierte Darstellung der jeweiligen Verarbeitungen und der Widerspruchsmöglichkeiten (Opt-Out), verweisen wir auf die nachfolgend verlinkten Angaben der Anbieter.";
 
-var section21P2 = "Dies setzt immer voraus, dass die Drittanbieter dieser Inhalte, die IP-Adresse der Nutzer wahrnehmen, da sie ohne die IP-Adresse die Inhalte nicht an deren Browser senden könnten. Die IP-Adresse ist damit für die Darstellung dieser Inhalte erforderlich. Wir bemühen uns nur solche Inhalte zu verwenden, deren jeweilige Anbieter die IP-Adresse lediglich zur Auslieferung der Inhalte verwenden. Drittanbieter können ferner so genannte Pixel-Tags (unsichtbare Grafiken, auch als \"Web Beacons\" bezeichnet) für statistische oder Marketingzwecke verwenden. Durch die \"Pixel-Tags\" können Informationen, wie der Besucherverkehr auf den Seiten dieser Website ausgewertet werden. Die pseudonymen Informationen können ferner in Cookies auf dem Gerät der Nutzer gespeichert werden und unter anderem technische Informationen zum Browser und Betriebssystem, verweisende Webseiten, Besuchszeit sowie weitere Angaben zur Nutzung unseres Onlineangebotes enthalten, als auch mit solchen Informationen aus anderen Quellen verbunden werden.";
+var section20P5 = "Auch im Fall von Auskunftsanfragen und der Geltendmachung von Nutzerrechten, weisen wir darauf hin, dass diese am effektivsten bei den Anbietern geltend gemacht werden können. Nur die Anbieter haben jeweils Zugriff auf die Daten der Nutzer und können direkt entsprechende Maßnahmen ergreifen und Auskünfte geben. Sollten Sie dennoch Hilfe benötigen, dann können Sie sich an uns wenden.\n";
 
-var section22Heading = "YouTube";
+var section20P6 = "- Google/ YouTube (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) ";
 
-var section23Heading = "Twitter";
+var section20P8 = "- Twitter (Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA)";
 
-var section24Heading = "LinkedIn";
+var section20P10 = "- LinkedIn (LinkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland) ";
+
+var section21Heading = "Sentry - Open Source Error Tracking";
+
+var section21P1 = "Mit Hilfe des Error-Trackings stellen wir die Verfügbarkeit und Integrität unseres Onlineangebotes sicher und verwenden die dabei verarbeiteten Daten, um unser Onlineangebot technisch zu optimieren.";
+
+var section21P3 = "Sentry ist eine Open-Source Echtzeit-Fehlerverfolgungsplattform für Web-Apps, mobilen Apps und Spiele und bietet die Entwicklern den nötigen Einblick, um Fehler und Abstürze zu reproduzieren und zu beheben.";
+
+var section21P4 = "Wir setzen Sentry auf Grundlage unserer berechtigten Interessen an der Sicherheit, Fehlerfreiheit und Optimierung unseres Onlineangebotes gem. Art. 6 Abs. 1 lit. f DSGVO ein.\n";
 
 exports.text = text;
 exports.extractString = extractString;
@@ -262,6 +298,9 @@ exports.section17Heading = section17Heading;
 exports.section17P1 = section17P1;
 exports.section17P2 = section17P2;
 exports.section17P3 = section17P3;
+exports.section17P4 = section17P4;
+exports.section17P5 = section17P5;
+exports.section17P6 = section17P6;
 exports.section18Heading = section18Heading;
 exports.section18P1 = section18P1;
 exports.section18P2 = section18P2;
@@ -276,14 +315,20 @@ exports.section19P2 = section19P2;
 exports.section20Heading = section20Heading;
 exports.section20P1 = section20P1;
 exports.section20P2 = section20P2;
+exports.section20P3 = section20P3;
+exports.section20P4 = section20P4;
+exports.section20P5 = section20P5;
+exports.section20P6 = section20P6;
+exports.section20P7 = section20P7;
+exports.section20P8 = section20P8;
+exports.section20P9 = section20P9;
+exports.section20P10 = section20P10;
+exports.section20P11 = section20P11;
 exports.section21Heading = section21Heading;
 exports.section21P1 = section21P1;
 exports.section21P2 = section21P2;
-exports.section22Heading = section22Heading;
+exports.section21P3 = section21P3;
+exports.section21P4 = section21P4;
+exports.section21P6 = section21P6;
 exports.section22 = section22;
-exports.section23Heading = section23Heading;
-exports.section23 = section23;
-exports.section24Heading = section24Heading;
-exports.section24 = section24;
-exports.section25 = section25;
 /* section3 Not a pure module */
