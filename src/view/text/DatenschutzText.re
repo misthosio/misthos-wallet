@@ -114,11 +114,81 @@ let section16Heading = {js|Kontaktaufnahme|js};
 let section16P1 = {js|Bei der Kontaktaufnahme mit uns (z.B. per Kontaktformular, E-Mail, Telefon oder via sozialer Medien) werden die Angaben des Nutzers zur Bearbeitung der Kontaktanfrage und deren Abwicklung gem. Art. 6 Abs. 1 lit. b) DSGVO verarbeitet. Die Angaben der Nutzer können in einem Customer-Relationship-Management System ("CRM System") oder vergleichbarer Anfragenorganisation gespeichert werden.|js};
 let section16P2 = {js|Wir löschen die Anfragen, sofern diese nicht mehr erforderlich sind. Wir überprüfen die Erforderlichkeit alle zwei Jahre; Ferner gelten die gesetzlichen Archivierungspflichten.|js};
 
-let section17Heading = {js|Registrierfunktion|js};
-let section17P1 = {js|Nutzer können ein Nutzerkonto anlegen. Im Rahmen der Registrierung werden die erforderlichen Pflichtangaben den Nutzern mitgeteilt und auf Grundlage des Art. 6 Abs. 1 lit. b DSGVO zu Zwecken der Bereitstellung des Nutzerkontos verarbeitet. Zu den verarbeiteten Daten gehören insbesondere die Login-Informationen (Name, Passwort sowie eine E-Mailadresse). Die im Rahmen der Registrierung eingegebenen Daten werden für die Zwecke der Nutzung des Nutzerkontos und dessen Zwecks verwendet.|js};
-let section17P2 = {js|Die Nutzer können über Informationen, die für deren Nutzerkonto relevant sind, wie z.B. technische Änderungen, per E-Mail informiert werden. Wenn Nutzer ihr Nutzerkonto gekündigt haben, werden deren Daten im Hinblick auf das Nutzerkonto, vorbehaltlich einer gesetzlichen Aufbewahrungspflicht, gelöscht. Es obliegt den Nutzern, ihre Daten bei erfolgter Kündigung vor dem Vertragsende zu sichern. Wir sind berechtigt, sämtliche während der Vertragsdauer gespeicherten Daten des Nutzers unwiederbringlich zu löschen.|js};
-let section17P3 = {js|Im Rahmen der Inanspruchnahme unserer Registrierungs- und Anmeldefunktionen sowie der Nutzung des Nutzerkontos, speichern wird die IP-Adresse und den Zeitpunkt der jeweiligen Nutzerhandlung. Die Speicherung erfolgt auf Grundlage unserer berechtigten Interessen, als auch der Nutzer an Schutz vor Missbrauch und sonstiger unbefugter Nutzung. Eine Weitergabe dieser Daten an Dritte erfolgt grundsätzlich nicht, außer sie ist zur Verfolgung unserer Ansprüche erforderlich oder es besteht hierzu besteht eine gesetzliche Verpflichtung gem. Art. 6 Abs. 1 lit. c DSGVO. Die IP-Adressen werden spätestens nach 7 Tagen anonymisiert oder gelöscht.|js};
+let section17Heading = {js|Google Analytics|js};
+let section17P1 =
+  <p>
+    (
+      {js|Wir setzen auf Grundlage unserer berechtigten Interessen (d.h. Interesse an der Analyse, Optimierung und wirtschaftlichem Betrieb unseres Onlineangebotes im Sinne des Art. 6 Abs. 1 lit. f. DSGVO) Google Analytics, einen Webanalysedienst der Google LLC („Google“) ein. Google verwendet Cookies. Die durch das Cookie erzeugten Informationen über Benutzung des Onlineangebotes durch die Nutzer werden in der Regel an einen Server von Google in den USA übertragen und dort gespeichert.|js}
+      |> text
+    )
+    (
+      {js|. Google ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäisches Datenschutzniveau einzuhalten (|js}
+      |> text
+    )
+    <a
+      href="https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
+      target="_blank">
+      (
+        "https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
+        |> text
+      )
+    </a>
+   
+  </p>;
+let section17P2 = {js|Google wird diese Informationen in unserem Auftrag benutzen, um die Nutzung unseres Onlineangebotes durch die Nutzer auszuwerten, um Reports über die Aktivitäten innerhalb dieses Onlineangebotes zusammenzustellen und um weitere, mit der Nutzung dieses Onlineangebotes und der Internetnutzung verbundene Dienstleistungen, uns gegenüber zu erbringen. Dabei können aus den verarbeiteten Daten pseudonyme Nutzungsprofile der Nutzer erstellt werden.|js};
+let section17P3 = {js|Wir setzen Google Analytics nur mit aktivierter IP-Anonymisierung ein. Das bedeutet, die IP-Adresse der Nutzer wird von Google innerhalb von Mitgliedstaaten der Europäischen Union oder in anderen Vertragsstaaten des Abkommens über den Europäischen Wirtschaftsraum gekürzt. Nur in Ausnahmefällen wird die volle IP-Adresse an einen Server von Google in den USA übertragen und dort gekürzt.
+|js};
+let section17P4 = 
+  <p>
+    (
+      {js|Die von dem Browser des Nutzers übermittelte IP-Adresse wird nicht mit anderen Daten von Google zusammengeführt. Die Nutzer können die Speicherung der Cookies durch eine entsprechende Einstellung ihrer Browser-Software verhindern; die Nutzer können darüber hinaus die Erfassung der durch das Cookie erzeugten und auf ihre Nutzung des Onlineangebotes bezogenen Daten an Google sowie die Verarbeitung dieser Daten durch Google verhindern, indem sie das unter folgendem Link verfügbare Browser-Plugin herunterladen und installieren:|js}
+      |> text
+    )
+    
+    <a
+      href=" http://tools.google.com/dlpage/gaoptout?hl=de"
+      target="_blank">
+      (
+        " http://tools.google.com/dlpage/gaoptout?hl=de"
+        |> text
+      )
+    </a>
+   
+  </p>;
+      
+  let section17P5 = 
+  <p>
+    (
+      {js|Weitere Informationen zur Datennutzung durch Google, Einstellungs- und Widerspruchsmöglichkeiten, erfahren Sie in der Datenschutzerklärung von Google |js}
+      |> text
+    )
+    
+    <a
+      href=" https://policies.google.com/technologies/ads"
+      target="_blank">
+      (
+        "https://policies.google.com/technologies/ads"
+        |> text
+      )
+    </a>
+   (
+      {js|sowie in den Einstellungen für die Darstellung von Werbeeinblendungen durch Google|js}
+      |> text
+    )
+    
+    <a
+      href=" https://adssettings.google.com/authenticated"
+      target="_blank">
+      (
+        "https://adssettings.google.com/authenticated"
+        |> text
+      )
+    </a>
 
+  </p>;
+    
+let section17P6 = {js|Die personenbezogenen Daten der Nutzer werden nach 14 Monaten gelöscht oder anonymisiert.|js};  
+      
 let section18Heading = {js|Newsletter|js};
 let section18P1 = {js|Mit den nachfolgenden Hinweisen informieren wir Sie über die Inhalte unseres Newsletters sowie das Anmelde-, Versand- und das statistische Auswertungsverfahren sowie Ihre Widerspruchsrechte auf. Indem Sie unseren Newsletter abonnieren, erklären Sie sich mit dem Empfang und den beschriebenen Verfahren einverstanden.|js};
 let section18P2 = {js|Inhalt des Newsletters: Wir versenden Newsletter, E-Mails und weitere elektronische Benachrichtigungen mit werblichen Informationen (nachfolgend „Newsletter“) nur mit der Einwilligung der Empfänger oder einer gesetzlichen Erlaubnis. Sofern im Rahmen einer Anmeldung zum Newsletter dessen Inhalte konkret umschrieben werden, sind sie für die Einwilligung der Nutzer maßgeblich. Im Übrigen enthalten unsere Newsletter Informationen zu unseren Leistungen und uns.|js};
@@ -157,19 +227,22 @@ let section19P1 =
   </p>;
 let section19P2 = {js|Der Versanddienstleister kann die Daten der Empfänger in pseudonymer Form, d.h. ohne Zuordnung zu einem Nutzer, zur Optimierung oder Verbesserung der eigenen Services nutzen, z.B. zur technischen Optimierung des Versandes und der Darstellung der Newsletter oder für statistische Zwecke verwenden. Der Versanddienstleister nutzt die Daten unserer Newsletterempfänger jedoch nicht, um diese selbst anzuschreiben oder um die Daten an Dritte weiterzugeben.|js};
 
+
 let section20Heading = {js|Onlinepräsenzen in sozialen Medien|js};
 let section20P1 = {js|Wir unterhalten Onlinepräsenzen innerhalb sozialer Netzwerke und Plattformen, um mit den dort aktiven Kunden, Interessenten und Nutzern kommunizieren und sie dort über unsere Leistungen informieren zu können. Beim Aufruf der jeweiligen Netzwerke und Plattformen gelten die Geschäftsbedingungen und die Datenverarbeitungsrichtlinien deren jeweiligen Betreiber.|js};
-let section20P2 = {js|Soweit nicht anders im Rahmen unserer Datenschutzerklärung angegeben, verarbeiten wir die Daten der Nutzer sofern diese mit uns innerhalb der sozialen Netzwerke und Plattformen kommunizieren, z.B. Beiträge auf unseren Onlinepräsenzen verfassen oder uns Nachrichten zusenden.|js};
+let section20P2 = {js|Wir weisen darauf hin, dass dabei Daten der Nutzer außerhalb des Raumes der Europäischen Union verarbeitet werden können. Hierdurch können sich für die Nutzer Risiken ergeben, weil so z.B. die Durchsetzung der Rechte der Nutzer erschwert werden könnte. Im Hinblick auf US-Anbieter die unter dem Privacy-Shield zertifiziert sind, weisen wir darauf hin, dass sie sich damit verpflichten, die Datenschutzstandards der EU einzuhalten.|js};
+let section20P3 = {js|Die Verarbeitung der personenbezogenen Daten der Nutzer erfolgt auf Grundlage unserer berechtigten Interessen an einer effektiven Information der Nutzer und Kommunikation mit den Nutzern gem. Art. 6 Abs. 1 lit. f. DSGVO. Falls die Nutzer von den jeweiligen Anbietern um eine Einwilligung in die Datenverarbeitung gebeten werden (d.h. ihr Einverständnis z.B. über das Anhaken eines Kontrollkästchens oder Bestätigung einer Schaltfläche erklären) ist die Rechtsgrundlage der Verarbeitung Art. 6 Abs. 1 lit. a., Art. 7 DSGVO.
+|js};
+let section20P4 = {js|Für eine detaillierte Darstellung der jeweiligen Verarbeitungen und der Widerspruchsmöglichkeiten (Opt-Out), verweisen wir auf die nachfolgend verlinkten Angaben der Anbieter.|js};
+let section20P4 = {js|Auch im Fall von Auskunftsanfragen und der Geltendmachung von Nutzerrechten, weisen wir darauf hin, dass diese am effektivsten bei den Anbietern geltend gemacht werden können. Nur die Anbieter haben jeweils Zugriff auf die Daten der Nutzer und können direkt entsprechende Maßnahmen ergreifen und Auskünfte geben. Sollten Sie dennoch Hilfe benötigen, dann können Sie sich an uns wenden.
+|js};
 
-let section21Heading = {js|Einbindung von Diensten und Inhalten Dritter|js};
-let section21P1 = {js|Wir setzen innerhalb unseres Onlineangebotes auf Grundlage unserer berechtigten Interessen (d.h. Interesse an der Analyse, Optimierung und wirtschaftlichem Betrieb unseres Onlineangebotes im Sinne des Art. 6 Abs. 1 lit. f. DSGVO) Inhalts- oder Serviceangebote von Drittanbietern ein, um deren Inhalte und Services, wie z.B. Videos oder Schriftarten einzubinden (nachfolgend einheitlich bezeichnet als “Inhalte”).|js};
-let section21P2 = {js|Dies setzt immer voraus, dass die Drittanbieter dieser Inhalte, die IP-Adresse der Nutzer wahrnehmen, da sie ohne die IP-Adresse die Inhalte nicht an deren Browser senden könnten. Die IP-Adresse ist damit für die Darstellung dieser Inhalte erforderlich. Wir bemühen uns nur solche Inhalte zu verwenden, deren jeweilige Anbieter die IP-Adresse lediglich zur Auslieferung der Inhalte verwenden. Drittanbieter können ferner so genannte Pixel-Tags (unsichtbare Grafiken, auch als "Web Beacons" bezeichnet) für statistische oder Marketingzwecke verwenden. Durch die "Pixel-Tags" können Informationen, wie der Besucherverkehr auf den Seiten dieser Website ausgewertet werden. Die pseudonymen Informationen können ferner in Cookies auf dem Gerät der Nutzer gespeichert werden und unter anderem technische Informationen zum Browser und Betriebssystem, verweisende Webseiten, Besuchszeit sowie weitere Angaben zur Nutzung unseres Onlineangebotes enthalten, als auch mit solchen Informationen aus anderen Quellen verbunden werden.|js};
+let section21Heading = {js|- Google/ YouTube (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) |js};
 
-let section22Heading = {js|YouTube|js};
 let section22 =
   <p>
     (
-      {js|Wir binden die Videos der Plattform “YouTube” des Anbieters Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, ein. Datenschutzerklärung: |js}
+      {js|Datenschutzerklärung: |js}
       |> text
     )
     <a href="https://www.google.com/policies/privacy/" target="_blank">
@@ -180,15 +253,25 @@ let section22 =
       ("https://adssettings.google.com/authenticated" |> text)
     </a>
     ("." |> text)
+ ({js|, Privacy Shield:  |js} |> text)
+    <a href="https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active" target="_blank">
+      ("https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active" |> text)
+    </a>
+    ("." |> text)
   </p>;
 
-let section23Heading = {js|Twitter|js};
+let section23Heading = {js|- Twitter (Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA)|js};
 let section23 =
   <p>
-    (
-      {js|Innerhalb unseres Onlineangebotes können Funktionen und Inhalte des Dienstes Twitter, angeboten durch die Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA, eingebunden werden. Hierzu können z.B. Inhalte wie Bilder, Videos oder Texte und Schaltflächen gehören, mit denen Nutzer Ihr Gefallen betreffend die Inhalte kundtun, den Verfassern der Inhalte oder unsere Beiträge abonnieren können. Sofern die Nutzer Mitglieder der Plattform Twitter sind, kann Twitter den Aufruf der o.g. Inhalte und Funktionen den dortigen Profilen der Nutzer zuordnen. Twitter ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten (|js}
-      |> text
-    )
+ ({js|) - Datenschutzerklärung: |js} |> text)
+    <a href="https://twitter.com/de/privacy" target="_blank">
+      ("https://twitter.com/de/privacy" |> text)
+    </a>
+    (", Opt-Out: " |> text)
+    <a href="https://twitter.com/personalization" target="_blank">
+      ("https://twitter.com/personalization" |> text)
+    </a>
+    (". Privacy Shield" |> text)
     <a
       href="https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active"
       target="_blank">
@@ -197,39 +280,12 @@ let section23 =
         |> text
       )
     </a>
-    ({js|). Datenschutzerklärung: |js} |> text)
-    <a href="https://twitter.com/de/privacy" target="_blank">
-      ("https://twitter.com/de/privacy" |> text)
-    </a>
-    (", Opt-Out: " |> text)
-    <a href="https://twitter.com/personalization" target="_blank">
-      ("https://twitter.com/personalization" |> text)
-    </a>
-    ("." |> text)
+    
   </p>;
 
-let section24Heading = {js|LinkedIn|js};
+let section24Heading = {js|- LinkedIn (LinkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland) |js};
 let section24 =
   <p>
-    (
-      {js|Innerhalb unseres Onlineangebotes können Funktionen und Inhalte des Dienstes LinkedIn, angeboten durch die inkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland, eingebunden werden. Hierzu können z.B. Inhalte wie Bilder, Videos oder Texte und Schaltflächen gehören, mit denen Nutzer Ihr Gefallen betreffend die Inhalte kundtun, den Verfassern der Inhalte oder unsere Beiträge abonnieren können. Sofern die Nutzer Mitglieder der Plattform LinkedIn sind, kann LinkedIn den Aufruf der o.g. Inhalte und Funktionen den dortigen Profilen der Nutzer zuordnen. Datenschutzerklärung von LinkedIn: |js}
-      |> text
-    )
-    <a href="https://www.linkedin.com/legal/privacy-policy" target="_blank">
-      ("https://www.linkedin.com/legal/privacy-policy" |> text)
-    </a>
-    (
-      {js|. LinkedIn ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten (|js}
-      |> text
-    )
-    <a
-      href="https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active"
-      target="_blank">
-      (
-        "https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active"
-        |> text
-      )
-    </a>
     ({js|). Datenschutzerklärung: |js} |> text)
     <a href="https://www.linkedin.com/legal/privacy-policy" target="_blank">
       ("https://www.linkedin.com/legal/privacy-policy" |> text)
@@ -243,10 +299,46 @@ let section24 =
         |> text
       )
     </a>
-    ("." |> text)
+    (". Privacy Shield" |> text)
+      <a
+      href="https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active"
+      target="_blank">
+      (
+        "https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active"
+        |> text
+      )
+    </a>
+   
   </p>;
 
-let section25 =
+let section25Heading = {js|Sentry - Open Source Error Tracking|js};
+let section25P1 = {js|Mit Hilfe des Error-Trackings stellen wir die Verfügbarkeit und Integrität unseres Onlineangebotes sicher und verwenden die dabei verarbeiteten Daten, um unser Onlineangebot technisch zu optimieren.|js};
+let section25P2 =
+  <p>
+    (
+      {js|Zu diesen Zwecken setzen wir den Dienst Sentry von der Firma Functional Software, Inc. dba Sentry, 132 Hawthorne Street, San Francisco, CA 94107. Die Firma Functional Software ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten |js}
+      |> text
+    )
+    <a href="https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO" target="_blank">
+      ("https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO" |> text)
+    </a>
+   </p>;
+let section25P3 = {js|Sentry ist eine Open-Source Echtzeit-Fehlerverfolgungsplattform für Web-Apps, mobilen Apps und Spiele und bietet die Entwicklern den nötigen Einblick, um Fehler und Abstürze zu reproduzieren und zu beheben.|js};
+let section25P4 = {js|Wir setzen Sentry auf Grundlage unserer berechtigten Interessen an der Sicherheit, Fehlerfreiheit und Optimierung unseres Onlineangebotes gem. Art. 6 Abs. 1 lit. f DSGVO ein.
+|js};
+let section25P6 =
+  <p>
+    (
+      {js|Weitere Informationen zur Verarbeitung personenbezogener Daten durch Sentry, erhalten Sie in der Datenschutzerklärung des Dienstes:|js}
+      |> text
+    )
+    <a href="https://sentry.io/privacy/" target="_blank">
+      ("https://sentry.io/privacy/" |> text)
+    </a>
+   </p>;
+
+
+let section26 =
   <p>
     <a href="https://datenschutz-generator.de/" target="_blank">
       (
