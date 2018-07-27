@@ -379,20 +379,15 @@ let build =
          BTC.zero,
        );
   let misthosFeeAddress = Network.incomeAddress(network);
-  let outTotal =
-    switch (network) {
-    | Network.Mainnet => outTotalWithoutFee
-    | _ =>
-      let misthosFee =
-        outTotalWithoutFee |> BTC.timesRounded(misthosFeePercent /. 100.);
-      txB
-      |> B.TxBuilder.addOutput(
-           misthosFeeAddress,
-           misthosFee |> BTC.toSatoshisFloat,
-         )
-      |> ignore;
-      outTotalWithoutFee |> BTC.plus(misthosFee);
-    };
+  let misthosFee =
+    outTotalWithoutFee |> BTC.timesRounded(misthosFeePercent /. 100.);
+  txB
+  |> B.TxBuilder.addOutput(
+       misthosFeeAddress,
+       misthosFee |> BTC.toSatoshisFloat,
+     )
+  |> ignore;
+  let outTotal = outTotalWithoutFee |> BTC.plus(misthosFee);
   let currentInputValue =
     usedInputs
     |> List.fold_left(
@@ -499,17 +494,15 @@ let max =
            Some(input) : None
        );
   let outputs =
-    List.concat(
-      if (targetDestination != "") {
-        [(targetDestination, BTC.zero), ...destinations];
-      } else {
-        destinations;
-      },
-      switch (network) {
-      | Network.Mainnet => []
-      | _ => [(Network.incomeAddress(network), BTC.zero)]
-      },
-    );
+    if (targetDestination != "") {
+      [
+        (targetDestination, BTC.zero),
+        (Network.incomeAddress(network), BTC.zero),
+        ...destinations,
+      ];
+    } else {
+      [(Network.incomeAddress(network), BTC.zero), ...destinations];
+    };
   let fee =
     Fee.estimate(
       outputs |. List.map(fst),
@@ -524,15 +517,11 @@ let max =
     destinations
     |. List.reduce(BTC.zero, (res, (_, outVal)) => res |> BTC.plus(outVal));
   let rest = totalInputValue |> BTC.minus(totalOutValue |> BTC.plus(fee));
-  switch (network) {
-  | Network.Mainnet => rest
-  | _ =>
-    let totalOutMisthosFee =
-      totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
-    rest
-    |> BTC.minus(totalOutMisthosFee)
-    |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.);
-  };
+  let totalOutMisthosFee =
+    totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
+  rest
+  |> BTC.minus(totalOutMisthosFee)
+  |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.);
 };
 
 let finalize = signedTransactions => {

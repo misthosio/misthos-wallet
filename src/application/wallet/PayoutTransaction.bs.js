@@ -307,14 +307,9 @@ function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, sa
           return total.plus(value);
         }), BTC.zero, destinations);
   var misthosFeeAddress = Network.incomeAddress(network);
-  var outTotal;
-  if (network >= 2) {
-    outTotal = outTotalWithoutFee;
-  } else {
-    var misthosFee = BTC.timesRounded(1.5 / 100, outTotalWithoutFee);
-    txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
-    outTotal = outTotalWithoutFee.plus(misthosFee);
-  }
+  var misthosFee = BTC.timesRounded(1.5 / 100, outTotalWithoutFee);
+  txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
+  var outTotal = outTotalWithoutFee.plus(misthosFee);
   var currentInputValue = List.fold_left((function (total, param) {
           return total.plus(param[1][/* value */3]);
         }), BTC.zero, usedInputs);
@@ -381,19 +376,25 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
             return /* None */0;
           }
         }));
-  var outputs = Belt_List.concat(targetDestination !== "" ? /* :: */[
-          /* tuple */[
-            targetDestination,
-            BTC.zero
-          ],
-          destinations
-        ] : destinations, network >= 2 ? /* [] */0 : /* :: */[
-          /* tuple */[
-            Network.incomeAddress(network),
-            BTC.zero
-          ],
-          /* [] */0
-        ]);
+  var outputs = targetDestination !== "" ? /* :: */[
+      /* tuple */[
+        targetDestination,
+        BTC.zero
+      ],
+      /* :: */[
+        /* tuple */[
+          Network.incomeAddress(network),
+          BTC.zero
+        ],
+        destinations
+      ]
+    ] : /* :: */[
+      /* tuple */[
+        Network.incomeAddress(network),
+        BTC.zero
+      ],
+      destinations
+    ];
   var fee = TransactionFee.estimate(Belt_List.map(outputs, (function (prim) {
               return prim[0];
             })), inputs, satsPerByte, Network.bitcoinNetwork(network));
@@ -404,12 +405,8 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
           return res.plus(param[1]);
         }));
   var rest = totalInputValue.minus(totalOutValue.plus(fee));
-  if (network >= 2) {
-    return rest;
-  } else {
-    var totalOutMisthosFee = BTC.timesRounded(1.5 / 100, totalOutValue);
-    return BTC.dividedByRounded(1 + 1.5 / 100, rest.minus(totalOutMisthosFee));
-  }
+  var totalOutMisthosFee = BTC.timesRounded(1.5 / 100, totalOutValue);
+  return BTC.dividedByRounded(1 + 1.5 / 100, rest.minus(totalOutMisthosFee));
 }
 
 function finalize(signedTransactions) {
