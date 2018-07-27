@@ -170,7 +170,7 @@ function make(onSignIn, _) {
                                       React.createElement("br", undefined),
                                       ViewCommon.text("with Misthos.")
                                     ])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("sub")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[
-                                      ViewCommon.text("Misthos is the only multisig bitcoin wallet that lets you change co-signers in a fast and frictionless way."),
+                                      ViewCommon.text("Misthos is the most advanced multisig bitcoin wallet, emphasizing frictionless setup, low risk and streamlined collaboration"),
                                       React.createElement("br", undefined),
                                       React.createElement("br", undefined),
                                       ViewCommon.text("Use it for projects. Use it for payments.")
