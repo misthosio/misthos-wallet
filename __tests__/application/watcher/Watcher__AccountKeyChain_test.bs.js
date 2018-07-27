@@ -16,15 +16,9 @@ function keyChainEq(keyChainA, keyChainB) {
 }
 
 describe("Watcher__AccountKeyChain", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Identifies a key chain when a custodian key chain changes", (function () {
-                return Fixtures.threeUserSessionsArray;
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
-                return Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
+        describe("Identifies a key chain when a custodian key chain changes", (function () {
+                var user1 = Fixtures.threeUserSessions[0];
+                var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var log$1 = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
@@ -44,16 +38,10 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Identifies a key chain when a partner is removed", (function () {
-                return Fixtures.threeUserSessionsArray;
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
-                return Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user2 = match[1];
-                var user1 = match[0];
+        describe("Identifies a key chain when a partner is removed", (function () {
+                var user2 = Fixtures.threeUserSessions[1];
+                var user1 = Fixtures.threeUserSessions[0];
+                var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
@@ -90,15 +78,9 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Activates a key chain when a custodian key chain changes", (function () {
-                return Fixtures.threeUserSessionsArray;
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
-                return Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
+        describe("Activates a key chain when a custodian key chain changes", (function () {
+                var user1 = Fixtures.threeUserSessions[0];
+                var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
@@ -119,15 +101,10 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Is idle when the key chain has been activated", (function () {
-                return Fixtures.threeUserSessionsArray;
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+        describe("Is idle when the key chain has been activated", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                return Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
+                var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
@@ -136,16 +113,10 @@ describe("Watcher__AccountKeyChain", (function () {
                 var log$1 = Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* None */0, eta));
                 return WatcherHelpers.testWatcherHasNoEventPending(Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1)));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Activates a key chain when a custodian is removed", (function () {
-                return Fixtures.threeUserSessionsArray;
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
-                return Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user2 = match[1];
-                var user1 = match[0];
+        describe("Activates a key chain when a custodian is removed", (function () {
+                var user2 = Fixtures.threeUserSessions[1];
+                var user1 = Fixtures.threeUserSessions[0];
+                var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
@@ -179,16 +150,11 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Is idle when the partner is removed", (function () {
-                return Fixtures.threeUserSessionsArray;
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
-                return Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+        describe("Is idle when the partner is removed", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
+                var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
@@ -209,36 +175,32 @@ describe("Watcher__AccountKeyChain", (function () {
                                 ], Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* None */0, eta))))));
                 return WatcherHelpers.testWatcherHasNoEventPending(Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1)));
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Is idle when the custodian is removed", (function () {
-                      return Fixtures.threeUserSessionsArray;
-                    }), (function (sessions) {
-                      var match = Generators.twoUserSessionsFromArray(sessions);
-                      var user1 = match[0];
-                      return Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
-                    }), (function (sessions, log) {
-                      var match = Generators.twoUserSessionsFromArray(sessions);
-                      var user2 = match[1];
-                      var user1 = match[0];
-                      var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                      var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
-                                user1,
-                                /* [] */0
-                              ], log));
-                      var log$1 = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianRemoved */37](user1, /* :: */[
+        describe("Is idle when the custodian is removed", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
+                var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], log));
+                var log$1 = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianRemoved */37](user1, /* :: */[
+                          user2,
+                          /* [] */0
+                        ], Generators.Log[/* withCustodian */33](user2, /* :: */[
+                              user1,
+                              /* :: */[
                                 user2,
                                 /* [] */0
-                              ], Generators.Log[/* withCustodian */33](user2, /* :: */[
-                                    user1,
-                                    /* :: */[
-                                      user2,
-                                      /* [] */0
-                                    ]
-                                  ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
-                                        user1,
-                                        /* [] */0
-                                      ], Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* None */0, eta))))));
-                      return WatcherHelpers.testWatcherHasNoEventPending(Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1)));
-                    }));
+                              ]
+                            ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
+                                  user1,
+                                  /* [] */0
+                                ], Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* None */0, eta))))));
+                return WatcherHelpers.testWatcherHasNoEventPending(Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1)));
+              }));
+        return /* () */0;
       }));
 
 var KeyChain = 0;

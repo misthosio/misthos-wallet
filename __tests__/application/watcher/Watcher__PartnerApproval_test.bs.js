@@ -4,26 +4,22 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../../../src/application/events/Event.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var Fixtures = require("../../helpers/Fixtures.bs.js");
 var Generators = require("../../helpers/Generators.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var WatcherHelpers = require("../../helpers/WatcherHelpers.bs.js");
 var Watcher__PartnerApproval = require("../../../src/application/watcher/Watcher__PartnerApproval.bs.js");
 
 describe("Watcher__PartnerApproval", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Will approve the creator", (function () {
-                return Generators.withUserSessions(2);
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+        describe("Will approve the creator", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
+                var eta = Generators.Log[/* createVenture */11](user1);
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2, param$3) {
-                                return Curry._6(func, param, param$1, param$2, param$3, user1, user1);
-                              })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* createVenture */11](user1));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user1);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log);
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user1, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
                               if (param.tag === 4) {
@@ -33,20 +29,17 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 1 partner and a proposal", (function () {
-                return Generators.withUserSessions(2);
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+        describe("With 1 partner and a proposal", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
+                var eta = Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1));
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2, param$3) {
-                                return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
-                              })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log);
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user1, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
                               if (param.tag === 4) {
@@ -56,91 +49,53 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Completes when the partner is accepted", (function () {
-                return Generators.withUserSessions(2);
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+        describe("Completes when the partner is accepted", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
+                var eta = Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1));
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2, param$3) {
-                                return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
-                              })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log);
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user1, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 var log$2 = Generators.Log[/* withPartnerAccepted */15](proposal)(log$1);
                 Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */4](log$2));
                 return WatcherHelpers.testWatcherHasCompleted(watcher);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 2 users and a proposal", (function () {
-                return Generators.withUserSessions(3);
-              }), (function (sessions) {
-                var match = Generators.threeUserSessionsFromArray(sessions);
+        describe("With 2 users and a proposal", (function () {
+                var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user1 = match[0];
+                var eta = Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2, param$3) {
-                                return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
-                              })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
-                                user1,
-                                /* [] */0
-                              ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
-              }), (function (sessions, log) {
-                var match = Generators.threeUserSessionsFromArray(sessions);
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log);
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user1, proposal)(log);
                 return WatcherHelpers.testWatcherHasNoEventPending(Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1)));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 2 users and a proposal and endorsement", (function () {
-                return Generators.withUserSessions(3);
-              }), (function (sessions) {
-                var match = Generators.threeUserSessionsFromArray(sessions);
-                var user3 = match[2];
-                var user1 = match[0];
-                var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2, param$3) {
-                                return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
-                              })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
-                                user1,
-                                /* [] */0
-                              ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
-              }), (function (sessions, log) {
-                var match = Generators.threeUserSessionsFromArray(sessions);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[1], proposal)(Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log));
-                var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
-                return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 4) {
-                                return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
-                              } else {
-                                return false;
-                              }
-                            }));
-              }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 2 users and a removal and a proposal", (function () {
-                return Generators.withUserSessions(3);
-              }), (function (sessions) {
-                var match = Generators.threeUserSessionsFromArray(sessions);
+        describe("With 2 users and a proposal and endorsement", (function () {
+                var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
+                var eta = Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2, param$3) {
-                                return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
-                              })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
-                                user1,
-                                /* [] */0
-                              ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
-                                    user1,
-                                    /* [] */0
-                                  ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log);
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user2, proposal)(Generators.Log[/* withPartnerEndorsed */13](/* None */0, user1, proposal)(log));
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
                               if (param.tag === 4) {
@@ -150,23 +105,48 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Process gets denied when it has been rejected", (function () {
-                return Generators.withUserSessions(3);
-              }), (function (sessions) {
-                var match = Generators.threeUserSessionsFromArray(sessions);
+        describe("With 2 users and a removal and a proposal", (function () {
+                var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
+                var user2 = match[1];
                 var user1 = match[0];
+                var eta = Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2, param$3) {
-                                return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
-                              })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
-                                user1,
-                                /* [] */0
-                              ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
-              }), (function (sessions, log) {
-                var match = Generators.threeUserSessionsFromArray(sessions);
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withPartnerRejected */14](/* None */0, match[1], proposal)(log);
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user1, proposal)(log);
+                var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
+                return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
+                              if (param.tag === 4) {
+                                return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
+                              } else {
+                                return false;
+                              }
+                            }));
+              }));
+        describe("Process gets denied when it has been rejected", (function () {
+                var match = Generators.threeUserSessions(/* () */0);
+                var user3 = match[2];
+                var user2 = match[1];
+                var user1 = match[0];
+                var eta = Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                var log$1 = Generators.Log[/* withPartnerRejected */14](/* None */0, user2, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerDenied", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
                               if (param.tag === 5) {
@@ -176,28 +156,27 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Completes when the partner is denied", (function () {
-                      return Generators.withUserSessions(3);
-                    }), (function (sessions) {
-                      var match = Generators.threeUserSessionsFromArray(sessions);
-                      var user3 = match[2];
-                      var user1 = match[0];
-                      var func = Generators.Log[/* withPartnerProposed */12];
-                      return Curry._1((function (param, param$1, param$2, param$3) {
-                                      return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
-                                    })(/* None */0, /* None */0, /* None */0, /* None */0), Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
-                                      user1,
-                                      /* [] */0
-                                    ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
-                    }), (function (sessions, log) {
-                      var match = Generators.threeUserSessionsFromArray(sessions);
-                      var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                      var log$1 = Generators.Log[/* withPartnerRejected */14](/* None */0, match[1], proposal)(log);
-                      var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
-                      var log$2 = Generators.Log[/* withPartnerDenied */16](proposal)(log$1);
-                      Caml_oo_curry.js2(710435299, 2, watcher, Generators.Log[/* lastItem */4](log$2));
-                      return WatcherHelpers.testWatcherHasCompleted(watcher);
-                    }));
+        describe("Completes when the partner is denied", (function () {
+                var match = Generators.threeUserSessions(/* () */0);
+                var user3 = match[2];
+                var user2 = match[1];
+                var user1 = match[0];
+                var eta = Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
+                var log = Curry._1((function (param, param$1, param$2, param$3) {
+                          return Curry._6(func, param, param$1, param$2, param$3, user1, user3);
+                        })(/* None */0, /* None */0, /* None */0, /* None */0), eta);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                var log$1 = Generators.Log[/* withPartnerRejected */14](/* None */0, user2, proposal)(log);
+                var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
+                var log$2 = Generators.Log[/* withPartnerDenied */16](proposal)(log$1);
+                Caml_oo_curry.js2(710435299, 2, watcher, Generators.Log[/* lastItem */4](log$2));
+                return WatcherHelpers.testWatcherHasCompleted(watcher);
+              }));
+        return /* () */0;
       }));
 
 var PartnerApproval = 0;
