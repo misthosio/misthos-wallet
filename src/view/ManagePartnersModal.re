@@ -73,26 +73,6 @@ module Styles = {
     ]);
 };
 
-module LinkEmail = {
-  let subject = name =>
-    encodeURI("Join this Misthos Venture: \"" ++ name ++ "\"");
-  let body = (prospect, ventureName, joinUrl, user) =>
-    encodeURI(
-      {j|Hello $prospect
-
-I have suggested that you should join the Misthos Venture "$ventureName".
-Go to the URL bellow to sync with the Venture as soon as you have been accepted.
-
-$joinUrl
-
-Sincerely,
-$user
-
-www.misthos.io
-  |j},
-    );
-};
-
 let renderInputComponent = props =>
   <MInput
     placeholder="Enter a Blockstack ID"

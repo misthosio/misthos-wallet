@@ -128,11 +128,9 @@ function fromViewModelState(param) {
 var AddressesView = /* module */[/* fromViewModelState */fromViewModelState];
 
 function fromViewModelState$1(param) {
-  var localUser = param[/* localUser */0];
   var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */10]);
   return /* record */[
           /* ventureName */param[/* ventureName */3],
-          /* localUser */localUser,
           /* partners */param[/* partnersCollector */6][/* partners */1],
           /* alertPartners */Belt_List.reduceU(infos, PrimitiveTypes.UserId[/* emptySet */9], (function (res, param) {
                   var addressStatus = param[/* addressStatus */4];
@@ -150,11 +148,7 @@ function fromViewModelState$1(param) {
                     }
                   }
                   
-                })),
-          /* joinVentureUrl */location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
-                  param[/* ventureId */1],
-                  localUser
-                ]))
+                }))
         ];
 }
 

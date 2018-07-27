@@ -156,27 +156,16 @@ module ManagePartnersView = {
   type partner = PartnersCollector.partner;
   type t = {
     ventureName: string,
-    localUser: UserId.t,
     partners: list(partner),
     alertPartners: UserId.set,
-    joinVentureUrl: string,
   };
   let fromViewModelState =
-      (
-        {
-          ventureName,
-          ventureId,
-          localUser,
-          partnersCollector,
-          walletInfoCollector,
-        },
-      ) => {
+      ({ventureName, partnersCollector, walletInfoCollector}) => {
     let infos =
       walletInfoCollector
       |> WalletInfoCollector.addressInfos(AccountIndex.default);
 
     {
-      localUser,
       alertPartners:
         infos
         |. Belt.List.reduceU(
@@ -195,9 +184,6 @@ module ManagePartnersView = {
            ),
       ventureName,
       partners: partnersCollector.partners,
-      joinVentureUrl:
-        Location.origin
-        ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
     };
   };
 };

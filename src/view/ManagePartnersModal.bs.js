@@ -151,19 +151,6 @@ var Styles = /* module */[
   /* ventureLink */ventureLink
 ];
 
-function subject(name) {
-  return encodeURI("Join this Misthos Venture: \"" + (name + "\""));
-}
-
-function body(prospect, ventureName, joinUrl, user) {
-  return encodeURI("Hello " + (String(prospect) + ("\n\nI have suggested that you should join the Misthos Venture \"" + (String(ventureName) + ("\".\nGo to the URL bellow to sync with the Venture as soon as you have been accepted.\n\n" + (String(joinUrl) + ("\n\nSincerely,\n" + (String(user) + "\n\nwww.misthos.io\n  "))))))));
-}
-
-var LinkEmail = /* module */[
-  /* subject */subject,
-  /* body */body
-];
-
 function renderInputComponent(props) {
   return ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                     -976970511,
@@ -282,7 +269,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var onSubmit = function () {
                 return Curry._1(send, /* ProposePartner */1);
               };
-              var partners = $$Array.of_list(Belt_List.keepMapU(state[/* viewData */0][/* partners */2], (function (partner) {
+              var partners = $$Array.of_list(Belt_List.keepMapU(state[/* viewData */0][/* partners */1], (function (partner) {
                           var match = partner[/* canProposeRemoval */3];
                           if (match) {
                             return /* Some */[ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */2], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Radio.make(/* Some */[/* `Bool */[
@@ -486,7 +473,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                         }
                       }
                       if (exit === 1) {
-                        var match$1 = Belt_Set.has(state[/* viewData */0][/* alertPartners */3], partner);
+                        var match$1 = Belt_Set.has(state[/* viewData */0][/* alertPartners */2], partner);
                         var init$2 = state[/* inputs */4];
                         return /* UpdateWithSideEffects */Block.__(2, [
                                   /* record */[
@@ -530,7 +517,6 @@ exports.ignoreEvent = ignoreEvent;
 exports.ViewData = ViewData;
 exports.component = component;
 exports.Styles = Styles;
-exports.LinkEmail = LinkEmail;
 exports.renderInputComponent = renderInputComponent;
 exports.renderSuggestionsContainer = renderSuggestionsContainer;
 exports.renderSuggestion = renderSuggestion;
