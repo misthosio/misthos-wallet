@@ -1,5 +1,4 @@
 let environment = Environment.get().monitoringEnvironment;
-let release = "dev";
 
 type t;
 

@@ -17,10 +17,7 @@ function captureException(error) {
   return /* () */0;
 }
 
-var release = "dev";
-
 exports.environment = environment;
-exports.release = release;
 exports.initialize = initialize;
 exports.captureException = captureException;
 /* environment Not a pure module */
