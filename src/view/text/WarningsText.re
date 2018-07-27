@@ -4,7 +4,7 @@ let testnet =
   [|
     "Warning! This is the testnet version of Misthos.  Get Testnet coins "
     |> text,
-    <a target="_blank" href="https://testnet.manu.backend.hamburg/faucet">
+    <a target="_blank" href="https://testnet.coinfaucet.eu/en/">
       ("here" |> text)
     </a>,
     " and get notified of our Mainnet release " |> text,
