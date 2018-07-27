@@ -133,62 +133,41 @@ let section17P1 =
         |> text
       )
     </a>
-   
   </p>;
 let section17P2 = {js|Google wird diese Informationen in unserem Auftrag benutzen, um die Nutzung unseres Onlineangebotes durch die Nutzer auszuwerten, um Reports über die Aktivitäten innerhalb dieses Onlineangebotes zusammenzustellen und um weitere, mit der Nutzung dieses Onlineangebotes und der Internetnutzung verbundene Dienstleistungen, uns gegenüber zu erbringen. Dabei können aus den verarbeiteten Daten pseudonyme Nutzungsprofile der Nutzer erstellt werden.|js};
 let section17P3 = {js|Wir setzen Google Analytics nur mit aktivierter IP-Anonymisierung ein. Das bedeutet, die IP-Adresse der Nutzer wird von Google innerhalb von Mitgliedstaaten der Europäischen Union oder in anderen Vertragsstaaten des Abkommens über den Europäischen Wirtschaftsraum gekürzt. Nur in Ausnahmefällen wird die volle IP-Adresse an einen Server von Google in den USA übertragen und dort gekürzt.
 |js};
-let section17P4 = 
+let section17P4 =
   <p>
     (
       {js|Die von dem Browser des Nutzers übermittelte IP-Adresse wird nicht mit anderen Daten von Google zusammengeführt. Die Nutzer können die Speicherung der Cookies durch eine entsprechende Einstellung ihrer Browser-Software verhindern; die Nutzer können darüber hinaus die Erfassung der durch das Cookie erzeugten und auf ihre Nutzung des Onlineangebotes bezogenen Daten an Google sowie die Verarbeitung dieser Daten durch Google verhindern, indem sie das unter folgendem Link verfügbare Browser-Plugin herunterladen und installieren:|js}
       |> text
     )
-    
-    <a
-      href=" http://tools.google.com/dlpage/gaoptout?hl=de"
-      target="_blank">
-      (
-        " http://tools.google.com/dlpage/gaoptout?hl=de"
-        |> text
-      )
+    <a href=" http://tools.google.com/dlpage/gaoptout?hl=de" target="_blank">
+      (" http://tools.google.com/dlpage/gaoptout?hl=de" |> text)
     </a>
-   
   </p>;
-      
-  let section17P5 = 
+
+let section17P5 =
   <p>
     (
       {js|Weitere Informationen zur Datennutzung durch Google, Einstellungs- und Widerspruchsmöglichkeiten, erfahren Sie in der Datenschutzerklärung von Google |js}
       |> text
     )
-    
-    <a
-      href=" https://policies.google.com/technologies/ads"
-      target="_blank">
-      (
-        "https://policies.google.com/technologies/ads"
-        |> text
-      )
+    <a href=" https://policies.google.com/technologies/ads" target="_blank">
+      ("https://policies.google.com/technologies/ads" |> text)
     </a>
-   (
+    (
       {js|sowie in den Einstellungen für die Darstellung von Werbeeinblendungen durch Google|js}
       |> text
     )
-    
-    <a
-      href=" https://adssettings.google.com/authenticated"
-      target="_blank">
-      (
-        "https://adssettings.google.com/authenticated"
-        |> text
-      )
+    <a href=" https://adssettings.google.com/authenticated" target="_blank">
+      ("https://adssettings.google.com/authenticated" |> text)
     </a>
-
   </p>;
-    
-let section17P6 = {js|Die personenbezogenen Daten der Nutzer werden nach 14 Monaten gelöscht oder anonymisiert.|js};  
-      
+
+let section17P6 = {js|Die personenbezogenen Daten der Nutzer werden nach 14 Monaten gelöscht oder anonymisiert.|js};
+
 let section18Heading = {js|Newsletter|js};
 let section18P1 = {js|Mit den nachfolgenden Hinweisen informieren wir Sie über die Inhalte unseres Newsletters sowie das Anmelde-, Versand- und das statistische Auswertungsverfahren sowie Ihre Widerspruchsrechte auf. Indem Sie unseren Newsletter abonnieren, erklären Sie sich mit dem Empfang und den beschriebenen Verfahren einverstanden.|js};
 let section18P2 = {js|Inhalt des Newsletters: Wir versenden Newsletter, E-Mails und weitere elektronische Benachrichtigungen mit werblichen Informationen (nachfolgend „Newsletter“) nur mit der Einwilligung der Empfänger oder einer gesetzlichen Erlaubnis. Sofern im Rahmen einer Anmeldung zum Newsletter dessen Inhalte konkret umschrieben werden, sind sie für die Einwilligung der Nutzer maßgeblich. Im Übrigen enthalten unsere Newsletter Informationen zu unseren Leistungen und uns.|js};
@@ -227,24 +206,20 @@ let section19P1 =
   </p>;
 let section19P2 = {js|Der Versanddienstleister kann die Daten der Empfänger in pseudonymer Form, d.h. ohne Zuordnung zu einem Nutzer, zur Optimierung oder Verbesserung der eigenen Services nutzen, z.B. zur technischen Optimierung des Versandes und der Darstellung der Newsletter oder für statistische Zwecke verwenden. Der Versanddienstleister nutzt die Daten unserer Newsletterempfänger jedoch nicht, um diese selbst anzuschreiben oder um die Daten an Dritte weiterzugeben.|js};
 
-
 let section20Heading = {js|Onlinepräsenzen in sozialen Medien|js};
 let section20P1 = {js|Wir unterhalten Onlinepräsenzen innerhalb sozialer Netzwerke und Plattformen, um mit den dort aktiven Kunden, Interessenten und Nutzern kommunizieren und sie dort über unsere Leistungen informieren zu können. Beim Aufruf der jeweiligen Netzwerke und Plattformen gelten die Geschäftsbedingungen und die Datenverarbeitungsrichtlinien deren jeweiligen Betreiber.|js};
 let section20P2 = {js|Wir weisen darauf hin, dass dabei Daten der Nutzer außerhalb des Raumes der Europäischen Union verarbeitet werden können. Hierdurch können sich für die Nutzer Risiken ergeben, weil so z.B. die Durchsetzung der Rechte der Nutzer erschwert werden könnte. Im Hinblick auf US-Anbieter die unter dem Privacy-Shield zertifiziert sind, weisen wir darauf hin, dass sie sich damit verpflichten, die Datenschutzstandards der EU einzuhalten.|js};
 let section20P3 = {js|Die Verarbeitung der personenbezogenen Daten der Nutzer erfolgt auf Grundlage unserer berechtigten Interessen an einer effektiven Information der Nutzer und Kommunikation mit den Nutzern gem. Art. 6 Abs. 1 lit. f. DSGVO. Falls die Nutzer von den jeweiligen Anbietern um eine Einwilligung in die Datenverarbeitung gebeten werden (d.h. ihr Einverständnis z.B. über das Anhaken eines Kontrollkästchens oder Bestätigung einer Schaltfläche erklären) ist die Rechtsgrundlage der Verarbeitung Art. 6 Abs. 1 lit. a., Art. 7 DSGVO.
 |js};
 let section20P4 = {js|Für eine detaillierte Darstellung der jeweiligen Verarbeitungen und der Widerspruchsmöglichkeiten (Opt-Out), verweisen wir auf die nachfolgend verlinkten Angaben der Anbieter.|js};
-let section20P4 = {js|Auch im Fall von Auskunftsanfragen und der Geltendmachung von Nutzerrechten, weisen wir darauf hin, dass diese am effektivsten bei den Anbietern geltend gemacht werden können. Nur die Anbieter haben jeweils Zugriff auf die Daten der Nutzer und können direkt entsprechende Maßnahmen ergreifen und Auskünfte geben. Sollten Sie dennoch Hilfe benötigen, dann können Sie sich an uns wenden.
+let section20P5 = {js|Auch im Fall von Auskunftsanfragen und der Geltendmachung von Nutzerrechten, weisen wir darauf hin, dass diese am effektivsten bei den Anbietern geltend gemacht werden können. Nur die Anbieter haben jeweils Zugriff auf die Daten der Nutzer und können direkt entsprechende Maßnahmen ergreifen und Auskünfte geben. Sollten Sie dennoch Hilfe benötigen, dann können Sie sich an uns wenden.
 |js};
 
-let section21Heading = {js|- Google/ YouTube (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) |js};
+let section20P6 = {js|- Google/ YouTube (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) |js};
 
-let section22 =
+let section20P7 =
   <p>
-    (
-      {js|Datenschutzerklärung: |js}
-      |> text
-    )
+    ({js|Datenschutzerklärung: |js} |> text)
     <a href="https://www.google.com/policies/privacy/" target="_blank">
       ("https://www.google.com/policies/privacy/" |> text)
     </a>
@@ -253,17 +228,22 @@ let section22 =
       ("https://adssettings.google.com/authenticated" |> text)
     </a>
     ("." |> text)
- ({js|, Privacy Shield:  |js} |> text)
-    <a href="https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active" target="_blank">
-      ("https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active" |> text)
+    ({js|, Privacy Shield:  |js} |> text)
+    <a
+      href="https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
+      target="_blank">
+      (
+        "https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
+        |> text
+      )
     </a>
     ("." |> text)
   </p>;
 
-let section23Heading = {js|- Twitter (Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA)|js};
-let section23 =
+let section20P8 = {js|- Twitter (Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA)|js};
+let section20P9 =
   <p>
- ({js|) - Datenschutzerklärung: |js} |> text)
+    ({js|Datenschutzerklärung: |js} |> text)
     <a href="https://twitter.com/de/privacy" target="_blank">
       ("https://twitter.com/de/privacy" |> text)
     </a>
@@ -280,13 +260,12 @@ let section23 =
         |> text
       )
     </a>
-    
   </p>;
 
-let section24Heading = {js|- LinkedIn (LinkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland) |js};
-let section24 =
+let section20P10 = {js|- LinkedIn (LinkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland) |js};
+let section20P11 =
   <p>
-    ({js|). Datenschutzerklärung: |js} |> text)
+    ({js|Datenschutzerklärung: |js} |> text)
     <a href="https://www.linkedin.com/legal/privacy-policy" target="_blank">
       ("https://www.linkedin.com/legal/privacy-policy" |> text)
     </a>
@@ -300,7 +279,7 @@ let section24 =
       )
     </a>
     (". Privacy Shield" |> text)
-      <a
+    <a
       href="https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active"
       target="_blank">
       (
@@ -308,25 +287,29 @@ let section24 =
         |> text
       )
     </a>
-   
   </p>;
 
-let section25Heading = {js|Sentry - Open Source Error Tracking|js};
-let section25P1 = {js|Mit Hilfe des Error-Trackings stellen wir die Verfügbarkeit und Integrität unseres Onlineangebotes sicher und verwenden die dabei verarbeiteten Daten, um unser Onlineangebot technisch zu optimieren.|js};
-let section25P2 =
+let section21Heading = {js|Sentry - Open Source Error Tracking|js};
+let section21P1 = {js|Mit Hilfe des Error-Trackings stellen wir die Verfügbarkeit und Integrität unseres Onlineangebotes sicher und verwenden die dabei verarbeiteten Daten, um unser Onlineangebot technisch zu optimieren.|js};
+let section21P2 =
   <p>
     (
       {js|Zu diesen Zwecken setzen wir den Dienst Sentry von der Firma Functional Software, Inc. dba Sentry, 132 Hawthorne Street, San Francisco, CA 94107. Die Firma Functional Software ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten |js}
       |> text
     )
-    <a href="https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO" target="_blank">
-      ("https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO" |> text)
+    <a
+      href="https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO"
+      target="_blank">
+      (
+        "https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO"
+        |> text
+      )
     </a>
-   </p>;
-let section25P3 = {js|Sentry ist eine Open-Source Echtzeit-Fehlerverfolgungsplattform für Web-Apps, mobilen Apps und Spiele und bietet die Entwicklern den nötigen Einblick, um Fehler und Abstürze zu reproduzieren und zu beheben.|js};
-let section25P4 = {js|Wir setzen Sentry auf Grundlage unserer berechtigten Interessen an der Sicherheit, Fehlerfreiheit und Optimierung unseres Onlineangebotes gem. Art. 6 Abs. 1 lit. f DSGVO ein.
+  </p>;
+let section21P3 = {js|Sentry ist eine Open-Source Echtzeit-Fehlerverfolgungsplattform für Web-Apps, mobilen Apps und Spiele und bietet die Entwicklern den nötigen Einblick, um Fehler und Abstürze zu reproduzieren und zu beheben.|js};
+let section21P4 = {js|Wir setzen Sentry auf Grundlage unserer berechtigten Interessen an der Sicherheit, Fehlerfreiheit und Optimierung unseres Onlineangebotes gem. Art. 6 Abs. 1 lit. f DSGVO ein.
 |js};
-let section25P6 =
+let section21P6 =
   <p>
     (
       {js|Weitere Informationen zur Verarbeitung personenbezogener Daten durch Sentry, erhalten Sie in der Datenschutzerklärung des Dienstes:|js}
@@ -335,10 +318,9 @@ let section25P6 =
     <a href="https://sentry.io/privacy/" target="_blank">
       ("https://sentry.io/privacy/" |> text)
     </a>
-   </p>;
+  </p>;
 
-
-let section26 =
+let section22 =
   <p>
     <a href="https://datenschutz-generator.de/" target="_blank">
       (
