@@ -43,16 +43,16 @@ let get = () => {
       monitoringEnvironment: "staging",
     }
   | "testnet.misthos.io"
-  | "www.misthos.io"
   | "web-testnet.misthos.io" => {
       redirectURI: "https://testnet.misthos.io/",
       manifestURI: "https://testnet.misthos.io/manifest.json",
       appDomain: "https://testnet.misthos.io",
-      webDomain: "https://www.misthos.io",
+      webDomain: "https://web-testnet.misthos.io",
       cookieDomain: "misthos.io",
       network: Testnet,
       monitoringEnvironment: "testnet",
     }
+  | "www.misthos.io"
   | "app.misthos.io" => {
       redirectURI: "https://app.misthos.io/",
       manifestURI: "https://app.misthos.io/manifest.json",
