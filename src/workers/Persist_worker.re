@@ -147,23 +147,25 @@ let determinPartnerKeysAndRemovals = eventLog => {
 };
 
 let persistLogString = (ventureId, logString, pubKey) =>
-  Blockstack.putFileNotEncrypted(
-    (ventureId |> VentureId.toString)
-    ++ "/"
-    ++ UserInfo.storagePrefix(~appPubKey=pubKey)
-    ++ "/log.json",
-    logString |> Blockstack.encryptECIES(~publicKey=pubKey) |> Json.stringify,
+  Blockstack.putFileEncryptedFor(
+    ~path=
+      (ventureId |> VentureId.toString)
+      ++ "/"
+      ++ UserInfo.storagePrefix(~appPubKey=pubKey)
+      ++ "/log.json",
+    ~content=logString,
+    ~pubKey,
   );
 
 let persistSummaryString = (ventureId, summaryString, pubKey) =>
-  Blockstack.putFileNotEncrypted(
-    (ventureId |> VentureId.toString)
-    ++ "/"
-    ++ UserInfo.storagePrefix(~appPubKey=pubKey)
-    ++ "/summary.json",
-    summaryString
-    |> Blockstack.encryptECIES(~publicKey=pubKey)
-    |> Json.stringify,
+  Blockstack.putFileEncryptedFor(
+    ~path=
+      (ventureId |> VentureId.toString)
+      ++ "/"
+      ++ UserInfo.storagePrefix(~appPubKey=pubKey)
+      ++ "/summary.json",
+    ~content=summaryString,
+    ~pubKey,
   );
 
 let persistRemovals = (ventureId, (removalProcesses, removedKeys)) =>

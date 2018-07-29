@@ -66,6 +66,14 @@ external putFileEncrypted : (string, string) => Js.Promise.t(unit) =
   "putFile";
 
 [@bs.module "blockstack"]
+external _putFileEncryptedFor :
+  (string, string, {. "encrypt": string}) => Js.Promise.t(unit) =
+  "putFile";
+
+let putFileEncryptedFor = (~path, ~content, ~pubKey) =>
+  _putFileEncryptedFor(path, content, {"encrypt": pubKey});
+
+[@bs.module "blockstack"]
 external putFileNotEncrypted :
   (string, string, [@bs.as {json| {"encrypt": false} |json}] _) =>
   Js.Promise.t(unit) =
@@ -79,12 +87,6 @@ external getUserAppFileUrl :
 
 [@bs.module "blockstack/lib/keys.js"]
 external makeECPrivateKey : unit => string = "";
-
-[@bs.module "blockstack/lib/encryption.js"]
-external encryptECIES : (~publicKey: string, string) => Js.Json.t = "";
-
-[@bs.module "blockstack/lib/encryption.js"]
-external decryptECIES : (~privateKey: string, Js.Json.t) => string = "";
 
 type profile;
 [@bs.module "blockstack"]

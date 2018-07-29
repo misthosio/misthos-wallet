@@ -9,14 +9,13 @@ var Venture = require("../application/Venture.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var Blockstack = require("blockstack");
+var Blockstack = require("../ffi/Blockstack.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var PersistWorkerMessage = require("./PersistWorkerMessage.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
-var EncryptionJs = require("blockstack/lib/encryption.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
 
@@ -266,11 +265,11 @@ function determinPartnerKeysAndRemovals(eventLog) {
 }
 
 function persistLogString(ventureId, logString, pubKey) {
-  return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/log.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, logString)), ( {"encrypt": false} ));
+  return Blockstack.putFileEncryptedFor(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/log.json")), logString, pubKey);
 }
 
 function persistSummaryString(ventureId, summaryString, pubKey) {
-  return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, summaryString)), ( {"encrypt": false} ));
+  return Blockstack.putFileEncryptedFor(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), summaryString, pubKey);
 }
 
 function persistRemovals(ventureId, param) {

@@ -18,6 +18,12 @@ function getFileFromUserAndDecrypt(file, username) {
             });
 }
 
+function putFileEncryptedFor(path, content, pubKey) {
+  return Blockstack.putFile(path, content, {
+              encrypt: pubKey
+            });
+}
+
 function fetchIds($staropt$star, beginning) {
   var current = $staropt$star ? $staropt$star[0] : /* array */[];
   if (beginning === "") {
@@ -48,5 +54,6 @@ function fetchIds($staropt$star, beginning) {
 
 exports.getFileFromUser = getFileFromUser;
 exports.getFileFromUserAndDecrypt = getFileFromUserAndDecrypt;
+exports.putFileEncryptedFor = putFileEncryptedFor;
 exports.fetchIds = fetchIds;
 /* blockstack Not a pure module */
