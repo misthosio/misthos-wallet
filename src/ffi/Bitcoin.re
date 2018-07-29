@@ -154,11 +154,20 @@ module TxBuilder = {
     "fromTransaction";
   [@bs.send.pipe: t] external addInput : (string, int) => int = "";
   [@bs.send.pipe: t]
+  external addInputFromTx : (Transaction.t, int) => int = "addInput";
+  [@bs.send.pipe: t]
+  external addInputWithOutScript :
+    (string, int, [@bs.as {json|null|json}] _, Node.buffer) => int =
+    "addInput";
+  [@bs.send.pipe: t]
   external addInputWithSequence : (string, int, int) => int = "addInput";
   [@bs.send] external setLockTime : (t, int) => unit = "";
   [@bs.send] external setVersion : (t, int) => unit = "";
   [@bs.send.pipe: t] external addOutput : (string, float) => int = "";
   [@bs.send.pipe: t] external sign : (int, ECPair.t) => unit = "";
+  [@bs.send.pipe: t]
+  external signMultisig : (int, ECPair.t, ~redeemScript: Node.buffer) => unit =
+    "sign";
   [@bs.send.pipe: t]
   external signSegwit :
     (

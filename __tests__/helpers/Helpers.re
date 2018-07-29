@@ -94,10 +94,14 @@ let fundAddress = (outputs, utxos) => {
      )
   |> ignore;
   inputs |> List.iteri((i, _utxo) => txB |> TxBuilder.sign(i, faucetKey));
+  Js.log(txB |> TxBuilder.build |> Transaction.toHex);
   Js.Promise.(
     broadcastTransaction(txB |> TxBuilder.build)
     |> then_(_ =>
-         BitcoindClient.getUTXOs(bitcoindConfig, outputs |> List.map(fst))
+         all2((
+           BitcoindClient.getUTXOs(bitcoindConfig, outputs |> List.map(fst)),
+           txB |> TxBuilder.build |> resolve,
+         ))
        )
   );
 };

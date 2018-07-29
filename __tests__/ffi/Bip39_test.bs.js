@@ -4,7 +4,9 @@
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Utils = require("../../src/utils/Utils.bs.js");
 var Bip39 = require("bip39");
+var ECurve = require("../../src/ffi/ECurve.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var Ecurve = require("ecurve");
 var BitcoinjsLib = require("bitcoinjs-lib");
 
 Jest.test("Mnemonic from pubKey", (function () {
@@ -12,6 +14,20 @@ Jest.test("Mnemonic from pubKey", (function () {
         var pubKey = Utils.bufFromHex($$String.sub(Utils.publicKeyFromKeyPair(keyPair), 0, 64));
         var wordList = Bip39.entropyToMnemonic(pubKey, Bip39.wordlists.english);
         return Jest.Expect[/* toEqual */12]("acoustic fuel evolve talk wine steak pool wrist heavy april refuse include material crane bargain rigid type carbon image spike sword tissue wrong pottery", Jest.Expect[/* expect */0](wordList));
+      }));
+
+Jest.test("stuff", (function () {
+        var node = BitcoinjsLib.HDNode.fromSeedBuffer(Bip39.mnemonicToSeed("abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"), BitcoinjsLib.networks.bitcoin).derivePath("0'/0").derive(0);
+        var lPubKeyBuf = Ecurve.Point.decodeFrom(ECurve.secp256k1, Utils.bufFromHex("046666422d00f1b308fc7527198749f06fedb028b979c09f60d0348ef79c985e4138b86996b354774c434488d61c7fb20a83293ef3195d422fde9354e6cf2a74ce")).getEncoded(true);
+        console.log("node asht", Utils.bufToHex(node.getPublicKeyBuffer()));
+        console.log("ledger", Utils.bufToHex(lPubKeyBuf));
+        var lPubKey = BitcoinjsLib.ECPair.fromPublicKeyBuffer(lPubKeyBuf);
+        var chainCode = Utils.bufFromHex("bce80dd580792cd18af542790e56aa813178dc28644bb5f03dbd44c85f2d2e7a");
+        var lNode = new BitcoinjsLib.HDNode(lPubKey, chainCode);
+        var derivedAddress = lNode.keyPair.getAddress();
+        console.log(derivedAddress);
+        var pubKey = BitcoinjsLib.ECPair.fromPublicKeyBuffer(node.getPublicKeyBuffer());
+        return Jest.Expect[/* toEqual */12](lPubKey.getAddress(), Jest.Expect[/* expect */0](pubKey.getAddress()));
       }));
 
 /*  Not a pure module */

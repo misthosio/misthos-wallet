@@ -115,10 +115,14 @@ function fundAddress(outputs, utxos) {
           txB.sign(i, faucetKey);
           return /* () */0;
         }), inputs);
+  console.log(txB.build().toHex());
   return broadcastTransaction(txB.build()).then((function () {
-                return BitcoindClient.getUTXOs(bitcoindConfig, List.map((function (prim) {
-                                  return prim[0];
-                                }), outputs));
+                return Promise.all(/* tuple */[
+                            BitcoindClient.getUTXOs(bitcoindConfig, List.map((function (prim) {
+                                        return prim[0];
+                                      }), outputs)),
+                            Promise.resolve(txB.build())
+                          ]);
               }));
 }
 
