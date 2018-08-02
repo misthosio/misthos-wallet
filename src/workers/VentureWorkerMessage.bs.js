@@ -14,7 +14,6 @@ var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var CustodianKeyChain = require("../application/wallet/CustodianKeyChain.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage");
 
@@ -101,14 +100,13 @@ function decodeSuccess(raw) {
 function encodeError(param) {
   switch (param) {
     case 0 : 
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              [
-                "VentureWorkerMessage.re",
-                114,
-                2
-              ]
-            ];
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "NotACustodian"
+                    ],
+                    /* [] */0
+                  ]);
     case 1 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[

@@ -112,6 +112,8 @@ let decodeSuccess = raw => {
 
 let encodeError =
   fun
+  | NotACustodian =>
+    Json.Encode.(object_([("type", string("NotACustodian"))]))
   | CouldNotJoinVenture =>
     Json.Encode.(object_([("type", string("CouldNotJoinVenture"))]))
   | CouldNotLoadVenture =>
