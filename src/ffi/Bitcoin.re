@@ -114,7 +114,13 @@ module Address = {
 module HDNode = {
   type t;
   [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
-  external fromPrivateKey : (Node.buffer, Node.buffer, Networks.t) => t = "";
+  external fromPrivateKey :
+    (~privateKey: Node.buffer, ~chainCode: Node.buffer, Networks.t) => t =
+    "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
+  external fromPublicKey :
+    (~publicKey: Node.buffer, ~chainCode: Node.buffer, Networks.t) => t =
+    "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
   external _fromBase58 : (string, Networks.t) => t = "fromBase58";
   let fromBase58 = base58 =>

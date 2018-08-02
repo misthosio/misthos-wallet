@@ -23,8 +23,8 @@ let userSession = id : SessionData.t => {
     masterKeyChain:
       Bitcoin.(
         HDNode.fromPrivateKey(
-          issuerKeyPair |> ECPair.getPrivateKey,
-          appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
+          ~privateKey=issuerKeyPair |> ECPair.getPrivateKey,
+          ~chainCode=appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
           issuerKeyPair |> ECPair.getNetwork,
         )
       ),

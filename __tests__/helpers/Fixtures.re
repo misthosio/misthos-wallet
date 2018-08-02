@@ -12,8 +12,8 @@ let userSession = (userId, keyPair) : SessionData.t => {
     storagePrefix: UserInfo.storagePrefix(~appPubKey),
     masterKeyChain:
       HDNode.fromPrivateKey(
-        keyPair |> ECPair.getPrivateKey,
-        chainCode,
+        ~privateKey=keyPair |> ECPair.getPrivateKey,
+        ~chainCode,
         keyPair |> ECPair.getNetwork,
       ),
     network: Regtest,
