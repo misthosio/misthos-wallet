@@ -21,7 +21,24 @@ type ledgerPubKey = {
 external getWalletPublicKey : (btc, string) => Js.Promise.t(ledgerPubKey) =
   "";
 
+let getHDNode = (path, network, ledger) =>
+  Js.Promise.(
+    ledger
+    |. getWalletPublicKey(path)
+    |> then_(pubKey =>
+         Bitcoin.HDNode.fromPublicKey(
+           ~publicKey=
+             bufFromStringWithEncoding(pubKey##publicKey, ~encoding="hex"),
+           ~chainCode=
+             bufFromStringWithEncoding(pubKey##chainCode, ~encoding="hex"),
+           network,
+         )
+         |> resolve
+       )
+  );
+
 type txInfo;
+
 [@bs.send]
 external splitTransaction :
   (btc, ~txHex: string, [@bs.as {json|true|json}] _) => txInfo =
@@ -46,19 +63,3 @@ external signP2SHTransaction :
   ) =>
   Js.Promise.t(array(string)) =
   "";
-
-let getHDNode = (path, network, ledger) =>
-  Js.Promise.(
-    ledger
-    |. getWalletPublicKey(path)
-    |> then_(pubKey =>
-         Bitcoin.HDNode.fromPublicKey(
-           ~publicKey=
-             bufFromStringWithEncoding(pubKey##publicKey, ~encoding="hex"),
-           ~chainCode=
-             bufFromStringWithEncoding(pubKey##chainCode, ~encoding="hex"),
-           network,
-         )
-         |> resolve
-       )
-  );

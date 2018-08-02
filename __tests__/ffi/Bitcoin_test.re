@@ -68,8 +68,8 @@ let () = {
     test("can create an HDNode", () => {
       let node =
         HDNode.fromPrivateKey(
-          pair |> ECPair.getPrivateKey,
-          chainCode,
+          ~privateKey=pair |> ECPair.getPrivateKey,
+          ~chainCode,
           pair |> ECPair.getNetwork,
         );
       expect(node |> HDNode.getPublicKey |> Utils.bufToHex)
