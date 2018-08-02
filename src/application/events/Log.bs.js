@@ -73,7 +73,7 @@ function Make(funarg) {
                   var item = param[1];
                   var issuerPubKey = item[/* issuerPubKey */2];
                   var hashCheck = makeItemHash(issuerPubKey, item[/* event */0]);
-                  if (Utils.bufToHex(hashCheck) !== item[/* hash */1] || !Utils.keyFromPublicKey(issuerPubKey).verify(hashCheck, item[/* signature */3])) {
+                  if (Utils.bufToHex(hashCheck) !== item[/* hash */1] || !Utils.keyFromPublicKey(BitcoinjsLib.networks.bitcoin, issuerPubKey).verify(hashCheck, item[/* signature */3])) {
                     return /* None */0;
                   } else {
                     return /* Some */[item];

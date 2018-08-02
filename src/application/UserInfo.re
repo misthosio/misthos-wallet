@@ -69,7 +69,7 @@ let hasSignedTAC = (tacHash, userInfo: Public.t) =>
   switch (userInfo.termsAndConditions |. Map.String.get(tacHash)) {
   | Some(signature) =>
     let signature = signature |> Utils.signatureFromDER;
-    Utils.keyFromPublicKey(userInfo.appPubKey)
+    Utils.keyFromPublicKey(Bitcoin.Networks.bitcoin, userInfo.appPubKey)
     |> Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature);
   | _ => false
   };
@@ -155,5 +155,5 @@ let getOrInit = (~appPubKey, userId) =>
 let storagePrefix = (~appPubKey) =>
   appPubKey
   |> Utils.bufFromHex
-  |> Bitcoin.ECPair.fromPublicKey
+  |. Bitcoin.ECPair.fromPublicKey({"network": Bitcoin.Networks.bitcoin})
   |> Bitcoin.Address.fromKeyPair;

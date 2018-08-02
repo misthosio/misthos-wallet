@@ -24,10 +24,10 @@ let get = () => {
       monitoringEnvironment: "web",
     }
   | "localhost" => {
-      redirectURI: "http://localhost:3000/",
-      manifestURI: "http://localhost:3000/manifest.json",
-      appDomain: "http://localhost:3000",
-      webDomain: "http://localhost:3001",
+      redirectURI: "https://localhost:3000/",
+      manifestURI: "https://localhost:3000/manifest.json",
+      appDomain: "https://localhost:3000",
+      webDomain: "https://localhost:3001",
       cookieDomain: "localhost",
       network: Testnet,
       monitoringEnvironment: "dev",

@@ -79,7 +79,7 @@ module ECPair = {
   external fromPrivateKey : (Node.buffer, {. "network": Networks.t}) => t =
     "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
-  external fromPublicKey : Node.buffer => t = "";
+  external fromPublicKey : (Node.buffer, {. "network": Networks.t}) => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIF : string => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]

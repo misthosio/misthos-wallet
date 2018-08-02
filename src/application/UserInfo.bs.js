@@ -77,7 +77,7 @@ function hasSignedTAC(tacHash, userInfo) {
   var match = Belt_MapString.get(userInfo[/* termsAndConditions */1], tacHash);
   if (match) {
     var signature = Utils.signatureFromDER(match[0]);
-    return Utils.keyFromPublicKey(userInfo[/* appPubKey */0]).verify(Utils.bufFromHex(tacHash), signature);
+    return Utils.keyFromPublicKey(BitcoinjsLib.networks.bitcoin, userInfo[/* appPubKey */0]).verify(Utils.bufFromHex(tacHash), signature);
   } else {
     return false;
   }
@@ -165,7 +165,9 @@ function getOrInit(appPubKey, userId) {
 }
 
 function storagePrefix(appPubKey) {
-  return Bitcoin.Address[/* fromKeyPair */1](BitcoinjsLib.ECPair.fromPublicKey(Utils.bufFromHex(appPubKey)));
+  return Bitcoin.Address[/* fromKeyPair */1](BitcoinjsLib.ECPair.fromPublicKey(Utils.bufFromHex(appPubKey), {
+                  network: BitcoinjsLib.networks.bitcoin
+                }));
 }
 
 var Public = [read];

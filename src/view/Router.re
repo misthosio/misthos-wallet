@@ -10,7 +10,8 @@ module Config = {
     | Income(string)
     | HiddenOutputLog
     | Addresses
-    | Receive;
+    | Receive
+    | ConnectLedger;
   type route =
     | Home
     | Venture(ventureId, ventureSubRoute)
@@ -44,6 +45,8 @@ module Config = {
       Venture(id |> VentureId.fromString, Income(transactionId))
     | ["ventures", id, "receive"] =>
       Venture(id |> VentureId.fromString, Receive)
+    | ["ventures", id, "ledger"] =>
+      Venture(id |> VentureId.fromString, ConnectLedger)
     | ["ventures", id, "joinvia", userId] =>
       JoinVenture(id |> VentureId.fromString, userId |> UserId.fromString)
     | ["typographystack"] => TypographyStack
@@ -76,6 +79,8 @@ module Config = {
       "/ventures/" ++ (id |> VentureId.toString) ++ "/income/" ++ txId
     | Venture(id, Receive) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/receive"
+    | Venture(id, ConnectLedger) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/ledger"
     | JoinVenture(id, userId) =>
       "/ventures/"
       ++ (id |> VentureId.toString)

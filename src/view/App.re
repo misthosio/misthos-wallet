@@ -170,6 +170,13 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
           },
           Some(onCloseModal(selected)),
         ))
+    | (
+        LoggedIn(_),
+        Venture(selected, ConnectLedger),
+        VentureLoaded(_, venture, _),
+      ) =>
+      venture |> ViewModel.readOnly ?
+        None : Some((<ConnectLedgerModal />, Some(onCloseModal(selected))))
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
