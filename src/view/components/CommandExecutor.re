@@ -16,6 +16,7 @@ type commands = {
   proposePartnerRemoval: (~partnerId: userId) => unit,
   endorsePartnerRemoval: (~processId: processId) => unit,
   rejectPartnerRemoval: (~processId: processId) => unit,
+  submitCustodianKeyChain: (~keyChain: CustodianKeyChain.public) => unit,
   proposePayout:
     (
       ~accountIdx: accountIdx,
@@ -58,6 +59,8 @@ let make =
       send(CommandExecuted(commands.endorsePartnerRemoval(~processId))),
     rejectPartnerRemoval: (~processId) =>
       send(CommandExecuted(commands.rejectPartnerRemoval(~processId))),
+    submitCustodianKeyChain: (~keyChain) =>
+      send(CommandExecuted(commands.submitCustodianKeyChain(~keyChain))),
     proposePayout: (~accountIdx, ~destinations, ~fee) =>
       send(
         CommandExecuted(
@@ -155,6 +158,8 @@ module Status = {
         | CouldNotPersistVenture =>
           "Your submission could not be persisted, probably due to network connectivity."
           |> message(Error)
+        | NotACustodian =>
+          "You are not a custodian of this venture" |> message(Error)
         | UserIdDoesNotExist =>
           "Blockstack id does not exist, or is corrupted" |> message(Error)
         | MaxPartnersReached =>
@@ -173,6 +178,8 @@ module Status = {
         }
       | Success(success) =>
         switch (success) {
+        | KeyChainSubmitted =>
+          "Your public Keys have been submitted" |> message(Success)
         | ProcessStarted(_) =>
           "Your proposal has been submitted" |> message(Success)
         | ProcessEndorsed(_) =>

@@ -12,61 +12,75 @@ var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
+var CustodianKeyChain = require("../application/wallet/CustodianKeyChain.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage");
 
 function encodeSuccess(param) {
-  switch (param.tag | 0) {
-    case 0 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "ProcessStarted"
-                    ],
-                    /* :: */[
+  if (typeof param === "number") {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "KeyChainSubmitted"
+                ],
+                /* [] */0
+              ]);
+  } else {
+    switch (param.tag | 0) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "processId",
-                        PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                        "type",
+                        "ProcessStarted"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 1 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "ProcessEndorsed"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "processId",
+                          PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "processId",
-                        PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                        "type",
+                        "ProcessEndorsed"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 2 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "ProcessRejected"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "processId",
+                          PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "processId",
-                        PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                        "type",
+                        "ProcessRejected"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    
+                      /* :: */[
+                        /* tuple */[
+                          "processId",
+                          PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      
+    }
   }
 }
 
 function decodeSuccess(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
+    case "KeyChainSubmitted" : 
+        return /* KeyChainSubmitted */0;
     case "ProcessEndorsed" : 
         var processId = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
         return /* ProcessEndorsed */Block.__(1, [processId]);
@@ -87,6 +101,15 @@ function decodeSuccess(raw) {
 function encodeError(param) {
   switch (param) {
     case 0 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              [
+                "VentureWorkerMessage.re",
+                114,
+                2
+              ]
+            ];
+    case 1 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -94,7 +117,7 @@ function encodeError(param) {
                     ],
                     /* [] */0
                   ]);
-    case 1 : 
+    case 2 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -102,7 +125,7 @@ function encodeError(param) {
                     ],
                     /* [] */0
                   ]);
-    case 2 : 
+    case 3 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -110,7 +133,7 @@ function encodeError(param) {
                     ],
                     /* [] */0
                   ]);
-    case 3 : 
+    case 4 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -118,7 +141,7 @@ function encodeError(param) {
                     ],
                     /* [] */0
                   ]);
-    case 4 : 
+    case 5 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -126,7 +149,7 @@ function encodeError(param) {
                     ],
                     /* [] */0
                   ]);
-    case 5 : 
+    case 6 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -134,7 +157,7 @@ function encodeError(param) {
                     ],
                     /* [] */0
                   ]);
-    case 6 : 
+    case 7 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -150,19 +173,19 @@ function decodeError(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "CouldNotJoinVenture" : 
-        return /* CouldNotJoinVenture */0;
+        return /* CouldNotJoinVenture */1;
     case "CouldNotLoadVenture" : 
-        return /* CouldNotLoadVenture */1;
+        return /* CouldNotLoadVenture */2;
     case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */6;
+        return /* CouldNotPersistVenture */7;
     case "MaxPartnersReached" : 
-        return /* MaxPartnersReached */2;
+        return /* MaxPartnersReached */3;
     case "PartnerAlreadyExists" : 
-        return /* PartnerAlreadyExists */3;
+        return /* PartnerAlreadyExists */4;
     case "PartnerAlreadyProposed" : 
-        return /* PartnerAlreadyProposed */4;
+        return /* PartnerAlreadyProposed */5;
     case "UserIdDoesNotExist" : 
-        return /* UserIdDoesNotExist */5;
+        return /* UserIdDoesNotExist */6;
     default:
       throw [
             UnknownMessage,
@@ -406,6 +429,26 @@ function encodeIncoming(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
+                      "SubmitCustodianKeyChain"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "ventureId",
+                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "keyChain",
+                          CustodianKeyChain.encode(param[1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    case 11 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
                       "ProposePayout"
                     ],
                     /* :: */[
@@ -438,7 +481,7 @@ function encodeIncoming(param) {
                       ]
                     ]
                   ]);
-    case 11 : 
+    case 12 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -458,7 +501,7 @@ function encodeIncoming(param) {
                       ]
                     ]
                   ]);
-    case 12 : 
+    case 13 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -478,7 +521,7 @@ function encodeIncoming(param) {
                       ]
                     ]
                   ]);
-    case 13 : 
+    case 14 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -498,7 +541,7 @@ function encodeIncoming(param) {
                       ]
                     ]
                   ]);
-    case 14 : 
+    case 15 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -524,7 +567,7 @@ function encodeIncoming(param) {
                       ]
                     ]
                   ]);
-    case 15 : 
+    case 16 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -568,7 +611,7 @@ function encodeIncoming(param) {
                       ]
                     ]
                   ]);
-    case 16 : 
+    case 17 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -615,14 +658,14 @@ function decodeIncoming(raw) {
     case "EndorsePayout" : 
         var ventureId$2 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var processId$2 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
-        return /* EndorsePayout */Block.__(12, [
+        return /* EndorsePayout */Block.__(13, [
                   ventureId$2,
                   processId$2
                 ]);
     case "ExposeIncomeAddress" : 
         var ventureId$3 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var accountIdx = Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw);
-        return /* ExposeIncomeAddress */Block.__(13, [
+        return /* ExposeIncomeAddress */Block.__(14, [
                   ventureId$3,
                   accountIdx
                 ]);
@@ -642,7 +685,7 @@ function decodeIncoming(raw) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         var partnerId = Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw);
-        return /* NewItemsDetected */Block.__(14, [
+        return /* NewItemsDetected */Block.__(15, [
                   ventureId$6,
                   items,
                   partnerId
@@ -670,7 +713,7 @@ function decodeIncoming(raw) {
                             }), param);
               }), raw);
         var fee = Json_decode.field("fee", BTC.decode, raw);
-        return /* ProposePayout */Block.__(10, [
+        return /* ProposePayout */Block.__(11, [
                   ventureId$9,
                   accountIdx$1,
                   destinations,
@@ -693,21 +736,28 @@ function decodeIncoming(raw) {
     case "RejectPayout" : 
         var ventureId$12 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var processId$5 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
-        return /* RejectPayout */Block.__(11, [
+        return /* RejectPayout */Block.__(12, [
                   ventureId$12,
                   processId$5
                 ]);
-    case "SyncTabs" : 
+    case "SubmitCustodianKeyChain" : 
         var ventureId$13 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var keyChain = Json_decode.field("keyChain", CustodianKeyChain.decode, raw);
+        return /* SubmitCustodianKeyChain */Block.__(10, [
+                  ventureId$13,
+                  keyChain
+                ]);
+    case "SyncTabs" : 
+        var ventureId$14 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items$1 = Json_decode.field("items", (function (param) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
-        return /* SyncTabs */Block.__(16, [
-                  ventureId$13,
+        return /* SyncTabs */Block.__(17, [
+                  ventureId$14,
                   items$1
                 ]);
     case "SyncWallet" : 
-        var ventureId$14 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$15 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var partial_arg = Event.Payout[/* Broadcast */11][/* decode */2];
         var broadcasts = Json_decode.field("broadcastEvents", (function (param) {
                 return Json_decode.list(partial_arg, param);
@@ -728,8 +778,8 @@ function decodeIncoming(raw) {
         var confs = Json_decode.field("transactionConfirmations", (function (param) {
                 return Json_decode.list(partial_arg$4, param);
               }), raw);
-        return /* SyncWallet */Block.__(15, [
-                  ventureId$14,
+        return /* SyncWallet */Block.__(16, [
+                  ventureId$15,
                   broadcasts,
                   broadcastFailures,
                   incomeEvents,

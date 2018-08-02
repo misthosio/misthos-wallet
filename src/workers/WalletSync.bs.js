@@ -63,7 +63,7 @@ function notifyOfUnlockedInputs(ventureId, blockHeight, param, walletInfo) {
           }
         }));
   if (events) {
-    return postMessage$1(/* SyncWallet */Block.__(15, [
+    return postMessage$1(/* SyncWallet */Block.__(16, [
                   ventureId,
                   /* [] */0,
                   /* [] */0,
@@ -84,7 +84,7 @@ function broadcastPayouts(param) {
                 return catchAndLogError(Curry._1(NetworkClient.broadcastTransaction(network), BitcoinjsLib.Transaction.fromHex(param[/* payoutTx */2][/* txHex */0])).then((function (result) {
                                   var tmp;
                                   if (typeof result === "number") {
-                                    tmp = postMessage$1(/* SyncWallet */Block.__(15, [
+                                    tmp = postMessage$1(/* SyncWallet */Block.__(16, [
                                             ventureId,
                                             /* :: */[
                                               Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId),
@@ -98,7 +98,7 @@ function broadcastPayouts(param) {
                                   } else {
                                     switch (result.tag | 0) {
                                       case 0 : 
-                                          tmp = postMessage$1(/* SyncWallet */Block.__(15, [
+                                          tmp = postMessage$1(/* SyncWallet */Block.__(16, [
                                                   ventureId,
                                                   /* :: */[
                                                     Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, result[0]),
@@ -113,7 +113,7 @@ function broadcastPayouts(param) {
                                       case 1 : 
                                           var errorMessage = result[0];
                                           Utils.printError("Broadcasting transaction failed", errorMessage);
-                                          tmp = postMessage$1(/* SyncWallet */Block.__(15, [
+                                          tmp = postMessage$1(/* SyncWallet */Block.__(16, [
                                                   ventureId,
                                                   /* [] */0,
                                                   /* :: */[
@@ -216,7 +216,7 @@ function detectIncomeFromVenture(ventureId, eventLog) {
                   tmp = /* () */0;
                 }
                 if (exit === 1) {
-                  tmp = postMessage$1(/* SyncWallet */Block.__(15, [
+                  tmp = postMessage$1(/* SyncWallet */Block.__(16, [
                           ventureId,
                           /* [] */0,
                           /* [] */0,

@@ -165,7 +165,7 @@ function make(currentRoute, session, children) {
                           case 5 : 
                               var newItems = msg[1];
                               var ventureId = msg[0];
-                              Curry._2(VentureWorkerClient.postMessage, state[/* ventureWorker */5][0], /* SyncTabs */Block.__(16, [
+                              Curry._2(VentureWorkerClient.postMessage, state[/* ventureWorker */5][0], /* SyncTabs */Block.__(17, [
                                       ventureId,
                                       newItems
                                     ]));

@@ -181,9 +181,9 @@ function make(viewData, commands, cmdStatus, _) {
                                           ])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* currentPartners */0], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", /* None */0, "Reject Payout", match[/* canVote */3], (function () {
-                                              return Curry._1(commands[/* endorsePayout */8], processId);
+                                              return Curry._1(commands[/* endorsePayout */9], processId);
                                             }), (function () {
-                                              return Curry._1(commands[/* rejectPayout */9], processId);
+                                              return Curry._1(commands[/* rejectPayout */10], processId);
                                             }), (function () {
                                               return Curry._1(commands[/* reset */0], /* () */0);
                                             }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */2]) > 0 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_SnackbarContent.make(/* None */0, /* None */0, /* Some */[ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])) : null)], /* Some */[tmp], /* None */0, /* array */[]));

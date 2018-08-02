@@ -541,6 +541,45 @@ module Handle = {
       )
     );
   };
+  let submitCustodianKeyChain = (ventureId, keyChain) => {
+    logMessage("Handling 'SubmitCustodianKeyChain'");
+    withVenture(Load(ventureId), (correlationId, venture) =>
+      Js.Promise.(
+        Venture.Cmd.SubmitCustodianKeyChain.(
+          venture
+          |> exec(~keyChain)
+          |> then_(
+               fun
+               | Ok(venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     KeyChainSubmitted,
+                   );
+                   venture |> resolve;
+                 }
+               | NotACustodian => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
   let proposePayout = (ventureId, accountIdx, destinations, fee) => {
     logMessage("Handling 'ProposePayout'");
     withVenture(Load(ventureId), (correlationId, venture) =>
@@ -761,6 +800,8 @@ let handleMessage =
     Handle.rejectPartnerRemoval(ventureId, processId)
   | Message.EndorsePartnerRemoval(ventureId, processId) =>
     Handle.endorsePartnerRemoval(ventureId, processId)
+  | SubmitCustodianKeyChain(ventureId, keyChain) =>
+    Handle.submitCustodianKeyChain(ventureId, keyChain)
   | Message.ProposePayout(ventureId, accountIdx, destinations, fee) =>
     Handle.proposePayout(ventureId, accountIdx, destinations, fee)
   | Message.RejectPayout(ventureId, processId) =>

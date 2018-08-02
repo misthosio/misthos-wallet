@@ -38,14 +38,17 @@ function make(commands, lastResponse, onProcessStarted, children) {
             /* rejectPartnerRemoval */(function (processId) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* rejectPartnerRemoval */4], processId)]);
               }),
+            /* submitCustodianKeyChain */(function (keyChain) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* submitCustodianKeyChain */6], keyChain)]);
+              }),
             /* proposePayout */(function (accountIdx, destinations, fee) {
-                return Curry._1(send, /* CommandExecuted */[Curry._3(commands[/* proposePayout */6], accountIdx, destinations, fee)]);
+                return Curry._1(send, /* CommandExecuted */[Curry._3(commands[/* proposePayout */7], accountIdx, destinations, fee)]);
               }),
             /* endorsePayout */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* endorsePayout */7], processId)]);
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* endorsePayout */8], processId)]);
               }),
             /* rejectPayout */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* rejectPayout */8], processId)]);
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* rejectPayout */9], processId)]);
               })
           ];
   };
@@ -66,19 +69,16 @@ function make(commands, lastResponse, onProcessStarted, children) {
                     tmp = /* Error */Block.__(1, [response[0]]);
                   } else {
                     var success = response[0];
-                    switch (success.tag | 0) {
-                      case 0 : 
-                          var processId = success[0];
-                          Utils.mapOption((function (fn) {
-                                  return Curry._1(fn, processId);
-                                }), onProcessStarted);
-                          tmp = /* Success */Block.__(2, [/* ProcessStarted */Block.__(0, [processId])]);
-                          break;
-                      case 1 : 
-                      case 2 : 
-                          tmp = /* Success */Block.__(2, [success]);
-                          break;
-                      
+                    if (typeof success === "number") {
+                      tmp = /* Success */Block.__(2, [success]);
+                    } else if (success.tag) {
+                      tmp = /* Success */Block.__(2, [success]);
+                    } else {
+                      var processId = success[0];
+                      Utils.mapOption((function (fn) {
+                              return Curry._1(fn, processId);
+                            }), onProcessStarted);
+                      tmp = /* Success */Block.__(2, [/* ProcessStarted */Block.__(0, [processId])]);
                     }
                   }
                 } else {
@@ -170,30 +170,37 @@ function make$1(cmdStatus, action, _) {
                   case 1 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
-                            return message(/* Error */1, "Error joining venture. Please contact us if this problem persists.");
+                            return message(/* Error */1, "You are not a custodian of this venture");
                         case 1 : 
-                            return message(/* Error */1, "Error loading venture. Please contact us if this problem persist");
+                            return message(/* Error */1, "Error joining venture. Please contact us if this problem persists.");
                         case 2 : 
-                            return message(/* Error */1, "The maximum number of partners we currently support in a venture has been reached");
+                            return message(/* Error */1, "Error loading venture. Please contact us if this problem persist");
                         case 3 : 
-                            return message(/* Error */1, "User is already a partner of this venture");
+                            return message(/* Error */1, "The maximum number of partners we currently support in a venture has been reached");
                         case 4 : 
-                            return message(/* Error */1, "This user has already been proposed to join");
+                            return message(/* Error */1, "User is already a partner of this venture");
                         case 5 : 
-                            return message(/* Error */1, "Blockstack id does not exist, or is corrupted");
+                            return message(/* Error */1, "This user has already been proposed to join");
                         case 6 : 
+                            return message(/* Error */1, "Blockstack id does not exist, or is corrupted");
+                        case 7 : 
                             return message(/* Error */1, "Your submission could not be persisted, probably due to network connectivity.");
                         
                       }
                   case 2 : 
-                      switch (cmdStatus[0].tag | 0) {
-                        case 0 : 
-                            return message(/* Success */0, "Your proposal has been submitted");
-                        case 1 : 
-                            return message(/* Success */0, "Your endorsement has been submitted");
-                        case 2 : 
-                            return message(/* Success */0, "Your rejection has been submitted");
-                        
+                      var tmp$1 = cmdStatus[0];
+                      if (typeof tmp$1 === "number") {
+                        return message(/* Success */0, "Your public Keys have been submitted");
+                      } else {
+                        switch (tmp$1.tag | 0) {
+                          case 0 : 
+                              return message(/* Success */0, "Your proposal has been submitted");
+                          case 1 : 
+                              return message(/* Success */0, "Your endorsement has been submitted");
+                          case 2 : 
+                              return message(/* Success */0, "Your rejection has been submitted");
+                          
+                        }
                       }
                   
                 }

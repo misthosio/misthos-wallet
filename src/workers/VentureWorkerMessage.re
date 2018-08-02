@@ -15,6 +15,7 @@ type incoming =
   | ProposePartnerRemoval(ventureId, userId)
   | RejectPartnerRemoval(ventureId, processId)
   | EndorsePartnerRemoval(ventureId, processId)
+  | SubmitCustodianKeyChain(ventureId, CustodianKeyChain.public)
   | ProposePayout(ventureId, accountIdx, list((string, BTC.t)), BTC.t)
   | RejectPayout(ventureId, processId)
   | EndorsePayout(ventureId, processId)
@@ -33,11 +34,13 @@ type incoming =
 type encodedIncoming = Js.Json.t;
 
 type cmdSuccess =
+  | KeyChainSubmitted
   | ProcessStarted(processId)
   | ProcessEndorsed(processId)
   | ProcessRejected(processId);
 
 type cmdError =
+  | NotACustodian
   | CouldNotJoinVenture
   | CouldNotLoadVenture
   | MaxPartnersReached
@@ -66,6 +69,8 @@ exception UnknownMessage(Js.Json.t);
 
 let encodeSuccess =
   fun
+  | KeyChainSubmitted =>
+    Json.Encode.(object_([("type", string("KeyChainSubmitted"))]))
   | ProcessStarted(processId) =>
     Json.Encode.(
       object_([
@@ -91,6 +96,7 @@ let encodeSuccess =
 let decodeSuccess = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
+  | "KeyChainSubmitted" => KeyChainSubmitted
   | "ProcessStarted" =>
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     ProcessStarted(processId);
@@ -237,6 +243,14 @@ let encodeIncoming =
         ("processId", ProcessId.encode(processId)),
       ])
     )
+  | SubmitCustodianKeyChain(ventureId, keyChain) =>
+    Json.Encode.(
+      object_([
+        ("type", string("SubmitCustodianKeyChain")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("keyChain", CustodianKeyChain.encode(keyChain)),
+      ])
+    )
   | ProposePayout(ventureId, accountIdx, destinations, fee) =>
     Json.Encode.(
       object_([
@@ -356,6 +370,12 @@ let decodeIncoming = raw => {
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     EndorsePartnerRemoval(ventureId, processId);
+  | "SubmitCustodianKeyChain" =>
+    let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
+    let keyChain =
+      raw |> Json.Decode.field("keyChain", CustodianKeyChain.decode);
+    SubmitCustodianKeyChain(ventureId, keyChain);
+
   | "ProposePayout" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let accountIdx =

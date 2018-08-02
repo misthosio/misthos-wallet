@@ -59,6 +59,12 @@ let endorsePartnerRemoval = (worker, ventureId, ~processId: processId) =>
        VentureWorkerMessage.EndorsePartnerRemoval(ventureId, processId),
      );
 
+let submitCustodianKeyChain = (worker, ventureId, ~keyChain) =>
+  worker
+  |. postMessage(
+       VentureWorkerMessage.SubmitCustodianKeyChain(ventureId, keyChain),
+     );
+
 let proposePayout =
     (
       worker,
@@ -107,6 +113,8 @@ module Cmd = {
     proposePartnerRemoval: (~partnerId: userId) => WebWorker.correlationId,
     rejectPartnerRemoval: (~processId: processId) => WebWorker.correlationId,
     endorsePartnerRemoval: (~processId: processId) => WebWorker.correlationId,
+    submitCustodianKeyChain:
+      (~keyChain: CustodianKeyChain.public) => WebWorker.correlationId,
     proposePayout:
       (
         ~accountIdx: accountIdx,
@@ -125,6 +133,7 @@ module Cmd = {
     proposePartnerRemoval: proposePartnerRemoval(worker, ventureId),
     rejectPartnerRemoval: rejectPartnerRemoval(worker, ventureId),
     endorsePartnerRemoval: endorsePartnerRemoval(worker, ventureId),
+    submitCustodianKeyChain: submitCustodianKeyChain(worker, ventureId),
     proposePayout: proposePayout(worker, ventureId),
     rejectPayout: rejectPayout(worker, ventureId),
     endorsePayout: endorsePayout(worker, ventureId),
