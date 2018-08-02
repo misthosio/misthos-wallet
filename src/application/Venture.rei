@@ -97,6 +97,14 @@ module Cmd: {
       ) =>
       Js.Promise.t(result);
   };
+  module SubmitCustodianKeyChain: {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | NotACustodian
+      | CouldNotPersist(Js.Promise.error);
+    let exec:
+      (~keyChain: CustodianKeyChain.public, t) => Js.Promise.t(result);
+  };
   module ProposePartner: {
     type result =
       | Ok(processId, t, array(EventLog.item))

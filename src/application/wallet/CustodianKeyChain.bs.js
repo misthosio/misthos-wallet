@@ -22,10 +22,15 @@ function hdNode($$public) {
   return $$public[/* hdNode */2];
 }
 
+function makePath(ventureIdx, accountIdx, keyChainIdx) {
+  return "0'/" + (String(ventureIdx) + ("'/" + (String(0) + ("'/" + (String(WalletTypes.AccountIndex[/* toInt */0](accountIdx)) + ("'/" + (String(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)) + ("'/" + (String(45) + "'")))))))));
+}
+
 function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
   var misthosKeyChain = masterKeyChain.deriveHardened(0);
   var salt = Utils.hash(Utils.bufToHex(misthosKeyChain.publicKey));
-  var custodianKeyChain = misthosKeyChain.deriveHardened(Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt))).deriveHardened(0).deriveHardened(WalletTypes.AccountIndex[/* toInt */0](accountIdx)).deriveHardened(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)).deriveHardened(45);
+  var ventureIdx = Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt));
+  var custodianKeyChain = masterKeyChain.derivePath(makePath(ventureIdx, accountIdx, keyChainIdx));
   return /* record */[
           /* accountIdx */accountIdx,
           /* keyChainIdx */keyChainIdx,

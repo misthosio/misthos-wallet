@@ -441,6 +441,33 @@ module Cmd = {
       );
     };
   };
+  module SubmitCustodianKeyChain = {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | NotACustodian
+      | CouldNotPersist(Js.Promise.error);
+    let exec = (~keyChain, {session: {userId}, state} as venture) =>
+      Js.Promise.(
+        switch (state |> State.custodianAcceptedFor(userId)) {
+        | None => NotACustodian |> resolve
+        | Some((accepted: Event.Custodian.Accepted.t)) =>
+          CustodianKeyChainUpdated(
+            Event.CustodianKeyChainUpdated.make(
+              ~custodianApprovalProcess=accepted.processId,
+              ~custodianId=userId,
+              ~keyChain,
+            ),
+          )
+          |. apply(venture)
+          |> persist
+          |> then_(
+               fun
+               | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+               | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+             )
+        }
+      );
+  };
   module ProposePartner = {
     let maxNPartners = 12;
     type result =

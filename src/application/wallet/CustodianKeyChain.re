@@ -25,20 +25,38 @@ let coinTypeBitcoin = 0;
 
 let bip45Purpose = 45;
 
+let makePath = (~ventureIdx, ~accountIdx, ~keyChainIdx) =>
+  "0'/"
+  ++ string_of_int(ventureIdx)
+  ++ "'/"
+  ++ string_of_int(coinTypeBitcoin)
+  ++ "'/"
+  ++ string_of_int(accountIdx |> AccountIndex.toInt)
+  ++ "'/"
+  ++ string_of_int(keyChainIdx |> CustodianKeyChainIndex.toInt)
+  ++ "'/"
+  ++ string_of_int(bip45Purpose)
+  ++ "'";
+
 let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
   let misthosKeyChain =
     masterKeyChain |> HDNode.deriveHardened(misthosWalletPurposeIdx);
   let salt =
     misthosKeyChain |> HDNode.getPublicKey |> Utils.bufToHex |> Utils.hash;
+  let ventureIdx =
+    Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode;
   let custodianKeyChain =
-    misthosKeyChain
-    |> HDNode.deriveHardened(
-         Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode,
-       )
-    |> HDNode.deriveHardened(coinTypeBitcoin)
-    |> HDNode.deriveHardened(accountIdx |> AccountIndex.toInt)
-    |> HDNode.deriveHardened(keyChainIdx |> CustodianKeyChainIndex.toInt)
-    |> HDNode.deriveHardened(bip45Purpose);
+    masterKeyChain
+    |> HDNode.derivePath(makePath(~ventureIdx, ~accountIdx, ~keyChainIdx));
+  /* let custodianKeyChain = */
+  /*   misthosKeyChain */
+  /*   |> HDNode.deriveHardened( */
+  /*        Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode, */
+  /*      ) */
+  /*   |> HDNode.deriveHardened(coinTypeBitcoin) */
+  /*   |> HDNode.deriveHardened(accountIdx |> AccountIndex.toInt) */
+  /*   |> HDNode.deriveHardened(keyChainIdx |> CustodianKeyChainIndex.toInt) */
+  /*   |> HDNode.deriveHardened(bip45Purpose); */
   {accountIdx, keyChainIdx, hdNode: custodianKeyChain};
 };
 
