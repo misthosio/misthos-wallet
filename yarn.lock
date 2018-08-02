@@ -1777,9 +1777,9 @@ bitcoinjs-lib@4.0.1, bitcoinjs-lib@^4:
     varuint-bitcoin "^1.0.4"
     wif "^2.0.1"
 
-blockstack@18.0.2:
-  version "18.0.2"
-  resolved "https://registry.yarnpkg.com/blockstack/-/blockstack-18.0.2.tgz#09da2725514c2d7dae532e3ae82028ce9d90ee14"
+blockstack@18.0.3:
+  version "18.0.3"
+  resolved "https://registry.yarnpkg.com/blockstack/-/blockstack-18.0.3.tgz#de79c5ecfb6abdbcd0a83393aae87e9dc450f75e"
   dependencies:
     ajv "^4.11.5"
     bigi "^1.4.2"
