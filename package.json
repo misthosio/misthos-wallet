@@ -30,8 +30,6 @@
   },
   "devDependencies": {
     "@glennsl/bs-jest": "0.4.2",
-    "@ledgerhq/hw-transport-mocker": "^4.21.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.22.0",
     "babel-core": "6.26.3",
     "babel-jest": "23.4.2",
     "babel-loader": "7.1.5",
