@@ -23,13 +23,13 @@ var NamelessLogin = require("./NamelessLogin.bs.js");
 var NotFoundModal = require("./NotFoundModal.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
+var LedgerKeysModal = require("./LedgerKeysModal.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
 var ViewIncomeModal = require("./ViewIncomeModal.bs.js");
 var ViewPayoutModal = require("./ViewPayoutModal.bs.js");
 var ViewPartnerModal = require("./ViewPartnerModal.bs.js");
 var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
-var ConnectLedgerModal = require("./ConnectLedgerModal.bs.js");
 var ViewAddressesModal = require("./ViewAddressesModal.bs.js");
 var ManagePartnersModal = require("./ManagePartnersModal.bs.js");
 var TermsAndConditionsModal = require("./TermsAndConditionsModal.bs.js");
@@ -119,9 +119,6 @@ function make(session, updateSession, signTAC, _) {
                             ]];
                   }
                 }
-            case 0 : 
-            case 3 : 
-                return /* None */0;
             case 4 : 
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return /* None */0;
@@ -164,7 +161,7 @@ function make(session, updateSession, signTAC, _) {
                     return /* None */0;
                   } else {
                     return /* Some */[/* tuple */[
-                              ReasonReact.element(/* None */0, /* None */0, ConnectLedgerModal.make(/* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, LedgerKeysModal.make(/* array */[])),
                               /* Some */[(function () {
                                     return Router.goTo(/* Venture */Block.__(0, [
                                                   selected,
@@ -174,7 +171,8 @@ function make(session, updateSession, signTAC, _) {
                             ]];
                   }
                 }
-            
+            default:
+              return /* None */0;
           }
         } else {
           switch (match.tag | 0) {

@@ -11,7 +11,9 @@ module Config = {
     | HiddenOutputLog
     | Addresses
     | Receive
-    | ConnectLedger;
+    | LedgerKeys
+    | LedgerSign;
+
   type route =
     | Home
     | Venture(ventureId, ventureSubRoute)
@@ -45,8 +47,10 @@ module Config = {
       Venture(id |> VentureId.fromString, Income(transactionId))
     | ["ventures", id, "receive"] =>
       Venture(id |> VentureId.fromString, Receive)
-    | ["ventures", id, "ledger"] =>
-      Venture(id |> VentureId.fromString, ConnectLedger)
+    | ["ventures", id, "ledger", "keys"] =>
+      Venture(id |> VentureId.fromString, LedgerKeys)
+    | ["ventures", id, "ledger", "sign"] =>
+      Venture(id |> VentureId.fromString, LedgerSign)
     | ["ventures", id, "joinvia", userId] =>
       JoinVenture(id |> VentureId.fromString, userId |> UserId.fromString)
     | ["typographystack"] => TypographyStack
@@ -79,8 +83,10 @@ module Config = {
       "/ventures/" ++ (id |> VentureId.toString) ++ "/income/" ++ txId
     | Venture(id, Receive) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/receive"
-    | Venture(id, ConnectLedger) =>
-      "/ventures/" ++ (id |> VentureId.toString) ++ "/ledger"
+    | Venture(id, LedgerKeys) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/ledger/keys"
+    | Venture(id, LedgerSign) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/ledger/sign"
     | JoinVenture(id, userId) =>
       "/ventures/"
       ++ (id |> VentureId.toString)
