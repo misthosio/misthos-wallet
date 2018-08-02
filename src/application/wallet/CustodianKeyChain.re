@@ -5,6 +5,7 @@ open WalletTypes;
 open Bitcoin;
 
 type t = {
+  hardwareId: option(string),
   accountIdx,
   keyChainIdx: custodianKeyChainIdx,
   hdNode: HDNode.t,
@@ -57,7 +58,7 @@ let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
   /*   |> HDNode.deriveHardened(accountIdx |> AccountIndex.toInt) */
   /*   |> HDNode.deriveHardened(keyChainIdx |> CustodianKeyChainIndex.toInt) */
   /*   |> HDNode.deriveHardened(bip45Purpose); */
-  {accountIdx, keyChainIdx, hdNode: custodianKeyChain};
+  {hardwareId: None, accountIdx, keyChainIdx, hdNode: custodianKeyChain};
 };
 
 let toPublicKeyChain = keyChain => {
@@ -76,6 +77,7 @@ let getSigningKey = (coSignerIdx, chainIdx, addressIdx, keyChain) =>
 let encode = keyChain =>
   Json.Encode.(
     object_([
+      ("hardwareId", nullable(string, keyChain.hardwareId)),
       ("accountIndex", AccountIndex.encode(keyChain.accountIdx)),
       ("keyChainIndex", CustodianKeyChainIndex.encode(keyChain.keyChainIdx)),
       ("hdNode", string(keyChain.hdNode |> Bitcoin.HDNode.toBase58)),
@@ -84,6 +86,7 @@ let encode = keyChain =>
 
 let decode = raw =>
   Json.Decode.{
+    hardwareId: raw |> field("hardwareId", optional(string)),
     accountIdx: raw |> field("accountIndex", AccountIndex.decode),
     keyChainIdx: raw |> field("keyChainIndex", CustodianKeyChainIndex.decode),
     hdNode: raw |> field("hdNode", string) |> Bitcoin.HDNode.fromBase58,

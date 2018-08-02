@@ -11,15 +11,15 @@ var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 
 function accountIdx($$public) {
-  return $$public[/* accountIdx */0];
+  return $$public[/* accountIdx */1];
 }
 
 function keyChainIdx($$public) {
-  return $$public[/* keyChainIdx */1];
+  return $$public[/* keyChainIdx */2];
 }
 
 function hdNode($$public) {
-  return $$public[/* hdNode */2];
+  return $$public[/* hdNode */3];
 }
 
 function makePath(ventureIdx, accountIdx, keyChainIdx) {
@@ -32,6 +32,7 @@ function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
   var ventureIdx = Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt));
   var custodianKeyChain = masterKeyChain.derivePath(makePath(ventureIdx, accountIdx, keyChainIdx));
   return /* record */[
+          /* hardwareId : None */0,
           /* accountIdx */accountIdx,
           /* keyChainIdx */keyChainIdx,
           /* hdNode */custodianKeyChain
@@ -40,35 +41,44 @@ function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
 
 function toPublicKeyChain(keyChain) {
   return /* record */[
-          /* accountIdx */keyChain[/* accountIdx */0],
-          /* keyChainIdx */keyChain[/* keyChainIdx */1],
-          /* hdNode */keyChain[/* hdNode */2].neutered()
+          /* hardwareId */keyChain[/* hardwareId */0],
+          /* accountIdx */keyChain[/* accountIdx */1],
+          /* keyChainIdx */keyChain[/* keyChainIdx */2],
+          /* hdNode */keyChain[/* hdNode */3].neutered()
         ];
 }
 
 function getSigningKey(coSignerIdx, chainIdx, addressIdx, keyChain) {
-  return BitcoinjsLib.ECPair.fromPrivateKey(keyChain[/* hdNode */2].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).privateKey, {
-              network: keyChain[/* hdNode */2].network
+  return BitcoinjsLib.ECPair.fromPrivateKey(keyChain[/* hdNode */3].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).privateKey, {
+              network: keyChain[/* hdNode */3].network
             });
 }
 
 function encode(keyChain) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "accountIndex",
-                WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
+                "hardwareId",
+                Json_encode.nullable((function (prim) {
+                        return prim;
+                      }), keyChain[/* hardwareId */0])
               ],
               /* :: */[
                 /* tuple */[
-                  "keyChainIndex",
-                  WalletTypes.CustodianKeyChainIndex[/* encode */3](keyChain[/* keyChainIdx */1])
+                  "accountIndex",
+                  WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */1])
                 ],
                 /* :: */[
                   /* tuple */[
-                    "hdNode",
-                    keyChain[/* hdNode */2].toBase58()
+                    "keyChainIndex",
+                    WalletTypes.CustodianKeyChainIndex[/* encode */3](keyChain[/* keyChainIdx */2])
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "hdNode",
+                      keyChain[/* hdNode */3].toBase58()
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]);
@@ -76,6 +86,9 @@ function encode(keyChain) {
 
 function decode(raw) {
   return /* record */[
+          /* hardwareId */Json_decode.field("hardwareId", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), raw),
           /* accountIdx */Json_decode.field("accountIndex", WalletTypes.AccountIndex[/* decode */5], raw),
           /* keyChainIdx */Json_decode.field("keyChainIndex", WalletTypes.CustodianKeyChainIndex[/* decode */4], raw),
           /* hdNode */Bitcoin.HDNode[/* fromBase58 */0](Json_decode.field("hdNode", Json_decode.string, raw))
