@@ -165,7 +165,7 @@ function getOrInit(appPubKey, userId) {
 }
 
 function storagePrefix(appPubKey) {
-  return Bitcoin.Address[/* fromKeyPair */1](BitcoinjsLib.ECPair.fromPublicKey(Utils.bufFromHex(appPubKey), {
+  return Bitcoin.Address[/* fromKeyPair */2](BitcoinjsLib.ECPair.fromPublicKey(Utils.bufFromHex(appPubKey), {
                   network: BitcoinjsLib.networks.bitcoin
                 }));
 }

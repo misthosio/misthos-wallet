@@ -22,15 +22,24 @@ function hdNode($$public) {
   return $$public[/* hdNode */3];
 }
 
-function makePath(ventureIdx, accountIdx, keyChainIdx) {
+function makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode) {
+  var salt = Utils.hash(Utils.bufToHex(misthosPurposeNode.publicKey));
+  var ventureIdx = Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt));
   return "0'/" + (String(ventureIdx) + ("'/" + (String(0) + ("'/" + (String(WalletTypes.AccountIndex[/* toInt */0](accountIdx)) + ("'/" + (String(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)) + ("'/" + (String(45) + "'")))))))));
 }
 
+function fromHardwareNode(hardwareId, accountIdx, keyChainIdx, hdNode) {
+  return /* record */[
+          /* hardwareId : Some */[hardwareId],
+          /* accountIdx */accountIdx,
+          /* keyChainIdx */keyChainIdx,
+          /* hdNode */hdNode.neutered()
+        ];
+}
+
 function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
-  var misthosKeyChain = masterKeyChain.deriveHardened(0);
-  var salt = Utils.hash(Utils.bufToHex(misthosKeyChain.publicKey));
-  var ventureIdx = Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt));
-  var custodianKeyChain = masterKeyChain.derivePath(makePath(ventureIdx, accountIdx, keyChainIdx));
+  var misthosPurposeNode = masterKeyChain.deriveHardened(0);
+  var custodianKeyChain = masterKeyChain.derivePath(makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode));
   return /* record */[
           /* hardwareId : None */0,
           /* accountIdx */accountIdx,
@@ -86,9 +95,7 @@ function encode(keyChain) {
 
 function decode(raw) {
   return /* record */[
-          /* hardwareId */Json_decode.field("hardwareId", (function (param) {
-                  return Json_decode.optional(Json_decode.string, param);
-                }), raw),
+          /* hardwareId */Utils.maybeField("hardwareId", Json_decode.string)(raw),
           /* accountIdx */Json_decode.field("accountIndex", WalletTypes.AccountIndex[/* decode */5], raw),
           /* keyChainIdx */Json_decode.field("keyChainIndex", WalletTypes.CustodianKeyChainIndex[/* decode */4], raw),
           /* hdNode */Bitcoin.HDNode[/* fromBase58 */0](Json_decode.field("hdNode", Json_decode.string, raw))
@@ -99,6 +106,11 @@ function eq(a, b) {
   return Caml_obj.caml_equal(encode(a), encode(b));
 }
 
+var misthosWalletPurposePath = "0'";
+
+exports.misthosWalletPurposePath = misthosWalletPurposePath;
+exports.makePathToBip45Root = makePathToBip45Root;
+exports.fromHardwareNode = fromHardwareNode;
 exports.make = make;
 exports.toPublicKeyChain = toPublicKeyChain;
 exports.accountIdx = accountIdx;

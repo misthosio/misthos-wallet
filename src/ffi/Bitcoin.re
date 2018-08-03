@@ -94,23 +94,6 @@ module ECPair = {
   [@bs.send.pipe: t] external verify : (Node.buffer, Node.buffer) => bool = "";
 };
 
-module Address = {
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
-  external _toBase58Check : (Node.buffer, Networks.pubKeyHash) => string =
-    "toBase58Check";
-  let toBase58Check = (hash, network) =>
-    _toBase58Check(hash, network##pubKeyHash);
-
-  let fromKeyPair = key =>
-    Crypto.hash160(key |> ECPair.getPublicKey)
-    |. toBase58Check(key |> ECPair.getNetwork);
-
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
-  external toOutputScript : (string, Networks.t) => Node.buffer = "";
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
-  external fromOutputScript : (Node.buffer, Networks.t) => string = "";
-};
-
 module HDNode = {
   type t;
   [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
@@ -135,6 +118,27 @@ module HDNode = {
   [@bs.get] external getNetwork : t => Networks.t = "network";
   [@bs.send] external neutered : t => t = "";
   [@bs.send] external toBase58 : t => string = "";
+};
+
+module Address = {
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
+  external _toBase58Check : (Node.buffer, Networks.pubKeyHash) => string =
+    "toBase58Check";
+  let toBase58Check = (hash, network) =>
+    _toBase58Check(hash, network##pubKeyHash);
+
+  let fromHDNode = node =>
+    Crypto.hash160(node |> HDNode.getPublicKey)
+    |. toBase58Check(node |> HDNode.getNetwork);
+
+  let fromKeyPair = key =>
+    Crypto.hash160(key |> ECPair.getPublicKey)
+    |. toBase58Check(key |> ECPair.getNetwork);
+
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
+  external toOutputScript : (string, Networks.t) => Node.buffer = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
+  external fromOutputScript : (Node.buffer, Networks.t) => string = "";
 };
 
 module TxBuilder = {

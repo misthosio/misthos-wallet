@@ -1,22 +1,17 @@
-[@bs.val]
-external bufFromStringWithEncoding :
-  (Js.String.t, ~encoding: Js.String.t) => Node.buffer =
-  "Buffer.from";
-
 type transport;
 [@bs.module "@ledgerhq/hw-transport-u2f"] [@bs.scope "default"]
-external createBrowserTransport : unit => Js.Promise.t(transport) = "create";
+external createTransport : unit => Js.Promise.t(transport) = "create";
 
-type transportError =
+type error =
   | U2FNotSupported(string)
   | U2F_5(string)
   | Unknown;
-let transportErrorToString =
+let error =
   fun
   | U2FNotSupported(message) => "U2FNotSupported(" ++ message ++ ")"
   | U2F_5(message) => "U2F_5(" ++ message ++ ")"
   | Unknown => "Unknown";
-let decodeTransportError = error => {
+let decodeError = error => {
   let error = error |> Obj.magic;
   switch (error##id) {
   | "U2FNotSupported" => U2FNotSupported(error##message)
@@ -40,24 +35,6 @@ type ledgerPubKey = {
 [@bs.send]
 external getWalletPublicKey : (btc, string) => Js.Promise.t(ledgerPubKey) =
   "";
-
-let getHDNode = (path, network, ledger) =>
-  Js.Promise.(
-    ledger
-    |. getWalletPublicKey(path)
-    |> then_(pubKey =>
-         Bitcoin.HDNode.fromPublicKey(
-           ~publicKey=
-             bufFromStringWithEncoding(pubKey##publicKey, ~encoding="hex")
-             |. Bitcoin.ECPair.fromPublicKey({"network": network})
-             |> Bitcoin.ECPair.getPublicKey,
-           ~chainCode=
-             bufFromStringWithEncoding(pubKey##chainCode, ~encoding="hex"),
-           network,
-         )
-         |> resolve
-       )
-  );
 
 type txInfo;
 

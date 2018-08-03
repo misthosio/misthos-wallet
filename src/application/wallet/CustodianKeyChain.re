@@ -21,12 +21,18 @@ let hdNode = public => public.hdNode;
 
 /* m/misthosPurpose' /venture'/coin_type'/account'/keyChain'/bip45'/cosignerIdx/change/address */
 let misthosWalletPurposeIdx = 0;
+let misthosWalletPurposePath = "0'";
 
 let coinTypeBitcoin = 0;
 
 let bip45Purpose = 45;
 
-let makePath = (~ventureIdx, ~accountIdx, ~keyChainIdx) =>
+let makePathToBip45Root =
+    (~ventureId, ~accountIdx, ~keyChainIdx, misthosPurposeNode) => {
+  let salt =
+    misthosPurposeNode |> HDNode.getPublicKey |> Utils.bufToHex |> Utils.hash;
+  let ventureIdx =
+    Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode;
   "0'/"
   ++ string_of_int(ventureIdx)
   ++ "'/"
@@ -38,17 +44,28 @@ let makePath = (~ventureIdx, ~accountIdx, ~keyChainIdx) =>
   ++ "'/"
   ++ string_of_int(bip45Purpose)
   ++ "'";
+};
+
+let fromHardwareNode = (~hardwareId, ~accountIdx, ~keyChainIdx, hdNode) => {
+  hardwareId: Some(hardwareId),
+  accountIdx,
+  keyChainIdx,
+  hdNode: hdNode |> HDNode.neutered,
+};
 
 let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
-  let misthosKeyChain =
+  let misthosPurposeNode =
     masterKeyChain |> HDNode.deriveHardened(misthosWalletPurposeIdx);
-  let salt =
-    misthosKeyChain |> HDNode.getPublicKey |> Utils.bufToHex |> Utils.hash;
-  let ventureIdx =
-    Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode;
   let custodianKeyChain =
     masterKeyChain
-    |> HDNode.derivePath(makePath(~ventureIdx, ~accountIdx, ~keyChainIdx));
+    |> HDNode.derivePath(
+         makePathToBip45Root(
+           ~ventureId,
+           ~accountIdx,
+           ~keyChainIdx,
+           misthosPurposeNode,
+         ),
+       );
   /* let custodianKeyChain = */
   /*   misthosKeyChain */
   /*   |> HDNode.deriveHardened( */
@@ -86,7 +103,7 @@ let encode = keyChain =>
 
 let decode = raw =>
   Json.Decode.{
-    hardwareId: raw |> field("hardwareId", optional(string)),
+    hardwareId: raw |> Utils.maybeField("hardwareId", string),
     accountIdx: raw |> field("accountIndex", AccountIndex.decode),
     keyChainIdx: raw |> field("keyChainIndex", CustodianKeyChainIndex.decode),
     hdNode: raw |> field("hdNode", string) |> Bitcoin.HDNode.fromBase58,

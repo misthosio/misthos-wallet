@@ -51,6 +51,18 @@ function lastResponse(param) {
   return param[/* lastResponse */2];
 }
 
+function fromViewModel() {
+  return /* record */[
+          /* ledgerId : None */0,
+          /* ledgerUpToDate */false,
+          /* getCustodianKeyChain */(function () {
+              return Promise.resolve("");
+            })
+        ];
+}
+
+var LedgerKeysView = /* module */[/* fromViewModel */fromViewModel];
+
 function fromViewModelState(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var oldInputCollector = param[/* oldInputCollector */9];
@@ -392,6 +404,8 @@ var TxDetailsCollector = 0;
 
 var OldInputCollector = 0;
 
+var ledgerKeysView = fromViewModel;
+
 var viewAddressesModal = fromViewModelState;
 
 var managePartnersModal = fromViewModelState$1;
@@ -414,6 +428,8 @@ exports.OldInputCollector = OldInputCollector;
 exports.readOnly = readOnly;
 exports.captureResponse = captureResponse;
 exports.lastResponse = lastResponse;
+exports.LedgerKeysView = LedgerKeysView;
+exports.ledgerKeysView = ledgerKeysView;
 exports.AddressesView = AddressesView;
 exports.viewAddressesModal = viewAddressesModal;
 exports.ManagePartnersView = ManagePartnersView;

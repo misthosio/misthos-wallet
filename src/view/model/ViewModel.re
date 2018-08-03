@@ -37,6 +37,21 @@ let captureResponse = (correlationId, response, state) => {
 
 let lastResponse = ({lastResponse}) => lastResponse;
 
+module LedgerKeysView = {
+  type t = {
+    ledgerId: option(string),
+    ledgerUpToDate: bool,
+    getCustodianKeyChain: unit => Js.Promise.t(string),
+    /* getCustodianKeyChain: Bitcoin.HDNode.t => CustodianKeyChain.t, */
+  };
+  let fromViewModel = _ => {
+    ledgerId: None,
+    ledgerUpToDate: false,
+    getCustodianKeyChain: () => Js.Promise.resolve(""),
+  };
+};
+let ledgerKeysView = LedgerKeysView.fromViewModel;
+
 module AddressesView = {
   open Belt;
   type addressType = WalletInfoCollector.addressType;

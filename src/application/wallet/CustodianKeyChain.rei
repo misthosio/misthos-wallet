@@ -8,6 +8,26 @@ type t;
 
 type public;
 
+let misthosWalletPurposePath: string;
+
+let makePathToBip45Root:
+  (
+    ~ventureId: ventureId,
+    ~accountIdx: accountIdx,
+    ~keyChainIdx: custodianKeyChainIdx,
+    HDNode.t
+  ) =>
+  string;
+
+let fromHardwareNode:
+  (
+    ~hardwareId: string,
+    ~accountIdx: accountIdx,
+    ~keyChainIdx: custodianKeyChainIdx,
+    HDNode.t
+  ) =>
+  public;
+
 let make:
   (
     ~ventureId: ventureId,

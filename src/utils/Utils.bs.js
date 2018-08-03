@@ -86,6 +86,16 @@ function andThen(fn, param) {
   }
 }
 
+function maybeField(name, decoder) {
+  return (function (param) {
+      return Json_decode.withDefault(/* None */0, (function (param) {
+                    return Json_decode.field(name, (function (param) {
+                                  return Json_decode.optional(decoder, param);
+                                }), param);
+                  }), param);
+    });
+}
+
 function encodeFloat(prim) {
   return prim;
 }
@@ -106,6 +116,7 @@ exports.$great$great = $great$great;
 exports.printError = printError;
 exports.mapOption = mapOption;
 exports.andThen = andThen;
+exports.maybeField = maybeField;
 exports.encodeFloat = encodeFloat;
 exports.decodeFloat = decodeFloat;
 /* bitcoinjs-lib Not a pure module */
