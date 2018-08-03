@@ -50,6 +50,10 @@ let apply = (event, state) =>
              |> CustodianKeyChainIndex.next,
            ),
     };
-
+  | PartnerRemovalAccepted({data: {id}})
+      when UserId.neq(id, state.localUser) => {
+      ...state,
+      ledgerUpToDate: AccountIndex.makeMap(),
+    }
   | _ => state
   };

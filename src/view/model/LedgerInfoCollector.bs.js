@@ -28,23 +28,35 @@ function nextKeyChainIdx(accountIdx, param) {
 }
 
 function apply($$event, state) {
-  if ($$event.tag === 37) {
-    var match = $$event[0];
-    var keyChain = match[/* keyChain */2];
-    if (PrimitiveTypes.UserId[/* eq */5](match[/* custodianId */1], state[/* localUser */0])) {
-      var accountIdx = CustodianKeyChain.accountIdx(keyChain);
-      var match$1 = CustodianKeyChain.hardwareId(keyChain);
-      return /* record */[
-              /* localUser */state[/* localUser */0],
-              /* ledgerIds */match$1 ? Belt_Map.set(state[/* ledgerIds */1], accountIdx, match$1[0]) : state[/* ledgerIds */1],
-              /* ledgerUpToDate */Belt_Map.set(state[/* ledgerUpToDate */2], accountIdx, true),
-              /* nextKeyChainIdx */Belt_Map.set(state[/* nextKeyChainIdx */3], accountIdx, WalletTypes.CustodianKeyChainIndex[/* next */2](CustodianKeyChain.keyChainIdx(keyChain)))
-            ];
-    } else {
+  switch ($$event.tag | 0) {
+    case 10 : 
+        if (PrimitiveTypes.UserId[/* neq */6]($$event[0][/* data */2][/* id */0], state[/* localUser */0])) {
+          return /* record */[
+                  /* localUser */state[/* localUser */0],
+                  /* ledgerIds */state[/* ledgerIds */1],
+                  /* ledgerUpToDate */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
+                  /* nextKeyChainIdx */state[/* nextKeyChainIdx */3]
+                ];
+        } else {
+          return state;
+        }
+    case 37 : 
+        var match = $$event[0];
+        var keyChain = match[/* keyChain */2];
+        if (PrimitiveTypes.UserId[/* eq */5](match[/* custodianId */1], state[/* localUser */0])) {
+          var accountIdx = CustodianKeyChain.accountIdx(keyChain);
+          var match$1 = CustodianKeyChain.hardwareId(keyChain);
+          return /* record */[
+                  /* localUser */state[/* localUser */0],
+                  /* ledgerIds */match$1 ? Belt_Map.set(state[/* ledgerIds */1], accountIdx, match$1[0]) : state[/* ledgerIds */1],
+                  /* ledgerUpToDate */Belt_Map.set(state[/* ledgerUpToDate */2], accountIdx, true),
+                  /* nextKeyChainIdx */Belt_Map.set(state[/* nextKeyChainIdx */3], accountIdx, WalletTypes.CustodianKeyChainIndex[/* next */2](CustodianKeyChain.keyChainIdx(keyChain)))
+                ];
+        } else {
+          return state;
+        }
+    default:
       return state;
-    }
-  } else {
-    return state;
   }
 }
 
