@@ -10,10 +10,12 @@ let getHDNode = (path, network, ledger) =>
          HDNode.fromPublicKey(
            ~publicKey=
              Utils.bufFromHex(pubKey##publicKey)
-             |. ECPair.fromPublicKey({"network": network})
+             |. ECPair.fromPublicKey({
+                  "network": network |> Network.bitcoinNetwork,
+                })
              |> ECPair.getPublicKey,
            ~chainCode=Utils.bufFromHex(pubKey##chainCode),
-           network,
+           network |> Network.bitcoinNetwork,
          )
          |> resolve
        )
@@ -31,7 +33,7 @@ let getCustodianKeyChain = (~network, ~ventureId, ~accountIdx, ~keyChainIdx) =>
            resolve(btc),
            getHDNode(
              CustodianKeyChain.misthosWalletPurposePath,
-             Networks.bitcoin,
+             Network.Mainnet,
              btc,
            ),
          ));

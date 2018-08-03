@@ -6,6 +6,7 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Ledger = require("../../application/wallet/Ledger.bs.js");
 var Policy = require("../../application/Policy.bs.js");
 var Router = require("../Router.bs.js");
 var Network = require("../../application/wallet/Network.bs.js");
@@ -18,6 +19,7 @@ var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
+var LedgerInfoCollector = require("./LedgerInfoCollector.bs.js");
 var WalletInfoCollector = require("../../application/wallet/WalletInfoCollector.bs.js");
 var ViewModel__PartnersCollector = require("./ViewModel__PartnersCollector.bs.js");
 var ViewModel__TxDetailsCollector = require("./ViewModel__TxDetailsCollector.bs.js");
@@ -43,7 +45,8 @@ function captureResponse(correlationId, response, state) {
           /* transactionCollector */state[/* transactionCollector */7],
           /* txDetailsCollector */state[/* txDetailsCollector */8],
           /* oldInputCollector */state[/* oldInputCollector */9],
-          /* walletInfoCollector */state[/* walletInfoCollector */10]
+          /* walletInfoCollector */state[/* walletInfoCollector */10],
+          /* ledgerInfoCollector */state[/* ledgerInfoCollector */11]
         ];
 }
 
@@ -51,12 +54,15 @@ function lastResponse(param) {
   return param[/* lastResponse */2];
 }
 
-function fromViewModel() {
+function fromViewModel(param) {
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
+  var ventureId = param[/* ventureId */1];
   return /* record */[
-          /* ledgerId : None */0,
-          /* ledgerUpToDate */false,
+          /* ledgerId */ledgerInfoCollector[/* ledgerId */1],
+          /* ledgerUpToDate */ledgerInfoCollector[/* ledgerUpToDate */2],
           /* getCustodianKeyChain */(function () {
-              return Promise.resolve("");
+              return Ledger.getCustodianKeyChain(WalletInfoCollector.network(walletInfoCollector), ventureId, WalletTypes.AccountIndex[/* default */11], LedgerInfoCollector.nextKeyChainIdx(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector));
             })
         ];
 }
@@ -326,7 +332,8 @@ function make(localUser) {
           /* transactionCollector */ViewModel__TransactionCollector.make(/* () */0),
           /* txDetailsCollector */ViewModel__TxDetailsCollector.make(localUser),
           /* oldInputCollector */ViewModel__OldTxInputCollector.make(/* () */0),
-          /* walletInfoCollector */WalletInfoCollector.make(/* () */0)
+          /* walletInfoCollector */WalletInfoCollector.make(/* () */0),
+          /* ledgerInfoCollector */LedgerInfoCollector.make(localUser)
         ];
 }
 
@@ -348,6 +355,7 @@ function apply(param, state) {
     var state_008 = /* txDetailsCollector */ViewModel__TxDetailsCollector.apply($$event, state[/* txDetailsCollector */8]);
     var state_009 = /* oldInputCollector */ViewModel__OldTxInputCollector.apply($$event, state[/* oldInputCollector */9]);
     var state_010 = /* walletInfoCollector */WalletInfoCollector.apply($$event, state[/* walletInfoCollector */10]);
+    var state_011 = /* ledgerInfoCollector */LedgerInfoCollector.apply($$event, state[/* ledgerInfoCollector */11]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -359,7 +367,8 @@ function apply(param, state) {
       state_007,
       state_008,
       state_009,
-      state_010
+      state_010,
+      state_011
     ];
     if ($$event.tag) {
       return state$1;
@@ -376,7 +385,8 @@ function apply(param, state) {
               state_007,
               state_008,
               state_009,
-              state_010
+              state_010,
+              state_011
             ];
     }
   }

@@ -25,6 +25,7 @@ type t = {
   txDetailsCollector: TxDetailsCollector.t,
   oldInputCollector: OldInputCollector.t,
   walletInfoCollector: WalletInfoCollector.t,
+  ledgerInfoCollector: LedgerInfoCollector.t,
 };
 
 let readOnly = ({localUser, partnersCollector}) =>
@@ -38,16 +39,24 @@ let captureResponse = (correlationId, response, state) => {
 let lastResponse = ({lastResponse}) => lastResponse;
 
 module LedgerKeysView = {
+  open Belt;
   type t = {
     ledgerId: option(string),
     ledgerUpToDate: bool,
-    getCustodianKeyChain: unit => Js.Promise.t(string),
-    /* getCustodianKeyChain: Bitcoin.HDNode.t => CustodianKeyChain.t, */
+    getCustodianKeyChain: unit => Js.Promise.t(Ledger.result),
   };
-  let fromViewModel = _ => {
-    ledgerId: None,
-    ledgerUpToDate: false,
-    getCustodianKeyChain: () => Js.Promise.resolve(""),
+  let fromViewModel = ({ventureId, walletInfoCollector, ledgerInfoCollector}) => {
+    ledgerId: ledgerInfoCollector.ledgerId,
+    ledgerUpToDate: ledgerInfoCollector.ledgerUpToDate,
+    getCustodianKeyChain: () =>
+      Ledger.getCustodianKeyChain(
+        ~network=walletInfoCollector |> WalletInfoCollector.network,
+        ~ventureId,
+        ~accountIdx=AccountIndex.default,
+        ~keyChainIdx=
+          ledgerInfoCollector
+          |> LedgerInfoCollector.nextKeyChainIdx(AccountIndex.default),
+      ),
   };
 };
 let ledgerKeysView = LedgerKeysView.fromViewModel;
@@ -502,6 +511,7 @@ let make = localUser => {
   txDetailsCollector: TxDetailsCollector.make(localUser),
   oldInputCollector: OldInputCollector.make(),
   walletInfoCollector: WalletInfoCollector.make(),
+  ledgerInfoCollector: LedgerInfoCollector.make(localUser),
 };
 
 let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
@@ -520,6 +530,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.walletInfoCollector |> WalletInfoCollector.apply(event),
       oldInputCollector:
         state.oldInputCollector |> OldInputCollector.apply(event),
+      ledgerInfoCollector:
+        state.ledgerInfoCollector |> LedgerInfoCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {

@@ -8,9 +8,10 @@ var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var CustodianKeyChain = require("../application/wallet/CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
-var component = ReasonReact.reducerComponent("ConnectLedger");
+var component = ReasonReact.reducerComponent("LedgerKeys");
 
 function make(viewData, _) {
   return /* record */[
@@ -29,7 +30,7 @@ function make(viewData, _) {
                                                 return ViewCommon.ignoreEvent((function () {
                                                               return Curry._1(send, /* SubmitPubKeys */0);
                                                             }), param);
-                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])))], /* None */0, /* None */0, /* None */0, /* array */[]));
+                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Submit keys")])))], /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* status : Idle */0];
@@ -40,7 +41,13 @@ function make(viewData, _) {
                 return /* UpdateWithSideEffects */Block.__(2, [
                           /* record */[/* status : InProgress */1],
                           (function () {
-                              Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0);
+                              Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
+                                      if (param.tag) {
+                                        return Promise.resolve((console.log(param[0]), /* () */0));
+                                      } else {
+                                        return Promise.resolve((console.log("key chain:", CustodianKeyChain.hdNode(param[0]).toBase58()), /* () */0));
+                                      }
+                                    }));
                               return /* () */0;
                             })
                         ]);

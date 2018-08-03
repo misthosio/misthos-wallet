@@ -110,6 +110,8 @@ module HDNode = {
     try (_fromBase58(base58, Networks.bitcoin)) {
     | _ => _fromBase58(base58, Networks.testnet)
     };
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
+  external fromSeed : (Node.buffer, Networks.t) => t = "";
   [@bs.send.pipe: t] external derive : int => t = "";
   [@bs.send.pipe: t] external deriveHardened : int => t = "";
   [@bs.send.pipe: t] external derivePath : string => t = "";

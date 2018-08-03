@@ -4,6 +4,7 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Bitcoin = require("../../ffi/Bitcoin.bs.js");
+var Network = require("./Network.bs.js");
 var LedgerJS = require("../../ffi/LedgerJS.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
@@ -13,8 +14,8 @@ var HwTransportU2f = require("@ledgerhq/hw-transport-u2f");
 function getHDNode(path, network, ledger) {
   return ledger.getWalletPublicKey(path).then((function (pubKey) {
                 return Promise.resolve(BitcoinjsLib.bip32.fromPublicKey(BitcoinjsLib.ECPair.fromPublicKey(Utils.bufFromHex(pubKey.publicKey), {
-                                    network: network
-                                  }).publicKey, Utils.bufFromHex(pubKey.chainCode), network));
+                                    network: Network.bitcoinNetwork(network)
+                                  }).publicKey, Utils.bufFromHex(pubKey.chainCode), Network.bitcoinNetwork(network)));
               }));
 }
 
@@ -23,7 +24,7 @@ function getCustodianKeyChain(network, ventureId, accountIdx, keyChainIdx) {
                       var btc = new HwAppBtc.default(transport);
                       return Promise.all(/* tuple */[
                                   Promise.resolve(btc),
-                                  getHDNode(CustodianKeyChain.misthosWalletPurposePath, BitcoinjsLib.networks.bitcoin, btc)
+                                  getHDNode(CustodianKeyChain.misthosWalletPurposePath, /* Mainnet */2, btc)
                                 ]);
                     })).then((function (param) {
                     var misthosPurposeNode = param[1];

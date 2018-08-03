@@ -13,7 +13,7 @@ type status =
   | Completed;
 type state = {status};
 
-let component = ReasonReact.reducerComponent("ConnectLedger");
+let component = ReasonReact.reducerComponent("LedgerKeys");
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
   initialState: () => {status: Idle},
@@ -22,60 +22,35 @@ let make = (~viewData: ViewData.t, _children) => {
     | SubmitPubKeys =>
       ReasonReact.UpdateWithSideEffects(
         {status: InProgress},
-        (({send}) => viewData.getCustodianKeyChain() |> ignore),
+        (
+          ({send}) =>
+            Js.Promise.(
+              viewData.getCustodianKeyChain()
+              |> then_(
+                   fun
+                   | Ledger.Ok(keyChain) =>
+                     Js.log2(
+                       "key chain:",
+                       keyChain
+                       |> CustodianKeyChain.hdNode
+                       |> Bitcoin.HDNode.toBase58,
+                     )
+                     |> resolve
+                   | Ledger.Error(error) => Js.log(error) |> resolve,
+                 )
+            )
+            |> ignore
+        ),
       )
-    /* | TransportCreated(transport) => */
-    /*   let btc = Ledger.btc(transport); */
-    /*   Js.log("Connected"); */
-    /*   ReasonReact.SideEffects( */
-    /*     ( */
-    /*       ({send}) => */
-    /*         Js.Global.setTimeout( */
-    /*           () => */
-    /*             Js.Promise.( */
-    /*               btc */
-    /*               |> Ledger.getHDNode( */
-    /*                    "44'/0'/0'/0", */
-    /*                    Bitcoin.Networks.bitcoin, */
-    /*                  ) */
-    /*               |> then_(hdNode => send(HDNodeFetched(hdNode)) |> resolve) */
-    /*               |> catch(error => { */
-    /*                    Js.log(error); */
-    /*                    send( */
-    /*                      FailedToFetchHDNode( */
-    /*                        error |> Ledger.decodeTransportError, */
-    /*                      ), */
-    /*                    ) */
-    /*                    |> resolve; */
-    /*                  }) */
-    /*             ) */
-    /*             |> ignore, */
-    /*           0, */
-    /*         ) */
-    /*         |> ignore */
-    /*     ), */
-    /*   ); */
-    /* | TransportCreationFailed(error) => */
-    /*   ReasonReact.Update({connectionStatus: ConnectionFailed(error)}) */
-    /* | FailedToFetchHDNode(error) => */
-    /*   ReasonReact.Update({connectionStatus: ConnectionFailed(error)}) */
-    /* | HDNodeFetched(hdNode) => */
-    /*   Js.log( */
-    /*     hdNode */
-    /*     |> Bitcoin.HDNode.getPublicKey */
-    /*     |. Bitcoin.ECPair.fromPublicKey({ */
-    /*          "network": hdNode |> Bitcoin.HDNode.getNetwork, */
-    /*        }) */
-    /*     |> Bitcoin.Address.fromKeyPair, */
-    /*   ); */
-    /*   ReasonReact.Update({connectionStatus: Connected(hdNode)}); */
     },
   render: ({state, send}) =>
     <Grid
       title1=("Connect Ledger" |> text)
       area3={
         <div>
-          <MButton onClick=(ignoreEvent(() => send(SubmitPubKeys))) />
+          <MButton onClick=(ignoreEvent(() => send(SubmitPubKeys)))>
+            ("Submit keys" |> text)
+          </MButton>
         </div>
       }
     />,
