@@ -10,6 +10,10 @@ var WalletTypes = require("./WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 
+function hardwareId($$public) {
+  return $$public[/* hardwareId */0];
+}
+
 function accountIdx($$public) {
   return $$public[/* accountIdx */1];
 }
@@ -25,7 +29,7 @@ function hdNode($$public) {
 function makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode) {
   var salt = Utils.hash(Utils.bufToHex(misthosPurposeNode.publicKey));
   var ventureIdx = Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt));
-  return "0'/" + (String(ventureIdx) + ("'/" + (String(0) + ("'/" + (String(WalletTypes.AccountIndex[/* toInt */0](accountIdx)) + ("'/" + (String(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)) + ("'/" + (String(45) + "'")))))))));
+  return String(0) + ("'/" + (String(ventureIdx) + ("'/" + (String(0) + ("'/" + (String(WalletTypes.AccountIndex[/* toInt */0](accountIdx)) + ("'/" + (String(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)) + ("'/" + (String(45) + "'"))))))))));
 }
 
 function fromHardwareNode(hardwareId, accountIdx, keyChainIdx, hdNode) {
@@ -113,6 +117,7 @@ exports.makePathToBip45Root = makePathToBip45Root;
 exports.fromHardwareNode = fromHardwareNode;
 exports.make = make;
 exports.toPublicKeyChain = toPublicKeyChain;
+exports.hardwareId = hardwareId;
 exports.accountIdx = accountIdx;
 exports.keyChainIdx = keyChainIdx;
 exports.getSigningKey = getSigningKey;

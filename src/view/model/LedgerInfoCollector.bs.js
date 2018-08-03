@@ -3,25 +3,54 @@
 
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
+var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
+var CustodianKeyChain = require("../../application/wallet/CustodianKeyChain.bs.js");
 
 function make(localUser) {
   return /* record */[
           /* localUser */localUser,
-          /* ledgerId : None */0,
-          /* ledgerUpToDate */false,
+          /* ledgerIds */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
+          /* ledgerUpToDate */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
           /* nextKeyChainIdx */WalletTypes.AccountIndex[/* makeMap */10](/* () */0)
         ];
+}
+
+function ledgerId(accountIdx, param) {
+  return Belt_Map.get(param[/* ledgerIds */1], accountIdx);
+}
+
+function ledgerUpToDate(accountIdx, param) {
+  return Belt_Map.getWithDefault(param[/* ledgerUpToDate */2], accountIdx, false);
 }
 
 function nextKeyChainIdx(accountIdx, param) {
   return Belt_Map.getWithDefault(param[/* nextKeyChainIdx */3], accountIdx, WalletTypes.CustodianKeyChainIndex[/* first */10]);
 }
 
-function apply(_, state) {
-  return state;
+function apply($$event, state) {
+  if ($$event.tag === 37) {
+    var match = $$event[0];
+    var keyChain = match[/* keyChain */2];
+    if (PrimitiveTypes.UserId[/* eq */5](match[/* custodianId */1], state[/* localUser */0])) {
+      var accountIdx = CustodianKeyChain.accountIdx(keyChain);
+      var match$1 = CustodianKeyChain.hardwareId(keyChain);
+      return /* record */[
+              /* localUser */state[/* localUser */0],
+              /* ledgerIds */match$1 ? Belt_Map.set(state[/* ledgerIds */1], accountIdx, match$1[0]) : state[/* ledgerIds */1],
+              /* ledgerUpToDate */Belt_Map.set(state[/* ledgerUpToDate */2], accountIdx, true),
+              /* nextKeyChainIdx */Belt_Map.set(state[/* nextKeyChainIdx */3], accountIdx, WalletTypes.CustodianKeyChainIndex[/* next */2](CustodianKeyChain.keyChainIdx(keyChain)))
+            ];
+    } else {
+      return state;
+    }
+  } else {
+    return state;
+  }
 }
 
 exports.make = make;
+exports.ledgerId = ledgerId;
+exports.ledgerUpToDate = ledgerUpToDate;
 exports.nextKeyChainIdx = nextKeyChainIdx;
 exports.apply = apply;
 /* WalletTypes Not a pure module */

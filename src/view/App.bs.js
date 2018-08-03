@@ -162,7 +162,9 @@ function make(session, updateSession, signTAC, _) {
                     return /* None */0;
                   } else {
                     return /* Some */[/* tuple */[
-                              ReasonReact.element(/* None */0, /* None */0, LedgerKeysModal.make(ViewModel.ledgerKeysView(venture$2), /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$2), /* None */0, (function (commands, cmdStatus) {
+                                          return ReasonReact.element(/* None */0, /* None */0, LedgerKeysModal.make(ViewModel.ledgerKeysView(venture$2), commands[/* submitCustodianKeyChain */7], cmdStatus, /* array */[]));
+                                        }))),
                               /* Some */[(function () {
                                     return Router.goTo(/* Venture */Block.__(0, [
                                                   selected,

@@ -39,8 +39,8 @@ let make:
 
 let toPublicKeyChain: t => public;
 
+let hardwareId: public => option(string);
 let accountIdx: public => accountIdx;
-
 let keyChainIdx: public => custodianKeyChainIdx;
 
 let getSigningKey: (coSignerIdx, chainIdx, addressIdx, t) => ECPair.t;

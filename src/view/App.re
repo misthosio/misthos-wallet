@@ -173,12 +173,22 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
     | (
         LoggedIn(_),
         Venture(selected, LedgerKeys),
-        VentureLoaded(_, venture, _),
+        VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <LedgerKeysModal viewData=(venture |> ViewModel.ledgerKeysView) />,
+          <CommandExecutor
+            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            ...(
+                 (~commands, ~cmdStatus) =>
+                   <LedgerKeysModal
+                     viewData=(venture |> ViewModel.ledgerKeysView)
+                     submitKeyChain=commands.submitCustodianKeyChain
+                     cmdStatus
+                   />
+               )
+          </CommandExecutor>,
           Some(onCloseModal(selected)),
         ))
     | (LoggedIn(_), _, _) => None

@@ -59,8 +59,8 @@ function fromViewModel(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var ventureId = param[/* ventureId */1];
   return /* record */[
-          /* ledgerId */ledgerInfoCollector[/* ledgerId */1],
-          /* ledgerUpToDate */ledgerInfoCollector[/* ledgerUpToDate */2],
+          /* ledgerId */LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
+          /* ledgerUpToDate */LedgerInfoCollector.ledgerUpToDate(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
           /* getCustodianKeyChain */(function () {
               return Ledger.getCustodianKeyChain(WalletInfoCollector.network(walletInfoCollector), ventureId, WalletTypes.AccountIndex[/* default */11], LedgerInfoCollector.nextKeyChainIdx(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector));
             })

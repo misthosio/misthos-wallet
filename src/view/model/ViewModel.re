@@ -46,8 +46,12 @@ module LedgerKeysView = {
     getCustodianKeyChain: unit => Js.Promise.t(Ledger.result),
   };
   let fromViewModel = ({ventureId, walletInfoCollector, ledgerInfoCollector}) => {
-    ledgerId: ledgerInfoCollector.ledgerId,
-    ledgerUpToDate: ledgerInfoCollector.ledgerUpToDate,
+    ledgerId:
+      ledgerInfoCollector
+      |> LedgerInfoCollector.ledgerId(AccountIndex.default),
+    ledgerUpToDate:
+      ledgerInfoCollector
+      |> LedgerInfoCollector.ledgerUpToDate(AccountIndex.default),
     getCustodianKeyChain: () =>
       Ledger.getCustodianKeyChain(
         ~network=walletInfoCollector |> WalletInfoCollector.network,

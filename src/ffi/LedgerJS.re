@@ -3,19 +3,15 @@ type transport;
 external createTransport : unit => Js.Promise.t(transport) = "create";
 
 type error =
-  | U2FNotSupported(string)
-  | U2F_5(string)
+  | Message(string)
   | Unknown;
-let error =
+let errorToString =
   fun
-  | U2FNotSupported(message) => "U2FNotSupported(" ++ message ++ ")"
-  | U2F_5(message) => "U2F_5(" ++ message ++ ")"
+  | Message(message) => message
   | Unknown => "Unknown";
 let decodeError = error => {
   let error = error |> Obj.magic;
-  switch (error##id) {
-  | "U2FNotSupported" => U2FNotSupported(error##message)
-  | "U2F_5" => U2F_5(error##message)
+  try (Message(error##message)) {
   | _ => Unknown
   };
 };

@@ -6,14 +6,15 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
+var Spinner = require("./components/Spinner.bs.js");
+var LedgerJS = require("../ffi/LedgerJS.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var CustodianKeyChain = require("../application/wallet/CustodianKeyChain.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var component = ReasonReact.reducerComponent("LedgerKeys");
 
-function make(viewData, _) {
+function make(viewData, submitKeyChain, _, _$1) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -26,40 +27,61 @@ function make(viewData, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Connect Ledger")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
+              var state = param[/* state */1];
+              var match = viewData[/* ledgerId */0];
+              var ledgerConnected = match ? "Ledger is connected" : "Ledger is not connected";
+              var match$1 = viewData[/* ledgerUpToDate */1];
+              var ledgerUpToDate = match$1 ? "Ledger pub keys are up to date" : "Ledger keys need rotating";
+              var match$2 = state[/* error */1];
+              var error = match$2 ? ViewCommon.text(LedgerJS.errorToString(match$2[0])) : null;
+              var match$3 = state[/* status */0];
+              var spinner = match$3 !== 1 ? null : ReasonReact.element(/* None */0, /* None */0, Spinner.make("InProgress", /* None */0, /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Connect Ledger")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, React.createElement("p", undefined, ViewCommon.text(ledgerConnected)), React.createElement("p", undefined, ViewCommon.text(ledgerUpToDate)), error, spinner, ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
                                                 return ViewCommon.ignoreEvent((function () {
                                                               return Curry._1(send, /* SubmitPubKeys */0);
                                                             }), param);
                                               })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Submit keys")])))], /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */(function () {
-              return /* record */[/* status : Idle */0];
+              return /* record */[
+                      /* status : Idle */0,
+                      /* error : None */0
+                    ];
             }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */(function (action, _) {
+          /* reducer */(function (action, state) {
+              var match = state[/* status */0];
               if (typeof action === "number") {
-                return /* UpdateWithSideEffects */Block.__(2, [
-                          /* record */[/* status : InProgress */1],
-                          (function () {
-                              Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
-                                      if (param.tag) {
-                                        return Promise.resolve((console.log(param[0]), /* () */0));
-                                      } else {
-                                        return Promise.resolve((console.log("key chain:", CustodianKeyChain.hdNode(param[0]).toBase58()), /* () */0));
-                                      }
-                                    }));
-                              return /* () */0;
-                            })
-                        ]);
+                if (match !== 0) {
+                  return /* NoUpdate */0;
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(2, [
+                            /* record */[
+                              /* status : InProgress */1,
+                              /* error : None */0
+                            ],
+                            (function (param) {
+                                var send = param[/* send */3];
+                                Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
+                                        if (param.tag) {
+                                          return Promise.resolve(Curry._1(send, /* FailedGettingKeys */Block.__(0, [param[0]])));
+                                        } else {
+                                          var keyChain = param[0];
+                                          Curry._1(submitKeyChain, keyChain);
+                                          return Promise.resolve((console.log("key chain:", CustodianKeyChain.hdNode(keyChain).toBase58(), CustodianKeyChain.hardwareId(keyChain)), /* () */0));
+                                        }
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              } else if (action.tag) {
+                return /* NoUpdate */0;
               } else {
-                throw [
-                      Caml_builtin_exceptions.match_failure,
-                      [
-                        "LedgerKeysModal.re",
-                        21,
-                        4
-                      ]
-                    ];
+                return /* Update */Block.__(0, [/* record */[
+                            /* status : Idle */0,
+                            /* error : Some */[action[0]]
+                          ]]);
               }
             }),
           /* subscriptions */component[/* subscriptions */13],

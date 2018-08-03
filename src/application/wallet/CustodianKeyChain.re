@@ -13,10 +13,9 @@ type t = {
 
 type public = t;
 
+let hardwareId = public => public.hardwareId;
 let accountIdx = public => public.accountIdx;
-
 let keyChainIdx = public => public.keyChainIdx;
-
 let hdNode = public => public.hdNode;
 
 /* m/misthosPurpose' /venture'/coin_type'/account'/keyChain'/bip45'/cosignerIdx/change/address */
@@ -33,7 +32,8 @@ let makePathToBip45Root =
     misthosPurposeNode |> HDNode.getPublicKey |> Utils.bufToHex |> Utils.hash;
   let ventureIdx =
     Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode;
-  "0'/"
+  string_of_int(misthosWalletPurposeIdx)
+  ++ "'/"
   ++ string_of_int(ventureIdx)
   ++ "'/"
   ++ string_of_int(coinTypeBitcoin)
