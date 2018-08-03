@@ -19,6 +19,9 @@ let getHDNode = (path, network, ledger) =>
        )
   );
 
+type result =
+  | Ok(CustodianKeyChain.public)
+  | Error(LedgerJS.error);
 let getCustodianKeyChain = (~network, ~ventureId, ~accountIdx, ~keyChainIdx) =>
   Js.Promise.(
     L.createTransport()
@@ -53,6 +56,8 @@ let getCustodianKeyChain = (~network, ~ventureId, ~accountIdx, ~keyChainIdx) =>
               ~accountIdx,
               ~keyChainIdx,
             )
+         |. Ok
          |> resolve
        )
+    |> catch(error => error |> L.decodeError |. Error |> resolve)
   );
