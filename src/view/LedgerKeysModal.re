@@ -2,9 +2,12 @@ include ViewCommon;
 
 module ViewData = ViewModel.LedgerKeysView;
 
+type error =
+  | LedgerError(LedgerJS.error)
+  | WrongHardwareId;
 type action =
   | SubmitPubKeys
-  | FailedGettingKeys(LedgerJS.error)
+  | FailedGettingKeys(error)
   | Completed(Bitcoin.HDNode.t);
 
 type status =
@@ -13,7 +16,7 @@ type status =
   | Completed;
 type state = {
   status,
-  error: option(LedgerJS.error),
+  error: option(error),
 };
 
 let component = ReasonReact.reducerComponent("LedgerKeys");
@@ -31,19 +34,18 @@ let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
               viewData.getCustodianKeyChain()
               |> then_(
                    fun
-                   | Ledger.Ok(keyChain) => {
-                       submitKeyChain(~keyChain);
-                       Js.log3(
-                         "key chain:",
-                         keyChain
-                         |> CustodianKeyChain.hdNode
-                         |> Bitcoin.HDNode.toBase58,
-                         keyChain |> CustodianKeyChain.hardwareId,
-                       )
-                       |> resolve;
+                   | Ledger.Ok(keyChain) =>
+                     switch (viewData.ledgerId) {
+                     | Some(ledgerId)
+                         when
+                           keyChain
+                           |> CustodianKeyChain.hardwareId
+                           |> Js.Option.getExn != ledgerId =>
+                       send(FailedGettingKeys(WrongHardwareId)) |> resolve
+                     | _ => submitKeyChain(~keyChain) |> resolve
                      }
                    | Ledger.Error(error) =>
-                     send(FailedGettingKeys(error)) |> resolve,
+                     send(FailedGettingKeys(LedgerError(error))) |> resolve,
                  )
             )
             |> ignore
@@ -64,7 +66,8 @@ let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
         "Ledger pub keys are up to date" : "Ledger keys need rotating";
     let error =
       switch (state.error) {
-      | Some(error) => LedgerJS.errorToString(error) |> text
+      | Some(LedgerError(error)) => LedgerJS.errorToString(error) |> text
+      | Some(WrongHardwareId) => "This ledger has the wrong seed" |> text
       | None => ReasonReact.null
       };
     let spinner =

@@ -8,6 +8,7 @@ var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var LedgerJS = require("../ffi/LedgerJS.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var CustodianKeyChain = require("../application/wallet/CustodianKeyChain.bs.js");
@@ -33,9 +34,15 @@ function make(viewData, submitKeyChain, _, _$1) {
               var match$1 = viewData[/* ledgerUpToDate */1];
               var ledgerUpToDate = match$1 ? "Ledger pub keys are up to date" : "Ledger keys need rotating";
               var match$2 = state[/* error */1];
-              var error = match$2 ? ViewCommon.text(LedgerJS.errorToString(match$2[0])) : null;
-              var match$3 = state[/* status */0];
-              var spinner = match$3 !== 1 ? null : ReasonReact.element(/* None */0, /* None */0, Spinner.make("InProgress", /* None */0, /* array */[]));
+              var error;
+              if (match$2) {
+                var match$3 = match$2[0];
+                error = match$3 ? ViewCommon.text(LedgerJS.errorToString(match$3[0])) : ViewCommon.text("This ledger has the wrong seed");
+              } else {
+                error = null;
+              }
+              var match$4 = state[/* status */0];
+              var spinner = match$4 !== 1 ? null : ReasonReact.element(/* None */0, /* None */0, Spinner.make("InProgress", /* None */0, /* array */[]));
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Connect Ledger")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, React.createElement("p", undefined, ViewCommon.text(ledgerConnected)), React.createElement("p", undefined, ViewCommon.text(ledgerUpToDate)), error, spinner, ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
                                                 return ViewCommon.ignoreEvent((function () {
                                                               return Curry._1(send, /* SubmitPubKeys */0);
@@ -64,11 +71,15 @@ function make(viewData, submitKeyChain, _, _$1) {
                                 var send = param[/* send */3];
                                 Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
                                         if (param.tag) {
-                                          return Promise.resolve(Curry._1(send, /* FailedGettingKeys */Block.__(0, [param[0]])));
+                                          return Promise.resolve(Curry._1(send, /* FailedGettingKeys */Block.__(0, [/* LedgerError */[param[0]]])));
                                         } else {
                                           var keyChain = param[0];
-                                          Curry._1(submitKeyChain, keyChain);
-                                          return Promise.resolve((console.log("key chain:", CustodianKeyChain.hdNode(keyChain).toBase58(), CustodianKeyChain.hardwareId(keyChain)), /* () */0));
+                                          var match = viewData[/* ledgerId */0];
+                                          if (match && Js_option.getExn(CustodianKeyChain.hardwareId(keyChain)) !== match[0]) {
+                                            return Promise.resolve(Curry._1(send, /* FailedGettingKeys */Block.__(0, [/* WrongHardwareId */0])));
+                                          } else {
+                                            return Promise.resolve(Curry._1(submitKeyChain, keyChain));
+                                          }
                                         }
                                       }));
                                 return /* () */0;
