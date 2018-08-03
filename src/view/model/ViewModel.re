@@ -39,7 +39,6 @@ let captureResponse = (correlationId, response, state) => {
 let lastResponse = ({lastResponse}) => lastResponse;
 
 module LedgerKeysView = {
-  open Belt;
   type t = {
     ledgerId: option(string),
     ledgerUpToDate: bool,

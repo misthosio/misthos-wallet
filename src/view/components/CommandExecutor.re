@@ -106,6 +106,7 @@ module Status = {
     | CreateVenture
     | JoinVenture
     | LoadVenture
+    | SubmitKeys
     | Proposal
     | Endorsement
     | Rejection;
@@ -141,6 +142,7 @@ module Status = {
                 | CreateVenture => "Venture is being created"
                 | JoinVenture => "Joining venture"
                 | LoadVenture => "Loading venture"
+                | SubmitKeys => "Your public keys are being submitted"
                 | Proposal => "Your proposal is being submitted"
                 | Endorsement => "Your endorsement is being submitted"
                 | Rejection => "Your rejection is being submitted"

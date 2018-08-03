@@ -7,14 +7,14 @@ type error =
   | WrongHardwareId;
 type action =
   | SubmitPubKeys
-  | FailedGettingKeys(error)
-  | Completed(Bitcoin.HDNode.t);
+  | FailedGettingKeys(error);
 
 type status =
   | Idle
   | InProgress
   | Completed;
 type state = {
+  viewData: ViewData.t,
   status,
   error: option(error),
 };
@@ -22,12 +22,13 @@ type state = {
 let component = ReasonReact.reducerComponent("LedgerKeys");
 let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
   ...component,
-  initialState: () => {status: Idle, error: None},
+  initialState: () => {status: Idle, error: None, viewData},
+  willReceiveProps: ({state}) => {...state, viewData},
   reducer: (action, state: state) =>
     switch (action, state.status) {
     | (SubmitPubKeys, Idle) =>
       ReasonReact.UpdateWithSideEffects(
-        {status: InProgress, error: None},
+        {...state, status: InProgress, error: None},
         (
           ({send}) =>
             Js.Promise.(
@@ -52,10 +53,11 @@ let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
         ),
       )
     | (FailedGettingKeys(error), _) =>
-      ReasonReact.Update({status: Idle, error: Some(error)})
+      ReasonReact.Update({...state, status: Idle, error: Some(error)})
     | _ => ReasonReact.NoUpdate
     },
   render: ({state, send}) => {
+    let viewData = state.viewData;
     let ledgerConnected =
       switch (viewData.ledgerId) {
       | Some(_) => "Ledger is connected"
@@ -70,11 +72,6 @@ let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
       | Some(WrongHardwareId) => "This ledger has the wrong seed" |> text
       | None => ReasonReact.null
       };
-    let spinner =
-      switch (state.status) {
-      | InProgress => <Spinner text="InProgress" />
-      | _ => ReasonReact.null
-      };
     <Grid
       title1=("Connect Ledger" |> text)
       area3={
@@ -82,10 +79,16 @@ let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
           <p> (ledgerConnected |> text) </p>
           <p> (ledgerUpToDate |> text) </p>
           error
-          spinner
-          <MButton onClick=(ignoreEvent(() => send(SubmitPubKeys)))>
-            ("Submit keys" |> text)
-          </MButton>
+          (
+            viewData.ledgerUpToDate ?
+              ReasonReact.null :
+              ReasonReact.array([|
+                <MButton onClick=(ignoreEvent(() => send(SubmitPubKeys)))>
+                  ("Submit keys" |> text)
+                </MButton>,
+                <CommandExecutor.Status cmdStatus action=SubmitKeys />,
+              |])
+          )
         </div>
       }
     />;

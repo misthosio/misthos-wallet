@@ -111,14 +111,14 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
                     case 1 : 
                         if (state >= 4) {
                           tmp = /* array */[
-                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */5, /* array */[])),
                             ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                     return Curry._1(send, /* Cancel */0);
                                                   })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))]))
                           ];
                         } else if (cmdStatus[0] >= 7) {
                           tmp = /* array */[
-                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */6, /* array */[])),
                             ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* Cancel */0);
                                         })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))
@@ -137,7 +137,7 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
               }
               switch (exit) {
                 case 1 : 
-                    tmp = state >= 4 ? /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[]))] : /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[]))];
+                    tmp = state >= 4 ? /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */6, /* array */[]))] : /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */5, /* array */[]))];
                     break;
                 case 2 : 
                     tmp = /* array */[

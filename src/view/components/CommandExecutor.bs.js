@@ -150,12 +150,15 @@ function make$1(cmdStatus, action, _) {
                             tmp = "Loading venture";
                             break;
                         case 3 : 
-                            tmp = "Your proposal is being submitted";
+                            tmp = "Your public keys are being submitted";
                             break;
                         case 4 : 
-                            tmp = "Your endorsement is being submitted";
+                            tmp = "Your proposal is being submitted";
                             break;
                         case 5 : 
+                            tmp = "Your endorsement is being submitted";
+                            break;
+                        case 6 : 
                             tmp = "Your rejection is being submitted";
                             break;
                         

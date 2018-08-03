@@ -96,14 +96,14 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
               }
               switch (exit) {
                 case 1 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */3, /* array */[]))];
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))];
                     break;
                 case 2 : 
                     tmp = /* array */[
                       ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                     return Curry._1(send, /* Propose */1);
                                   })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* array */[ViewCommon.text(proposeText)])),
-                      ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */3, /* array */[]))
+                      ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))
                     ];
                     break;
                 
