@@ -49,7 +49,7 @@ function make(viewData, submitKeyChain, cmdStatus, _) {
               } else {
                 error = null;
               }
-              var match$4 = viewData[/* ledgerUpToDate */1];
+              var match$4 = viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Connect Ledger")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, React.createElement("p", undefined, ViewCommon.text(ledgerConnected)), React.createElement("p", undefined, ViewCommon.text(ledgerUpToDate)), error, match$4 ? null : /* array */[
                                       ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
                                                     return ViewCommon.ignoreEvent((function () {

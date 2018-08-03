@@ -80,7 +80,7 @@ let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
           <p> (ledgerUpToDate |> text) </p>
           error
           (
-            viewData.ledgerUpToDate ?
+            viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
               ReasonReact.null :
               ReasonReact.array([|
                 <MButton onClick=(ignoreEvent(() => send(SubmitPubKeys)))>
