@@ -52,7 +52,8 @@ function make(param, param$1, log) {
                       /* pendingEvent */init[/* pendingEvent */1],
                       /* selfRemoved */init[/* selfRemoved */2],
                       /* pubKeyPresent */init[/* pubKeyPresent */3],
-                      /* nextKeyChainIdx */init[/* nextKeyChainIdx */4]
+                      /* hardwareIdPresent */init[/* hardwareIdPresent */4],
+                      /* nextKeyChainIdx */init[/* nextKeyChainIdx */5]
                     ];
                     break;
                 case 1 : 
@@ -64,7 +65,8 @@ function make(param, param$1, log) {
                         /* pendingEvent */init$1[/* pendingEvent */1],
                         /* selfRemoved */init$1[/* selfRemoved */2],
                         /* pubKeyPresent */Js_option.isSome(match[/* data */6][/* pubKey */2]),
-                        /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */4]
+                        /* hardwareIdPresent */init$1[/* hardwareIdPresent */4],
+                        /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */5]
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -78,7 +80,8 @@ function make(param, param$1, log) {
                         /* pendingEvent */init$2[/* pendingEvent */1],
                         /* selfRemoved */init$2[/* selfRemoved */2],
                         /* pubKeyPresent */true,
-                        /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */4]
+                        /* hardwareIdPresent */init$2[/* hardwareIdPresent */4],
+                        /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */5]
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -93,7 +96,8 @@ function make(param, param$1, log) {
                         /* pendingEvent : None */0,
                         /* selfRemoved */true,
                         /* pubKeyPresent */init$3[/* pubKeyPresent */3],
-                        /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */4]
+                        /* hardwareIdPresent */init$3[/* hardwareIdPresent */4],
+                        /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */5]
                       ];
                     } else {
                       var init$4 = self$1[state][0];
@@ -102,12 +106,13 @@ function make(param, param$1, log) {
                         /* pendingEvent : Some */[(function () {
                               return /* tuple */[
                                       env$1[2],
-                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */4], env$1[3])))])
+                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */5], env$1[3])))])
                                     ];
                             })],
                         /* selfRemoved */init$4[/* selfRemoved */2],
                         /* pubKeyPresent */init$4[/* pubKeyPresent */3],
-                        /* nextKeyChainIdx */init$4[/* nextKeyChainIdx */4]
+                        /* hardwareIdPresent */init$4[/* hardwareIdPresent */4],
+                        /* nextKeyChainIdx */init$4[/* nextKeyChainIdx */5]
                       ];
                     }
                     break;
@@ -119,12 +124,13 @@ function make(param, param$1, log) {
                         /* pendingEvent : Some */[(function () {
                               return /* tuple */[
                                       env$1[2],
-                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */4], env$1[3])))])
+                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */5], env$1[3])))])
                                     ];
                             })],
                         /* selfRemoved */init$5[/* selfRemoved */2],
                         /* pubKeyPresent */init$5[/* pubKeyPresent */3],
-                        /* nextKeyChainIdx */init$5[/* nextKeyChainIdx */4]
+                        /* hardwareIdPresent */init$5[/* hardwareIdPresent */4],
+                        /* nextKeyChainIdx */init$5[/* nextKeyChainIdx */5]
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -139,7 +145,8 @@ function make(param, param$1, log) {
                         /* pendingEvent : None */0,
                         /* selfRemoved */true,
                         /* pubKeyPresent */init$6[/* pubKeyPresent */3],
-                        /* nextKeyChainIdx */init$6[/* nextKeyChainIdx */4]
+                        /* hardwareIdPresent */init$6[/* hardwareIdPresent */4],
+                        /* nextKeyChainIdx */init$6[/* nextKeyChainIdx */5]
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -156,7 +163,8 @@ function make(param, param$1, log) {
                         /* pendingEvent : None */0,
                         /* selfRemoved */init$7[/* selfRemoved */2],
                         /* pubKeyPresent */init$7[/* pubKeyPresent */3],
-                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */4])
+                        /* hardwareIdPresent */Js_option.isSome(CustodianKeyChain.hardwareId(keyChain)),
+                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */5])
                       ];
                     } else if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && WalletTypes.AccountIndex[/* eq */7](CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
                       var init$8 = self$1[state][0];
@@ -165,12 +173,13 @@ function make(param, param$1, log) {
                         /* pendingEvent */Utils.mapOption((function (_, _$1) {
                                 return /* tuple */[
                                         env$1[2],
-                                        /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */4]), env$1[3])))])
+                                        /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */5]), env$1[3])))])
                                       ];
                               }), self$1[state][0][/* pendingEvent */1]),
                         /* selfRemoved */init$8[/* selfRemoved */2],
                         /* pubKeyPresent */init$8[/* pubKeyPresent */3],
-                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */4])
+                        /* hardwareIdPresent */Js_option.isSome(CustodianKeyChain.hardwareId(keyChain)),
+                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */5])
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -193,7 +202,7 @@ function make(param, param$1, log) {
             }),
           pendingEvent,
           (function (self$1, _) {
-              var match = self$1[state][0][/* pubKeyPresent */3];
+              var match = !self$1[state][0][/* hardwareIdPresent */4] && self$1[state][0][/* pubKeyPresent */3];
               if (match) {
                 return Utils.mapOption((function (f) {
                               return Curry._1(f, /* () */0);
@@ -210,6 +219,7 @@ function make(param, param$1, log) {
           /* pendingEvent : None */0,
           /* selfRemoved */false,
           /* pubKeyPresent */false,
+          /* hardwareIdPresent */false,
           /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* first */10]
         ]];
       self[env] = env$1;

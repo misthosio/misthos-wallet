@@ -17,7 +17,7 @@ function constructState(log) {
 describe("AddressCollector", (function () {
         describe("collects addresses", (function () {
                 var user1 = Fixtures.threeUserSessions[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)))));

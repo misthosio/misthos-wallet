@@ -116,9 +116,15 @@ function fiveUserSessions() {
         ];
 }
 
-function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
-  var accountIdx = $staropt$star ? $staropt$star[0] : WalletTypes.AccountIndex[/* default */11];
-  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
+function custodianKeyChain($staropt$star, $staropt$star$1, ventureId, keyChainIdx, param) {
+  var hardwareId = $staropt$star ? $staropt$star[0] : false;
+  var accountIdx = $staropt$star$1 ? $staropt$star$1[0] : WalletTypes.AccountIndex[/* default */11];
+  var keyChain = CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
+  if (hardwareId) {
+    return CustodianKeyChain.fromHardwareNode("hardwareId", accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), CustodianKeyChain.hdNode(keyChain));
+  } else {
+    return keyChain;
+  }
 }
 
 function accountKeyChainFrom($staropt$star) {
@@ -136,7 +142,7 @@ function accountKeyChain($staropt$star, $staropt$star$1, users) {
   return accountKeyChainFrom(/* None */0)(List.map((function (user) {
                     return /* tuple */[
                             user[/* userId */0],
-                            custodianKeyChain(/* None */0, ventureId, keyChainIdx, user)
+                            custodianKeyChain(/* None */0, /* None */0, ventureId, keyChainIdx, user)
                           ];
                   }), users));
 }
@@ -661,8 +667,9 @@ function withCustodianRemoved(user, supporters, log) {
   }
 }
 
-function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
+function withCustodianKeyChain($staropt$star, $staropt$star$1, issuer, custodian, l) {
   var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
+  var hardwareId = $staropt$star$1 ? $staropt$star$1[0] : false;
   var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           if ($$event.tag === 19) {
@@ -678,7 +685,7 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
             return res;
           }
         }), /* [] */0, l[/* log */3]);
-  var keyChain = custodianKeyChain(/* None */0, l[/* ventureId */0], keyChainIdx, custodian);
+  var keyChain = custodianKeyChain(/* Some */[hardwareId], /* None */0, l[/* ventureId */0], keyChainIdx, custodian);
   var issuerKeyPair = Js_option.getWithDefault(custodian[/* issuerKeyPair */2], Utils.mapOption((function (issuer) {
               return issuer[/* issuerKeyPair */2];
             }), issuer));

@@ -13,7 +13,7 @@ describe(" AccountKeyChainIdentified", (function () {
         describe("when everything is fine", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -22,7 +22,7 @@ describe(" AccountKeyChainIdentified", (function () {
         describe("when the account doesn't exist", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -41,7 +41,7 @@ describe(" AccountKeyChainIdentified", (function () {
         describe("when the AccountKeyChain is inconsistent", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -61,7 +61,7 @@ describe(" AccountKeyChainIdentified", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
                           user1,
                           /* :: */[
                             user2,
@@ -70,11 +70,11 @@ describe(" AccountKeyChainIdentified", (function () {
                         ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
                               user1,
                               /* [] */0
-                            ], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                            ], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                                       user1,
                                       /* [] */0
                                     ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))));
-                var log = Generators.Log[/* withCustodianKeyChain */38](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
+                var log = Generators.Log[/* withCustodianKeyChain */38](/* Some */[1], /* None */0, /* None */0, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withCustodianRemoved */37](user2, /* :: */[
@@ -86,12 +86,12 @@ describe(" AccountKeyChainIdentified", (function () {
                             }), ValidationHelpers.constructState(/* None */0, log), /* record */[/* keyChain */AccountKeyChain.make(/* None */0, WalletTypes.AccountIndex[/* default */11], /* :: */[
                                   /* tuple */[
                                     user1[/* userId */0],
-                                    Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 1, user1)
+                                    Generators.custodianKeyChain(/* None */0, /* None */0, Generators.Log[/* ventureId */2](log), 1, user1)
                                   ],
                                   /* :: */[
                                     /* tuple */[
                                       user2[/* userId */0],
-                                      Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 0, user2)
+                                      Generators.custodianKeyChain(/* None */0, /* None */0, Generators.Log[/* ventureId */2](log), 0, user2)
                                     ],
                                     /* [] */0
                                   ]
@@ -100,7 +100,7 @@ describe(" AccountKeyChainIdentified", (function () {
         describe("when a CustodianKeyChain is unknown", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var log = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -109,7 +109,7 @@ describe(" AccountKeyChainIdentified", (function () {
                             }), ValidationHelpers.constructState(/* None */0, log), /* record */[/* keyChain */AccountKeyChain.make(/* None */0, WalletTypes.AccountIndex[/* default */11], /* :: */[
                                   /* tuple */[
                                     user1[/* userId */0],
-                                    Generators.custodianKeyChain(/* None */0, PrimitiveTypes.VentureId[/* make */10](/* () */0), 1, user1)
+                                    Generators.custodianKeyChain(/* None */0, /* None */0, PrimitiveTypes.VentureId[/* make */10](/* () */0), 1, user1)
                                   ],
                                   /* [] */0
                                 ])], /* BadData */["Bad CustodianKeyChain"]);
@@ -121,7 +121,7 @@ describe("AccountKeyChainActivated", (function () {
         describe("when everything is fine", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -132,11 +132,11 @@ describe("AccountKeyChainActivated", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
-                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
                           user1,
                           /* :: */[
                             user2,
@@ -155,7 +155,7 @@ describe("AccountKeyChainActivated", (function () {
         describe("when the account doesn't exist", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -174,7 +174,7 @@ describe("AccountKeyChainActivated", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -191,7 +191,7 @@ describe("AccountKeyChainActivated", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -207,7 +207,7 @@ describe("AccountKeyChainActivated", (function () {
         describe("when the identifier is unknown", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -225,7 +225,7 @@ describe("AccountKeyChainActivated", (function () {
         describe("when the sequence is not in order", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));

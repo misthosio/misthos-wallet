@@ -16,7 +16,7 @@ describe("CustodianKeyChainUpdated", (function () {
                       user1,
                       /* [] */0
                     ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
-                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, log)), /* Ok */0);
               }));
         describe("when the signer doesn't match the custodianId", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
@@ -29,7 +29,7 @@ describe("CustodianKeyChainUpdated", (function () {
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
-                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* Some */[user2], user1, log)), /* InvalidIssuer */2);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* Some */[user2], user1, log)), /* InvalidIssuer */2);
               }));
         describe("when the custodianApprovalProcess doesn't exist", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
@@ -43,7 +43,7 @@ describe("CustodianKeyChainUpdated", (function () {
                             }), ValidationHelpers.constructState(/* None */0, log), /* record */[
                             /* custodianApprovalProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0),
                             /* custodianId */user1[/* userId */0],
-                            /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 0, user1)
+                            /* keyChain */Generators.custodianKeyChain(/* None */0, /* None */0, Generators.Log[/* ventureId */2](log), 0, user1)
                           ], /* BadData */["Bad custodianApprovalProcess"]);
               }));
         describe("when the custodianApprovalProcess isn't completed", (function () {
@@ -56,7 +56,7 @@ describe("CustodianKeyChainUpdated", (function () {
                             }), ValidationHelpers.constructState(/* None */0, log), /* record */[
                             /* custodianApprovalProcess */proposal[/* processId */0],
                             /* custodianId */user1[/* userId */0],
-                            /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 0, user1)
+                            /* keyChain */Generators.custodianKeyChain(/* None */0, /* None */0, Generators.Log[/* ventureId */2](log), 0, user1)
                           ], /* BadData */["Bad custodianApprovalProcess"]);
               }));
         describe("when the custodian approval process is for another user", (function () {
@@ -77,7 +77,7 @@ describe("CustodianKeyChainUpdated", (function () {
                             }), ValidationHelpers.constructState(/* None */0, log$1), /* record */[
                             /* custodianApprovalProcess */accepted[/* processId */0],
                             /* custodianId */user2[/* userId */0],
-                            /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log$1), 0, user1)
+                            /* keyChain */Generators.custodianKeyChain(/* None */0, /* None */0, Generators.Log[/* ventureId */2](log$1), 0, user1)
                           ], /* BadData */["CustodianApprovalProcess is for another partner"]);
               }));
         describe("when the account doesn't exist", (function () {
@@ -93,7 +93,7 @@ describe("CustodianKeyChainUpdated", (function () {
                             }), ValidationHelpers.constructState(/* None */0, log), /* record */[
                             /* custodianApprovalProcess */accepted[/* processId */0],
                             /* custodianId */user1[/* userId */0],
-                            /* keyChain */Generators.custodianKeyChain(/* Some */[WalletTypes.AccountIndex[/* fromInt */1](1)], Generators.Log[/* ventureId */2](log), 0, user1)
+                            /* keyChain */Generators.custodianKeyChain(/* None */0, /* Some */[WalletTypes.AccountIndex[/* fromInt */1](1)], Generators.Log[/* ventureId */2](log), 0, user1)
                           ], /* BadData */["Account doesn't exist"]);
               }));
         describe("when the key chain index isn't in order", (function () {
@@ -109,7 +109,7 @@ describe("CustodianKeyChainUpdated", (function () {
                             }), ValidationHelpers.constructState(/* None */0, log), /* record */[
                             /* custodianApprovalProcess */accepted[/* processId */0],
                             /* custodianId */user1[/* userId */0],
-                            /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 1, user1)
+                            /* keyChain */Generators.custodianKeyChain(/* None */0, /* None */0, Generators.Log[/* ventureId */2](log), 1, user1)
                           ], /* BadData */["CustodianKeyChainIndex isn't in order"]);
               }));
         return /* () */0;

@@ -25,7 +25,7 @@ describe("Wallet_integration", (function () {
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var log = Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* Some */[4], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                var log = Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* Some */[4], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user2, /* :: */[
                                           user1,
                                           /* :: */[
                                             user2,
@@ -49,7 +49,7 @@ describe("Wallet_integration", (function () {
                 var match$3 = match$1[0];
                 var address2 = match$3[1];
                 var address1 = match$3[0];
-                var log$1 = Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* Some */[4], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
+                var log$1 = Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* Some */[4], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, /* None */0, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
                                           user1,
                                           /* :: */[
                                             user2,

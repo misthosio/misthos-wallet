@@ -108,6 +108,28 @@ let () =
         | _ => false,
       );
     });
+    describe("Is idle when a hardware keychain is detected", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+        );
+      let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      let log =
+        L.(
+          log
+          |> withCustodianKeyChain(user1)
+          |> withCustodianKeyChain(~keyChainIdx=1, ~hardwareId=true, user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerRemoved(user2, ~supporters=[user1])
+        );
+      let watcher =
+        CustodianKeyChain.make(user1, acceptance, log |> L.eventLog);
+      testWatcherHasNoEventPending(watcher);
+    });
     describe("Keeps increasing the index accross multiple removals", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =

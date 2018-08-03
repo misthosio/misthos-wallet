@@ -89,18 +89,32 @@ let fiveUserSessions = () => (
 
 let custodianKeyChain =
     (
+      ~hardwareId=false,
       ~accountIdx=AccountIndex.default,
       ~ventureId,
       ~keyChainIdx,
       {masterKeyChain}: SessionData.t,
-    ) =>
-  CustodianKeyChain.make(
-    ~ventureId,
-    ~accountIdx,
-    ~keyChainIdx=CustodianKeyChainIndex.fromInt(keyChainIdx),
-    ~masterKeyChain,
-  )
-  |> CustodianKeyChain.toPublicKeyChain;
+    ) => {
+  let keyChain =
+    CustodianKeyChain.make(
+      ~ventureId,
+      ~accountIdx,
+      ~keyChainIdx=CustodianKeyChainIndex.fromInt(keyChainIdx),
+      ~masterKeyChain,
+    )
+    |> CustodianKeyChain.toPublicKeyChain;
+  if (hardwareId) {
+    keyChain
+    |> CustodianKeyChain.hdNode
+    |> CustodianKeyChain.fromHardwareNode(
+         ~hardwareId="hardwareId",
+         ~accountIdx,
+         ~keyChainIdx=CustodianKeyChainIndex.fromInt(keyChainIdx),
+       );
+  } else {
+    keyChain;
+  };
+};
 
 let accountKeyChainFrom = (~sequence=AccountKeyChain.defaultSequence) =>
   AccountKeyChain.make(~sequence, AccountIndex.default);
@@ -659,7 +673,13 @@ module Log = {
            "withCustodian"
     };
   let withCustodianKeyChain =
-      (~keyChainIdx=0, ~issuer=?, custodian, {log, ventureId} as l) => {
+      (
+        ~keyChainIdx=0,
+        ~hardwareId=false,
+        ~issuer=?,
+        custodian,
+        {log, ventureId} as l,
+      ) => {
     let custodianProcesses =
       log
       |> EventLog.reduce(
@@ -673,7 +693,8 @@ module Log = {
              },
            [],
          );
-    let keyChain = custodianKeyChain(~ventureId, ~keyChainIdx, custodian);
+    let keyChain =
+      custodianKeyChain(~hardwareId, ~ventureId, ~keyChainIdx, custodian);
     let issuerKeyPair =
       issuer
       |> Utils.mapOption((issuer: SessionData.t) => issuer.issuerKeyPair)
