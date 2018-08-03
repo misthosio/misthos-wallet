@@ -12,7 +12,8 @@ var BlockchainInfoClient = require("./BlockchainInfoClient.bs.js");
 function Make(Client) {
   var network = Client[/* network */0];
   var transactionInfo = Client[/* getTransactionInfo */2];
-  var currentBlockHeight = Client[/* getCurrentBlockHeight */3];
+  var transactionHex = Client[/* getTransactionHex */3];
+  var currentBlockHeight = Client[/* getCurrentBlockHeight */4];
   var transactionInputs = function (addresses) {
     return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                   return Promise.resolve(Belt_List.map(utxos, (function (param) {
@@ -32,10 +33,11 @@ function Make(Client) {
                                   })));
                 }));
   };
-  var broadcastTransaction = Client[/* broadcastTransaction */4];
+  var broadcastTransaction = Client[/* broadcastTransaction */5];
   return /* module */[
           /* network */network,
           /* transactionInfo */transactionInfo,
+          /* transactionHex */transactionHex,
           /* currentBlockHeight */currentBlockHeight,
           /* transactionInputs */transactionInputs,
           /* broadcastTransaction */broadcastTransaction
@@ -52,7 +54,9 @@ var network = Client[/* network */0];
 
 var transactionInfo = Client[/* getTransactionInfo */2];
 
-var currentBlockHeight = Client[/* getCurrentBlockHeight */3];
+var transactionHex = Client[/* getTransactionHex */3];
+
+var currentBlockHeight = Client[/* getCurrentBlockHeight */4];
 
 function transactionInputs(addresses) {
   return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
@@ -74,11 +78,12 @@ function transactionInputs(addresses) {
               }));
 }
 
-var broadcastTransaction = Client[/* broadcastTransaction */4];
+var broadcastTransaction = Client[/* broadcastTransaction */5];
 
 var Regtest = /* module */[
   /* network */network,
   /* transactionInfo */transactionInfo,
+  /* transactionHex */transactionHex,
   /* currentBlockHeight */currentBlockHeight,
   /* transactionInputs */transactionInputs,
   /* broadcastTransaction */broadcastTransaction
@@ -90,7 +95,9 @@ var network$1 = Client$1[/* network */0];
 
 var transactionInfo$1 = Client$1[/* getTransactionInfo */2];
 
-var currentBlockHeight$1 = Client$1[/* getCurrentBlockHeight */3];
+var transactionHex$1 = Client$1[/* getTransactionHex */3];
+
+var currentBlockHeight$1 = Client$1[/* getCurrentBlockHeight */4];
 
 function transactionInputs$1(addresses) {
   return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
@@ -112,11 +119,12 @@ function transactionInputs$1(addresses) {
               }));
 }
 
-var broadcastTransaction$1 = Client$1[/* broadcastTransaction */4];
+var broadcastTransaction$1 = Client$1[/* broadcastTransaction */5];
 
 var Testnet = /* module */[
   /* network */network$1,
   /* transactionInfo */transactionInfo$1,
+  /* transactionHex */transactionHex$1,
   /* currentBlockHeight */currentBlockHeight$1,
   /* transactionInputs */transactionInputs$1,
   /* broadcastTransaction */broadcastTransaction$1
@@ -128,7 +136,9 @@ var network$2 = Client$2[/* network */0];
 
 var transactionInfo$2 = Client$2[/* getTransactionInfo */2];
 
-var currentBlockHeight$2 = Client$2[/* getCurrentBlockHeight */3];
+var transactionHex$2 = Client$2[/* getTransactionHex */3];
+
+var currentBlockHeight$2 = Client$2[/* getCurrentBlockHeight */4];
 
 function transactionInputs$2(addresses) {
   return Curry._1(Client$2[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
@@ -150,11 +160,12 @@ function transactionInputs$2(addresses) {
               }));
 }
 
-var broadcastTransaction$2 = Client$2[/* broadcastTransaction */4];
+var broadcastTransaction$2 = Client$2[/* broadcastTransaction */5];
 
 var Mainnet = /* module */[
   /* network */network$2,
   /* transactionInfo */transactionInfo$2,
+  /* transactionHex */transactionHex$2,
   /* currentBlockHeight */currentBlockHeight$2,
   /* transactionInputs */transactionInputs$2,
   /* broadcastTransaction */broadcastTransaction$2
@@ -180,6 +191,18 @@ function transactionInfo$3(param) {
         return transactionInfo$1;
     case 2 : 
         return transactionInfo$2;
+    
+  }
+}
+
+function transactionHex$3(param) {
+  switch (param) {
+    case 0 : 
+        return transactionHex;
+    case 1 : 
+        return transactionHex$1;
+    case 2 : 
+        return transactionHex$2;
     
   }
 }
@@ -214,6 +237,7 @@ exports.Testnet = Testnet;
 exports.Mainnet = Mainnet;
 exports.transactionInputs = transactionInputs$3;
 exports.transactionInfo = transactionInfo$3;
+exports.transactionHex = transactionHex$3;
 exports.currentBlockHeight = currentBlockHeight$3;
 exports.broadcastTransaction = broadcastTransaction$3;
 /* Client Not a pure module */

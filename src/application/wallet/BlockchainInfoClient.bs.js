@@ -6,6 +6,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -79,6 +80,16 @@ function getTransactionInfo(config, transactions) {
               }));
 }
 
+function getTransactionHex(config, transactions) {
+  return Promise.all(Belt_Array.mapU(transactions, (function (txId) {
+                      return fetch("https://" + (config[/* subdomain */0] + ("blockchain.info/rawtx/" + (txId + "?format=hex&cors=true")))).then((function (prim) {
+                                    return prim.text();
+                                  }));
+                    }))).then((function (res) {
+                return Promise.resolve(res);
+              }));
+}
+
 function getCurrentBlockHeight(config, _) {
   return fetch("https://" + (config[/* subdomain */0] + "blockchain.info/latestblock?cors=true")).then((function (prim) {
                   return prim.json();
@@ -114,6 +125,9 @@ function make(config, network) {
   var getTransactionInfo$1 = function (param) {
     return getTransactionInfo(config, param);
   };
+  var getTransactionHex$1 = function (param) {
+    return getTransactionHex(config, param);
+  };
   var getCurrentBlockHeight$1 = function (param) {
     return getCurrentBlockHeight(config, param);
   };
@@ -124,6 +138,7 @@ function make(config, network) {
           /* network */network,
           /* getUTXOs */getUTXOs$1,
           /* getTransactionInfo */getTransactionInfo$1,
+          /* getTransactionHex */getTransactionHex$1,
           /* getCurrentBlockHeight */getCurrentBlockHeight$1,
           /* broadcastTransaction */broadcastTransaction$1
         ];
@@ -137,6 +152,7 @@ exports.float_ = float_;
 exports.decodeUTXO = decodeUTXO;
 exports.getUTXOs = getUTXOs;
 exports.getTransactionInfo = getTransactionInfo;
+exports.getTransactionHex = getTransactionHex;
 exports.getCurrentBlockHeight = getCurrentBlockHeight;
 exports.broadcastTransaction = broadcastTransaction;
 exports.make = make;
