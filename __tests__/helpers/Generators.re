@@ -204,6 +204,7 @@ module Event = {
       ~proposerId=userId,
       ~name="test",
       ~accountIdx=AccountIndex.default,
+      ~accountSettings=AccountSettings.default,
       ~policy=Policy.unanimous,
     )
     |> AppEvent.getAccountCreationProposedExn;

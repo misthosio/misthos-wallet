@@ -30,6 +30,7 @@ function make(ventureName, creatorId, creatorPubKey, metaPolicy, network) {
           /* ventureName */ventureName,
           /* creatorId */creatorId,
           /* creatorPubKey */creatorPubKey,
+          /* defaultAccountSettings */undefined,
           /* metaPolicy */metaPolicy,
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* network */network
@@ -64,20 +65,26 @@ function encode($$event) {
                       ],
                       /* :: */[
                         /* tuple */[
-                          "metaPolicy",
-                          Policy.encode($$event[/* metaPolicy */4])
+                          "defaultAccountSettings",
+                          Json_encode.nullable(AccountSettings.encode, $$event[/* defaultAccountSettings */4])
                         ],
                         /* :: */[
                           /* tuple */[
-                            "systemIssuer",
-                            $$event[/* systemIssuer */5].toWIF()
+                            "metaPolicy",
+                            Policy.encode($$event[/* metaPolicy */5])
                           ],
                           /* :: */[
                             /* tuple */[
-                              "network",
-                              Network.encode($$event[/* network */6])
+                              "systemIssuer",
+                              $$event[/* systemIssuer */6].toWIF()
                             ],
-                            /* [] */0
+                            /* :: */[
+                              /* tuple */[
+                                "network",
+                                Network.encode($$event[/* network */7])
+                              ],
+                              /* [] */0
+                            ]
                           ]
                         ]
                       ]
@@ -94,6 +101,7 @@ function decode(raw) {
           /* ventureName */Json_decode.field("ventureName", Json_decode.string, raw),
           /* creatorId */Json_decode.field("creatorId", PrimitiveTypes.UserId[/* decode */3], raw),
           /* creatorPubKey */Json_decode.field("creatorPubKey", Json_decode.string, raw),
+          /* defaultAccountSettings */Utils.maybeField("defaultAccountSettings", AccountSettings.decode)(raw),
           /* metaPolicy */Json_decode.field("metaPolicy", Policy.decode, raw),
           /* systemIssuer */BitcoinjsLib.ECPair.fromWIF(Json_decode.field("systemIssuer", Json_decode.string, raw)),
           /* network */Json_decode.field("network", Network.decode, raw)
@@ -288,10 +296,16 @@ function encode$4($$event) {
               ],
               /* :: */[
                 /* tuple */[
-                  "name",
-                  $$event[/* name */2]
+                  "settings",
+                  Json_encode.nullable(AccountSettings.encode, $$event[/* settings */1])
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "name",
+                    $$event[/* name */2]
+                  ],
+                  /* [] */0
+                ]
               ]
             ]);
 }
@@ -1120,10 +1134,10 @@ function makePartnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, 
                 ])]);
 }
 
-function makeAccountCreationProposed(eligibleWhenProposing, proposerId, name, accountIdx, policy) {
+function makeAccountCreationProposed(eligibleWhenProposing, proposerId, name, accountIdx, accountSettings, policy) {
   return /* AccountCreationProposed */Block.__(12, [Curry._6(Proposed$2[/* make */0], undefined, undefined, eligibleWhenProposing, proposerId, policy, /* record */[
                   /* accountIdx */accountIdx,
-                  /* settings */undefined,
+                  /* settings */accountSettings,
                   /* name */name
                 ])]);
 }

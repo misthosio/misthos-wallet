@@ -183,7 +183,7 @@ function partnerRemovalEndorsed(supporter, param) {
 var partnerRemovalAccepted = Event.Partner[/* Removal */9][/* Accepted */6][/* fromProposal */0];
 
 function accountCreationProposed(eligibleWhenProposing, param) {
-  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */11], Policy.unanimous));
+  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */11], AccountSettings.$$default, Policy.unanimous));
 }
 
 function accountCreationEndorsed(supporter, param) {
@@ -340,7 +340,7 @@ function fromEventLog(log) {
             var match = $$event[0];
             return /* tuple */[
                     Js_primitive.some(match[/* ventureId */0]),
-                    Js_primitive.some(match[/* systemIssuer */5]),
+                    Js_primitive.some(match[/* systemIssuer */6]),
                     lastItem
                   ];
           }
@@ -361,7 +361,7 @@ function make(session, ventureCreated) {
   var match = Curry._3(EventLog.append, session[/* issuerKeyPair */2], /* VentureCreated */Block.__(0, [ventureCreated]), Curry._1(EventLog.make, /* () */0));
   return /* record */[
           /* ventureId */ventureCreated[/* ventureId */0],
-          /* systemIssuer */ventureCreated[/* systemIssuer */5],
+          /* systemIssuer */ventureCreated[/* systemIssuer */6],
           /* lastItem */match[0],
           /* log */match[1]
         ];

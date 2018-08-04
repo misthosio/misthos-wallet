@@ -68,7 +68,7 @@ function apply(param, state) {
     case 0 : 
         var match = $$event[0];
         var newrecord$1 = Caml_array.caml_array_dup(newrecord);
-        newrecord$1[/* systemPubKey */5] = Utils.publicKeyFromKeyPair(match[/* systemIssuer */5]);
+        newrecord$1[/* systemPubKey */5] = Utils.publicKeyFromKeyPair(match[/* systemIssuer */6]);
         newrecord$1[/* creatorData */19] = /* record */[
           /* lastPartnerRemovalProcess */undefined,
           /* id */match[/* creatorId */2],
