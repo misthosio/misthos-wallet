@@ -33,10 +33,9 @@ external getWalletPublicKey : (btc, string) => Js.Promise.t(ledgerPubKey) =
   "";
 
 type txInfo;
-
 [@bs.send]
 external splitTransaction :
-  (btc, ~txHex: string, [@bs.as {json|true|json}] _) => txInfo =
+  (btc, string, [@bs.as {json|true|json}] _) => txInfo =
   "";
 
 [@bs.send]
