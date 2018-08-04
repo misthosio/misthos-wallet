@@ -26,6 +26,7 @@ var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../../src/application/wallet/AccountKeyChain.bs.js");
+var AccountSettings = require("../../src/application/wallet/AccountSettings.bs.js");
 var CustodianKeyChain = require("../../src/application/wallet/CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
@@ -125,7 +126,10 @@ function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
 function accountKeyChainFrom($staropt$star) {
   var sequence = $staropt$star !== undefined ? $staropt$star : AccountKeyChain.defaultSequence;
   var partial_arg = WalletTypes.AccountIndex[/* default */11];
-  var partial_arg$1 = sequence;
+  var partial_arg$1 = /* record */[
+    /* coSignerList */AccountSettings.defaultSettings[/* coSignerList */0],
+    /* sequence */sequence
+  ];
   return (function (param) {
       return AccountKeyChain.make(partial_arg$1, partial_arg, param);
     });

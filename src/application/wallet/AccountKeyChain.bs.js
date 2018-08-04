@@ -12,6 +12,7 @@ var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var WalletTypes = require("./WalletTypes.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
+var AccountSettings = require("./AccountSettings.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 
 function encode(prim) {
@@ -63,14 +64,14 @@ var defaultCoSignerList = /* array */[
 ];
 
 function make$1($staropt$star, accountIdx, custodianKeyChains) {
-  var sequence = $staropt$star !== undefined ? $staropt$star : 12672;
-  var nCoSigners = Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains));
+  var settings = $staropt$star !== undefined ? $staropt$star : AccountSettings.defaultSettings;
+  var nCoSigners = Caml_array.caml_array_get(settings[/* coSignerList */0], List.length(custodianKeyChains));
   var match = nCoSigners > 1;
   return /* record */[
           /* accountIdx */accountIdx,
           /* identifier */make(nCoSigners, custodianKeyChains),
           /* nCoSigners */nCoSigners,
-          /* sequence */match ? sequence : undefined,
+          /* sequence */match ? settings[/* sequence */1] : undefined,
           /* custodianKeyChains */custodianKeyChains
         ];
 }

@@ -103,7 +103,10 @@ let custodianKeyChain =
   |> CustodianKeyChain.toPublicKeyChain;
 
 let accountKeyChainFrom = (~sequence=AccountKeyChain.defaultSequence) =>
-  AccountKeyChain.make(~sequence, AccountIndex.default);
+  AccountKeyChain.make(
+    ~settings={...AccountSettings.defaultSettings, sequence: Some(sequence)},
+    AccountIndex.default,
+  );
 
 let accountKeyChain =
     (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
