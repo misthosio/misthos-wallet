@@ -127,7 +127,7 @@ function accountKeyChainFrom($staropt$star) {
   var sequence = $staropt$star !== undefined ? $staropt$star : AccountKeyChain.defaultSequence;
   var partial_arg = WalletTypes.AccountIndex[/* default */11];
   var partial_arg$1 = /* record */[
-    /* coSignerList */AccountSettings.defaultSettings[/* coSignerList */0],
+    /* coSignerList */AccountSettings.$$default[/* coSignerList */0],
     /* sequence */sequence
   ];
   return (function (param) {

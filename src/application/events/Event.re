@@ -128,6 +128,7 @@ module AccountCreation = {
   module Data = {
     type t = {
       accountIdx,
+      settings: option(AccountSettings.t),
       name: string,
     };
     let encode = event =>
@@ -139,6 +140,7 @@ module AccountCreation = {
       );
     let decode = raw =>
       Json.Decode.{
+        settings: raw |> Utils.maybeField("settings", AccountSettings.decode),
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
         name: raw |> field("name", string),
       };
@@ -636,7 +638,7 @@ let makeAccountCreationProposed =
       ~eligibleWhenProposing,
       ~proposerId,
       ~policy,
-      AccountCreation.Data.{accountIdx, name},
+      AccountCreation.Data.{settings: None, accountIdx, name},
     ),
   );
 

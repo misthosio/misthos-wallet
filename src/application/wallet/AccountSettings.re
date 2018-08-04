@@ -6,7 +6,7 @@ type t = {
   sequence: option(int),
 };
 
-let defaultSettings = {
+let default = {
   coSignerList: defaultCoSignerList,
   sequence: Some(defaultSequence),
 };

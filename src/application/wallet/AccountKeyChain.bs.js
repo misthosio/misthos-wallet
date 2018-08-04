@@ -64,7 +64,7 @@ var defaultCoSignerList = /* array */[
 ];
 
 function make$1($staropt$star, accountIdx, custodianKeyChains) {
-  var settings = $staropt$star !== undefined ? $staropt$star : AccountSettings.defaultSettings;
+  var settings = $staropt$star !== undefined ? $staropt$star : AccountSettings.$$default;
   var nCoSigners = Caml_array.caml_array_get(settings[/* coSignerList */0], List.length(custodianKeyChains));
   var match = nCoSigners > 1;
   return /* record */[

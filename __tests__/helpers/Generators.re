@@ -104,7 +104,7 @@ let custodianKeyChain =
 
 let accountKeyChainFrom = (~sequence=AccountKeyChain.defaultSequence) =>
   AccountKeyChain.make(
-    ~settings={...AccountSettings.defaultSettings, sequence: Some(sequence)},
+    ~settings={...AccountSettings.default, sequence: Some(sequence)},
     AccountIndex.default,
   );
 

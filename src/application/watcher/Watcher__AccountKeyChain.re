@@ -17,13 +17,19 @@ type state = {
 let make =
     (
       {userId: localUserId, issuerKeyPair}: SessionData.t,
-      {data: {accountIdx}}: AccountCreation.Accepted.t,
+      {data: {accountIdx, settings}}: AccountCreation.Accepted.t,
       log,
     ) => {
   let identifiedEvent = (keyChains, state) => {
     let event =
       AccountKeyChainIdentified.make(
-        ~keyChain=AccountKeyChain.make(accountIdx, keyChains),
+        ~keyChain=
+          AccountKeyChain.make(
+            ~settings=
+              settings |> Js.Option.getWithDefault(AccountSettings.default),
+            accountIdx,
+            keyChains,
+          ),
       );
     let identifier = event.keyChain.identifier;
     state.identifiedKeyChains |> List.mem_assoc(identifier) ?

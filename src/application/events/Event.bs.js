@@ -19,6 +19,7 @@ var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../wallet/AccountKeyChain.bs.js");
+var AccountSettings = require("../wallet/AccountSettings.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var CustodianKeyChain = require("../wallet/CustodianKeyChain.bs.js");
 var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
@@ -288,7 +289,7 @@ function encode$4($$event) {
               /* :: */[
                 /* tuple */[
                   "name",
-                  $$event[/* name */1]
+                  $$event[/* name */2]
                 ],
                 /* [] */0
               ]
@@ -298,6 +299,7 @@ function encode$4($$event) {
 function decode$4(raw) {
   return /* record */[
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
+          /* settings */Utils.maybeField("settings", AccountSettings.decode)(raw),
           /* name */Json_decode.field("name", Json_decode.string, raw)
         ];
 }
@@ -1121,6 +1123,7 @@ function makePartnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, 
 function makeAccountCreationProposed(eligibleWhenProposing, proposerId, name, accountIdx, policy) {
   return /* AccountCreationProposed */Block.__(12, [Curry._6(Proposed$2[/* make */0], undefined, undefined, eligibleWhenProposing, proposerId, policy, /* record */[
                   /* accountIdx */accountIdx,
+                  /* settings */undefined,
                   /* name */name
                 ])]);
 }

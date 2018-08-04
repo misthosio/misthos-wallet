@@ -37,12 +37,7 @@ type t = {
 let defaultCoSignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8|];
 let defaultSequence = 6 * 24 * 88;
 
-let make =
-    (
-      ~settings=AccountSettings.defaultSettings,
-      accountIdx,
-      custodianKeyChains,
-    ) => {
+let make = (~settings=AccountSettings.default, accountIdx, custodianKeyChains) => {
   let nCoSigners = settings.coSignerList[custodianKeyChains |> List.length];
   {
     accountIdx,

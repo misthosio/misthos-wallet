@@ -23,11 +23,11 @@ var defaultCoSignerList = /* array */[
   8
 ];
 
-var defaultSettings_001 = /* sequence */12672;
+var default_001 = /* sequence */12672;
 
-var defaultSettings = /* record */[
+var $$default = /* record */[
   /* coSignerList */defaultCoSignerList,
-  defaultSettings_001
+  default_001
 ];
 
 function encode(settings) {
@@ -63,7 +63,9 @@ var defaultSequence = 12672;
 
 exports.defaultCoSignerList = defaultCoSignerList;
 exports.defaultSequence = defaultSequence;
-exports.defaultSettings = defaultSettings;
+exports.$$default = $$default;
+exports.default = $$default;
+exports.__esModule = true;
 exports.encode = encode;
 exports.decode = decode;
 /* Json_encode Not a pure module */
