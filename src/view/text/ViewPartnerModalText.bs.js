@@ -16,7 +16,7 @@ var AlertBox = /* module */[
 ];
 
 function signInRequired(userId, localUser, venture, webDomain) {
-  return "mailto:?subject=" + (encodeURI("I want to add you to a Misthos Venture: \"" + (String(venture) + "\"")) + ("&body=" + encodeURI("Hi " + (String(userId) + (",\n\nI want to add you to the \"" + (String(venture) + ("\" Venture on Misthos, a multisig bitcoin wallet to collaboratively handle our income and payouts.\n\nBefore I can send you the invite, please sign into " + (String(webDomain) + (" to expose your public key for data encryption (this will happen automatically when you sign in). Let me know when you’ve done so, and I can send you the Venture invite link.\n\nIf you have any questions about Misthos, check out their FAQ.\n\nThank you,\n" + (String(localUser) + "\n\nwww.misthos.io\n"))))))))));
+  return "mailto:?subject=" + (encodeURI("I want to add you to a Misthos Venture: \"" + (String(venture) + "\"")) + ("&body=" + encodeURI("Hi " + (String(userId) + (",\n\nI want to add you to the \"" + (String(venture) + ("\" Venture on Misthos, a multisig bitcoin wallet to collaboratively handle our income and payouts.\n\nBefore I can send you the invite, please sign into " + (String(webDomain) + (" to expose your public key for data encryption (this will happen automatically when you sign in). Let me know when you’ve done so, and I can send you the Venture invite link.\n\nIf you have any questions about Misthos, check out their FAQ (https://www.misthos.io/faq).\n\nThank you,\n" + (String(localUser) + "\n\nwww.misthos.io\n"))))))))));
 }
 
 function syncRequired(userId, localUser, venture, joinUrl) {

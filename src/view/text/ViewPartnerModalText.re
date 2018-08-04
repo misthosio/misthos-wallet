@@ -26,7 +26,7 @@ I want to add you to the "$venture" Venture on Misthos, a multisig bitcoin walle
 
 Before I can send you the invite, please sign into $webDomain to expose your public key for data encryption (this will happen automatically when you sign in). Let me know when you’ve done so, and I can send you the Venture invite link.
 
-If you have any questions about Misthos, check out their FAQ.
+If you have any questions about Misthos, check out their FAQ (https://www.misthos.io/faq).
 
 Thank you,
 $localUser

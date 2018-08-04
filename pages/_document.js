@@ -48,7 +48,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
           <title>Misthos - A multisig Bitcoin wallet for businesses</title>
-          <meta name="description" content="Misthos is the only multisig bitcoin wallet that lets you change co-signers in a fast and frictionless way. Use it for projects. Use it for payments." />
+          <meta name="description" content="Misthos is the most advanced multisig bitcoin wallet for businesses, emphasizing frictionless setup, low risk and streamlined collaboration." />
         </Head>
         <body>
           <Main />
