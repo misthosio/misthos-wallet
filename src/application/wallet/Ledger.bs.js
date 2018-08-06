@@ -31,12 +31,8 @@ function misthosPurposeNode(param) {
   return getHDNode(CustodianKeyChain.misthosWalletPurposePath, /* Mainnet */2, param);
 }
 
-function pathToBip45Root(ventureId, misthosPurposeNode, accountIdx, keyChainIdx) {
-  return CustodianKeyChain.makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode);
-}
-
 function getSigningPathAndPubKey(ventureId, misthosPurposeNode, keyChain, coordinates) {
-  var path = pathToBip45Root(ventureId, misthosPurposeNode, Address.Coordinates[/* accountIdx */3](coordinates), CustodianKeyChain.keyChainIdx(keyChain));
+  var path = CustodianKeyChain.makePathToBip45Root(ventureId, Address.Coordinates[/* accountIdx */3](coordinates), CustodianKeyChain.keyChainIdx(keyChain), misthosPurposeNode);
   return /* tuple */[
           path + ("/" + (String(WalletTypes.CoSignerIndex[/* toInt */0](Address.Coordinates[/* coSignerIdx */5](coordinates))) + ("/" + (String(WalletTypes.ChainIndex[/* toInt */0](Address.Coordinates[/* chainIdx */6](coordinates))) + ("/" + String(WalletTypes.AddressIndex[/* toInt */0](Address.Coordinates[/* addressIdx */7](coordinates)))))))),
           CustodianKeyChain.getPublicKey(Address.Coordinates[/* coSignerIdx */5](coordinates), Address.Coordinates[/* chainIdx */6](coordinates), Address.Coordinates[/* addressIdx */7](coordinates), keyChain)
@@ -52,7 +48,7 @@ function getCustodianKeyChain(network, ventureId, accountIdx, keyChainIdx) {
                                 ]);
                     })).then((function (param) {
                     var misthosPurposeNode = param[1];
-                    var path = pathToBip45Root(ventureId, misthosPurposeNode, accountIdx, keyChainIdx);
+                    var path = CustodianKeyChain.makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode);
                     return Promise.all(/* tuple */[
                                 Promise.resolve(Bitcoin.Address[/* fromHDNode */1](misthosPurposeNode)),
                                 getHDNode(path, network, param[0])
@@ -136,6 +132,8 @@ function signPayout(ventureId, userId, param, inputTxHexs, accountKeyChains) {
 var L = 0;
 
 var B = 0;
+
+var pathToBip45Root = CustodianKeyChain.makePathToBip45Root;
 
 exports.L = L;
 exports.B = B;

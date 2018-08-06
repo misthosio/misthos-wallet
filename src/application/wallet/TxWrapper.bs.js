@@ -71,22 +71,13 @@ function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScri
   var witnessBuf = Utils.bufFromHex(witnessScript);
   tx.setInputScript(idx, BitcoinjsLib.script.compile(/* array */[Utils.bufFromHex(redeemScript)]));
   var match;
-  var exit = 0;
   if (signature) {
     var match$1 = signature[0];
-    if (match$1) {
-      var match$2 = match$1[0];
-      match = /* tuple */[
-        Utils.bufFromHex(match$2[0]),
-        Utils.bufFromHex(match$2[1])
-      ];
-    } else {
-      exit = 1;
-    }
+    match = /* tuple */[
+      Utils.bufFromHex(match$1[0]),
+      Utils.bufFromHex(match$1[1])
+    ];
   } else {
-    exit = 1;
-  }
-  if (exit === 1) {
     var signatureHash = tx.hashForWitnessV0(idx, witnessBuf, BTC.toSatoshisFloat(witnessValue), BitcoinjsLib.Transaction.SIGHASH_ALL);
     match = /* tuple */[
       keyPair.publicKey,

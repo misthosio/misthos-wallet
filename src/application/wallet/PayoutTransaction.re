@@ -208,7 +208,10 @@ let signPayout =
                       ~redeemScript=address.redeemScript,
                       ~witnessValue=input.value,
                       ~witnessScript=address.witnessScript,
-                      ~signature=signatures |. Belt.Array.get(idx),
+                      ~signature=
+                        signatures
+                        |. Belt.Array.get(idx)
+                        |> Js.Option.getWithDefault(None),
                     );
                true;
              }
@@ -352,7 +355,6 @@ let build =
          i1.value |> BTC.comparedTo(i2.value)
        );
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
-  txB |. B.TxBuilder.setVersion(2);
   let usedInputs =
     mandatoryInputs
     |> Belt.Set.toList

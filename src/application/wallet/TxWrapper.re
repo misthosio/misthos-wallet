@@ -62,7 +62,7 @@ let sign =
       ~redeemScript,
       ~witnessValue,
       ~witnessScript,
-      ~signature: option(option((string, string))),
+      ~signature: option((string, string)),
       {tx, inputs},
     ) => {
   let witnessBuf = witnessScript |> Utils.bufFromHex;
@@ -73,7 +73,7 @@ let sign =
      );
   let (pubKey, signature) =
     switch (signature) {
-    | Some(Some((pubKey, signature))) => (
+    | Some((pubKey, signature)) => (
         pubKey |> Utils.bufFromHex,
         signature |> Utils.bufFromHex,
       )

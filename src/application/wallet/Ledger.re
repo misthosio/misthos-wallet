@@ -28,24 +28,17 @@ let getHDNode = (path, network, ledger) =>
 let misthosPurposeNode =
   getHDNode(CustodianKeyChain.misthosWalletPurposePath, Network.Mainnet);
 
-let pathToBip45Root =
-    (~ventureId, ~misthosPurposeNode, ~accountIdx, ~keyChainIdx) =>
-  misthosPurposeNode
-  |> CustodianKeyChain.makePathToBip45Root(
-       ~ventureId,
-       ~accountIdx,
-       ~keyChainIdx,
-     );
+let pathToBip45Root = CustodianKeyChain.makePathToBip45Root;
 
 let getSigningPathAndPubKey =
     (ventureId, misthosPurposeNode, keyChain, coordinates) => {
   let path =
-    pathToBip45Root(
-      ~ventureId,
-      ~misthosPurposeNode,
-      ~accountIdx=coordinates |> Address.Coordinates.accountIdx,
-      ~keyChainIdx=keyChain |> CustodianKeyChain.keyChainIdx,
-    );
+    misthosPurposeNode
+    |> pathToBip45Root(
+         ~ventureId,
+         ~accountIdx=coordinates |> Address.Coordinates.accountIdx,
+         ~keyChainIdx=keyChain |> CustodianKeyChain.keyChainIdx,
+       );
   (
     path
     ++ "/"
@@ -82,12 +75,8 @@ let getCustodianKeyChain = (~network, ~ventureId, ~accountIdx, ~keyChainIdx) =>
        })
     |> then_(((btc, misthosPurposeNode)) => {
          let path =
-           pathToBip45Root(
-             ~ventureId,
-             ~misthosPurposeNode,
-             ~accountIdx,
-             ~keyChainIdx,
-           );
+           misthosPurposeNode
+           |> pathToBip45Root(~ventureId, ~accountIdx, ~keyChainIdx);
          all2((
            misthosPurposeNode |> B.Address.fromHDNode |> resolve,
            btc |> getHDNode(path, network),

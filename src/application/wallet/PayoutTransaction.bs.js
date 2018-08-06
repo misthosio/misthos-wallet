@@ -182,7 +182,7 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
               var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
-              txW[0] = TxWrapper.sign(idx, keyPair, List.length(accountKeyChain[/* custodianKeyChains */4]), address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], Belt_Array.get(signatures, idx), txW[0]);
+              txW[0] = TxWrapper.sign(idx, keyPair, List.length(accountKeyChain[/* custodianKeyChains */4]), address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], Js_option.getWithDefault(/* None */0, Belt_Array.get(signatures, idx)), txW[0]);
               return true;
             }
             catch (exn){
@@ -294,7 +294,6 @@ function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, sa
                       return TransactionFee.canPayForItself(satsPerByte, param);
                     })), unlockedInputs$1)));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
-  txB.setVersion(2);
   var usedInputs = List.map((function (i) {
           var match = i[/* unlocked */8];
           return /* tuple */[
