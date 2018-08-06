@@ -38,15 +38,15 @@ let pathToBip45Root =
      );
 
 let getSigningPathAndPubKey =
-    (ventureId, misthosPurposeNode, keyChainIdx, coordinates, btc) => {
+    (ventureId, misthosPurposeNode, keyChain, coordinates) => {
   let path =
     pathToBip45Root(
       ~ventureId,
       ~misthosPurposeNode,
       ~accountIdx=coordinates |> Address.Coordinates.accountIdx,
-      ~keyChainIdx,
+      ~keyChainIdx=keyChain |> CustodianKeyChain.keyChainIdx,
     );
-  let pathToSigningNode =
+  (
     path
     ++ "/"
     ++ string_of_int(
@@ -59,15 +59,13 @@ let getSigningPathAndPubKey =
     ++ "/"
     ++ string_of_int(
          coordinates |> Address.Coordinates.addressIdx |> AddressIndex.toInt,
-       );
-
-  Js.Promise.(
-    btc
-    |> getHDNode(pathToSigningNode, Network.Mainnet)
-    |> then_(node =>
-         (pathToSigningNode, node |> B.HDNode.getPublicKey |> Utils.bufToHex)
-         |> resolve
-       )
+       ),
+    keyChain
+    |> CustodianKeyChain.getPublicKey(
+         coordinates |> Address.Coordinates.coSignerIdx,
+         coordinates |> Address.Coordinates.chainIdx,
+         coordinates |> Address.Coordinates.addressIdx,
+       ),
   );
 };
 
@@ -125,9 +123,8 @@ let signPayout =
          let btc = L.btc(transport);
          all2((resolve(btc), btc |> misthosPurposeNode));
        })
-    |> then_(((btc, misthosPurposeNode)) =>
-         all2((
-           resolve(btc),
+    |> then_(((btc, misthosPurposeNode)) => {
+         let infos =
            usedInputs
            |. Array.zip(inputTxHexs |. Array.map(L.splitTransaction(btc)))
            |. Array.mapWithIndexU(
@@ -140,7 +137,7 @@ let signPayout =
                        coordinates |> Address.Coordinates.accountIdx,
                        coordinates |> Address.Coordinates.keyChainIdent,
                      );
-                let pathAndPubKeyPromise =
+                let pathAndPubKey =
                   switch (
                     accountKeyChain.custodianKeyChains
                     |. List.getAssoc(userId, UserId.eq)
@@ -150,30 +147,24 @@ let signPayout =
                         keyChain
                         |> CustodianKeyChain.hardwareId
                         |> Js.Option.isSome =>
-                    btc
-                    |> getSigningPathAndPubKey(
-                         ventureId,
-                         misthosPurposeNode,
-                         keyChain |> CustodianKeyChain.keyChainIdx,
-                         coordinates,
-                       )
-                  | _ => (dummyPath, dummyPubKey) |> resolve
+                    getSigningPathAndPubKey(
+                      ventureId,
+                      misthosPurposeNode,
+                      keyChain,
+                      coordinates,
+                    )
+                  | _ => (dummyPath, dummyPubKey)
                   };
-                all2((
+                (
                   (
                     txInfo,
                     txOutputN,
                     address.witnessScript,
                     (txWrapper.inputs |. Array.getExn(idx)).sequence,
-                  )
-                  |> resolve,
-                  pathAndPubKeyPromise,
-                ));
-              })
-           |> all,
-         ))
-       )
-    |> then_(((btc, infos)) => {
+                  ),
+                  pathAndPubKey,
+                );
+              });
          let (inputInfos, pathAndPubKeys) = infos |> Array.unzip;
          let (paths, pubKeys) = pathAndPubKeys |> Array.unzip;
          let outputScriptHex =

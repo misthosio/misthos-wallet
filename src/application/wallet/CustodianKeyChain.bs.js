@@ -61,6 +61,10 @@ function toPublicKeyChain(keyChain) {
         ];
 }
 
+function getPublicKey(coSignerIdx, chainIdx, addressIdx, keyChain) {
+  return Utils.bufToHex(keyChain[/* hdNode */3].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).publicKey);
+}
+
 function getSigningKey(coSignerIdx, chainIdx, addressIdx, keyChain) {
   return BitcoinjsLib.ECPair.fromPrivateKey(keyChain[/* hdNode */3].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).privateKey, {
               network: keyChain[/* hdNode */3].network
@@ -120,6 +124,7 @@ exports.toPublicKeyChain = toPublicKeyChain;
 exports.hardwareId = hardwareId;
 exports.accountIdx = accountIdx;
 exports.keyChainIdx = keyChainIdx;
+exports.getPublicKey = getPublicKey;
 exports.getSigningKey = getSigningKey;
 exports.hdNode = hdNode;
 exports.encode = encode;

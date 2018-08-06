@@ -43,6 +43,7 @@ let hardwareId: public => option(string);
 let accountIdx: public => accountIdx;
 let keyChainIdx: public => custodianKeyChainIdx;
 
+let getPublicKey: (coSignerIdx, chainIdx, addressIdx, public) => string;
 let getSigningKey: (coSignerIdx, chainIdx, addressIdx, t) => ECPair.t;
 
 let hdNode: public => HDNode.t;

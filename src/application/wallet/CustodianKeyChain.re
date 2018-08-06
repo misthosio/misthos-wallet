@@ -83,6 +83,14 @@ let toPublicKeyChain = keyChain => {
   hdNode: keyChain.hdNode |> HDNode.neutered,
 };
 
+let getPublicKey = (coSignerIdx, chainIdx, addressIdx, keyChain) =>
+  keyChain.hdNode
+  |> HDNode.derive(coSignerIdx |> CoSignerIndex.toInt)
+  |> HDNode.derive(chainIdx |> ChainIndex.toInt)
+  |> HDNode.derive(addressIdx |> AddressIndex.toInt)
+  |> HDNode.getPublicKey
+  |> Utils.bufToHex;
+
 let getSigningKey = (coSignerIdx, chainIdx, addressIdx, keyChain) =>
   keyChain.hdNode
   |> HDNode.derive(coSignerIdx |> CoSignerIndex.toInt)

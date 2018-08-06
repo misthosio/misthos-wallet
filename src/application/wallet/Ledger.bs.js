@@ -35,15 +35,12 @@ function pathToBip45Root(ventureId, misthosPurposeNode, accountIdx, keyChainIdx)
   return CustodianKeyChain.makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode);
 }
 
-function getSigningPathAndPubKey(ventureId, misthosPurposeNode, keyChainIdx, coordinates, btc) {
-  var path = pathToBip45Root(ventureId, misthosPurposeNode, Address.Coordinates[/* accountIdx */3](coordinates), keyChainIdx);
-  var pathToSigningNode = path + ("/" + (String(WalletTypes.CoSignerIndex[/* toInt */0](Address.Coordinates[/* coSignerIdx */5](coordinates))) + ("/" + (String(WalletTypes.ChainIndex[/* toInt */0](Address.Coordinates[/* chainIdx */6](coordinates))) + ("/" + String(WalletTypes.AddressIndex[/* toInt */0](Address.Coordinates[/* addressIdx */7](coordinates))))))));
-  return getHDNode(pathToSigningNode, /* Mainnet */2, btc).then((function (node) {
-                return Promise.resolve(/* tuple */[
-                            pathToSigningNode,
-                            Utils.bufToHex(node.publicKey)
-                          ]);
-              }));
+function getSigningPathAndPubKey(ventureId, misthosPurposeNode, keyChain, coordinates) {
+  var path = pathToBip45Root(ventureId, misthosPurposeNode, Address.Coordinates[/* accountIdx */3](coordinates), CustodianKeyChain.keyChainIdx(keyChain));
+  return /* tuple */[
+          path + ("/" + (String(WalletTypes.CoSignerIndex[/* toInt */0](Address.Coordinates[/* coSignerIdx */5](coordinates))) + ("/" + (String(WalletTypes.ChainIndex[/* toInt */0](Address.Coordinates[/* chainIdx */6](coordinates))) + ("/" + String(WalletTypes.AddressIndex[/* toInt */0](Address.Coordinates[/* addressIdx */7](coordinates)))))))),
+          CustodianKeyChain.getPublicKey(Address.Coordinates[/* coSignerIdx */5](coordinates), Address.Coordinates[/* chainIdx */6](coordinates), Address.Coordinates[/* addressIdx */7](coordinates), keyChain)
+        ];
 }
 
 function getCustodianKeyChain(network, ventureId, accountIdx, keyChainIdx) {
@@ -76,51 +73,46 @@ function signPayout(ventureId, userId, param, inputTxHexs, accountKeyChains) {
   var txHex = param[/* txHex */0];
   var txWrapper = TxWrapper.make(txHex);
   return HwTransportU2f.default.create().then((function (transport) {
-                    var btc = new HwAppBtc.default(transport);
-                    return Promise.all(/* tuple */[
-                                Promise.resolve(btc),
-                                misthosPurposeNode(btc)
-                              ]);
-                  })).then((function (param) {
-                  var misthosPurposeNode = param[1];
-                  var btc = param[0];
+                  var btc = new HwAppBtc.default(transport);
                   return Promise.all(/* tuple */[
                               Promise.resolve(btc),
-                              Promise.all(Belt_Array.mapWithIndexU(Belt_Array.zip(usedInputs, Belt_Array.map(inputTxHexs, (function (param) {
-                                                  return btc.splitTransaction(param, true);
-                                                }))), (function (idx, param) {
-                                          var match = param[0];
-                                          var coordinates = match[/* coordinates */6];
-                                          var address = Address.find(coordinates, accountKeyChains);
-                                          var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), accountKeyChains);
-                                          var match$1 = Belt_List.getAssoc(accountKeyChain[/* custodianKeyChains */4], userId, PrimitiveTypes.UserId[/* eq */5]);
-                                          var pathAndPubKeyPromise;
-                                          if (match$1) {
-                                            var keyChain = match$1[0];
-                                            pathAndPubKeyPromise = Js_option.isSome(CustodianKeyChain.hardwareId(keyChain)) ? getSigningPathAndPubKey(ventureId, misthosPurposeNode, CustodianKeyChain.keyChainIdx(keyChain), coordinates, btc) : Promise.resolve(/* tuple */[
-                                                    dummyPath,
-                                                    dummyPubKey
-                                                  ]);
-                                          } else {
-                                            pathAndPubKeyPromise = Promise.resolve(/* tuple */[
-                                                  dummyPath,
-                                                  dummyPubKey
-                                                ]);
-                                          }
-                                          return Promise.all(/* tuple */[
-                                                      Promise.resolve(/* tuple */[
-                                                            param[1],
-                                                            match[/* txOutputN */1],
-                                                            address[/* witnessScript */3],
-                                                            Belt_Array.getExn(txWrapper[/* inputs */1], idx)[/* sequence */1]
-                                                          ]),
-                                                      pathAndPubKeyPromise
-                                                    ]);
-                                        })))
+                              misthosPurposeNode(btc)
                             ]);
                 })).then((function (param) {
+                var misthosPurposeNode = param[1];
                 var btc = param[0];
-                var match = Belt_Array.unzip(param[1]);
+                var infos = Belt_Array.mapWithIndexU(Belt_Array.zip(usedInputs, Belt_Array.map(inputTxHexs, (function (param) {
+                                return btc.splitTransaction(param, true);
+                              }))), (function (idx, param) {
+                        var match = param[0];
+                        var coordinates = match[/* coordinates */6];
+                        var address = Address.find(coordinates, accountKeyChains);
+                        var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), accountKeyChains);
+                        var match$1 = Belt_List.getAssoc(accountKeyChain[/* custodianKeyChains */4], userId, PrimitiveTypes.UserId[/* eq */5]);
+                        var pathAndPubKey;
+                        if (match$1) {
+                          var keyChain = match$1[0];
+                          pathAndPubKey = Js_option.isSome(CustodianKeyChain.hardwareId(keyChain)) ? getSigningPathAndPubKey(ventureId, misthosPurposeNode, keyChain, coordinates) : /* tuple */[
+                              dummyPath,
+                              dummyPubKey
+                            ];
+                        } else {
+                          pathAndPubKey = /* tuple */[
+                            dummyPath,
+                            dummyPubKey
+                          ];
+                        }
+                        return /* tuple */[
+                                /* tuple */[
+                                  param[1],
+                                  match[/* txOutputN */1],
+                                  address[/* witnessScript */3],
+                                  Belt_Array.getExn(txWrapper[/* inputs */1], idx)[/* sequence */1]
+                                ],
+                                pathAndPubKey
+                              ];
+                      }));
+                var match = Belt_Array.unzip(infos);
                 var match$1 = Belt_Array.unzip(match[1]);
                 var pubKeys = match$1[1];
                 var outputScriptHex = btc.serializeTransactionOutputs(btc.splitTransaction(txHex, true));
