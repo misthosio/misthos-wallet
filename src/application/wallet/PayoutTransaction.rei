@@ -63,7 +63,8 @@ let signPayout:
     ~userId: userId,
     ~masterKeyChain: Bitcoin.HDNode.t,
     ~accountKeyChains: AccountKeyChain.Collection.t,
-    ~payoutTx: t
+    ~payoutTx: t,
+    ~signatures: array(option((string, string)))
   ) =>
   signResult;
 

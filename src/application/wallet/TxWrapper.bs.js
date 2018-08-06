@@ -66,20 +66,40 @@ function pubKeyIndex(witnessBuf, nCustodians, pubKey) {
                 }))[0];
 }
 
-function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScript, param) {
+function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScript, signature, param) {
   var tx = param[/* tx */0];
   var witnessBuf = Utils.bufFromHex(witnessScript);
   tx.setInputScript(idx, BitcoinjsLib.script.compile(/* array */[Utils.bufFromHex(redeemScript)]));
-  var signatureHash = tx.hashForWitnessV0(idx, witnessBuf, BTC.toSatoshisFloat(witnessValue), BitcoinjsLib.Transaction.SIGHASH_ALL);
-  var signature = BitcoinjsLib.script.signature.encode(keyPair.sign(signatureHash), BitcoinjsLib.Transaction.SIGHASH_ALL);
-  var pubKey = keyPair.publicKey;
-  var insert = pubKeyIndex(witnessBuf, nCustodians, pubKey);
+  var match;
+  var exit = 0;
+  if (signature) {
+    var match$1 = signature[0];
+    if (match$1) {
+      var match$2 = match$1[0];
+      match = /* tuple */[
+        Utils.bufFromHex(match$2[0]),
+        Utils.bufFromHex(match$2[1])
+      ];
+    } else {
+      exit = 1;
+    }
+  } else {
+    exit = 1;
+  }
+  if (exit === 1) {
+    var signatureHash = tx.hashForWitnessV0(idx, witnessBuf, BTC.toSatoshisFloat(witnessValue), BitcoinjsLib.Transaction.SIGHASH_ALL);
+    match = /* tuple */[
+      keyPair.publicKey,
+      BitcoinjsLib.script.signature.encode(keyPair.sign(signatureHash), BitcoinjsLib.Transaction.SIGHASH_ALL)
+    ];
+  }
+  var insert = pubKeyIndex(witnessBuf, nCustodians, match[0]);
   var input = Belt_Array.getExn(param[/* inputs */1], idx);
   var sigs = input[/* signatures */0];
   var signatures = sigs.length !== 0 ? sigs : Belt_Array.makeByU(nCustodians, (function () {
             return Buffer.alloc(0);
           }));
-  Belt_Array.set(signatures, insert, signature);
+  Belt_Array.set(signatures, insert, match[1]);
   tx.setWitness(idx, Belt_Array.concatMany(/* array */[
             /* array */[Buffer.alloc(0)],
             signatures,

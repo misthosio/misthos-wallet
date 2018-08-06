@@ -181,6 +181,7 @@ let () =
                     user1,
                     accountIdx,
                     payoutTx,
+                    [||],
                   )
                |> (
                  fun
@@ -287,6 +288,7 @@ let () =
                  user1,
                  accountIdx,
                  payoutTx,
+                 [||],
                )
             |> (
               fun
@@ -300,6 +302,7 @@ let () =
                         wallet.walletInfoCollector
                         |> WalletInfoCollector.accountKeyChains,
                       ~payoutTx=data.payoutTx,
+                      ~signatures=[||],
                     )
                     |> PayoutTransaction.getSignedExn;
                   Js.Promise.all2((

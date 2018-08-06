@@ -72,7 +72,7 @@ function make(param, param$1, log) {
       ], log);
   var signEvent;
   if (PrimitiveTypes.UserId[/* eq */5](param$1[/* supporterId */1], userId) && state[/* complete */3] === false) {
-    var match = PayoutTransaction.signPayout(state[/* ventureId */0], userId, param[/* masterKeyChain */4], state[/* accountKeyChains */1], Js_option.getExn(state[/* payoutTx */2]));
+    var match = PayoutTransaction.signPayout(state[/* ventureId */0], userId, param[/* masterKeyChain */4], state[/* accountKeyChains */1], Js_option.getExn(state[/* payoutTx */2]), /* array */[]);
     signEvent = match ? /* Some */[/* tuple */[
           param[/* issuerKeyPair */2],
           /* PayoutSigned */Block.__(32, [Curry._3(Event.Payout[/* Signed */9][/* make */0], payoutProcess, userId, match[0])])

@@ -60,6 +60,7 @@ let make =
           ~masterKeyChain,
           ~accountKeyChains=state.accountKeyChains,
           ~payoutTx=state.payoutTx |> Js.Option.getExn,
+          ~signatures=[||],
         )
       ) {
       | Signed(payoutTx) =>

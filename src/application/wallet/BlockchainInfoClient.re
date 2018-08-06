@@ -98,9 +98,9 @@ let getTransactionHex = (config, transactions) =>
              ++ "?format=hex&cors=true",
            )
            |> then_(Fetch.Response.text)
+           |> then_(hex => (txId, hex) |> resolve)
          ),
     )
-    |> then_(res => res |> resolve)
   );
 let getCurrentBlockHeight = (config, ()) =>
   Js.Promise.(

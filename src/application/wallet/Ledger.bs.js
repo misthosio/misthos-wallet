@@ -125,7 +125,18 @@ function signPayout(ventureId, userId, param, inputTxHexs, accountKeyChains) {
                 var pubKeys = match$1[1];
                 var outputScriptHex = btc.serializeTransactionOutputs(btc.splitTransaction(txHex, true));
                 return btc.signP2SHTransaction(match[0], match$1[0], Utils.bufToHex(outputScriptHex), 0, 1, true, 2).then((function (signatures) {
-                              return Promise.resolve(Belt_Array.zip(signatures, pubKeys));
+                              return Promise.resolve(Belt_Array.mapU(Belt_Array.zip(pubKeys, signatures), (function (param) {
+                                                var pubKey = param[0];
+                                                var match = pubKey === dummyPubKey;
+                                                if (match) {
+                                                  return /* None */0;
+                                                } else {
+                                                  return /* Some */[/* tuple */[
+                                                            pubKey,
+                                                            param[1]
+                                                          ]];
+                                                }
+                                              })));
                             }));
               }));
 }

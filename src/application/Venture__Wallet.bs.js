@@ -49,10 +49,10 @@ function exposeNextIncomeAddress(userId, accountIdx, param) {
   return Curry._2(Event.Income[/* AddressExposed */0][/* make */0], userId, Address.make(coordinates, accountKeyChain));
 }
 
-function preparePayoutTx(eligibleWhenProposing, param, accountIdx, payoutTx, param$1) {
+function preparePayoutTx(eligibleWhenProposing, param, accountIdx, payoutTx, signatures, param$1) {
   var userId = param[/* userId */0];
   try {
-    var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(param$1[/* walletInfoCollector */3]), payoutTx);
+    var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(param$1[/* walletInfoCollector */3]), payoutTx, signatures);
     var payoutTx$1 = match ? match[0] : payoutTx;
     return /* Ok */[Curry._6(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, eligibleWhenProposing, userId, param$1[/* payoutPolicy */2], /* record */[
                   /* accountIdx */accountIdx,

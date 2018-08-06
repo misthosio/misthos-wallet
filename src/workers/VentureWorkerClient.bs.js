@@ -103,11 +103,12 @@ function submitCustodianKeyChain(worker, ventureId, keyChain) {
               ]));
 }
 
-function proposePayout(worker, ventureId, accountIdx, payoutTx) {
+function proposePayout(worker, ventureId, accountIdx, payoutTx, signatures) {
   return Curry._2(postMessage, worker, /* ProposePayout */Block.__(11, [
                 ventureId,
                 accountIdx,
-                payoutTx
+                payoutTx,
+                signatures
               ]));
 }
 
@@ -161,8 +162,8 @@ function make(worker, ventureId) {
           /* submitCustodianKeyChain */(function (param) {
               return submitCustodianKeyChain(worker, ventureId, param);
             }),
-          /* proposePayout */(function (param, param$1) {
-              return proposePayout(worker, ventureId, param, param$1);
+          /* proposePayout */(function (param, param$1, param$2) {
+              return proposePayout(worker, ventureId, param, param$1, param$2);
             }),
           /* endorsePayout */(function (param) {
               return endorsePayout(worker, ventureId, param);

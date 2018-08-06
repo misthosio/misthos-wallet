@@ -741,10 +741,10 @@ function exec$10(accountIdx, venture) {
 
 var ExposeIncomeAddress = /* module */[/* exec */exec$10];
 
-function exec$11(accountIdx, payoutTx, venture) {
+function exec$11(accountIdx, payoutTx, signatures, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePayout' command");
-  var param = Venture__Wallet.preparePayoutTx(Venture__State.currentPartners(venture[/* state */3]), session, accountIdx, payoutTx, venture[/* wallet */5]);
+  var param = Venture__Wallet.preparePayoutTx(Venture__State.currentPartners(venture[/* state */3]), session, accountIdx, payoutTx, signatures, venture[/* wallet */5]);
   if (param) {
     var proposal = param[0];
     return persist(/* None */0, applyMany(/* None */0, venture)(/* :: */[

@@ -283,6 +283,7 @@ module ViewPartnerView = {
 let viewPartnerModal = ViewPartnerView.fromViewModelState;
 
 module CreatePayoutView = {
+  open Belt;
   type balance = {
     currentSpendable: BTC.t,
     reserved: BTC.t,
@@ -297,9 +298,12 @@ module CreatePayoutView = {
     max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
     summary: PayoutTransaction.t => PayoutTransaction.summary,
     createPayoutTx: (list((string, BTC.t)), BTC.t) => PayoutTransaction.t,
+    collectInputHexs:
+      (Map.String.t(string), PayoutTransaction.t) =>
+      Js.Promise.t((Map.String.t(string), array(string))),
     signPayoutTx:
       (PayoutTransaction.t, array(string)) =>
-      Js.Promise.t(array((string, string))),
+      Js.Promise.t(array(option((string, string)))),
   };
   let fromViewModelState =
       ({ventureId, localUser, ventureName, walletInfoCollector}) => {
@@ -377,6 +381,32 @@ module CreatePayoutView = {
           ~changeAddress,
           ~network,
         ),
+      collectInputHexs: (knownHexs, {usedInputs}) => {
+        let inputs =
+          usedInputs
+          |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
+          |> Set.String.fromArray;
+        let knownIds =
+          knownHexs |. Map.String.keysToArray |> Set.String.fromArray;
+        Js.Promise.(
+          Set.String.diff(inputs, knownIds)
+          |> Set.String.toArray
+          |> NetworkClient.transactionHex(network)
+          |> then_(txs => {
+               let knownHexs = knownHexs |. Map.String.mergeMany(txs);
+               (
+                 knownHexs,
+                 usedInputs
+                 |. Array.mapU((. {txId}: PayoutTransaction.input) =>
+                      knownHexs
+                      |. Map.String.get(txId)
+                      |> Js.Option.getWithDefault("")
+                    ),
+               )
+               |> resolve;
+             })
+        );
+      },
       signPayoutTx: (payoutTx, txHexs) =>
         Ledger.signPayout(
           ventureId,

@@ -62,6 +62,7 @@ let sign =
       ~redeemScript,
       ~witnessValue,
       ~witnessScript,
+      ~signature: option(option((string, string))),
       {tx, inputs},
     ) => {
   let witnessBuf = witnessScript |> Utils.bufFromHex;
@@ -70,19 +71,28 @@ let sign =
        idx,
        B.Script.compile([|redeemScript |> Utils.bufFromHex|]),
      );
-  let signatureHash =
-    tx
-    |. B.Transaction.hashForWitnessV0(
-         idx,
-         witnessBuf,
-         witnessValue |> BTC.toSatoshisFloat,
-         B.Transaction.sighashAll,
-       );
-  let signature =
-    keyPair
-    |> B.ECPair.sign(signatureHash)
-    |. B.Script.Signature.encode(B.Transaction.sighashAll);
-  let pubKey = keyPair |> B.ECPair.getPublicKey;
+  let (pubKey, signature) =
+    switch (signature) {
+    | Some(Some((pubKey, signature))) => (
+        pubKey |> Utils.bufFromHex,
+        signature |> Utils.bufFromHex,
+      )
+    | _ =>
+      let signatureHash =
+        tx
+        |. B.Transaction.hashForWitnessV0(
+             idx,
+             witnessBuf,
+             witnessValue |> BTC.toSatoshisFloat,
+             B.Transaction.sighashAll,
+           );
+      (
+        keyPair |> B.ECPair.getPublicKey,
+        keyPair
+        |> B.ECPair.sign(signatureHash)
+        |. B.Script.Signature.encode(B.Transaction.sighashAll),
+      );
+    };
   let insert = pubKey |> pubKeyIndex(witnessBuf, nCustodians);
   let input = inputs |. Array.getExn(idx);
   let signatures =

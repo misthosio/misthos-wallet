@@ -158,7 +158,12 @@ module Cmd: {
       | NotEnoughFunds
       | CouldNotPersist(Js.Promise.error);
     let exec:
-      (~accountIdx: accountIdx, ~payoutTx: PayoutTransaction.t, t) =>
+      (
+        ~accountIdx: accountIdx,
+        ~payoutTx: PayoutTransaction.t,
+        ~signatures: array(option((string, string))),
+        t
+      ) =>
       Js.Promise.t(result);
   };
   module RejectPayout: {

@@ -18,7 +18,12 @@ type commands = {
   rejectPartnerRemoval: (~processId: processId) => unit,
   submitCustodianKeyChain: (~keyChain: CustodianKeyChain.public) => unit,
   proposePayout:
-    (~accountIdx: accountIdx, ~payoutTx: PayoutTransaction.t) => unit,
+    (
+      ~accountIdx: accountIdx,
+      ~payoutTx: PayoutTransaction.t,
+      ~signatures: array(option((string, string)))
+    ) =>
+    unit,
   endorsePayout: (~processId: processId) => unit,
   rejectPayout: (~processId: processId) => unit,
 };
@@ -56,8 +61,12 @@ let make =
       send(CommandExecuted(commands.rejectPartnerRemoval(~processId))),
     submitCustodianKeyChain: (~keyChain) =>
       send(CommandExecuted(commands.submitCustodianKeyChain(~keyChain))),
-    proposePayout: (~accountIdx, ~payoutTx) =>
-      send(CommandExecuted(commands.proposePayout(~accountIdx, ~payoutTx))),
+    proposePayout: (~accountIdx, ~payoutTx, ~signatures) =>
+      send(
+        CommandExecuted(
+          commands.proposePayout(~accountIdx, ~payoutTx, ~signatures),
+        ),
+      ),
     endorsePayout: (~processId) =>
       send(CommandExecuted(commands.endorsePayout(~processId))),
     rejectPayout: (~processId) =>

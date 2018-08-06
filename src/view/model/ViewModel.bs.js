@@ -13,9 +13,13 @@ var Network = require("../../application/wallet/Network.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Environment = require("../../web/Environment.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
+var NetworkClient = require("../../application/wallet/NetworkClient.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
@@ -263,6 +267,22 @@ function fromViewModelState$3(param) {
             }),
           /* createPayoutTx */(function (destinations, fee) {
               return PayoutTransaction.build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, fee, changeAddress, network);
+            }),
+          /* collectInputHexs */(function (knownHexs, param) {
+              var usedInputs = param[/* usedInputs */1];
+              var inputs = Belt_SetString.fromArray(Belt_Array.mapU(usedInputs, (function (param) {
+                          return param[/* txId */0];
+                        })));
+              var knownIds = Belt_SetString.fromArray(Belt_MapString.keysToArray(knownHexs));
+              return Curry._1(NetworkClient.transactionHex(network), Belt_SetString.toArray(Belt_SetString.diff(inputs, knownIds))).then((function (txs) {
+                            var knownHexs$1 = Belt_MapString.mergeMany(knownHexs, txs);
+                            return Promise.resolve(/* tuple */[
+                                        knownHexs$1,
+                                        Belt_Array.mapU(usedInputs, (function (param) {
+                                                return Js_option.getWithDefault("", Belt_MapString.get(knownHexs$1, param[/* txId */0]));
+                                              }))
+                                      ]);
+                          }));
             }),
           /* signPayoutTx */(function (payoutTx, txHexs) {
               return Ledger.signPayout(ventureId, localUser, payoutTx, txHexs, WalletInfoCollector.accountKeyChains(walletInfoCollector));

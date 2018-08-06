@@ -22,7 +22,8 @@ module type NetworkClientInterface = {
   let network: Bitcoin.Networks.t;
   let getUTXOs: list(string) => Js.Promise.t(list(utxo));
   let getTransactionInfo: Belt.Set.String.t => Js.Promise.t(list(txInfo));
-  let getTransactionHex: array(string) => Js.Promise.t(array(string));
+  let getTransactionHex:
+    array(string) => Js.Promise.t(array((string, string)));
   let getCurrentBlockHeight: unit => Js.Promise.t(int);
   let broadcastTransaction:
     Bitcoin.Transaction.t => Js.Promise.t(broadcastResult);

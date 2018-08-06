@@ -464,7 +464,21 @@ function encodeIncoming(param) {
                             "payoutTx",
                             PayoutTransaction.encode(param[2])
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "signatures",
+                              Json_encode.array((function (param) {
+                                      return Json_encode.nullable((function (param) {
+                                                    return Json_encode.pair((function (prim) {
+                                                                  return prim;
+                                                                }), (function (prim) {
+                                                                  return prim;
+                                                                }), param);
+                                                  }), param);
+                                    }), param[3])
+                            ],
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]
@@ -696,10 +710,18 @@ function decodeIncoming(raw) {
         var ventureId$9 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var accountIdx$1 = Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw);
         var payoutTx = Json_decode.field("payoutTx", PayoutTransaction.decode, raw);
+        var signatures = Json_decode.field("signatures", (function (param) {
+                return Json_decode.array((function (param) {
+                              return Json_decode.optional((function (param) {
+                                            return Json_decode.pair(Json_decode.string, Json_decode.string, param);
+                                          }), param);
+                            }), param);
+              }), raw);
         return /* ProposePayout */Block.__(11, [
                   ventureId$9,
                   accountIdx$1,
-                  payoutTx
+                  payoutTx,
+                  signatures
                 ]);
     case "RejectPartner" : 
         var ventureId$10 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);

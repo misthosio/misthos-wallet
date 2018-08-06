@@ -1,3 +1,5 @@
+open Belt;
+
 include ViewCommon;
 
 module View = ViewModel.CreatePayoutView;
@@ -18,6 +20,7 @@ type state = {
   fee: BTC.t,
   summary: PayoutTransaction.summary,
   payoutTx: option(PayoutTransaction.t),
+  txHexs: Map.String.t(string),
   inputs,
 };
 
@@ -26,6 +29,7 @@ type action =
   | ChangeBTCAmount(string)
   | RemoveDestination(int)
   | SetFee(BTC.t)
+  | InputHexsCollected(Map.String.t(string))
   | EnterMax
   | AddToSummary
   | ProposePayout
@@ -125,6 +129,24 @@ let updateState =
   };
 };
 
+let updateInputTxs = (send, state) =>
+  switch (state.payoutTx) {
+  | Some(payoutTx) =>
+    Js.Global.setTimeout(
+      () =>
+        Js.Promise.(
+          state.viewData.collectInputHexs(state.txHexs, payoutTx)
+          |> then_(((knownHexs, _inputs)) =>
+               send(InputHexsCollected(knownHexs)) |> resolve
+             )
+          |> ignore
+        ),
+      0,
+    )
+    |> ignore
+  | None => ()
+  };
+
 let make =
     (
       ~viewData: View.t,
@@ -142,6 +164,7 @@ let make =
     addressValid: true,
     summary: viewData.initialSummary,
     payoutTx: None,
+    txHexs: Map.String.empty,
     inputDestination: "",
     inputAmount: BTC.zero,
     inputs: {
@@ -172,7 +195,7 @@ let make =
       switch (action) {
       | SetFee(fee) => ReasonReact.Update({...state, fee})
       | RemoveDestination(removeIdx) =>
-        ReasonReact.Update(
+        let state =
           {
             ...state,
             destinations:
@@ -182,10 +205,14 @@ let make =
                  )
               |. Belt.List.keepMapU((. d) => d),
           }
-          |> updateState,
-        )
+          |> updateState;
+
+        ReasonReact.UpdateWithSideEffects(
+          state,
+          (({send, state}) => updateInputTxs(send, state)),
+        );
       | ChangeRecipientAddress(address) when canInput == true =>
-        ReasonReact.Update(
+        let state =
           {
             ...state,
             inputs: {
@@ -193,10 +220,13 @@ let make =
               recipientAddress: address |> Js.String.trim,
             },
           }
-          |> updateState,
-        )
+          |> updateState;
+        ReasonReact.UpdateWithSideEffects(
+          state,
+          (({send, state}) => updateInputTxs(send, state)),
+        );
       | ChangeBTCAmount(amount) when canInput == true =>
-        ReasonReact.Update(
+        let state =
           {
             ...state,
             inputs: {
@@ -204,8 +234,11 @@ let make =
               btcAmount: amount == "." ? "0." : amount,
             },
           }
-          |> updateState,
-        )
+          |> updateState;
+        ReasonReact.UpdateWithSideEffects(
+          state,
+          (({send, state}) => updateInputTxs(send, state)),
+        );
       | AddToSummary when canInput == true =>
         if (state.inputDestination != ""
             && state.inputAmount
@@ -238,10 +271,14 @@ let make =
           {...state, frozen: false},
           (_ => commands.reset()),
         )
+      | InputHexsCollected(knownHexs) =>
+        ReasonReact.Update({...state, txHexs: knownHexs})
       | _ => ReasonReact.NoUpdate
       }
     | _ =>
       switch (action) {
+      | InputHexsCollected(knownHexs) =>
+        ReasonReact.Update({...state, txHexs: knownHexs})
       | Freeze => ReasonReact.Update({...state, frozen: true})
       | Reset =>
         ReasonReact.UpdateWithSideEffects(
@@ -251,10 +288,22 @@ let make =
       | ProposePayout =>
         switch (state.payoutTx) {
         | Some(payoutTx) =>
-          commands.proposePayout(
-            ~accountIdx=WalletTypes.AccountIndex.default,
-            ~payoutTx,
+          Js.Promise.(
+            viewData.collectInputHexs(state.txHexs, payoutTx)
+            |> then_(((_, inputs)) =>
+                 viewData.signPayoutTx(payoutTx, inputs)
+               )
+            |> then_(signatures => {
+                 Js.log2("sigs", signatures);
+                 commands.proposePayout(
+                   ~accountIdx=WalletTypes.AccountIndex.default,
+                   ~payoutTx,
+                   ~signatures,
+                 )
+                 |> resolve;
+               })
           )
+          |> ignore
         | None => ()
         };
         ReasonReact.NoUpdate;
@@ -316,7 +365,7 @@ let make =
       );
     let destinationList =
       ReasonReact.array(
-        Array.of_list([
+        List.toArray([
           destinationRow(
             ~withRemoveBtn=false,
             0,
@@ -324,7 +373,7 @@ let make =
             inputAmount,
           ),
           ...destinations
-             |> List.mapi((idx, (address, amount)) =>
+             |. List.mapWithIndex((idx, (address, amount)) =>
                   destinationRow(idx + 1, address, amount)
                 ),
         ]),

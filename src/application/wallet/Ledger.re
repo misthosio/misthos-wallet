@@ -186,7 +186,14 @@ let signPayout =
               paths,
               outputScriptHex |> Utils.bufToHex,
             )
-         |> then_(signatures => signatures |. Array.zip(pubKeys) |> resolve);
+         |> then_(signatures =>
+              signatures
+              |> Array.zip(pubKeys)
+              |. Array.mapU((. (pubKey, signature)) =>
+                   pubKey == dummyPubKey ? None : Some((pubKey, signature))
+                 )
+              |> resolve
+            );
        })
   );
 };

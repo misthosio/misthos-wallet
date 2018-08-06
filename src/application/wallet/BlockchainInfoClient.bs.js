@@ -82,12 +82,15 @@ function getTransactionInfo(config, transactions) {
 
 function getTransactionHex(config, transactions) {
   return Promise.all(Belt_Array.mapU(transactions, (function (txId) {
-                      return fetch("https://" + (config[/* subdomain */0] + ("blockchain.info/rawtx/" + (txId + "?format=hex&cors=true")))).then((function (prim) {
+                    return fetch("https://" + (config[/* subdomain */0] + ("blockchain.info/rawtx/" + (txId + "?format=hex&cors=true")))).then((function (prim) {
                                     return prim.text();
-                                  }));
-                    }))).then((function (res) {
-                return Promise.resolve(res);
-              }));
+                                  })).then((function (hex) {
+                                  return Promise.resolve(/* tuple */[
+                                              txId,
+                                              hex
+                                            ]);
+                                }));
+                  })));
 }
 
 function getCurrentBlockHeight(config, _) {

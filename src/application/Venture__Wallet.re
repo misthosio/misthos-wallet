@@ -62,6 +62,7 @@ let preparePayoutTx =
       {userId, masterKeyChain}: SessionData.t,
       accountIdx,
       payoutTx,
+      signatures,
       {ventureId, payoutPolicy, walletInfoCollector},
     ) =>
   try (
@@ -75,6 +76,7 @@ let preparePayoutTx =
             ~accountKeyChains=
               walletInfoCollector |> WalletInfoCollector.accountKeyChains,
             ~payoutTx,
+            ~signatures,
           )
         ) {
         | Signed(payout) => payout

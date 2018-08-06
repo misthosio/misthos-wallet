@@ -219,7 +219,7 @@ describe("Wallet_integration", (function () {
                                         var param = Venture__Wallet.preparePayoutTx(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
                                                   user1[/* userId */0],
                                                   user2[/* userId */0]
-                                                ]), user1, accountIdx, payoutTx, oneKeyChainWallet[0]);
+                                                ]), user1, accountIdx, payoutTx, /* array */[], oneKeyChainWallet[0]);
                                         if (param) {
                                           var $$event = param[0];
                                           oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(26, [$$event]), oneKeyChainWallet[0]);
@@ -269,12 +269,12 @@ describe("Wallet_integration", (function () {
                                         user1[/* userId */0],
                                         user2[/* userId */0],
                                         user3[/* userId */0]
-                                      ]), user1, accountIdx, payoutTx, twoKeyChainWallet[0]);
+                                      ]), user1, accountIdx, payoutTx, /* array */[], twoKeyChainWallet[0]);
                               var tmp;
                               if (param) {
                                 var $$event = param[0];
                                 var data = $$event[/* data */6];
-                                var payoutTx$1 = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1]));
+                                var payoutTx$1 = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1], /* array */[]));
                                 tmp = Promise.all(/* tuple */[
                                       Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(26, [$$event]), twoKeyChainWallet[0])),
                                       Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[

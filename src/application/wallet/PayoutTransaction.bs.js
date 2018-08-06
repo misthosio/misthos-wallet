@@ -13,6 +13,7 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var TxWrapper = require("./TxWrapper.bs.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
@@ -167,7 +168,7 @@ function getSignedExn(result) {
   }
 }
 
-function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout) {
+function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, signatures) {
   var txW = [TxWrapper.make(payout[/* txHex */0])];
   var signed = $$Array.mapi((function (idx, input) {
           var needsSigning = TxWrapper.needsSigning(idx, txW[0]);
@@ -181,7 +182,7 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout)
               var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
-              txW[0] = TxWrapper.sign(idx, keyPair, List.length(accountKeyChain[/* custodianKeyChains */4]), address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], txW[0]);
+              txW[0] = TxWrapper.sign(idx, keyPair, List.length(accountKeyChain[/* custodianKeyChains */4]), address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], Belt_Array.get(signatures, idx), txW[0]);
               return true;
             }
             catch (exn){

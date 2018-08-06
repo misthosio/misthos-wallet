@@ -65,10 +65,16 @@ let submitCustodianKeyChain = (worker, ventureId, ~keyChain) =>
        VentureWorkerMessage.SubmitCustodianKeyChain(ventureId, keyChain),
      );
 
-let proposePayout = (worker, ventureId, ~accountIdx: accountIdx, ~payoutTx) =>
+let proposePayout =
+    (worker, ventureId, ~accountIdx: accountIdx, ~payoutTx, ~signatures) =>
   worker
   |. postMessage(
-       VentureWorkerMessage.ProposePayout(ventureId, accountIdx, payoutTx),
+       VentureWorkerMessage.ProposePayout(
+         ventureId,
+         accountIdx,
+         payoutTx,
+         signatures,
+       ),
      );
 
 let rejectPayout = (worker, ventureId, ~processId: processId) =>
@@ -104,7 +110,11 @@ module Cmd = {
     submitCustodianKeyChain:
       (~keyChain: CustodianKeyChain.public) => WebWorker.correlationId,
     proposePayout:
-      (~accountIdx: accountIdx, ~payoutTx: PayoutTransaction.t) =>
+      (
+        ~accountIdx: accountIdx,
+        ~payoutTx: PayoutTransaction.t,
+        ~signatures: array(option((string, string)))
+      ) =>
       WebWorker.correlationId,
     endorsePayout: (~processId: processId) => WebWorker.correlationId,
     rejectPayout: (~processId: processId) => WebWorker.correlationId,

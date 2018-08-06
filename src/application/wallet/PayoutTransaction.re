@@ -157,6 +157,7 @@ let signPayout =
       ~masterKeyChain: B.HDNode.t,
       ~accountKeyChains: AccountKeyChain.Collection.t,
       ~payoutTx as payout: t,
+      ~signatures,
     ) => {
   let txW = ref(TxWrapper.make(payout.txHex));
   let signed =
@@ -207,6 +208,7 @@ let signPayout =
                       ~redeemScript=address.redeemScript,
                       ~witnessValue=input.value,
                       ~witnessScript=address.witnessScript,
+                      ~signature=signatures |. Belt.Array.get(idx),
                     );
                true;
              }

@@ -770,7 +770,13 @@ module Cmd = {
       | Ok(processId, t, array(EventLog.item))
       | NotEnoughFunds
       | CouldNotPersist(Js.Promise.error);
-    let exec = (~accountIdx, ~payoutTx, {state, wallet, session} as venture) => {
+    let exec =
+        (
+          ~accountIdx,
+          ~payoutTx,
+          ~signatures,
+          {state, wallet, session} as venture,
+        ) => {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
         Wallet.preparePayoutTx(
@@ -778,6 +784,7 @@ module Cmd = {
           session,
           accountIdx,
           payoutTx,
+          signatures,
           wallet,
         )
         |> (
