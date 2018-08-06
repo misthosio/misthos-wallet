@@ -507,12 +507,12 @@ function submitCustodianKeyChain(ventureId, keyChain) {
     });
 }
 
-function proposePayout(ventureId, accountIdx, destinations, fee) {
+function proposePayout(ventureId, accountIdx, payoutTx) {
   logMessage("Handling 'ProposePayout'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
-                    return Curry._4(Venture.Cmd[/* ProposePayout */11][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
+                    return Curry._3(Venture.Cmd[/* ProposePayout */11][/* exec */0], accountIdx, payoutTx, venture).then((function (param) {
                                   if (typeof param === "number") {
                                     logMessage("Not enough funds");
                                     return Promise.resolve(venture);
@@ -701,7 +701,7 @@ function handleMessage(param) {
     case 10 : 
         return submitCustodianKeyChain(param[0], param[1]);
     case 11 : 
-        return proposePayout(param[0], param[1], param[2], param[3]);
+        return proposePayout(param[0], param[1], param[2]);
     case 12 : 
         return rejectPayout(param[0], param[1]);
     case 13 : 

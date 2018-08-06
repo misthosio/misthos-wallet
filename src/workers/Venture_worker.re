@@ -580,13 +580,13 @@ module Handle = {
       )
     );
   };
-  let proposePayout = (ventureId, accountIdx, destinations, fee) => {
+  let proposePayout = (ventureId, accountIdx, payoutTx) => {
     logMessage("Handling 'ProposePayout'");
     withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePayout.(
           venture
-          |> exec(~accountIdx, ~destinations, ~fee)
+          |> exec(~accountIdx, ~payoutTx)
           |> then_(
                fun
                | Ok(processId, venture, newItems) => {
@@ -802,8 +802,8 @@ let handleMessage =
     Handle.endorsePartnerRemoval(ventureId, processId)
   | SubmitCustodianKeyChain(ventureId, keyChain) =>
     Handle.submitCustodianKeyChain(ventureId, keyChain)
-  | Message.ProposePayout(ventureId, accountIdx, destinations, fee) =>
-    Handle.proposePayout(ventureId, accountIdx, destinations, fee)
+  | Message.ProposePayout(ventureId, accountIdx, payoutTx) =>
+    Handle.proposePayout(ventureId, accountIdx, payoutTx)
   | Message.RejectPayout(ventureId, processId) =>
     Handle.rejectPayout(ventureId, processId)
   | Message.EndorsePayout(ventureId, processId) =>

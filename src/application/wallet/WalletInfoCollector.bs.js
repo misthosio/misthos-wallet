@@ -153,23 +153,6 @@ function nextChangeAddress(accountIdx, userId, collector) {
   return Address.find(nextChangeCoordinates, collector[/* keyChains */7]);
 }
 
-function fakeChangeAddress(accountIdx, userId, collector) {
-  var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
-  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, collector[/* keyChains */7]);
-  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(collector[/* exposedCoordinates */10]);
-  var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
-  var match = accountKeyChain[/* nCoSigners */2] > 1;
-  return /* record */[
-          /* nCoSigners */accountKeyChain[/* nCoSigners */2],
-          /* nPubKeys */Belt_List.length(accountKeyChain[/* custodianKeyChains */4]),
-          /* coordinates */nextChangeCoordinates,
-          /* witnessScript */"",
-          /* redeemScript */"",
-          /* displayAddress */Network.exampleOfLongestAddress(collector[/* network */0]),
-          /* sequence */match ? /* Some */[1] : /* None */0
-        ];
-}
-
 function make() {
   return /* record */[
           /* network : Regtest */0,
@@ -1206,5 +1189,4 @@ exports.unlockedInputs = unlockedInputs;
 exports.allUnspentInputs = allUnspentInputs;
 exports.inputsFor = inputsFor;
 exports.nextChangeAddress = nextChangeAddress;
-exports.fakeChangeAddress = fakeChangeAddress;
 /* BTC Not a pure module */

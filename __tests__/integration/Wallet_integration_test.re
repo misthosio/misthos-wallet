@@ -141,6 +141,38 @@ let () =
                       };
                     };
                   });
+               let walletInfoCollector =
+                 oneKeyChainWallet^.walletInfoCollector;
+               let mandatoryInputs =
+                 walletInfoCollector
+                 |> WalletInfoCollector.oldSpendableInputs(
+                      AccountIndex.default,
+                    );
+               let unlockedInputs =
+                 walletInfoCollector
+                 |> WalletInfoCollector.unlockedInputs(AccountIndex.default);
+               let optionalInputs =
+                 walletInfoCollector
+                 |> WalletInfoCollector.currentSpendableInputs(
+                      AccountIndex.default,
+                    );
+               let payoutTx =
+                 PayoutTransaction.build(
+                   ~mandatoryInputs,
+                   ~unlockedInputs,
+                   ~optionalInputs,
+                   ~destinations=[
+                     (Helpers.faucetAddress, oneKeyChainSpendAmount),
+                   ],
+                   ~satsPerByte=BTC.fromSatoshis(10L),
+                   ~changeAddress=
+                     walletInfoCollector
+                     |> WalletInfoCollector.nextChangeAddress(
+                          AccountIndex.default,
+                          user1.userId,
+                        ),
+                   ~network=Network.Testnet,
+                 );
                oneKeyChainWallet^
                |> Wallet.preparePayoutTx(
                     ~eligibleWhenProposing=
@@ -148,8 +180,7 @@ let () =
                       |> Belt.Set.mergeMany(UserId.emptySet),
                     user1,
                     accountIdx,
-                    [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
-                    BTC.fromSatoshis(10L),
+                    payoutTx,
                   )
                |> (
                  fun
@@ -218,6 +249,35 @@ let () =
         "2 of 3 wallet",
         () => {
           Helpers.genBlocks(testSequence);
+          let walletInfoCollector = twoKeyChainWallet^.walletInfoCollector;
+          let mandatoryInputs =
+            walletInfoCollector
+            |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default);
+          let unlockedInputs =
+            walletInfoCollector
+            |> WalletInfoCollector.unlockedInputs(AccountIndex.default);
+          let optionalInputs =
+            walletInfoCollector
+            |> WalletInfoCollector.currentSpendableInputs(
+                 AccountIndex.default,
+               );
+          let payoutTx =
+            PayoutTransaction.build(
+              ~mandatoryInputs,
+              ~unlockedInputs,
+              ~optionalInputs,
+              ~destinations=[
+                (Helpers.faucetAddress, twoKeyChainSpendAmount),
+              ],
+              ~satsPerByte=BTC.fromSatoshis(10L),
+              ~changeAddress=
+                walletInfoCollector
+                |> WalletInfoCollector.nextChangeAddress(
+                     AccountIndex.default,
+                     user1.userId,
+                   ),
+              ~network=Network.Testnet,
+            );
           Js.Promise.(
             twoKeyChainWallet^
             |> Wallet.preparePayoutTx(
@@ -226,8 +286,7 @@ let () =
                    |> Belt.Set.mergeMany(UserId.emptySet),
                  user1,
                  accountIdx,
-                 [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
-                 BTC.fromSatoshis(10L),
+                 payoutTx,
                )
             |> (
               fun

@@ -61,30 +61,11 @@ let preparePayoutTx =
       ~eligibleWhenProposing,
       {userId, masterKeyChain}: SessionData.t,
       accountIdx,
-      destinations,
-      satsPerByte,
+      payoutTx,
       {ventureId, payoutPolicy, walletInfoCollector},
     ) =>
   try (
     {
-      let payoutTx =
-        PayoutTransaction.build(
-          ~optionalInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.currentSpendableInputs(accountIdx),
-          ~mandatoryInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.oldSpendableInputs(accountIdx),
-          ~unlockedInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.unlockedInputs(accountIdx),
-          ~destinations,
-          ~satsPerByte,
-          ~changeAddress=
-            walletInfoCollector
-            |> WalletInfoCollector.nextChangeAddress(accountIdx, userId),
-          ~network=walletInfoCollector |> WalletInfoCollector.network,
-        );
       let payoutTx =
         switch (
           PayoutTransaction.signPayout(

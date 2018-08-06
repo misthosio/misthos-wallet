@@ -54,4 +54,3 @@ let allUnspentInputs: t => Network.inputSet;
 let inputsFor: (accountIdx, addressInfo, t) => list(Network.txInput);
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
-let fakeChangeAddress: (accountIdx, userId, t) => Address.t;

@@ -41,8 +41,8 @@ function make(commands, lastResponse, onProcessStarted, children) {
             /* submitCustodianKeyChain */(function (keyChain) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* submitCustodianKeyChain */6], keyChain)]);
               }),
-            /* proposePayout */(function (accountIdx, destinations, fee) {
-                return Curry._1(send, /* CommandExecuted */[Curry._3(commands[/* proposePayout */7], accountIdx, destinations, fee)]);
+            /* proposePayout */(function (accountIdx, payoutTx) {
+                return Curry._1(send, /* CommandExecuted */[Curry._2(commands[/* proposePayout */7], accountIdx, payoutTx)]);
               }),
             /* endorsePayout */(function (processId) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* endorsePayout */8], processId)]);

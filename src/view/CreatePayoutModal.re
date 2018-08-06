@@ -256,8 +256,7 @@ let make =
           };
         commands.proposePayout(
           ~accountIdx=WalletTypes.AccountIndex.default,
-          ~destinations,
-          ~fee=state.fee,
+          ~payoutTx=viewData.createPayoutTx(destinations, state.fee),
         );
         ReasonReact.NoUpdate;
       | _ => ReasonReact.NoUpdate

@@ -296,6 +296,7 @@ module CreatePayoutView = {
     isAddressValid: string => bool,
     max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
     summary: (list((string, BTC.t)), BTC.t) => PayoutTransaction.summary,
+    createPayoutTx: (list((string, BTC.t)), BTC.t) => PayoutTransaction.t,
   };
   let fromViewModelState =
       ({ventureId, localUser, ventureName, walletInfoCollector}) => {
@@ -325,7 +326,7 @@ module CreatePayoutView = {
       |. Belt.Set.union(unlockedInputs);
     let changeAddress =
       walletInfoCollector
-      |> WalletInfoCollector.fakeChangeAddress(
+      |> WalletInfoCollector.nextChangeAddress(
            AccountIndex.default,
            localUser,
          );
@@ -373,6 +374,16 @@ module CreatePayoutView = {
           ~network,
         )
         |> PayoutTransaction.summary(network),
+      createPayoutTx: (destinations, fee) =>
+        PayoutTransaction.build(
+          ~mandatoryInputs,
+          ~unlockedInputs,
+          ~optionalInputs,
+          ~destinations,
+          ~satsPerByte=fee,
+          ~changeAddress,
+          ~network,
+        ),
     };
   };
 };
