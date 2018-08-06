@@ -65,7 +65,8 @@ let getSigningPathAndPubKey =
     btc
     |> getHDNode(pathToSigningNode, Network.Mainnet)
     |> then_(node =>
-         (pathToSigningNode, node |> B.HDNode.getPublicKey) |> resolve
+         (pathToSigningNode, node |> B.HDNode.getPublicKey |> Utils.bufToHex)
+         |> resolve
        )
   );
 };
@@ -108,6 +109,7 @@ let getCustodianKeyChain = (~network, ~ventureId, ~accountIdx, ~keyChainIdx) =>
   );
 
 let dummyPath = "0'";
+let dummyPubKey = "DUMMY";
 let signPayout =
     (
       ventureId,
@@ -155,7 +157,7 @@ let signPayout =
                          keyChain |> CustodianKeyChain.keyChainIdx,
                          coordinates,
                        )
-                  | _ => (dummyPath, BufferExt.makeWithSize(0)) |> resolve
+                  | _ => (dummyPath, dummyPubKey) |> resolve
                   };
                 all2((
                   (

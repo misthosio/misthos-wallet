@@ -41,7 +41,7 @@ function getSigningPathAndPubKey(ventureId, misthosPurposeNode, keyChainIdx, coo
   return getHDNode(pathToSigningNode, /* Mainnet */2, btc).then((function (node) {
                 return Promise.resolve(/* tuple */[
                             pathToSigningNode,
-                            node.publicKey
+                            Utils.bufToHex(node.publicKey)
                           ]);
               }));
 }
@@ -68,6 +68,8 @@ function getCustodianKeyChain(network, ventureId, accountIdx, keyChainIdx) {
 }
 
 var dummyPath = "0'";
+
+var dummyPubKey = "DUMMY";
 
 function signPayout(ventureId, userId, param, inputTxHexs, accountKeyChains) {
   var usedInputs = param[/* usedInputs */1];
@@ -97,12 +99,12 @@ function signPayout(ventureId, userId, param, inputTxHexs, accountKeyChains) {
                                             var keyChain = match$1[0];
                                             pathAndPubKeyPromise = Js_option.isSome(CustodianKeyChain.hardwareId(keyChain)) ? getSigningPathAndPubKey(ventureId, misthosPurposeNode, CustodianKeyChain.keyChainIdx(keyChain), coordinates, btc) : Promise.resolve(/* tuple */[
                                                     dummyPath,
-                                                    Buffer.alloc(0)
+                                                    dummyPubKey
                                                   ]);
                                           } else {
                                             pathAndPubKeyPromise = Promise.resolve(/* tuple */[
                                                   dummyPath,
-                                                  Buffer.alloc(0)
+                                                  dummyPubKey
                                                 ]);
                                           }
                                           return Promise.all(/* tuple */[
@@ -140,5 +142,6 @@ exports.pathToBip45Root = pathToBip45Root;
 exports.getSigningPathAndPubKey = getSigningPathAndPubKey;
 exports.getCustodianKeyChain = getCustodianKeyChain;
 exports.dummyPath = dummyPath;
+exports.dummyPubKey = dummyPubKey;
 exports.signPayout = signPayout;
 /* Utils Not a pure module */
