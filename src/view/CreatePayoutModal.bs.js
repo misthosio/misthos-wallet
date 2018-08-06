@@ -100,7 +100,7 @@ var Styles = /* module */[
 ];
 
 function updateState(state) {
-  var match = state[/* inputs */9];
+  var match = state[/* inputs */10];
   var btcAmount = match[/* btcAmount */1];
   var recipientAddress = match[/* recipientAddress */0];
   var fee = state[/* fee */7];
@@ -145,13 +145,14 @@ function updateState(state) {
         btcAmount$1
       ];
     var inputAmount$2 = match$4[0];
-    var summary = Curry._2(viewData[/* summary */7], /* :: */[
+    var payoutTx = Curry._2(viewData[/* createPayoutTx */8], /* :: */[
           /* tuple */[
             inputDestination,
             inputAmount$2
           ],
           destinations
         ], fee);
+    var summary = Curry._1(viewData[/* summary */7], payoutTx);
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
@@ -162,13 +163,15 @@ function updateState(state) {
             /* frozen */state[/* frozen */6],
             /* fee */state[/* fee */7],
             /* summary */summary,
+            /* payoutTx : Some */[payoutTx],
             /* inputs : record */[
               /* recipientAddress */recipientAddress$1,
               /* btcAmount */match$4[1]
             ]
           ];
   } else {
-    var summary$1 = Curry._2(viewData[/* summary */7], destinations, fee);
+    var payoutTx$1 = Curry._2(viewData[/* createPayoutTx */8], destinations, fee);
+    var summary$1 = Curry._1(viewData[/* summary */7], payoutTx$1);
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
@@ -179,6 +182,7 @@ function updateState(state) {
             /* frozen */state[/* frozen */6],
             /* fee */state[/* fee */7],
             /* summary */summary$1,
+            /* payoutTx : Some */[payoutTx$1],
             /* inputs : record */[
               /* recipientAddress */recipientAddress$1,
               /* btcAmount */btcAmount$1
@@ -204,7 +208,8 @@ function make(viewData, commands, cmdStatus, _) {
                       /* frozen */state[/* frozen */6],
                       /* fee */state[/* fee */7],
                       /* summary */state[/* summary */8],
-                      /* inputs */state[/* inputs */9]
+                      /* payoutTx */state[/* payoutTx */9],
+                      /* inputs */state[/* inputs */10]
                     ];
             }),
           /* didMount */(function (param) {
@@ -221,7 +226,7 @@ function make(viewData, commands, cmdStatus, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              var inputs = match[/* inputs */9];
+              var inputs = match[/* inputs */10];
               var summary = match[/* summary */8];
               var viewData = match[/* viewData */0];
               var match$1 = Environment.get(/* () */0)[/* network */5];
@@ -306,6 +311,7 @@ function make(viewData, commands, cmdStatus, _) {
                       /* frozen */false,
                       /* fee */BTC.zero,
                       /* summary */viewData[/* initialSummary */4],
+                      /* payoutTx : None */0,
                       /* inputs : record */[
                         /* recipientAddress */"",
                         /* btcAmount */""
@@ -347,14 +353,10 @@ function make(viewData, commands, cmdStatus, _) {
                         case 1 : 
                             return /* NoUpdate */0;
                         case 2 : 
-                            var destinations = state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero) ? /* :: */[
-                                /* tuple */[
-                                  state[/* inputDestination */2],
-                                  state[/* inputAmount */3]
-                                ],
-                                state[/* destinations */1]
-                              ] : state[/* destinations */1];
-                            Curry._2(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], Curry._2(viewData[/* createPayoutTx */8], destinations, state[/* fee */7]));
+                            var match$2 = state[/* payoutTx */9];
+                            if (match$2) {
+                              Curry._2(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], match$2[0]);
+                            }
                             return /* NoUpdate */0;
                         case 3 : 
                             return /* Update */Block.__(0, [/* record */[
@@ -367,7 +369,8 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */true,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* inputs */state[/* inputs */10]
                                       ]]);
                         case 4 : 
                             return /* UpdateWithSideEffects */Block.__(2, [
@@ -381,7 +384,8 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */false,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* inputs */state[/* inputs */10]
                                       ],
                                       (function () {
                                           return Curry._1(commands[/* reset */0], /* () */0);
@@ -422,6 +426,7 @@ function make(viewData, commands, cmdStatus, _) {
                                           /* frozen */state[/* frozen */6],
                                           /* fee */state[/* fee */7],
                                           /* summary */state[/* summary */8],
+                                          /* payoutTx */state[/* payoutTx */9],
                                           /* inputs : record */[
                                             /* recipientAddress */"",
                                             /* btcAmount */""
@@ -443,7 +448,8 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */true,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* inputs */state[/* inputs */10]
                                       ]]);
                         case 4 : 
                             return /* UpdateWithSideEffects */Block.__(2, [
@@ -457,7 +463,8 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */false,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* inputs */state[/* inputs */10]
                                       ],
                                       (function () {
                                           return Curry._1(commands[/* reset */0], /* () */0);
@@ -469,7 +476,7 @@ function make(viewData, commands, cmdStatus, _) {
                       switch (action.tag | 0) {
                         case 0 : 
                             if (canInput === true) {
-                              var init = state[/* inputs */9];
+                              var init = state[/* inputs */10];
                               return /* Update */Block.__(0, [updateState(/* record */[
                                               /* viewData */state[/* viewData */0],
                                               /* destinations */state[/* destinations */1],
@@ -480,6 +487,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               /* frozen */state[/* frozen */6],
                                               /* fee */state[/* fee */7],
                                               /* summary */state[/* summary */8],
+                                              /* payoutTx */state[/* payoutTx */9],
                                               /* inputs : record */[
                                                 /* recipientAddress */action[0].trim(),
                                                 /* btcAmount */init[/* btcAmount */1]
@@ -491,8 +499,8 @@ function make(viewData, commands, cmdStatus, _) {
                         case 1 : 
                             if (canInput === true) {
                               var amount = action[0];
-                              var init$1 = state[/* inputs */9];
-                              var match$2 = amount === ".";
+                              var init$1 = state[/* inputs */10];
+                              var match$3 = amount === ".";
                               return /* Update */Block.__(0, [updateState(/* record */[
                                               /* viewData */state[/* viewData */0],
                                               /* destinations */state[/* destinations */1],
@@ -503,9 +511,10 @@ function make(viewData, commands, cmdStatus, _) {
                                               /* frozen */state[/* frozen */6],
                                               /* fee */state[/* fee */7],
                                               /* summary */state[/* summary */8],
+                                              /* payoutTx */state[/* payoutTx */9],
                                               /* inputs : record */[
                                                 /* recipientAddress */init$1[/* recipientAddress */0],
-                                                /* btcAmount */match$2 ? "0." : amount
+                                                /* btcAmount */match$3 ? "0." : amount
                                               ]
                                             ])]);
                             } else {
@@ -532,7 +541,8 @@ function make(viewData, commands, cmdStatus, _) {
                                             /* frozen */state[/* frozen */6],
                                             /* fee */state[/* fee */7],
                                             /* summary */state[/* summary */8],
-                                            /* inputs */state[/* inputs */9]
+                                            /* payoutTx */state[/* payoutTx */9],
+                                            /* inputs */state[/* inputs */10]
                                           ])]);
                         case 3 : 
                             return /* Update */Block.__(0, [/* record */[
@@ -545,7 +555,8 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */state[/* frozen */6],
                                         /* fee */action[0],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* inputs */state[/* inputs */10]
                                       ]]);
                         
                       }

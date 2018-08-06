@@ -295,8 +295,11 @@ module CreatePayoutView = {
     initialSummary: PayoutTransaction.summary,
     isAddressValid: string => bool,
     max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
-    summary: (list((string, BTC.t)), BTC.t) => PayoutTransaction.summary,
+    summary: PayoutTransaction.t => PayoutTransaction.summary,
     createPayoutTx: (list((string, BTC.t)), BTC.t) => PayoutTransaction.t,
+    signPayoutTx:
+      (PayoutTransaction.t, array(string)) =>
+      Js.Promise.t(array((string, string))),
   };
   let fromViewModelState =
       ({ventureId, localUser, ventureName, walletInfoCollector}) => {
@@ -363,17 +366,7 @@ module CreatePayoutView = {
           ~satsPerByte=fee,
           ~network,
         ),
-      summary: (destinations, fee) =>
-        PayoutTransaction.build(
-          ~mandatoryInputs,
-          ~unlockedInputs,
-          ~optionalInputs,
-          ~destinations,
-          ~satsPerByte=fee,
-          ~changeAddress,
-          ~network,
-        )
-        |> PayoutTransaction.summary(network),
+      summary: PayoutTransaction.summary(network),
       createPayoutTx: (destinations, fee) =>
         PayoutTransaction.build(
           ~mandatoryInputs,
@@ -383,6 +376,14 @@ module CreatePayoutView = {
           ~satsPerByte=fee,
           ~changeAddress,
           ~network,
+        ),
+      signPayoutTx: (payoutTx, txHexs) =>
+        Ledger.signPayout(
+          ventureId,
+          localUser,
+          payoutTx,
+          txHexs,
+          walletInfoCollector |> WalletInfoCollector.accountKeyChains,
         ),
     };
   };

@@ -17,6 +17,7 @@ type state = {
   frozen: bool,
   fee: BTC.t,
   summary: PayoutTransaction.summary,
+  payoutTx: option(PayoutTransaction.t),
   inputs,
 };
 
@@ -84,11 +85,12 @@ let updateState =
     let (inputAmount, btcAmount) =
       inputAmount |> BTC.gt(max) ?
         (max, max |> BTC.format) : (inputAmount, btcAmount);
-    let summary =
-      viewData.summary(
+    let payoutTx =
+      viewData.createPayoutTx(
         [(inputDestination, inputAmount), ...destinations],
         fee,
       );
+    let summary = viewData.summary(payoutTx);
     {
       ...state,
       viewData,
@@ -97,13 +99,15 @@ let updateState =
       addressValid,
       canSubmitProposal: summary.spentWithFees |> BTC.gt(summary.networkFee),
       summary,
+      payoutTx: Some(payoutTx),
       inputs: {
         btcAmount,
         recipientAddress,
       },
     };
   } else {
-    let summary = viewData.summary(destinations, fee);
+    let payoutTx = viewData.createPayoutTx(destinations, fee);
+    let summary = viewData.summary(payoutTx);
     {
       ...state,
       viewData,
@@ -112,6 +116,7 @@ let updateState =
       addressValid,
       canSubmitProposal: summary.spentWithFees |> BTC.gt(summary.networkFee),
       summary,
+      payoutTx: Some(payoutTx),
       inputs: {
         btcAmount,
         recipientAddress,
@@ -136,6 +141,7 @@ let make =
     destinations: [],
     addressValid: true,
     summary: viewData.initialSummary,
+    payoutTx: None,
     inputDestination: "",
     inputAmount: BTC.zero,
     inputs: {
@@ -243,21 +249,14 @@ let make =
           (_ => commands.reset()),
         )
       | ProposePayout =>
-        let destinations =
-          if (state.inputDestination != ""
-              && state.inputAmount
-              |> BTC.gt(BTC.zero)) {
-            [
-              (state.inputDestination, state.inputAmount),
-              ...state.destinations,
-            ];
-          } else {
-            state.destinations;
-          };
-        commands.proposePayout(
-          ~accountIdx=WalletTypes.AccountIndex.default,
-          ~payoutTx=viewData.createPayoutTx(destinations, state.fee),
-        );
+        switch (state.payoutTx) {
+        | Some(payoutTx) =>
+          commands.proposePayout(
+            ~accountIdx=WalletTypes.AccountIndex.default,
+            ~payoutTx,
+          )
+        | None => ()
+        };
         ReasonReact.NoUpdate;
       | _ => ReasonReact.NoUpdate
       }

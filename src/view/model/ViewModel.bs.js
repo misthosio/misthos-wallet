@@ -220,6 +220,8 @@ var ViewPartnerView = /* module */[
 
 function fromViewModelState$3(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
+  var ventureId = param[/* ventureId */1];
+  var localUser = param[/* localUser */0];
   var reserved = WalletInfoCollector.totalReservedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
@@ -231,11 +233,11 @@ function fromViewModelState$3(param) {
   var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var unlockedInputs = WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var allInputs = Belt_Set.union(Belt_Set.union(optionalInputs, mandatoryInputs), unlockedInputs);
-  var changeAddress = WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */11], param[/* localUser */0], walletInfoCollector);
+  var changeAddress = WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */11], localUser, walletInfoCollector);
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),
           /* balance */balance,
-          /* ventureId */param[/* ventureId */1],
+          /* ventureId */ventureId,
           /* ventureName */param[/* ventureName */3],
           /* initialSummary : record */[
             /* reserved */BTC.zero,
@@ -256,11 +258,14 @@ function fromViewModelState$3(param) {
           /* max */(function (targetDestination, destinations, fee) {
               return PayoutTransaction.max(allInputs, targetDestination, destinations, fee, network);
             }),
-          /* summary */(function (destinations, fee) {
-              return PayoutTransaction.summary(network, PayoutTransaction.build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, fee, changeAddress, network));
+          /* summary */(function (param) {
+              return PayoutTransaction.summary(network, param);
             }),
           /* createPayoutTx */(function (destinations, fee) {
               return PayoutTransaction.build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, fee, changeAddress, network);
+            }),
+          /* signPayoutTx */(function (payoutTx, txHexs) {
+              return Ledger.signPayout(ventureId, localUser, payoutTx, txHexs, WalletInfoCollector.accountKeyChains(walletInfoCollector));
             })
         ];
 }
