@@ -88,24 +88,31 @@ let lastRemovalOfCustodian = (partnerId, {custodianRemovals}) =>
 let lastPartnerAccepted = (partnerId, {partnerAccepted}) =>
   partnerAccepted |> List.assoc(partnerId);
 
+let defaultMetaPolicy = Policy.defaultMetaPolicy;
+let defaultInitialPolicies: VentureCreated.initialPolicies = {
+  addPartner: Policy.unanimousMinusOne,
+  removePartner: Policy.defaultRemovePartner,
+  payout: Policy.unanimousMinusOne,
+};
+
 let apply = (event, state) =>
   switch (event) {
-  | VentureCreated({ventureName, metaPolicy, systemIssuer}) => {
+  | VentureCreated({ventureName, initialPolicies, systemIssuer}) =>
+    let initialPolicies =
+      initialPolicies |> Js.Option.getWithDefault(defaultInitialPolicies);
+    {
       ...state,
       ventureName,
       systemIssuer,
       policies: [
-        (Partner.Removal.processName, Policy.UnanimousMinusOne),
-        (Custodian.Removal.processName, Policy.UnanimousMinusOne),
-        ...[
-             Partner.processName,
-             AccountCreation.processName,
-             Custodian.processName,
-             Payout.processName,
-           ]
-           |> List.map(n => (n, metaPolicy)),
+        (Partner.Removal.processName, initialPolicies.removePartner),
+        (Custodian.Removal.processName, initialPolicies.removePartner),
+        (Partner.processName, initialPolicies.addPartner),
+        (Custodian.processName, initialPolicies.addPartner),
+        (Payout.processName, initialPolicies.payout),
+        (AccountCreation.processName, defaultMetaPolicy),
       ],
-    }
+    };
   | PartnerProposed(proposal) => {
       ...state,
       activePartnerProcesses:

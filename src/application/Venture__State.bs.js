@@ -3,8 +3,10 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var Event = require("./events/Event.bs.js");
+var Policy = require("./Policy.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
@@ -116,42 +118,55 @@ function lastPartnerAccepted(partnerId, param) {
   return List.assoc(partnerId, param[/* partnerAccepted */11]);
 }
 
+var defaultInitialPolicies = /* record */[
+  /* addPartner */Policy.unanimousMinusOne,
+  /* removePartner */Policy.defaultRemovePartner,
+  /* payout */Policy.unanimousMinusOne
+];
+
 function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         var match = $$event[0];
-        var metaPolicy = match[/* metaPolicy */5];
+        var initialPolicies = Js_option.getWithDefault(defaultInitialPolicies, match[/* initialPolicies */6]);
         return /* record */[
                 /* ventureName */match[/* ventureName */1],
-                /* systemIssuer */match[/* systemIssuer */6],
+                /* systemIssuer */match[/* systemIssuer */7],
                 /* policies : :: */[
                   /* tuple */[
                     Event.Partner[/* Removal */9][/* processName */1],
-                    /* UnanimousMinusOne */1
+                    initialPolicies[/* removePartner */1]
                   ],
                   /* :: */[
                     /* tuple */[
                       Event.Custodian[/* Removal */9][/* processName */1],
-                      /* UnanimousMinusOne */1
+                      initialPolicies[/* removePartner */1]
                     ],
-                    List.map((function (n) {
-                            return /* tuple */[
-                                    n,
-                                    metaPolicy
-                                  ];
-                          }), /* :: */[
-                          Event.Partner[/* processName */1],
+                    /* :: */[
+                      /* tuple */[
+                        Event.Partner[/* processName */1],
+                        initialPolicies[/* addPartner */0]
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          Event.Custodian[/* processName */1],
+                          initialPolicies[/* addPartner */0]
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            Event.Payout[/* processName */1],
+                            initialPolicies[/* payout */2]
+                          ],
                           /* :: */[
-                            Event.AccountCreation[/* processName */1],
-                            /* :: */[
-                              Event.Custodian[/* processName */1],
-                              /* :: */[
-                                Event.Payout[/* processName */1],
-                                /* [] */0
-                              ]
-                            ]
+                            /* tuple */[
+                              Event.AccountCreation[/* processName */1],
+                              Policy.defaultMetaPolicy
+                            ],
+                            /* [] */0
                           ]
-                        ])
+                        ]
+                      ]
+                    ]
                   ]
                 ],
                 /* activePartnerProcesses */state[/* activePartnerProcesses */3],
@@ -360,7 +375,11 @@ function apply($$event, state) {
   }
 }
 
+var defaultMetaPolicy = Policy.defaultMetaPolicy;
+
 exports.make = make;
+exports.defaultMetaPolicy = defaultMetaPolicy;
+exports.defaultInitialPolicies = defaultInitialPolicies;
 exports.systemIssuer = systemIssuer;
 exports.ventureName = ventureName;
 exports.currentPolicy = currentPolicy;

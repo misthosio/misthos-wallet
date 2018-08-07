@@ -150,8 +150,6 @@ let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
     }
   );
 
-let defaultPolicy = Policy.unanimous;
-
 type loadResult =
   | Ok(t, array(EventLog.item))
   | CouldNotLoad(Js.Promise.error);
@@ -272,7 +270,8 @@ module Cmd = {
           ~creatorId=session.userId,
           ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
           ~defaultAccountSettings,
-          ~metaPolicy=defaultPolicy,
+          ~metaPolicy=State.defaultMetaPolicy,
+          ~initialPolicies=State.defaultInitialPolicies,
           ~network=session.network,
         );
       (

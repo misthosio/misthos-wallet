@@ -6,6 +6,9 @@ type t;
 
 let make: unit => t;
 
+let defaultMetaPolicy: Policy.t;
+let defaultInitialPolicies: VentureCreated.initialPolicies;
+
 let systemIssuer: t => Bitcoin.ECPair.t;
 
 let ventureName: t => string;

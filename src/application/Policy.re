@@ -65,3 +65,8 @@ let decode = raw => {
   | _ => raise(UnknownPolicy(raw))
   };
 };
+
+let defaultMetaPolicy = unanimous;
+let defaultAddPartner = unanimous;
+let defaultRemovePartner = unanimousMinusOne;
+let defaultPayout = unanimous;

@@ -19,7 +19,6 @@ type t = {
     option((WebWorker.correlationId, VentureWorkerMessage.cmdResponse)),
   ventureName: string,
   processedItems: ItemsSet.t,
-  metaPolicy: Policy.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
   txDetailsCollector: TxDetailsCollector.t,
@@ -618,7 +617,6 @@ let make = localUser => {
   ventureName: "",
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
-  metaPolicy: Policy.unanimous,
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
   txDetailsCollector: TxDetailsCollector.make(localUser),
@@ -648,11 +646,10 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
-    | VentureCreated({ventureName, metaPolicy, ventureId}) => {
+    | VentureCreated({ventureName, ventureId}) => {
         ...state,
         ventureId,
         ventureName,
-        metaPolicy,
       }
     | _ => state
     };

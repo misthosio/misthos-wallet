@@ -20,7 +20,7 @@ describe("CreateVenture", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
         var log = Generators.Log[/* createVenture */11](user1);
         var match = Event.getVentureCreatedExn(Generators.Log[/* lastEvent */5](log));
-        var systemIssuer = match[/* systemIssuer */6];
+        var systemIssuer = match[/* systemIssuer */7];
         var ventureName = match[/* ventureName */1];
         var state = constructState(log);
         Jest.test("extract ventureName", (function () {

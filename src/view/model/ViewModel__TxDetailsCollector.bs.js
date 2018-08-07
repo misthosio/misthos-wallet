@@ -72,7 +72,7 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         return /* record */[
-                /* network */$$event[0][/* network */7],
+                /* network */$$event[0][/* network */8],
                 /* localUser */state[/* localUser */1],
                 /* payouts */state[/* payouts */2],
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],

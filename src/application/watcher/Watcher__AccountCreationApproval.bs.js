@@ -62,7 +62,7 @@ function make(proposal, log) {
                       /* eligibilityCollector */init$1[/* eligibilityCollector */0],
                       /* endorsements */init$1[/* endorsements */1],
                       /* policy */init$1[/* policy */2],
-                      /* systemIssuer */$$event[0][/* systemIssuer */6]
+                      /* systemIssuer */$$event[0][/* systemIssuer */7]
                     ];
                     break;
                 case 14 : 

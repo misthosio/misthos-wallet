@@ -89,7 +89,7 @@ function make(param, param$1, log) {
                 case 0 : 
                     var init = self$1[state][0];
                     tmp = /* record */[
-                      /* systemIssuer */$$event[0][/* systemIssuer */6],
+                      /* systemIssuer */$$event[0][/* systemIssuer */7],
                       /* custodianKeyChains */init[/* custodianKeyChains */1],
                       /* identifiedKeyChains */init[/* identifiedKeyChains */2],
                       /* identifiedEvent */init[/* identifiedEvent */3],

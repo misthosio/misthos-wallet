@@ -4,8 +4,10 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
+var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 var PayoutTransaction = require("./wallet/PayoutTransaction.bs.js");
 var WalletInfoCollector = require("./wallet/WalletInfoCollector.bs.js");
@@ -14,7 +16,7 @@ function make() {
   return /* record */[
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* network : Regtest */0,
-          /* payoutPolicy */Policy.unanimous,
+          /* payoutPolicy */Policy.defaultPayout,
           /* walletInfoCollector */WalletInfoCollector.make(/* () */0)
         ];
 }
@@ -36,8 +38,10 @@ function apply($$event, state) {
     var match = $$event[0];
     return /* record */[
             /* ventureId */match[/* ventureId */0],
-            /* network */match[/* network */7],
-            /* payoutPolicy */match[/* metaPolicy */5],
+            /* network */match[/* network */8],
+            /* payoutPolicy */Js_option.getWithDefault(Policy.defaultPayout, Utils.mapOption((function (p) {
+                        return p[/* payout */2];
+                      }), match[/* initialPolicies */6])),
             state_003
           ];
   }

@@ -60,7 +60,7 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */1],
                 /* unconfirmedTxs */state[/* unconfirmedTxs */2],
                 /* confirmedTxs */state[/* confirmedTxs */3],
-                /* network */match[/* network */7],
+                /* network */match[/* network */8],
                 /* txDates */state[/* txDates */5]
               ];
     case 26 : 

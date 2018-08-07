@@ -20,7 +20,13 @@ type state =
 let make =
     (
       {userId, issuerKeyPair}: SessionData.t,
-      {creatorId, creatorPubKey, defaultAccountSettings, metaPolicy}: VentureCreated.t,
+      {
+        creatorId,
+        creatorPubKey,
+        defaultAccountSettings,
+        initialPolicies,
+        metaPolicy,
+      }: VentureCreated.t,
       log,
     ) => {
   let process = {
@@ -83,7 +89,12 @@ let make =
                 ~proposerId=creatorId,
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
-                ~policy=metaPolicy,
+                ~policy=
+                  initialPolicies
+                  |> Utils.mapOption((p: VentureCreated.initialPolicies) =>
+                       p.addPartner
+                     )
+                  |> Js.Option.getWithDefault(Policy.defaultAddPartner),
                 ~lastRemovalAccepted=None,
                 (),
               ),
@@ -126,7 +137,12 @@ let make =
                 ~partnerProposed,
                 ~proposerId=creatorId,
                 ~accountIdx=AccountIndex.default,
-                ~policy=metaPolicy,
+                ~policy=
+                  initialPolicies
+                  |> Utils.mapOption((p: VentureCreated.initialPolicies) =>
+                       p.addPartner
+                     )
+                  |> Js.Option.getWithDefault(Policy.defaultAddPartner),
               ),
             ))
           | EndorseCustodian(processId) =>

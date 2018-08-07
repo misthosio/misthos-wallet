@@ -116,6 +116,14 @@ var unanimous = /* Unanimous */0;
 
 var unanimousMinusOne = /* UnanimousMinusOne */1;
 
+var defaultMetaPolicy = /* Unanimous */0;
+
+var defaultAddPartner = /* Unanimous */0;
+
+var defaultRemovePartner = /* UnanimousMinusOne */1;
+
+var defaultPayout = /* Unanimous */0;
+
 exports.Unanimous = Unanimous;
 exports.UnanimousMinusOne = UnanimousMinusOne;
 exports.unanimous = unanimous;
@@ -127,4 +135,8 @@ exports.neq = neq;
 exports.encode = encode$2;
 exports.UnknownPolicy = UnknownPolicy;
 exports.decode = decode;
+exports.defaultMetaPolicy = defaultMetaPolicy;
+exports.defaultAddPartner = defaultAddPartner;
+exports.defaultRemovePartner = defaultRemovePartner;
+exports.defaultPayout = defaultPayout;
 /* Json_encode Not a pure module */
