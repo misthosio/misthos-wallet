@@ -89,16 +89,16 @@ describe("Wallet_integration", (function () {
                       /* hi */0,
                       /* lo */15000
                     ]);
-                var oneKeyChainWalletTotal = address1Satoshis.plus(address2Satoshis);
+                var oneKeyChainWalletTotal = address2Satoshis.plus(address1Satoshis);
                 var oneKeyChainSpendAmount = BTC.fromSatoshis(/* int64 */[
                       /* hi */0,
                       /* lo */6100
                     ]);
-                var oneKeyChainExpectedFee = BTC.fromSatoshis(/* int64 */[
-                        /* hi */0,
-                        /* lo */1892
-                      ]).plus(BTC.timesRounded(PayoutTransaction.misthosFeePercent / 100, oneKeyChainSpendAmount));
-                var twoKeyChainWalletTotal = oneKeyChainWalletTotal.plus(address3Satoshis).plus(address4Satoshis).minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee);
+                var oneKeyChainExpectedFee = BTC.timesRounded(oneKeyChainSpendAmount, PayoutTransaction.misthosFeePercent / 100).plus(BTC.fromSatoshis(/* int64 */[
+                          /* hi */0,
+                          /* lo */1892
+                        ]));
+                var twoKeyChainWalletTotal = address4Satoshis.plus(address3Satoshis.plus(oneKeyChainWalletTotal)).minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee);
                 var twoKeyChainSpendAmount = BTC.fromSatoshis(/* int64 */[
                       /* hi */0,
                       /* lo */25000
@@ -240,7 +240,7 @@ describe("Wallet_integration", (function () {
                 Jest.testPromise(undefined, "1 of 2 wallet", (function () {
                         return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(oneKeyChainWallet[0])).then((function (utxos) {
                                       return Promise.resolve(Jest.Expect[/* toEqual */12](oneKeyChainWalletTotal.minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
-                                                                return total.plus(utxo[/* amount */3]);
+                                                                return utxo[/* amount */3].plus(total);
                                                               }), BTC.zero, utxos))));
                                     }));
                       }));
@@ -279,13 +279,13 @@ describe("Wallet_integration", (function () {
                                 throw PayoutTransaction.NotEnoughFunds;
                               }
                               return tmp.then((function (param) {
-                                            var expectedFee = BTC.fromSatoshis(/* int64 */[
-                                                    /* hi */0,
-                                                    /* lo */5687
-                                                  ]).plus(BTC.timesRounded(PayoutTransaction.misthosFeePercent / 100, twoKeyChainSpendAmount));
+                                            var expectedFee = BTC.timesRounded(twoKeyChainSpendAmount, PayoutTransaction.misthosFeePercent / 100).plus(BTC.fromSatoshis(/* int64 */[
+                                                      /* hi */0,
+                                                      /* lo */5687
+                                                    ]));
                                             return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                           return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
-                                                                                    return total.plus(utxo[/* amount */3]);
+                                                                                    return utxo[/* amount */3].plus(total);
                                                                                   }), BTC.zero, utxos))));
                                                         }));
                                           }));

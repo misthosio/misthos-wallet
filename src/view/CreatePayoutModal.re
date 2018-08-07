@@ -79,10 +79,10 @@ let updateState =
     } else {
       (btcAmount, newInputAmount);
     };
-  if (inputAmount |> BTC.gt(BTC.zero) && inputDestination != "") {
+  if (inputAmount |. BTC.gt(BTC.zero) && inputDestination != "") {
     let max = viewData.max(inputDestination, destinations, fee);
     let (inputAmount, btcAmount) =
-      inputAmount |> BTC.gt(max) ?
+      inputAmount |. BTC.gt(max) ?
         (max, max |> BTC.format) : (inputAmount, btcAmount);
     let summary =
       viewData.summary(
@@ -95,7 +95,7 @@ let updateState =
       inputAmount,
       inputDestination,
       addressValid,
-      canSubmitProposal: summary.spentWithFees |> BTC.gt(summary.networkFee),
+      canSubmitProposal: summary.spentWithFees |. BTC.gt(summary.networkFee),
       summary,
       inputs: {
         btcAmount,
@@ -110,7 +110,7 @@ let updateState =
       inputAmount,
       inputDestination,
       addressValid,
-      canSubmitProposal: summary.spentWithFees |> BTC.gt(summary.networkFee),
+      canSubmitProposal: summary.spentWithFees |. BTC.gt(summary.networkFee),
       summary,
       inputs: {
         btcAmount,
@@ -157,9 +157,9 @@ let make =
       cmdStatus,
       state.frozen,
       viewData.balance.currentSpendable
-      |> BTC.gt(state.summary.spentWithFees)
+      |. BTC.gt(state.summary.spentWithFees)
       || state.inputAmount
-      |> BTC.gt(BTC.zero),
+      |. BTC.gt(BTC.zero),
     ) {
     | (Success(_) | Error(_), _, canInput)
     | (Idle, false, canInput) =>
@@ -203,7 +203,7 @@ let make =
       | AddToSummary when canInput == true =>
         if (state.inputDestination != ""
             && state.inputAmount
-            |> BTC.gt(BTC.zero)) {
+            |. BTC.gt(BTC.zero)) {
           ReasonReact.Update({
             ...state,
             destinations: [
@@ -246,7 +246,7 @@ let make =
         let destinations =
           if (state.inputDestination != ""
               && state.inputAmount
-              |> BTC.gt(BTC.zero)) {
+              |. BTC.gt(BTC.zero)) {
             [
               (state.inputDestination, state.inputAmount),
               ...state.destinations,
@@ -287,7 +287,7 @@ let make =
 
     let destinationRow = (~withRemoveBtn=true, idx, address, amount) =>
       MaterialUi.(
-        address != "" && amount |> BTC.gt(BTC.zero) ?
+        address != "" && amount |. BTC.gt(BTC.zero) ?
           <TableRow key=(idx |> string_of_int)>
             <TableCell
               className=(

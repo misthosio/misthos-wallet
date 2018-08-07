@@ -11,7 +11,7 @@ type config = {
 let makeAuthHeaders = ({rpcUser, rpcPassword}) => {
   let authString =
     Node_buffer.fromString({j|$(rpcUser):$(rpcPassword)|j})
-    |> BufferExt.toStringWithEncoding("base64");
+    |. BufferExt.toStringWithEncoding("base64");
   Fetch.HeadersInit.make({"Authorization": {j|Basic $(authString)|j}});
 };
 

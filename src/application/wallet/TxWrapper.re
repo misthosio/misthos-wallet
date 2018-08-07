@@ -80,7 +80,7 @@ let sign =
        );
   let signature =
     keyPair
-    |> B.ECPair.sign(signatureHash)
+    |. B.ECPair.sign(signatureHash)
     |. B.Script.Signature.encode(B.Transaction.sighashAll);
   let pubKey = keyPair |> B.ECPair.getPublicKey;
   let insert = pubKey |> pubKeyIndex(witnessBuf, nCustodians);

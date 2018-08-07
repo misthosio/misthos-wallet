@@ -17,9 +17,9 @@ let fetchFees = () =>
     all3((fetchNConfs(2), fetchNConfs(6), fetchNConfs(12)))
     |> then_(((high, normal, economy)) =>
          {
-           high: high |> BTC.dividedByRounded(1000.),
-           normal: normal |> BTC.dividedByRounded(1000.),
-           economy: economy |> BTC.dividedByRounded(1000.),
+           high: high |. BTC.dividedByRounded(1000.),
+           normal: normal |. BTC.dividedByRounded(1000.),
+           economy: economy |. BTC.dividedByRounded(1000.),
          }
          |> resolve
        )

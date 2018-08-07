@@ -89,7 +89,7 @@ module AddressesView = {
         |. List.reduceU(
              false, (. res, {addressStatus, balance}: addressInfo) =>
              switch (addressStatus) {
-             | AtRisk => res || balance |> BTC.gt(BTC.zero)
+             | AtRisk => res || balance |. BTC.gt(BTC.zero)
              | _ => res
              }
            ),
@@ -177,7 +177,7 @@ module ManagePartnersView = {
              switch (addressStatus, balance) {
              | (AtRisk, balance)
              | (TemporarilyInaccessible, balance)
-                 when balance |> BTC.gt(BTC.zero) =>
+                 when balance |. BTC.gt(BTC.zero) =>
                res |. Set.union(custodians)
              | _ => res
              }
@@ -280,7 +280,7 @@ module CreatePayoutView = {
       currentSpendable:
         walletInfoCollector
         |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
-        |> BTC.minus(reserved),
+        |. BTC.minus(reserved),
     };
     let network = walletInfoCollector |> WalletInfoCollector.network;
     let optionalInputs =
@@ -305,7 +305,7 @@ module CreatePayoutView = {
     {
       ventureId,
       balance,
-      allowCreation: balance.currentSpendable |> BTC.gt(BTC.zero),
+      allowCreation: balance.currentSpendable |. BTC.gt(BTC.zero),
       ventureName,
       initialSummary: {
         reserved: BTC.zero,
@@ -438,7 +438,7 @@ module SelectedVentureView = {
       currentSpendable:
         walletInfoCollector
         |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
-        |> BTC.minus(reserved),
+        |. BTC.minus(reserved),
     };
     let (proposedAdditions, proposedRemovals) =
       partnersCollector |> PartnersCollector.processesPendingApproval;
@@ -457,7 +457,7 @@ module SelectedVentureView = {
                {addressStatus, balance}: WalletInfoCollector.addressInfo,
              ) =>
              switch (addressStatus) {
-             | AtRisk => res || balance |> BTC.gt(BTC.zero)
+             | AtRisk => res || balance |. BTC.gt(BTC.zero)
              | _ => res
              }
            ),

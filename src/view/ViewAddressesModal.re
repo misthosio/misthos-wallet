@@ -56,7 +56,7 @@ let calcAddressStatus =
     (status: ViewData.addressStatus, balance: BTC.t, unlocked: list(bool)) =>
   switch (status, unlocked) {
   | (Accessible, _) => Accessible
-  | (AtRisk, _) when balance |> BTC.gt(BTC.zero) => AtRisk
+  | (AtRisk, _) when balance |. BTC.gt(BTC.zero) => AtRisk
   | (AtRisk, _) => OldAddress
   | (OutdatedCustodians, _) => OldAddress
   | (TemporarilyInaccessible, unlocked) when unlocked |. List.some(b => b) =>
@@ -242,7 +242,7 @@ let make = (~viewData: ViewData.t, _children) => {
         |. List.keepMapU((. info: ViewData.addressInfo) =>
              if (info.addressType != WalletInfoCollector.Change
                  || info.balance
-                 |> BTC.gt(BTC.zero)) {
+                 |. BTC.gt(BTC.zero)) {
                let details = viewData.addressDetails(info);
                let expand = state.expandedAddress == Some(info);
                [|

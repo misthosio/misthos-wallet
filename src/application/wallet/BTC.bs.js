@@ -23,7 +23,7 @@ var zero = new BignumberJs.BigNumber(0);
 var satoshisPerBTC = new BignumberJs.BigNumber("1e8");
 
 function fromString(btcString) {
-  return new BignumberJs.BigNumber(btcString).times(satoshisPerBTC).integerValue(BignumberJs.ROUND_FLOOR);
+  return satoshisPerBTC.times(new BignumberJs.BigNumber(btcString)).integerValue(BignumberJs.ROUND_FLOOR);
 }
 
 function format(btc) {
@@ -31,15 +31,15 @@ function format(btc) {
 }
 
 function fromFloat(btcFloat) {
-  return new BignumberJs.BigNumber(btcFloat).times(satoshisPerBTC);
+  return satoshisPerBTC.times(new BignumberJs.BigNumber(btcFloat));
 }
 
 function timesRounded(n, btc) {
-  return btc.times(n).integerValue(BignumberJs.ROUND_CEIL);
+  return n.times(btc).integerValue(BignumberJs.ROUND_CEIL);
 }
 
 function dividedByRounded(n, btc) {
-  return btc.dividedBy(n).integerValue(BignumberJs.ROUND_FLOOR);
+  return n.dividedBy(btc).integerValue(BignumberJs.ROUND_FLOOR);
 }
 
 function encode(prim) {
