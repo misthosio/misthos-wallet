@@ -34,12 +34,12 @@ function fromFloat(btcFloat) {
   return satoshisPerBTC.times(new BignumberJs.BigNumber(btcFloat));
 }
 
-function timesRounded(n, btc) {
-  return n.times(btc).integerValue(BignumberJs.ROUND_CEIL);
+function timesRounded(btc, n) {
+  return btc.times(n).integerValue(BignumberJs.ROUND_CEIL);
 }
 
-function dividedByRounded(n, btc) {
-  return n.dividedBy(btc).integerValue(BignumberJs.ROUND_FLOOR);
+function dividedByRounded(btc, n) {
+  return btc.dividedBy(n).integerValue(BignumberJs.ROUND_FLOOR);
 }
 
 function encode(prim) {

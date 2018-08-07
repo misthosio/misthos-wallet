@@ -27,12 +27,12 @@ let format = btc =>
 let fromFloat = btcFloat =>
   BigNumber.make(`Float(btcFloat)) |> BigNumber.times(satoshisPerBTC);
 
-let timesRounded = (n, btc) =>
-  btc |> timesFloat(n) |. BigNumber.integerValue(BigNumber.RoundingMode.ceil);
+let timesRounded = (btc, n) =>
+  btc |. timesFloat(n) |. BigNumber.integerValue(BigNumber.RoundingMode.ceil);
 
-let dividedByRounded = (n, btc) =>
+let dividedByRounded = (btc, n) =>
   btc
-  |> dividedByFloat(n)
+  |. dividedByFloat(n)
   |. BigNumber.integerValue(BigNumber.RoundingMode.floor);
 
 let encode = toJSON;
