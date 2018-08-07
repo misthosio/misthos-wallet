@@ -1,6 +1,6 @@
 type t;
 
-[@bs.module "material-ui/styles"]
+[@bs.module "@material-ui/core"]
 external createMuiTheme : Js.t({..}) => t = "";
 
 external toJsUnsafe : t => Js.t({..}) = "%identity";

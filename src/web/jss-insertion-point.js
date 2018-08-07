@@ -1,5 +1,5 @@
 import { create } from 'jss';
-import { jssPreset } from 'material-ui/styles';
+import { jssPreset } from '@material-ui/core';
 
 export default function() {
   let jss = create(jssPreset());
