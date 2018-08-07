@@ -155,7 +155,9 @@ function accountKeyChain($staropt$star, $staropt$star$1, users) {
 function createVenture(session) {
   return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), AccountSettings.$$default, Policy.unanimous, /* record */[
               /* addPartner */Policy.unanimous,
+              /* addCustodian */Policy.unanimous,
               /* removePartner */Policy.unanimousMinusOne,
+              /* removeCustodian */Policy.unanimousMinusOne,
               /* payout */Policy.unanimous
             ], session[/* network */5]);
 }

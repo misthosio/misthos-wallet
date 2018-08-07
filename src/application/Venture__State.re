@@ -90,8 +90,10 @@ let lastPartnerAccepted = (partnerId, {partnerAccepted}) =>
 
 let defaultMetaPolicy = Policy.defaultMetaPolicy;
 let defaultInitialPolicies: VentureCreated.initialPolicies = {
-  addPartner: Policy.unanimousMinusOne,
+  addPartner: Policy.defaultAddPartner,
+  addCustodian: Policy.defaultAddCustodian,
   removePartner: Policy.defaultRemovePartner,
+  removeCustodian: Policy.defaultRemoveCustodian,
   payout: Policy.unanimousMinusOne,
 };
 
@@ -105,10 +107,10 @@ let apply = (event, state) =>
       ventureName,
       systemIssuer,
       policies: [
-        (Partner.Removal.processName, initialPolicies.removePartner),
-        (Custodian.Removal.processName, initialPolicies.removePartner),
         (Partner.processName, initialPolicies.addPartner),
-        (Custodian.processName, initialPolicies.addPartner),
+        (Custodian.processName, initialPolicies.addCustodian),
+        (Partner.Removal.processName, initialPolicies.removePartner),
+        (Custodian.Removal.processName, initialPolicies.removeCustodian),
         (Payout.processName, initialPolicies.payout),
         (AccountCreation.processName, defaultMetaPolicy),
       ],

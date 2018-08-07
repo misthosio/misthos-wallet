@@ -119,8 +119,10 @@ function lastPartnerAccepted(partnerId, param) {
 }
 
 var defaultInitialPolicies = /* record */[
-  /* addPartner */Policy.unanimousMinusOne,
+  /* addPartner */Policy.defaultAddPartner,
+  /* addCustodian */Policy.defaultAddCustodian,
   /* removePartner */Policy.defaultRemovePartner,
+  /* removeCustodian */Policy.defaultRemoveCustodian,
   /* payout */Policy.unanimousMinusOne
 ];
 
@@ -134,28 +136,28 @@ function apply($$event, state) {
                 /* systemIssuer */match[/* systemIssuer */7],
                 /* policies : :: */[
                   /* tuple */[
-                    Event.Partner[/* Removal */9][/* processName */1],
-                    initialPolicies[/* removePartner */1]
+                    Event.Partner[/* processName */1],
+                    initialPolicies[/* addPartner */0]
                   ],
                   /* :: */[
                     /* tuple */[
-                      Event.Custodian[/* Removal */9][/* processName */1],
-                      initialPolicies[/* removePartner */1]
+                      Event.Custodian[/* processName */1],
+                      initialPolicies[/* addCustodian */1]
                     ],
                     /* :: */[
                       /* tuple */[
-                        Event.Partner[/* processName */1],
-                        initialPolicies[/* addPartner */0]
+                        Event.Partner[/* Removal */9][/* processName */1],
+                        initialPolicies[/* removePartner */2]
                       ],
                       /* :: */[
                         /* tuple */[
-                          Event.Custodian[/* processName */1],
-                          initialPolicies[/* addPartner */0]
+                          Event.Custodian[/* Removal */9][/* processName */1],
+                          initialPolicies[/* removeCustodian */3]
                         ],
                         /* :: */[
                           /* tuple */[
                             Event.Payout[/* processName */1],
-                            initialPolicies[/* payout */2]
+                            initialPolicies[/* payout */4]
                           ],
                           /* :: */[
                             /* tuple */[

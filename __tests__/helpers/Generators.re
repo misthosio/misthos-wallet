@@ -140,7 +140,9 @@ module Event = {
       ~metaPolicy=Policy.unanimous,
       ~initialPolicies={
         addPartner: Policy.unanimous,
+        addCustodian: Policy.unanimous,
         removePartner: Policy.unanimousMinusOne,
+        removeCustodian: Policy.unanimousMinusOne,
         payout: Policy.unanimous,
       },
       ~network=session.network,

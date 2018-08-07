@@ -68,5 +68,7 @@ let decode = raw => {
 
 let defaultMetaPolicy = unanimous;
 let defaultAddPartner = unanimous;
+let defaultAddCustodian = unanimous;
 let defaultRemovePartner = unanimousMinusOne;
+let defaultRemoveCustodian = unanimousMinusOne;
 let defaultPayout = unanimous;

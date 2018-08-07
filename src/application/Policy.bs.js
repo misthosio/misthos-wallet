@@ -120,7 +120,11 @@ var defaultMetaPolicy = /* Unanimous */0;
 
 var defaultAddPartner = /* Unanimous */0;
 
+var defaultAddCustodian = /* Unanimous */0;
+
 var defaultRemovePartner = /* UnanimousMinusOne */1;
+
+var defaultRemoveCustodian = /* UnanimousMinusOne */1;
 
 var defaultPayout = /* Unanimous */0;
 
@@ -137,6 +141,8 @@ exports.UnknownPolicy = UnknownPolicy;
 exports.decode = decode;
 exports.defaultMetaPolicy = defaultMetaPolicy;
 exports.defaultAddPartner = defaultAddPartner;
+exports.defaultAddCustodian = defaultAddCustodian;
 exports.defaultRemovePartner = defaultRemovePartner;
+exports.defaultRemoveCustodian = defaultRemoveCustodian;
 exports.defaultPayout = defaultPayout;
 /* Json_encode Not a pure module */

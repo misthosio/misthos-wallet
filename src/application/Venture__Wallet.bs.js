@@ -40,7 +40,7 @@ function apply($$event, state) {
             /* ventureId */match[/* ventureId */0],
             /* network */match[/* network */8],
             /* payoutPolicy */Js_option.getWithDefault(Policy.defaultPayout, Utils.mapOption((function (p) {
-                        return p[/* payout */2];
+                        return p[/* payout */4];
                       }), match[/* initialPolicies */6])),
             state_003
           ];

@@ -7,7 +7,9 @@ open WalletTypes;
 module VentureCreated = {
   type initialPolicies = {
     addPartner: Policy.t,
+    addCustodian: Policy.t,
     removePartner: Policy.t,
+    removeCustodian: Policy.t,
     payout: Policy.t,
   };
   type t = {
@@ -45,7 +47,9 @@ module VentureCreated = {
     Json.Encode.(
       object_([
         ("addPartner", Policy.encode(policies.addPartner)),
+        ("addCustodian", Policy.encode(policies.addCustodian)),
         ("removePartner", Policy.encode(policies.removePartner)),
+        ("removeCustodian", Policy.encode(policies.removeCustodian)),
         ("payout", Policy.encode(policies.payout)),
       ])
     );
@@ -73,7 +77,9 @@ module VentureCreated = {
   let decodeInitialPolicies = raw =>
     Json.Decode.{
       addPartner: raw |> field("addPartner", Policy.decode),
+      addCustodian: raw |> field("addCustodian", Policy.decode),
       removePartner: raw |> field("removePartner", Policy.decode),
+      removeCustodian: raw |> field("removeCustodian", Policy.decode),
       payout: raw |> field("payout", Policy.decode),
     };
   let decode = raw =>

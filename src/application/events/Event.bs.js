@@ -46,15 +46,27 @@ function encodeInitialPolicies(policies) {
               ],
               /* :: */[
                 /* tuple */[
-                  "removePartner",
-                  Policy.encode(policies[/* removePartner */1])
+                  "addCustodian",
+                  Policy.encode(policies[/* addCustodian */1])
                 ],
                 /* :: */[
                   /* tuple */[
-                    "payout",
-                    Policy.encode(policies[/* payout */2])
+                    "removePartner",
+                    Policy.encode(policies[/* removePartner */2])
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "removeCustodian",
+                      Policy.encode(policies[/* removeCustodian */3])
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "payout",
+                        Policy.encode(policies[/* payout */4])
+                      ],
+                      /* [] */0
+                    ]
+                  ]
                 ]
               ]
             ]);
@@ -127,7 +139,9 @@ function encode($$event) {
 function decodeInitialPolicies(raw) {
   return /* record */[
           /* addPartner */Json_decode.field("addPartner", Policy.decode, raw),
+          /* addCustodian */Json_decode.field("addCustodian", Policy.decode, raw),
           /* removePartner */Json_decode.field("removePartner", Policy.decode, raw),
+          /* removeCustodian */Json_decode.field("removeCustodian", Policy.decode, raw),
           /* payout */Json_decode.field("payout", Policy.decode, raw)
         ];
 }
