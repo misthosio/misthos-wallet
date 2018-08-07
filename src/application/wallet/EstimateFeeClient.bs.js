@@ -25,9 +25,9 @@ function fetchFees() {
                 fetchNConfs(12)
               ]).then((function (param) {
                 return Promise.resolve(/* record */[
-                            /* high */BTC.dividedByRounded(1000, param[0]),
-                            /* normal */BTC.dividedByRounded(1000, param[1]),
-                            /* economy */BTC.dividedByRounded(1000, param[2])
+                            /* high */BTC.dividedByRounded(param[0], 1000),
+                            /* normal */BTC.dividedByRounded(param[1], 1000),
+                            /* economy */BTC.dividedByRounded(param[2], 1000)
                           ]);
               }));
 }

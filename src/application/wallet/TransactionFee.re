@@ -67,7 +67,7 @@ let baseWeight =
 
 let weightToVSize = weight => float_of_int(weight) /. 4.;
 
-let cost = (fee, weight) => fee |> BTC.timesFloat(weight |> weightToVSize);
+let cost = (fee, weight) => fee |. BTC.timesFloat(weight |> weightToVSize);
 
 let outputCost = (address, fee, network) =>
   outputWeight(address, network) |> cost(fee);
@@ -79,9 +79,9 @@ let minChange = inputCost;
 
 let canPayForItself = (fee, input: Network.txInput) =>
   input.value
-  |> BTC.gte(
+  |. BTC.gte(
        fee
-       |> BTC.timesFloat(
+       |. BTC.timesFloat(
             estimateInputWeight(
               ~withDms=input.sequence |> Js.Option.isSome,
               ~unlocked=input.unlocked,
@@ -94,7 +94,7 @@ let canPayForItself = (fee, input: Network.txInput) =>
 
 let estimate = (outputs, inputs, fee, network) =>
   fee
-  |> BTC.timesFloat(
+  |. BTC.timesFloat(
        baseWeight
        + (
          outputs

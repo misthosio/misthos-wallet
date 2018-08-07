@@ -10,8 +10,8 @@ external fromStringWithEncoding : (Js.String.t, ~encoding: Js.String.t) => t =
 
 [@bs.send] external toString : t => Js.String.t = "";
 
-[@bs.send.pipe: t]
-external toStringWithEncoding : Js.String.t => Js.String.t = "toString";
+[@bs.send]
+external toStringWithEncoding : (t, Js.String.t) => Js.String.t = "toString";
 
 [@bs.val] external concat : array(t) => t = "Buffer.concat";
 
@@ -23,5 +23,5 @@ external byteLength : (Js.String.t, ~encoding: Js.String.t) => int =
 
 [@bs.send] external readUInt32BE : (t, int) => int = "";
 
-[@bs.send.pipe: t] external slice : (int, int) => t = "";
-[@bs.send.pipe: t] external writeUInt8 : (int, int) => unit = "";
+[@bs.send] external slice : (t, int, int) => t = "";
+[@bs.send] external writeUInt8 : (t, int, int) => unit = "";

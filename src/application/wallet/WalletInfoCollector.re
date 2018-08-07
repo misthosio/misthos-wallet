@@ -881,7 +881,7 @@ let apply = (event, state) =>
              |> addToBalance(
                   accountIdx,
                   input.address,
-                  input.value |> BTC.timesRounded(-1.),
+                  input.value |. BTC.timesRounded(-1.),
                 )
            ),
       reserved,

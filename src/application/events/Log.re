@@ -34,7 +34,7 @@ module Make = (Event: Encodable) => {
       event,
       hash: hashBuffer |> Utils.bufToHex,
       issuerPubKey,
-      signature: issuerKeyPair |> Bitcoin.ECPair.sign(hashBuffer),
+      signature: issuerKeyPair |. Bitcoin.ECPair.sign(hashBuffer),
     };
   };
   let append = (issuer, event, log) => {
@@ -68,7 +68,7 @@ module Make = (Event: Encodable) => {
          if (hashCheck |> Utils.bufToHex != hash) {
            None;
          } else if (Utils.keyFromPublicKey(issuerPubKey)
-                    |> Bitcoin.ECPair.verify(hashCheck, signature)) {
+                    |. Bitcoin.ECPair.verify(hashCheck, signature)) {
            Some(item);
          } else {
            None;

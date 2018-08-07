@@ -230,7 +230,7 @@ function apply($$event, state) {
                                   /* explorerLink */income[/* explorerLink */1],
                                   /* date */income[/* date */2],
                                   /* txId */income[/* txId */3],
-                                  /* amount */income[/* amount */4].plus(amount),
+                                  /* amount */amount.plus(income[/* amount */4]),
                                   /* addresses */Belt_SetString.add(income[/* addresses */5], address)
                                 ];
                         } else {
