@@ -102,7 +102,7 @@ let custodianKeyChain =
   )
   |> CustodianKeyChain.toPublicKeyChain;
 
-let accountKeyChainFrom = (~sequence=AccountKeyChain.defaultSequence) =>
+let accountKeyChainFrom = (~sequence=AccountSettings.defaultSequence) =>
   AccountKeyChain.make(
     ~settings={...AccountSettings.default, sequence: Some(sequence)},
     AccountIndex.default,
@@ -697,7 +697,7 @@ module Log = {
        );
   };
   let withAccountKeyChainIdentified =
-      (~sequence=AccountKeyChain.defaultSequence, {log} as l) => {
+      (~sequence=AccountSettings.defaultSequence, {log} as l) => {
     let keyChains =
       log
       |> EventLog.reduce(

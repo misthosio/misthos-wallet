@@ -448,7 +448,7 @@ function ensureDependencies($staropt$star, $staropt$star$1, param) {
 }
 
 function accountExists(accountIdx, param) {
-  var match = Curry._1(param[/* accountValidator */0][/* exists */1], accountIdx);
+  var match = Js_option.isSome(Curry._1(param[/* accountValidator */0][/* settings */1], accountIdx));
   if (match) {
     return /* Ok */0;
   } else {
@@ -776,22 +776,24 @@ function validateAccountKeyChainIdentified(param, state, _) {
   var keyChain = param[/* keyChain */0];
   var custodianKeyChains = keyChain[/* custodianKeyChains */4];
   var accountIdx = keyChain[/* accountIdx */0];
-  var match = AccountKeyChain.isConsistent(keyChain) === false;
-  if (match) {
-    return /* BadData */["Inconsistent AccountKeyChain"];
-  } else {
-    var partial_arg = List.map((function (prim) {
-            return prim[0];
-          }), custodianKeyChains);
-    return returnResult(andThen((function (param) {
-                      return custodianKeyChainsExist(accountIdx, custodianKeyChains, param);
-                    }), andThen((function (param) {
-                          return currentCustodians(accountIdx, partial_arg, param);
-                        }), /* tuple */[
-                        accountExists(accountIdx, state),
-                        state
-                      ])));
-  }
+  var partial_arg = List.map((function (prim) {
+          return prim[0];
+        }), custodianKeyChains);
+  return returnResult(andThen((function (param) {
+                    return custodianKeyChainsExist(accountIdx, custodianKeyChains, param);
+                  }), andThen((function (param) {
+                        return currentCustodians(accountIdx, partial_arg, param);
+                      }), andThen((function (state) {
+                            var match = AccountKeyChain.isConsistent(Js_option.getExn(Curry._1(state[/* accountValidator */0][/* settings */1], accountIdx)), keyChain) === false;
+                            if (match) {
+                              return /* BadData */["Inconsistent AccountKeyChain"];
+                            } else {
+                              return /* Ok */0;
+                            }
+                          }), /* tuple */[
+                          accountExists(accountIdx, state),
+                          state
+                        ]))));
 }
 
 function validateAccountKeyChainActivated(param, state, issuerId) {

@@ -321,7 +321,7 @@ let ensureDependencies =
     Ok : DependencyNotMet;
 
 let accountExists = (accountIdx, {accountValidator}) =>
-  accountValidator.exists(accountIdx) ?
+  accountValidator.settings(accountIdx) |> Js.Option.isSome ?
     Ok : BadData("Account doesn't exist");
 
 let isCustodian = (accountIdx, custodian, {custodianValidator}) =>
@@ -576,15 +576,22 @@ let validateAccountKeyChainIdentified =
       state,
       _issuerId,
     ) =>
-  AccountKeyChain.isConsistent(keyChain) == false ?
-    BadData("Inconsistent AccountKeyChain") :
-    state
-    |> test(accountExists(accountIdx))
-    |> andThen(
-         custodianKeyChains |> List.map(fst) |> currentCustodians(accountIdx),
-       )
-    |> andThen(custodianKeyChains |> custodianKeyChainsExist(accountIdx))
-    |> returnResult;
+  state
+  |> test(accountExists(accountIdx))
+  |> andThen(state =>
+       keyChain
+       |>
+       AccountKeyChain.isConsistent(
+         ~accountSettings=
+           state.accountValidator.settings(accountIdx) |> Js.Option.getExn,
+       ) == false ?
+         BadData("Inconsistent AccountKeyChain") : Ok
+     )
+  |> andThen(
+       custodianKeyChains |> List.map(fst) |> currentCustodians(accountIdx),
+     )
+  |> andThen(custodianKeyChains |> custodianKeyChainsExist(accountIdx))
+  |> returnResult;
 
 let validateAccountKeyChainActivated =
     (

@@ -124,7 +124,7 @@ function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
 }
 
 function accountKeyChainFrom($staropt$star) {
-  var sequence = $staropt$star !== undefined ? $staropt$star : AccountKeyChain.defaultSequence;
+  var sequence = $staropt$star !== undefined ? $staropt$star : AccountSettings.defaultSequence;
   var partial_arg = WalletTypes.AccountIndex[/* default */11];
   var partial_arg$1 = /* record */[
     /* coSignerList */AccountSettings.$$default[/* coSignerList */0],
@@ -691,7 +691,7 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
 }
 
 function withAccountKeyChainIdentified($staropt$star, l) {
-  var sequence = $staropt$star !== undefined ? $staropt$star : AccountKeyChain.defaultSequence;
+  var sequence = $staropt$star !== undefined ? $staropt$star : AccountSettings.defaultSequence;
   var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           switch ($$event.tag | 0) {

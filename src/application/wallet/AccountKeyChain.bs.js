@@ -44,25 +44,6 @@ var Identifier = /* module */[
   /* eq */eq
 ];
 
-var defaultCoSignerList = /* array */[
-  0,
-  1,
-  1,
-  2,
-  2,
-  3,
-  3,
-  4,
-  4,
-  5,
-  5,
-  6,
-  6,
-  7,
-  7,
-  8
-];
-
 function make$1($staropt$star, accountIdx, custodianKeyChains) {
   var settings = $staropt$star !== undefined ? $staropt$star : AccountSettings.$$default;
   var nCoSigners = Caml_array.caml_array_get(settings[/* coSignerList */0], List.length(custodianKeyChains));
@@ -76,10 +57,10 @@ function make$1($staropt$star, accountIdx, custodianKeyChains) {
         ];
 }
 
-function isConsistent(param) {
+function isConsistent(accountSettings, param) {
   var custodianKeyChains = param[/* custodianKeyChains */4];
   var nCoSigners = param[/* nCoSigners */2];
-  if (nCoSigners === Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains))) {
+  if (nCoSigners === Caml_array.caml_array_get(accountSettings[/* coSignerList */0], List.length(custodianKeyChains))) {
     return Caml_obj.caml_equal(make(nCoSigners, custodianKeyChains), param[/* identifier */1]);
   } else {
     return false;
@@ -163,11 +144,7 @@ function decode(raw) {
         ];
 }
 
-var defaultSequence = 12672;
-
 exports.Identifier = Identifier;
-exports.defaultCoSignerList = defaultCoSignerList;
-exports.defaultSequence = defaultSequence;
 exports.make = make$1;
 exports.isConsistent = isConsistent;
 exports.custodians = custodians;

@@ -34,9 +34,6 @@ type t = {
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
 };
 
-let defaultCoSignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8|];
-let defaultSequence = 6 * 24 * 88;
-
 let make = (~settings=AccountSettings.default, accountIdx, custodianKeyChains) => {
   let nCoSigners = settings.coSignerList[custodianKeyChains |> List.length];
   {
@@ -48,8 +45,12 @@ let make = (~settings=AccountSettings.default, accountIdx, custodianKeyChains) =
   };
 };
 
-let isConsistent = ({custodianKeyChains, identifier, nCoSigners}) =>
-  nCoSigners == defaultCoSignerList[custodianKeyChains |> List.length]
+let isConsistent =
+    (
+      ~accountSettings: AccountSettings.t,
+      {custodianKeyChains, identifier, nCoSigners},
+    ) =>
+  nCoSigners == accountSettings.coSignerList[custodianKeyChains |> List.length]
   && identifier
   |> Identifier.eq(Identifier.make(nCoSigners, custodianKeyChains));
 
