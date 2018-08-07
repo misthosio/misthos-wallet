@@ -386,23 +386,26 @@ resources:
 - name: deps-version
   type: semver
   source:
+    initial_version: 1.0.0
     driver: gcs
     bucket: artifact-cache
-    key: misthos-deps-version
+    key: versions/misthos-deps-version
     json_key: ((gcp-service-account))
 - name: code-version
   type: semver
   source:
+    initial_version: 1.0.0
     driver: gcs
     bucket: artifact-cache
-    key: misthos-code-version
+    key: versions/misthos-code-version
     json_key: ((gcp-service-account))
 - name: build-version
   type: semver
   source:
+    initial_version: 1.0.0
     driver: gcs
     bucket: artifact-cache
-    key: misthos-build-version
+    key: versions/misthos-build-version
     json_key: ((gcp-service-account))
 - name: pipeline-ci-image
   type: git
