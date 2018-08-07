@@ -35,8 +35,8 @@ function apply($$event, state) {
     var match = $$event[0];
     return /* record */[
             /* ventureId */match[/* ventureId */0],
-            /* network */match[/* network */6],
-            /* payoutPolicy */match[/* metaPolicy */4],
+            /* network */match[/* network */7],
+            /* payoutPolicy */match[/* metaPolicy */5],
             state_003
           ];
   }

@@ -63,6 +63,8 @@ let andThen = fn =>
   | Some(a) => fn(a)
   | None => None;
 
+let maybeField = (name, decoder) =>
+  Json.Decode.(withDefault(None, field(name, optional(decoder))));
 let encodeFloat = Json.Encode.float;
 
 let decodeFloat = Json.Decode.float;

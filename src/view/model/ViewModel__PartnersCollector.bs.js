@@ -81,7 +81,7 @@ function apply($$event, state) {
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
                 /* partnerProcesses */state[/* partnerProcesses */2],
-                /* partnerPolicy */$$event[0][/* metaPolicy */4]
+                /* partnerPolicy */$$event[0][/* metaPolicy */5]
               ];
     case 1 : 
         var proposal = $$event[0];

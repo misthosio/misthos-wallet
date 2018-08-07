@@ -53,9 +53,10 @@ function createVenture(user) {
               /* ventureName */init[/* ventureName */1],
               /* creatorId */init[/* creatorId */2],
               /* creatorPubKey */init[/* creatorPubKey */3],
-              /* metaPolicy */init[/* metaPolicy */4],
-              /* systemIssuer */init[/* systemIssuer */5],
-              /* network */init[/* network */6]
+              /* defaultAccountSettings */init[/* defaultAccountSettings */4],
+              /* metaPolicy */init[/* metaPolicy */5],
+              /* systemIssuer */init[/* systemIssuer */6],
+              /* network */init[/* network */7]
             ]);
 }
 

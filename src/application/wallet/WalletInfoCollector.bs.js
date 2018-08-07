@@ -710,7 +710,7 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         return /* record */[
-                /* network */$$event[0][/* network */6],
+                /* network */$$event[0][/* network */7],
                 /* spendable */state[/* spendable */1],
                 /* oldSpendable */state[/* oldSpendable */2],
                 /* unlocked */state[/* unlocked */3],

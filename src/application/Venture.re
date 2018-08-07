@@ -259,13 +259,19 @@ module Cmd = {
     type result =
       | Ok(Index.t, t)
       | CouldNotPersist(Js.Promise.error);
-    let exec = (session: SessionData.t, ~name as ventureName) => {
+    let exec =
+        (
+          session: SessionData.t,
+          ~name as ventureName,
+          ~defaultAccountSettings,
+        ) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
         Event.VentureCreated.make(
           ~ventureName,
           ~creatorId=session.userId,
           ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
+          ~defaultAccountSettings,
           ~metaPolicy=defaultPolicy,
           ~network=session.network,
         );

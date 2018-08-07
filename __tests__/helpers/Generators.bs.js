@@ -26,6 +26,7 @@ var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../../src/application/wallet/AccountKeyChain.bs.js");
+var AccountSettings = require("../../src/application/wallet/AccountSettings.bs.js");
 var CustodianKeyChain = require("../../src/application/wallet/CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
@@ -123,9 +124,12 @@ function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
 }
 
 function accountKeyChainFrom($staropt$star) {
-  var sequence = $staropt$star !== undefined ? $staropt$star : AccountKeyChain.defaultSequence;
+  var sequence = $staropt$star !== undefined ? $staropt$star : AccountSettings.defaultSequence;
   var partial_arg = WalletTypes.AccountIndex[/* default */11];
-  var partial_arg$1 = sequence;
+  var partial_arg$1 = /* record */[
+    /* coSignerList */AccountSettings.$$default[/* coSignerList */0],
+    /* sequence */sequence
+  ];
   return (function (param) {
       return AccountKeyChain.make(partial_arg$1, partial_arg, param);
     });
@@ -143,7 +147,7 @@ function accountKeyChain($staropt$star, $staropt$star$1, users) {
 }
 
 function createVenture(session) {
-  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
+  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), AccountSettings.$$default, Policy.unanimous, session[/* network */5]);
 }
 
 function partnerProposed($staropt$star, eligibleWhenProposing, $staropt$star$1, lastRemovalAccepted, proposerSession, prospectSession) {
@@ -179,7 +183,7 @@ function partnerRemovalEndorsed(supporter, param) {
 var partnerRemovalAccepted = Event.Partner[/* Removal */9][/* Accepted */6][/* fromProposal */0];
 
 function accountCreationProposed(eligibleWhenProposing, param) {
-  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */11], Policy.unanimous));
+  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */11], AccountSettings.$$default, Policy.unanimous));
 }
 
 function accountCreationEndorsed(supporter, param) {
@@ -336,7 +340,7 @@ function fromEventLog(log) {
             var match = $$event[0];
             return /* tuple */[
                     Js_primitive.some(match[/* ventureId */0]),
-                    Js_primitive.some(match[/* systemIssuer */5]),
+                    Js_primitive.some(match[/* systemIssuer */6]),
                     lastItem
                   ];
           }
@@ -357,7 +361,7 @@ function make(session, ventureCreated) {
   var match = Curry._3(EventLog.append, session[/* issuerKeyPair */2], /* VentureCreated */Block.__(0, [ventureCreated]), Curry._1(EventLog.make, /* () */0));
   return /* record */[
           /* ventureId */ventureCreated[/* ventureId */0],
-          /* systemIssuer */ventureCreated[/* systemIssuer */5],
+          /* systemIssuer */ventureCreated[/* systemIssuer */6],
           /* lastItem */match[0],
           /* log */match[1]
         ];
@@ -687,7 +691,7 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
 }
 
 function withAccountKeyChainIdentified($staropt$star, l) {
-  var sequence = $staropt$star !== undefined ? $staropt$star : AccountKeyChain.defaultSequence;
+  var sequence = $staropt$star !== undefined ? $staropt$star : AccountSettings.defaultSequence;
   var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           switch ($$event.tag | 0) {

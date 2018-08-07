@@ -11,6 +11,7 @@ var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 
@@ -245,7 +246,13 @@ function encodeIncoming(param) {
                         "name",
                         param[0]
                       ],
-                      /* [] */0
+                      /* :: */[
+                        /* tuple */[
+                          "accountSettings",
+                          AccountSettings.encode(param[1])
+                        ],
+                        /* [] */0
+                      ]
                     ]
                   ]);
     case 2 : 
@@ -597,7 +604,11 @@ function decodeIncoming(raw) {
   switch (type_) {
     case "Create" : 
         var name = Json_decode.field("name", Json_decode.string, raw);
-        return /* Create */Block.__(1, [name]);
+        var accountSettings = Json_decode.field("accountSettings", AccountSettings.decode, raw);
+        return /* Create */Block.__(1, [
+                  name,
+                  accountSettings
+                ]);
     case "EndorsePartner" : 
         var ventureId = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var processId = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);

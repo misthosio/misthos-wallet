@@ -22,7 +22,7 @@ function apply($$event, state) {
     case 0 : 
         var match = $$event[0];
         return /* record */[
-                /* network */match[/* network */6],
+                /* network */match[/* network */7],
                 /* ventureId */match[/* ventureId */0],
                 /* transactionsOfInterest */state[/* transactionsOfInterest */2],
                 /* knownIncomeTxs */state[/* knownIncomeTxs */3],

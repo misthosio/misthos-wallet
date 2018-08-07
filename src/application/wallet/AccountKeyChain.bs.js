@@ -12,6 +12,7 @@ var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var WalletTypes = require("./WalletTypes.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
+var AccountSettings = require("./AccountSettings.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 
 function encode(prim) {
@@ -43,42 +44,23 @@ var Identifier = /* module */[
   /* eq */eq
 ];
 
-var defaultCoSignerList = /* array */[
-  0,
-  1,
-  1,
-  2,
-  2,
-  3,
-  3,
-  4,
-  4,
-  5,
-  5,
-  6,
-  6,
-  7,
-  7,
-  8
-];
-
 function make$1($staropt$star, accountIdx, custodianKeyChains) {
-  var sequence = $staropt$star !== undefined ? $staropt$star : 12672;
-  var nCoSigners = Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains));
+  var settings = $staropt$star !== undefined ? $staropt$star : AccountSettings.$$default;
+  var nCoSigners = Caml_array.caml_array_get(settings[/* coSignerList */0], List.length(custodianKeyChains));
   var match = nCoSigners > 1;
   return /* record */[
           /* accountIdx */accountIdx,
           /* identifier */make(nCoSigners, custodianKeyChains),
           /* nCoSigners */nCoSigners,
-          /* sequence */match ? sequence : undefined,
+          /* sequence */match ? settings[/* sequence */1] : undefined,
           /* custodianKeyChains */custodianKeyChains
         ];
 }
 
-function isConsistent(param) {
+function isConsistent(accountSettings, param) {
   var custodianKeyChains = param[/* custodianKeyChains */4];
   var nCoSigners = param[/* nCoSigners */2];
-  if (nCoSigners === Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains))) {
+  if (nCoSigners === Caml_array.caml_array_get(accountSettings[/* coSignerList */0], List.length(custodianKeyChains))) {
     return Caml_obj.caml_equal(make(nCoSigners, custodianKeyChains), param[/* identifier */1]);
   } else {
     return false;
@@ -162,11 +144,7 @@ function decode(raw) {
         ];
 }
 
-var defaultSequence = 12672;
-
 exports.Identifier = Identifier;
-exports.defaultCoSignerList = defaultCoSignerList;
-exports.defaultSequence = defaultSequence;
 exports.make = make$1;
 exports.isConsistent = isConsistent;
 exports.custodians = custodians;

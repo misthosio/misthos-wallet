@@ -20,7 +20,7 @@ type state =
 let make =
     (
       {userId, issuerKeyPair}: SessionData.t,
-      {creatorId, creatorPubKey, metaPolicy}: VentureCreated.t,
+      {creatorId, creatorPubKey, defaultAccountSettings, metaPolicy}: VentureCreated.t,
       log,
     ) => {
   let process = {
@@ -102,6 +102,9 @@ let make =
                 ~proposerId=creatorId,
                 ~name=defaultAccountName,
                 ~accountIdx=AccountIndex.default,
+                ~accountSettings=
+                  defaultAccountSettings
+                  |> Js.Option.getWithDefault(AccountSettings.default),
                 ~policy=metaPolicy,
               ),
             ))
