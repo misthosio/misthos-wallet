@@ -24,13 +24,13 @@ var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var CustodianKeyChain = require("../wallet/CustodianKeyChain.bs.js");
 var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
 
-function make(ventureName, creatorId, creatorPubKey, metaPolicy, network) {
+function make(ventureName, creatorId, creatorPubKey, defaultAccountSettings, metaPolicy, network) {
   return /* record */[
           /* ventureId */PrimitiveTypes.VentureId[/* make */10](/* () */0),
           /* ventureName */ventureName,
           /* creatorId */creatorId,
           /* creatorPubKey */creatorPubKey,
-          /* defaultAccountSettings */undefined,
+          /* defaultAccountSettings */defaultAccountSettings,
           /* metaPolicy */metaPolicy,
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* network */network

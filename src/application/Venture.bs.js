@@ -341,9 +341,9 @@ function getEventLog(param) {
   return param[/* log */2];
 }
 
-function exec(session, ventureName) {
+function exec(session, ventureName, defaultAccountSettings) {
   logMessage("Executing 'Create' command");
-  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
+  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), defaultAccountSettings, Policy.unanimous, session[/* network */5]);
   var makeResult = make(session, ventureCreated[/* ventureId */0]);
   return /* tuple */[
           ventureCreated[/* ventureId */0],

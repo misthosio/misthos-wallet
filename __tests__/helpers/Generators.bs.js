@@ -147,7 +147,7 @@ function accountKeyChain($staropt$star, $staropt$star$1, users) {
 }
 
 function createVenture(session) {
-  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
+  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), AccountSettings.$$default, Policy.unanimous, session[/* network */5]);
 }
 
 function partnerProposed($staropt$star, eligibleWhenProposing, $staropt$star$1, lastRemovalAccepted, proposerSession, prospectSession) {

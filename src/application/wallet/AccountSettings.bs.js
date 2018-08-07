@@ -55,7 +55,9 @@ function decode(raw) {
           /* coSignerList */Json_decode.field("coSignerList", (function (param) {
                   return Json_decode.array(Json_decode.$$int, param);
                 }), raw),
-          /* sequence */Json_decode.optional(Json_decode.$$int, raw)
+          /* sequence */Json_decode.field("sequence", (function (param) {
+                  return Json_decode.optional(Json_decode.$$int, param);
+                }), raw)
         ];
 }
 

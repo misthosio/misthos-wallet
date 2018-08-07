@@ -15,12 +15,20 @@ module VentureCreated = {
     systemIssuer: Bitcoin.ECPair.t,
     network: Network.t,
   };
-  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~network) => {
+  let make =
+      (
+        ~ventureName,
+        ~creatorId,
+        ~creatorPubKey,
+        ~defaultAccountSettings,
+        ~metaPolicy,
+        ~network,
+      ) => {
     ventureId: VentureId.make(),
     ventureName,
     creatorId,
     creatorPubKey,
-    defaultAccountSettings: None,
+    defaultAccountSettings: Some(defaultAccountSettings),
     metaPolicy,
     systemIssuer: Bitcoin.ECPair.makeRandom(),
     network,

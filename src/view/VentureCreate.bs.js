@@ -13,6 +13,7 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var VentureInfoBox = require("./components/VentureInfoBox.bs.js");
+var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var ContactUsShoutOut = require("./components/ContactUsShoutOut.bs.js");
 
@@ -81,7 +82,7 @@ function make(onCreateVenture, cmdStatus, _) {
                   if (name === "") {
                     return /* NoUpdate */0;
                   } else {
-                    Curry._1(onCreateVenture, name);
+                    Curry._2(onCreateVenture, name, AccountSettings.$$default);
                     return /* NoUpdate */0;
                   }
                 }

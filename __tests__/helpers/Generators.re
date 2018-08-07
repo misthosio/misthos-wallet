@@ -122,6 +122,7 @@ module Event = {
       ~ventureName=UserId.toString(session.userId) ++ "-testventure",
       ~creatorId=session.userId,
       ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
+      ~defaultAccountSettings=AccountSettings.default,
       ~metaPolicy=Policy.unanimous,
       ~network=session.network,
     );

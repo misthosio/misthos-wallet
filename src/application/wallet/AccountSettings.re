@@ -22,5 +22,5 @@ let encode = settings =>
 let decode = raw =>
   Json.Decode.{
     coSignerList: raw |> field("coSignerList", array(int)),
-    sequence: raw |> optional(int),
+    sequence: raw |> field("sequence", optional(int)),
   };
