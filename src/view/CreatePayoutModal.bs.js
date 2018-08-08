@@ -355,10 +355,11 @@ function make(viewData, commands, cmdStatus, _) {
               } else {
                 switch (cmdStatus.tag | 0) {
                   case 0 : 
+                  case 1 : 
                       exit = 1;
                       break;
-                  case 1 : 
                   case 2 : 
+                  case 3 : 
                       canInput = match$1;
                       exit = 2;
                       break;
@@ -373,12 +374,15 @@ function make(viewData, commands, cmdStatus, _) {
                             var match$2 = state[/* payoutTx */9];
                             if (match$2 !== undefined) {
                               var payoutTx = match$2;
-                              Curry._2(viewData[/* collectInputHexs */9], state[/* txHexs */10], payoutTx).then((function (param) {
-                                        return Curry._2(viewData[/* signPayoutTx */10], payoutTx, param[1]);
-                                      })).then((function (signatures) {
-                                      console.log("sigs", signatures);
-                                      return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, signatures));
-                                    }));
+                              setTimeout((function () {
+                                      Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device");
+                                      Curry._2(viewData[/* collectInputHexs */9], state[/* txHexs */10], payoutTx).then((function (param) {
+                                                return Curry._2(viewData[/* signPayoutTx */10], payoutTx, param[1]);
+                                              })).then((function (signatures) {
+                                              return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, signatures));
+                                            }));
+                                      return /* () */0;
+                                    }), 0);
                             }
                             return /* NoUpdate */0;
                         case 3 : 

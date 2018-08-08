@@ -60,7 +60,7 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
               var exit = 0;
               switch (match[/* buttonState */0]) {
                 case 0 : 
-                    exit = 2;
+                    exit = 1;
                     break;
                 case 1 : 
                     tmp = /* array */[
@@ -77,36 +77,21 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
                     ];
                     break;
                 case 2 : 
-                    if (typeof cmdStatus === "number") {
-                      exit = 2;
+                    if (typeof cmdStatus === "number" || cmdStatus.tag === 2) {
+                      exit = 1;
                     } else {
-                      switch (cmdStatus.tag | 0) {
-                        case 1 : 
-                            exit = 2;
-                            break;
-                        case 0 : 
-                        case 2 : 
-                            exit = 1;
-                            break;
-                        
-                      }
+                      tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))];
                     }
                     break;
                 
               }
-              switch (exit) {
-                case 1 : 
-                    tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))];
-                    break;
-                case 2 : 
-                    tmp = /* array */[
-                      ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
-                                  return Curry._1(send, /* Propose */1);
-                                }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, true, /* array */[ViewCommon.text(proposeText)])),
-                      ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))
-                    ];
-                    break;
-                
+              if (exit === 1) {
+                tmp = /* array */[
+                  ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                              return Curry._1(send, /* Propose */1);
+                            }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, true, /* array */[ViewCommon.text(proposeText)])),
+                  ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))
+                ];
               }
               return React.createElement("div", undefined, Belt_Array.concatMany(/* array */[tmp]));
             }),

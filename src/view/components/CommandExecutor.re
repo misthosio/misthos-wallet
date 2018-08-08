@@ -5,6 +5,7 @@ open PrimitiveTypes;
 open WalletTypes;
 
 type action =
+  | PreSubmit(string)
   | CommandExecuted(WebWorker.correlationId)
   | Reset;
 
@@ -26,10 +27,12 @@ type commands = {
     unit,
   endorsePayout: (~processId: processId) => unit,
   rejectPayout: (~processId: processId) => unit,
+  preSubmit: string => unit,
 };
 
 type cmdStatus =
   | Idle
+  | PreSubmit(string)
   | Pending(WebWorker.correlationId)
   | Error(VentureWorkerMessage.cmdError)
   | Success(VentureWorkerMessage.cmdSuccess);
@@ -71,6 +74,7 @@ let make =
       send(CommandExecuted(commands.endorsePayout(~processId))),
     rejectPayout: (~processId) =>
       send(CommandExecuted(commands.rejectPayout(~processId))),
+    preSubmit: message => send(PreSubmit(message)),
   };
   {
     ...component,
@@ -92,6 +96,8 @@ let make =
     },
     reducer: (action, _state) =>
       switch (action) {
+      | PreSubmit(message) =>
+        ReasonReact.Update({cmdStatus: PreSubmit(message)})
       | CommandExecuted(correlationId) =>
         ReasonReact.Update({cmdStatus: Pending(correlationId)})
       | Reset => ReasonReact.Update({cmdStatus: Idle})
@@ -133,6 +139,13 @@ module Status = {
     render: _ =>
       switch (cmdStatus) {
       | Idle => ReasonReact.null
+      | PreSubmit(message) =>
+        ReasonReact.array([|
+          <MTypography variant=`Body2> (message |> text) </MTypography>,
+          <MaterialUi.LinearProgress
+            className=Css.(style([marginTop(px(Theme.space(1)))]))
+          />,
+        |])
       | Pending(_) =>
         ReasonReact.array([|
           <MTypography variant=`Body2>

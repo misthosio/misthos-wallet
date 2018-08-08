@@ -464,9 +464,10 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                       } else {
                         switch (removeCmdStatus.tag | 0) {
                           case 0 : 
-                              return /* NoUpdate */0;
                           case 1 : 
+                              return /* NoUpdate */0;
                           case 2 : 
+                          case 3 : 
                               exit = 1;
                               break;
                           

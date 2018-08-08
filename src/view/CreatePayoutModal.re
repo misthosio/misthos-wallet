@@ -288,20 +288,28 @@ let make =
       | ProposePayout =>
         switch (state.payoutTx) {
         | Some(payoutTx) =>
-          Js.Promise.(
-            viewData.collectInputHexs(state.txHexs, payoutTx)
-            |> then_(((_, inputs)) =>
-                 viewData.signPayoutTx(payoutTx, inputs)
-               )
-            |> then_(signatures => {
-                 Js.log2("sigs", signatures);
-                 commands.proposePayout(
-                   ~accountIdx=WalletTypes.AccountIndex.default,
-                   ~payoutTx,
-                   ~signatures,
-                 )
-                 |> resolve;
-               })
+          Js.Global.setTimeout(
+            () => {
+              commands.preSubmit(
+                "Please confirm this proposal on your ledger device",
+              );
+              Js.Promise.(
+                viewData.collectInputHexs(state.txHexs, payoutTx)
+                |> then_(((_, inputs)) =>
+                     viewData.signPayoutTx(payoutTx, inputs)
+                   )
+                |> then_(signatures =>
+                     commands.proposePayout(
+                       ~accountIdx=WalletTypes.AccountIndex.default,
+                       ~payoutTx,
+                       ~signatures,
+                     )
+                     |> resolve
+                   )
+              )
+              |> ignore;
+            },
+            0,
           )
           |> ignore
         | None => ()
