@@ -198,7 +198,7 @@ function updateInputTxs(send, state) {
   if (match !== undefined) {
     var payoutTx = match;
     setTimeout((function () {
-            Curry._2(state[/* viewData */0][/* collectInputHexs */9], state[/* txHexs */10], payoutTx).then((function (param) {
+            Curry._2(state[/* viewData */0][/* collectInputHexs */10], state[/* txHexs */10], payoutTx).then((function (param) {
                     return Promise.resolve(Curry._1(send, /* InputHexsCollected */Block.__(4, [param[0]])));
                   }));
             return /* () */0;
@@ -375,10 +375,10 @@ function make(viewData, commands, cmdStatus, _) {
                             if (match$2 !== undefined) {
                               var payoutTx = match$2;
                               setTimeout((function () {
-                                      Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device");
-                                      Curry._2(viewData[/* collectInputHexs */9], state[/* txHexs */10], payoutTx).then((function (param) {
-                                                return Curry._2(viewData[/* signPayoutTx */10], payoutTx, param[1]);
-                                              })).then((function (signatures) {
+                                      var signatures = viewData[/* requiresLedgerSig */9] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device"), Curry._2(viewData[/* collectInputHexs */10], state[/* txHexs */10], payoutTx).then((function (param) {
+                                                  return Curry._2(viewData[/* signPayoutTx */11], payoutTx, param[1]);
+                                                }))) : Promise.resolve(/* array */[]);
+                                      signatures.then((function (signatures) {
                                               return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, signatures));
                                             }));
                                       return /* () */0;

@@ -268,6 +268,7 @@ function fromViewModelState$3(param) {
           /* createPayoutTx */(function (destinations, fee) {
               return PayoutTransaction.build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, fee, changeAddress, network);
             }),
+          /* requiresLedgerSig */Js_option.isSome(LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], param[/* ledgerInfoCollector */11])),
           /* collectInputHexs */(function (knownHexs, param) {
               var usedInputs = param[/* usedInputs */1];
               var inputs = Belt_SetString.fromArray(Belt_Array.mapU(usedInputs, (function (param) {

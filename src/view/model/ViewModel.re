@@ -298,6 +298,7 @@ module CreatePayoutView = {
     max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
     summary: PayoutTransaction.t => PayoutTransaction.summary,
     createPayoutTx: (list((string, BTC.t)), BTC.t) => PayoutTransaction.t,
+    requiresLedgerSig: bool,
     collectInputHexs:
       (Map.String.t(string), PayoutTransaction.t) =>
       Js.Promise.t((Map.String.t(string), array(string))),
@@ -306,7 +307,15 @@ module CreatePayoutView = {
       Js.Promise.t(array(option((string, string)))),
   };
   let fromViewModelState =
-      ({ventureId, localUser, ventureName, walletInfoCollector}) => {
+      (
+        {
+          ventureId,
+          localUser,
+          ledgerInfoCollector,
+          ventureName,
+          walletInfoCollector,
+        },
+      ) => {
     let reserved =
       walletInfoCollector
       |> WalletInfoCollector.totalReservedBTC(AccountIndex.default);
@@ -381,6 +390,10 @@ module CreatePayoutView = {
           ~changeAddress,
           ~network,
         ),
+      requiresLedgerSig:
+        ledgerInfoCollector
+        |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+        |> Js.Option.isSome,
       collectInputHexs: (knownHexs, {usedInputs}) => {
         let inputs =
           usedInputs

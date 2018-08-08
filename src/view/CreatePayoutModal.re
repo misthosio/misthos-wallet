@@ -290,23 +290,28 @@ let make =
         | Some(payoutTx) =>
           Js.Global.setTimeout(
             () => {
-              commands.preSubmit(
-                "Please confirm this proposal on your ledger device",
-              );
-              Js.Promise.(
-                viewData.collectInputHexs(state.txHexs, payoutTx)
-                |> then_(((_, inputs)) =>
-                     viewData.signPayoutTx(payoutTx, inputs)
+              open Js.Promise;
+              let signatures =
+                if (viewData.requiresLedgerSig) {
+                  commands.preSubmit(
+                    "Please confirm this proposal on your ledger device",
+                  );
+                  viewData.collectInputHexs(state.txHexs, payoutTx)
+                  |> then_(((_, inputs)) =>
+                       viewData.signPayoutTx(payoutTx, inputs)
+                     );
+                } else {
+                  resolve([||]);
+                };
+              signatures
+              |> then_(signatures =>
+                   commands.proposePayout(
+                     ~accountIdx=WalletTypes.AccountIndex.default,
+                     ~payoutTx,
+                     ~signatures,
                    )
-                |> then_(signatures =>
-                     commands.proposePayout(
-                       ~accountIdx=WalletTypes.AccountIndex.default,
-                       ~payoutTx,
-                       ~signatures,
-                     )
-                     |> resolve
-                   )
-              )
+                   |> resolve
+                 )
               |> ignore;
             },
             0,
