@@ -27,6 +27,7 @@ let make: unit => t;
 
 let addressInfos: (accountIdx, t) => list(addressInfo);
 let collidingProcesses: (accountIdx, processId, t) => ProcessId.set;
+let getPayoutTx: (processId, t) => PayoutTransaction.t;
 
 let exposedCoordinates: t => list(Address.Coordinates.t);
 

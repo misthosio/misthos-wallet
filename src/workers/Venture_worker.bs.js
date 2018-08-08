@@ -552,12 +552,12 @@ function rejectPayout(ventureId, processId) {
     });
 }
 
-function endorsePayout(ventureId, processId) {
+function endorsePayout(ventureId, signatures, processId) {
   logMessage("Handling 'EndorsePayout'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param, param$1) {
       return withVenture(undefined, partial_arg, (function (correlationId, venture) {
-                    return Curry._2(Venture.Cmd[/* EndorsePayout */13][/* exec */0], processId, venture).then((function (param) {
+                    return Curry._3(Venture.Cmd[/* EndorsePayout */13][/* exec */0], processId, signatures, venture).then((function (param) {
                                   if (param.tag) {
                                     cmdError(ventureId, correlationId, /* CouldNotPersistVenture */7);
                                     return Promise.resolve(venture);
@@ -709,7 +709,7 @@ function handleMessage(param) {
     case 12 : 
         return rejectPayout(param[0], param[1]);
     case 13 : 
-        return endorsePayout(param[0], param[1]);
+        return endorsePayout(param[0], param[1], param[2]);
     case 14 : 
         return exposeIncomeAddress(param[0], param[1]);
     case 15 : 

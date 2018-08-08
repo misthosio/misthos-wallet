@@ -790,9 +790,9 @@ function exec$12(processId, venture) {
 
 var RejectPayout = /* module */[/* exec */exec$12];
 
-function exec$13(processId, venture) {
+function exec$13(processId, signatures, venture) {
   logMessage("Executing 'EndorsePayout' command");
-  return persist(undefined, apply(undefined, undefined, Event.makePayoutEndorsed(processId, venture[/* session */0][/* userId */0]), venture)).then((function (param) {
+  return persist(undefined, applyMany(undefined, venture)(Venture__Wallet.endorsePayout(processId, signatures, venture[/* session */0], venture[/* wallet */5]))).then((function (param) {
                 if (param.tag) {
                   return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
                 } else {

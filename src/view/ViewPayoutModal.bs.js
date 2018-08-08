@@ -105,7 +105,7 @@ function make(viewData, commands, cmdStatus, _) {
                             return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
                           }
                         } else {
-                          return Promise.resolve(Curry._2(commands[/* endorsePayout */9], processId, param[0]));
+                          return Promise.resolve(Curry._2(commands[/* endorsePayout */9], param[0], processId));
                         }
                       }));
                 return /* () */0;

@@ -199,5 +199,6 @@ let signPayout =
            |> catch(error => error |> L.decodeError |. Error |> resolve);
          };
        })
+    |> catch(error => error |> L.decodeError |. Error |> resolve)
   );
 };

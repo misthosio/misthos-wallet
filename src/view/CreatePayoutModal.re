@@ -288,47 +288,52 @@ let make =
       | ProposePayout =>
         switch (state.payoutTx) {
         | Some(payoutTx) =>
-          Js.Global.setTimeout(
-            () => {
-              open Js.Promise;
-              let signatures =
-                if (viewData.requiresLedgerSig) {
-                  commands.preSubmit(
-                    "Please confirm this proposal on your ledger device",
-                  );
+          if (! viewData.requiresLedgerSig) {
+            commands.proposePayout(
+              ~accountIdx=WalletTypes.AccountIndex.default,
+              ~payoutTx,
+              ~signatures=[||],
+            );
+          } else {
+            Js.Global.setTimeout(
+              () =>
+                Js.Promise.(
                   viewData.collectInputHexs(state.txHexs, payoutTx)
                   |> then_(((_, inputs)) =>
                        viewData.signPayoutTx(payoutTx, inputs)
-                     );
-                } else {
-                  resolve(Ledger.Signatures([||]));
-                };
-              signatures
-              |> then_(
-                   fun
-                   | Ledger.Signatures(signatures) =>
-                     commands.proposePayout(
-                       ~accountIdx=WalletTypes.AccountIndex.default,
-                       ~payoutTx,
-                       ~signatures,
                      )
-                     |> resolve
-                   | WrongDevice =>
-                     commands.preSubmitError(
-                       "The device does not have the correct seed for signing",
+                  |> then_(
+                       fun
+                       | Ledger.Signatures(signatures) =>
+                         commands.proposePayout(
+                           ~accountIdx=WalletTypes.AccountIndex.default,
+                           ~payoutTx,
+                           ~signatures,
+                         )
+                         |> resolve
+                       | WrongDevice =>
+                         commands.preSubmitError(
+                           "The device does not have the correct seed for signing",
+                         )
+                         |> resolve
+                       | Error(Message(message)) =>
+                         commands.preSubmitError(message) |> resolve
+                       | Error(Unknown) =>
+                         commands.preSubmitError(
+                           "An unknown error has occured",
+                         )
+                         |> resolve,
                      )
-                     |> resolve
-                   | Error(Message(message)) =>
-                     commands.preSubmitError(message) |> resolve
-                   | Error(Unknown) =>
-                     commands.preSubmitError("An unknown error has occured")
-                     |> resolve,
-                 )
-              |> ignore;
-            },
-            0,
-          )
-          |> ignore
+                  |> ignore
+                ),
+              1,
+            )
+            |> ignore;
+            commands.preSubmit(
+              "Please confirm this proposal on your ledger device",
+            );
+          };
+          ();
         | None => ()
         };
         ReasonReact.NoUpdate;

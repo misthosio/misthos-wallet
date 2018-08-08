@@ -169,7 +169,7 @@ function getSignedExn(result) {
 function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, signatures) {
   var txW = /* record */[/* contents */TxWrapper.make(payout[/* txHex */0])];
   var signed = $$Array.mapi((function (idx, input) {
-          var needsSigning = TxWrapper.needsSigning(idx, txW[0]);
+          var needsSigning = TxWrapper.needsSigning(idx, input[/* nCoSigners */4], txW[0]);
           if (needsSigning) {
             try {
               var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains);

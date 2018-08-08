@@ -23,7 +23,7 @@ type incoming =
       array(option((string, string))),
     )
   | RejectPayout(ventureId, processId)
-  | EndorsePayout(ventureId, processId)
+  | EndorsePayout(ventureId, array(option((string, string))), processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
   | NewItemsDetected(ventureId, array(EventLog.item), userId)
   | SyncWallet(
@@ -280,11 +280,12 @@ let encodeIncoming =
         ("processId", ProcessId.encode(processId)),
       ])
     )
-  | EndorsePayout(ventureId, processId) =>
+  | EndorsePayout(ventureId, signatures, processId) =>
     Json.Encode.(
       object_([
         ("type", string("EndorsePayout")),
         ("ventureId", VentureId.encode(ventureId)),
+        ("signatures", array(nullable(pair(string, string)), signatures)),
         ("processId", ProcessId.encode(processId)),
       ])
     )
@@ -408,7 +409,12 @@ let decodeIncoming = raw => {
   | "EndorsePayout" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
-    EndorsePayout(ventureId, processId);
+    let signatures =
+      raw
+      |> Json.Decode.(
+           field("signatures", array(optional(pair(string, string))))
+         );
+    EndorsePayout(ventureId, signatures, processId);
   | "ExposeIncomeAddress" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let accountIdx =

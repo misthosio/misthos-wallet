@@ -32,13 +32,18 @@ function make(hex) {
         ];
 }
 
-function needsSigning(idx, param) {
+function needsSigning(idx, nCoSigners, param) {
   var input = Belt_Array.getExn(param[/* inputs */1], idx);
   var sigs = input[/* signatures */0];
   if (sigs.length !== 0) {
-    return Belt_Array.someU(sigs, (function (sig_) {
-                  return BitcoinjsLib.script.isCanonicalScriptSignature(sig_) === false;
-                }));
+    return Belt_Array.reduceU(sigs, 0, (function (res, sig_) {
+                  var match = BitcoinjsLib.script.isCanonicalScriptSignature(sig_);
+                  if (match) {
+                    return res + 1 | 0;
+                  } else {
+                    return res;
+                  }
+                })) < nCoSigners;
   } else {
     return true;
   }

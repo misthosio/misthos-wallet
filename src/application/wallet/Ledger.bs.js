@@ -80,70 +80,72 @@ function signPayout(ventureId, userId, ledgerId, param, inputTxHexs, accountKeyC
   var txHex = param[/* txHex */0];
   var txWrapper = TxWrapper.make(txHex);
   return HwTransportU2f.default.create().then((function (transport) {
-                  var btc = new HwAppBtc.default(transport);
-                  return Promise.all(/* tuple */[
-                              Promise.resolve(btc),
-                              misthosPurposeNode(btc)
-                            ]);
-                })).then((function (param) {
-                var misthosPurposeNode = param[1];
-                var btc = param[0];
-                var hardwareId = Bitcoin.Address[/* fromHDNode */1](misthosPurposeNode);
-                if (hardwareId !== ledgerId) {
-                  return Promise.resolve(/* WrongDevice */0);
-                } else {
-                  var infos = Belt_Array.mapWithIndexU(Belt_Array.zip(usedInputs, Belt_Array.map(inputTxHexs, (function (param) {
-                                  return btc.splitTransaction(param, true);
-                                }))), (function (idx, param) {
-                          var match = param[0];
-                          var coordinates = match[/* coordinates */6];
-                          var address = Address.find(coordinates, accountKeyChains);
-                          var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), accountKeyChains);
-                          var match$1 = Belt_List.getAssoc(accountKeyChain[/* custodianKeyChains */4], userId, PrimitiveTypes.UserId[/* eq */5]);
-                          var pathAndPubKey;
-                          if (match$1 !== undefined) {
-                            var keyChain = Js_primitive.valFromOption(match$1);
-                            pathAndPubKey = Js_option.isSome(CustodianKeyChain.hardwareId(keyChain)) ? getSigningPathAndPubKey(ventureId, misthosPurposeNode, keyChain, coordinates) : /* tuple */[
+                    var btc = new HwAppBtc.default(transport);
+                    return Promise.all(/* tuple */[
+                                Promise.resolve(btc),
+                                misthosPurposeNode(btc)
+                              ]);
+                  })).then((function (param) {
+                  var misthosPurposeNode = param[1];
+                  var btc = param[0];
+                  var hardwareId = Bitcoin.Address[/* fromHDNode */1](misthosPurposeNode);
+                  if (hardwareId !== ledgerId) {
+                    return Promise.resolve(/* WrongDevice */0);
+                  } else {
+                    var infos = Belt_Array.mapWithIndexU(Belt_Array.zip(usedInputs, Belt_Array.map(inputTxHexs, (function (param) {
+                                    return btc.splitTransaction(param, true);
+                                  }))), (function (idx, param) {
+                            var match = param[0];
+                            var coordinates = match[/* coordinates */6];
+                            var address = Address.find(coordinates, accountKeyChains);
+                            var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), accountKeyChains);
+                            var match$1 = Belt_List.getAssoc(accountKeyChain[/* custodianKeyChains */4], userId, PrimitiveTypes.UserId[/* eq */5]);
+                            var pathAndPubKey;
+                            if (match$1 !== undefined) {
+                              var keyChain = Js_primitive.valFromOption(match$1);
+                              pathAndPubKey = Js_option.isSome(CustodianKeyChain.hardwareId(keyChain)) ? getSigningPathAndPubKey(ventureId, misthosPurposeNode, keyChain, coordinates) : /* tuple */[
+                                  dummyPath,
+                                  dummyPubKey
+                                ];
+                            } else {
+                              pathAndPubKey = /* tuple */[
                                 dummyPath,
                                 dummyPubKey
                               ];
-                          } else {
-                            pathAndPubKey = /* tuple */[
-                              dummyPath,
-                              dummyPubKey
-                            ];
-                          }
-                          return /* tuple */[
-                                  /* tuple */[
-                                    param[1],
-                                    match[/* txOutputN */1],
-                                    address[/* witnessScript */3],
-                                    Belt_Array.getExn(txWrapper[/* inputs */1], idx)[/* sequence */1]
-                                  ],
-                                  pathAndPubKey
-                                ];
-                        }));
-                  var match = Belt_Array.unzip(infos);
-                  var match$1 = Belt_Array.unzip(match[1]);
-                  var pubKeys = match$1[1];
-                  var outputScriptHex = btc.serializeTransactionOutputs(btc.splitTransaction(txHex, true));
-                  return btc.signP2SHTransaction(match[0], match$1[0], Utils.bufToHex(outputScriptHex), 0, 1, true, 2).then((function (signatures) {
-                                  return Promise.resolve(/* Signatures */Block.__(0, [Belt_Array.mapU(Belt_Array.zip(pubKeys, signatures), (function (param) {
-                                                        var pubKey = param[0];
-                                                        var match = pubKey === dummyPubKey;
-                                                        if (match) {
-                                                          return undefined;
-                                                        } else {
-                                                          return /* tuple */[
-                                                                  pubKey,
-                                                                  param[1]
-                                                                ];
-                                                        }
-                                                      }))]));
-                                })).catch((function (error) {
-                                return Promise.resolve(/* Error */Block.__(1, [LedgerJS.decodeError(error)]));
-                              }));
-                }
+                            }
+                            return /* tuple */[
+                                    /* tuple */[
+                                      param[1],
+                                      match[/* txOutputN */1],
+                                      address[/* witnessScript */3],
+                                      Belt_Array.getExn(txWrapper[/* inputs */1], idx)[/* sequence */1]
+                                    ],
+                                    pathAndPubKey
+                                  ];
+                          }));
+                    var match = Belt_Array.unzip(infos);
+                    var match$1 = Belt_Array.unzip(match[1]);
+                    var pubKeys = match$1[1];
+                    var outputScriptHex = btc.serializeTransactionOutputs(btc.splitTransaction(txHex, true));
+                    return btc.signP2SHTransaction(match[0], match$1[0], Utils.bufToHex(outputScriptHex), 0, 1, true, 2).then((function (signatures) {
+                                    return Promise.resolve(/* Signatures */Block.__(0, [Belt_Array.mapU(Belt_Array.zip(pubKeys, signatures), (function (param) {
+                                                          var pubKey = param[0];
+                                                          var match = pubKey === dummyPubKey;
+                                                          if (match) {
+                                                            return undefined;
+                                                          } else {
+                                                            return /* tuple */[
+                                                                    pubKey,
+                                                                    param[1]
+                                                                  ];
+                                                          }
+                                                        }))]));
+                                  })).catch((function (error) {
+                                  return Promise.resolve(/* Error */Block.__(1, [LedgerJS.decodeError(error)]));
+                                }));
+                  }
+                })).catch((function (error) {
+                return Promise.resolve(/* Error */Block.__(1, [LedgerJS.decodeError(error)]));
               }));
 }
 

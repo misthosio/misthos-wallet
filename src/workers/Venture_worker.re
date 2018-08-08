@@ -647,13 +647,13 @@ module Handle = {
       )
     );
   };
-  let endorsePayout = (ventureId, processId) => {
+  let endorsePayout = (ventureId, signatures, processId) => {
     logMessage("Handling 'EndorsePayout'");
     withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePayout.(
           venture
-          |> exec(~processId)
+          |> exec(~processId, ~signatures)
           |> then_(
                fun
                | Ok(venture, newItems) => {
@@ -808,8 +808,8 @@ let handleMessage =
     Handle.proposePayout(ventureId, accountIdx, payoutTx, signatures)
   | Message.RejectPayout(ventureId, processId) =>
     Handle.rejectPayout(ventureId, processId)
-  | Message.EndorsePayout(ventureId, processId) =>
-    Handle.endorsePayout(ventureId, processId)
+  | Message.EndorsePayout(ventureId, signatures, processId) =>
+    Handle.endorsePayout(ventureId, signatures, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(ventureId, accountIdx)
   | SyncWallet(

@@ -113,7 +113,7 @@ let make =
                   (text(rejectText))
                 </MButton>,
               |]
-            | (Error(_), RejectionSubmited, _) => [|
+            | (PreSubmitError(_) | Error(_), RejectionSubmited, _) => [|
                 <CommandExecutor.Status cmdStatus action=Endorsement />,
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
                   <MButton variant=Flat onClick=(_e => send(Cancel))>
@@ -121,7 +121,7 @@ let make =
                   </MButton>
                 </MTypography>,
               |]
-            | (Error(CouldNotPersistVenture), EndorsementSubmited, _) => [|
+            | (PreSubmitError(_) | Error(_), EndorsementSubmited, _) => [|
                 <CommandExecutor.Status cmdStatus action=Rejection />,
                 <MButton variant=Flat onClick=(_e => send(Cancel))>
                   (text("Try Again"))

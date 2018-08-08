@@ -523,10 +523,24 @@ function encodeIncoming(param) {
                       ],
                       /* :: */[
                         /* tuple */[
-                          "processId",
-                          PrimitiveTypes.ProcessId[/* encode */2](param[1])
+                          "signatures",
+                          Json_encode.array((function (param) {
+                                  return Json_encode.nullable((function (param) {
+                                                return Json_encode.pair((function (prim) {
+                                                              return prim;
+                                                            }), (function (prim) {
+                                                              return prim;
+                                                            }), param);
+                                              }), param);
+                                }), param[1])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "processId",
+                            PrimitiveTypes.ProcessId[/* encode */2](param[2])
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]);
@@ -671,8 +685,16 @@ function decodeIncoming(raw) {
     case "EndorsePayout" : 
         var ventureId$2 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var processId$2 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
+        var signatures = Json_decode.field("signatures", (function (param) {
+                return Json_decode.array((function (param) {
+                              return Json_decode.optional((function (param) {
+                                            return Json_decode.pair(Json_decode.string, Json_decode.string, param);
+                                          }), param);
+                            }), param);
+              }), raw);
         return /* EndorsePayout */Block.__(13, [
                   ventureId$2,
+                  signatures,
                   processId$2
                 ]);
     case "ExposeIncomeAddress" : 
@@ -721,7 +743,7 @@ function decodeIncoming(raw) {
         var ventureId$9 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var accountIdx$1 = Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw);
         var payoutTx = Json_decode.field("payoutTx", PayoutTransaction.decode, raw);
-        var signatures = Json_decode.field("signatures", (function (param) {
+        var signatures$1 = Json_decode.field("signatures", (function (param) {
                 return Json_decode.array((function (param) {
                               return Json_decode.optional((function (param) {
                                             return Json_decode.pair(Json_decode.string, Json_decode.string, param);
@@ -732,7 +754,7 @@ function decodeIncoming(raw) {
                   ventureId$9,
                   accountIdx$1,
                   payoutTx,
-                  signatures
+                  signatures$1
                 ]);
     case "RejectPartner" : 
         var ventureId$10 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);

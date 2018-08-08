@@ -45,6 +45,8 @@ type t = {
   addressInfos: AccountIndex.map(list(addressInfo)),
   currentCustodians: AccountIndex.map(UserId.set),
 };
+let getPayoutTx = (processId, {payoutProcesses}) =>
+  payoutProcesses |. Map.getExn(processId);
 
 let addressInfos = (accountIdx, {addressInfos}) =>
   addressInfos |. Map.get(accountIdx) |> Js.Option.getWithDefault([]);

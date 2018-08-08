@@ -122,9 +122,10 @@ function rejectPayout(worker, ventureId, processId) {
               ]));
 }
 
-function endorsePayout(worker, ventureId, processId) {
+function endorsePayout(worker, ventureId, signatures, processId) {
   return Curry._2(postMessage, worker, /* EndorsePayout */Block.__(13, [
                 ventureId,
+                signatures,
                 processId
               ]));
 }
@@ -168,8 +169,8 @@ function make(worker, ventureId) {
           /* proposePayout */(function (param, param$1, param$2) {
               return proposePayout(worker, ventureId, param, param$1, param$2);
             }),
-          /* endorsePayout */(function (param) {
-              return endorsePayout(worker, ventureId, param);
+          /* endorsePayout */(function (param, param$1) {
+              return endorsePayout(worker, ventureId, param, param$1);
             }),
           /* rejectPayout */(function (param) {
               return rejectPayout(worker, ventureId, param);

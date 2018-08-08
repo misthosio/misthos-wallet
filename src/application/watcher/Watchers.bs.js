@@ -8,7 +8,6 @@ var Js_option = require("bs-platform/lib/js/js_option.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var Watcher__AddPubKey = require("./Watcher__AddPubKey.bs.js");
-var Watcher__SignPayout = require("./Watcher__SignPayout.bs.js");
 var Watcher__AbortPayout = require("./Watcher__AbortPayout.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 var Watcher__FinalizePayout = require("../events/Watcher__FinalizePayout.bs.js");
@@ -83,11 +82,6 @@ function initWatcherFor(session, param, log) {
                   Watcher__AbortPayout.make(proposal$1, log),
                   /* [] */0
                 ]
-              ];
-    case 28 : 
-        return /* :: */[
-                Watcher__SignPayout.make(session, $$event[0], log),
-                /* [] */0
               ];
     case 29 : 
         return /* :: */[
@@ -193,8 +187,6 @@ var AbortPayout = 0;
 
 var PayoutApproval = 0;
 
-var SignPayout = 0;
-
 var FinalizePayout = 0;
 
 exports.Initialize = Initialize;
@@ -209,7 +201,6 @@ exports.CustodianKeyChain = CustodianKeyChain;
 exports.AccountKeyChain = AccountKeyChain;
 exports.AbortPayout = AbortPayout;
 exports.PayoutApproval = PayoutApproval;
-exports.SignPayout = SignPayout;
 exports.FinalizePayout = FinalizePayout;
 exports.initWatcherFor = initWatcherFor;
 exports.apply = apply;

@@ -840,16 +840,17 @@ module Cmd = {
     type result =
       | Ok(t, array(EventLog.item))
       | CouldNotPersist(Js.Promise.error);
-    let exec = (~processId, {session} as venture) => {
+    let exec =
+        (
+          ~processId,
+          ~signatures: array(option((string, string))),
+          {session, wallet} as venture,
+        ) => {
       logMessage("Executing 'EndorsePayout' command");
       Js.Promise.(
-        venture
-        |> apply(
-             Event.makePayoutEndorsed(
-               ~processId,
-               ~supporterId=session.userId,
-             ),
-           )
+        wallet
+        |> Wallet.endorsePayout(processId, signatures, session)
+        |> applyMany(venture)
         |> persist
         |> then_(
              fun

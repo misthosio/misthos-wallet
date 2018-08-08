@@ -19,7 +19,6 @@ module CustodianKeyChain = Watcher__CustodianKeyChain;
 module AccountKeyChain = Watcher__AccountKeyChain;
 module AbortPayout = Watcher__AbortPayout;
 module PayoutApproval = Watcher__PayoutApproval;
-module SignPayout = Watcher__SignPayout;
 module FinalizePayout = Watcher__FinalizePayout;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
@@ -41,9 +40,6 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   | PayoutProposed(proposal) => [
       PayoutApproval.make(proposal, log),
       AbortPayout.make(proposal, log),
-    ]
-  | PayoutEndorsed(endorsement) => [
-      SignPayout.make(session, endorsement, log),
     ]
   | PayoutAccepted(acceptance) => [FinalizePayout.make(acceptance, log)]
   | CustodianProposed(proposal) => [

@@ -371,26 +371,30 @@ function make(viewData, commands, cmdStatus, _) {
                             var match$2 = state[/* payoutTx */9];
                             if (match$2 !== undefined) {
                               var payoutTx = match$2;
-                              setTimeout((function () {
-                                      var signatures = viewData[/* requiresLedgerSig */9] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device"), Curry._2(viewData[/* collectInputHexs */10], state[/* txHexs */10], payoutTx).then((function (param) {
+                              if (viewData[/* requiresLedgerSig */9]) {
+                                setTimeout((function () {
+                                        Curry._2(viewData[/* collectInputHexs */10], state[/* txHexs */10], payoutTx).then((function (param) {
                                                   return Curry._2(viewData[/* signPayoutTx */11], payoutTx, param[1]);
-                                                }))) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
-                                      signatures.then((function (param) {
-                                              if (typeof param === "number") {
-                                                return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
-                                              } else if (param.tag) {
-                                                var match = param[0];
-                                                if (match) {
-                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                                                })).then((function (param) {
+                                                if (typeof param === "number") {
+                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
+                                                } else if (param.tag) {
+                                                  var match = param[0];
+                                                  if (match) {
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                                                  } else {
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                                                  }
                                                 } else {
-                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                                                  return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, param[0]));
                                                 }
-                                              } else {
-                                                return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, param[0]));
-                                              }
-                                            }));
-                                      return /* () */0;
-                                    }), 0);
+                                              }));
+                                        return /* () */0;
+                                      }), 1);
+                                Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device");
+                              } else {
+                                Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, /* array */[]);
+                              }
                             }
                             return /* NoUpdate */0;
                         case 3 : 

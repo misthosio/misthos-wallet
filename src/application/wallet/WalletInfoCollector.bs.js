@@ -17,6 +17,10 @@ var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var PayoutTransaction = require("./PayoutTransaction.bs.js");
 
+function getPayoutTx(processId, param) {
+  return Belt_Map.getExn(param[/* payoutProcesses */8], processId);
+}
+
 function addressInfos(accountIdx, param) {
   return Js_option.getWithDefault(/* [] */0, Belt_Map.get(param[/* addressInfos */11], accountIdx));
 }
@@ -1173,6 +1177,7 @@ function apply($$event, state) {
 exports.make = make;
 exports.addressInfos = addressInfos;
 exports.collidingProcesses = collidingProcesses;
+exports.getPayoutTx = getPayoutTx;
 exports.exposedCoordinates = exposedCoordinates;
 exports.accountKeyChains = accountKeyChains;
 exports.network = network;

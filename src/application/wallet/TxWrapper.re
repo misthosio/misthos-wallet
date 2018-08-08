@@ -25,15 +25,16 @@ let make = hex => {
   {tx, inputs: extractInputs(tx)};
 };
 
-let needsSigning = (idx, {inputs}) => {
+let needsSigning = (idx, nCoSigners, {inputs}) => {
   let input = inputs |. Array.getExn(idx);
   switch (input.signatures) {
   | [||] => true
   | sigs =>
     sigs
-    |. Array.someU((. sig_) =>
-         sig_ |> B.Script.isCanonicalScriptSignature == false
-       )
+    |.
+    Array.reduceU(0, (. res, sig_) =>
+      sig_ |> B.Script.isCanonicalScriptSignature ? res + 1 : res
+    ) < nCoSigners
   };
 };
 

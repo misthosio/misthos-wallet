@@ -163,7 +163,8 @@ let signPayout =
   let signed =
     payout.usedInputs
     |> Array.mapi((idx, input: input) => {
-         let needsSigning = txW^ |> TxWrapper.needsSigning(idx);
+         let needsSigning =
+           txW^ |> TxWrapper.needsSigning(idx, input.nCoSigners);
          if (needsSigning) {
            try (
              {
