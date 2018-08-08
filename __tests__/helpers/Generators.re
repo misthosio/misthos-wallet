@@ -116,8 +116,11 @@ let custodianKeyChain =
   };
 };
 
-let accountKeyChainFrom = (~sequence=AccountKeyChain.defaultSequence) =>
-  AccountKeyChain.make(~sequence, AccountIndex.default);
+let accountKeyChainFrom = (~sequence=AccountSettings.defaultSequence) =>
+  AccountKeyChain.make(
+    ~settings={...AccountSettings.default, sequence: Some(sequence)},
+    AccountIndex.default,
+  );
 
 let accountKeyChain =
     (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
@@ -133,6 +136,7 @@ module Event = {
       ~ventureName=UserId.toString(session.userId) ++ "-testventure",
       ~creatorId=session.userId,
       ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
+      ~defaultAccountSettings=AccountSettings.default,
       ~metaPolicy=Policy.unanimous,
       ~network=session.network,
     );
@@ -215,6 +219,7 @@ module Event = {
       ~proposerId=userId,
       ~name="test",
       ~accountIdx=AccountIndex.default,
+      ~accountSettings=AccountSettings.default,
       ~policy=Policy.unanimous,
     )
     |> AppEvent.getAccountCreationProposedExn;
@@ -713,7 +718,7 @@ module Log = {
        );
   };
   let withAccountKeyChainIdentified =
-      (~sequence=AccountKeyChain.defaultSequence, {log} as l) => {
+      (~sequence=AccountSettings.defaultSequence, {log} as l) => {
     let keyChains =
       log
       |> EventLog.reduce(

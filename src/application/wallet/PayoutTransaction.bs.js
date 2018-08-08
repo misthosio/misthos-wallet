@@ -36,7 +36,7 @@ function summary(network, param) {
   var changeAddress = param[/* changeAddress */3];
   var misthosFeeAddress = param[/* misthosFeeAddress */2];
   var totalIn = $$Array.fold_left((function (total, input) {
-          return total.plus(input[/* value */3]);
+          return input[/* value */3].plus(total);
         }), BTC.zero, param[/* usedInputs */1]);
   var tx = BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]);
   var outs = List.map((function (o) {
@@ -46,7 +46,7 @@ function summary(network, param) {
                 ];
         }), $$Array.to_list(tx.outs));
   var totalOut = List.fold_left((function (total, out) {
-          return total.plus(out[1]);
+          return out[1].plus(total);
         }), BTC.zero, outs);
   var cAddress = Js_option.getWithDefault("", Utils.mapOption((function (a) {
               return a[/* displayAddress */5];
@@ -83,7 +83,7 @@ function summary(network, param) {
   return /* record */[
           /* reserved */totalIn,
           /* destinations */destinations,
-          /* spentWithFees */totalOut.plus(networkFee).minus(changeOut),
+          /* spentWithFees */networkFee.plus(totalOut).minus(changeOut),
           /* misthosFee */misthosFee,
           /* networkFee */networkFee
         ];
@@ -216,7 +216,7 @@ function findInput(_inputs, ammountMissing, fee) {
       var rest = inputs[1];
       var i = inputs[0];
       if (rest) {
-        var match = i[/* value */3].gte(ammountMissing.plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* unlocked */8], i[/* nCoSigners */4], i[/* nPubKeys */5], fee)));
+        var match = i[/* value */3].gte(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* unlocked */8], i[/* nCoSigners */4], i[/* nPubKeys */5], fee).plus(ammountMissing));
         if (match) {
           return i;
         } else {
@@ -244,7 +244,7 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
         i,
         addedInputs
       ];
-      var ammountMissing$1 = ammountMissing.plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* unlocked */8], i[/* nCoSigners */4], i[/* nPubKeys */5], fee)).minus(i[/* value */3]);
+      var ammountMissing$1 = TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* unlocked */8], i[/* nCoSigners */4], i[/* nPubKeys */5], fee).plus(ammountMissing).minus(i[/* value */3]);
       if (BTC.zero.gte(ammountMissing$1)) {
         return /* tuple */[
                 addedInputs$1,
@@ -270,8 +270,8 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
 }
 
 function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, network, txBuilder) {
-  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(Js_option.isSome(changeAddress[/* sequence */6]), false, changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
-    var currentFee$1 = currentFee.plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network)));
+  if (totalInputs.gte(TransactionFee.minChange(Js_option.isSome(changeAddress[/* sequence */6]), false, changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network)).plus(currentFee.plus(outTotal))))) {
+    var currentFee$1 = TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network)).plus(currentFee);
     txBuilder.addOutput(changeAddress[/* displayAddress */5], BTC.toSatoshisFloat(totalInputs.minus(outTotal).minus(currentFee$1)));
     return true;
   } else {
@@ -302,21 +302,21 @@ function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, sa
   var outTotalWithoutFee = List.fold_left((function (total, param) {
           var value = param[1];
           txB.addOutput(param[0], BTC.toSatoshisFloat(value));
-          return total.plus(value);
+          return value.plus(total);
         }), BTC.zero, destinations);
   var misthosFeeAddress = Network.incomeAddress(network);
-  var misthosFee = BTC.timesRounded(1.5 / 100, outTotalWithoutFee);
+  var misthosFee = BTC.timesRounded(outTotalWithoutFee, 1.5 / 100);
   txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
-  var outTotal = outTotalWithoutFee.plus(misthosFee);
+  var outTotal = misthosFee.plus(outTotalWithoutFee);
   var currentInputValue = List.fold_left((function (total, param) {
-          return total.plus(param[1][/* value */3]);
+          return param[1][/* value */3].plus(total);
         }), BTC.zero, usedInputs);
   var currentFee = TransactionFee.estimate(List.map((function (prim) {
               return prim[0];
             }), destinations), List.map((function (prim) {
               return prim[1];
             }), usedInputs), satsPerByte, Network.bitcoinNetwork(network));
-  if (currentInputValue.gte(outTotal.plus(currentFee))) {
+  if (currentInputValue.gte(currentFee.plus(outTotal))) {
     var withChange = addChangeOutput(currentInputValue, outTotal, currentFee, changeAddress, satsPerByte, network, txB);
     return /* record */[
             /* txHex */txB.buildIncomplete().toHex(),
@@ -329,12 +329,12 @@ function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, sa
             /* changeAddress */withChange ? changeAddress : undefined
           ];
   } else {
-    var match = findInputs(optionalInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
+    var match = findInputs(optionalInputs$1, currentFee.plus(outTotal).minus(currentInputValue), satsPerByte, /* [] */0);
     if (match[1]) {
       var match$1 = List.fold_left((function (param, i) {
               return /* tuple */[
-                      param[0].plus(i[/* value */3]),
-                      param[1].plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* unlocked */8], i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
+                      i[/* value */3].plus(param[0]),
+                      TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* unlocked */8], i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte).plus(param[1]),
                       /* :: */[
                         /* tuple */[
                           txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
@@ -396,14 +396,14 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
               return prim[0];
             })), inputs, satsPerByte, Network.bitcoinNetwork(network));
   var totalInputValue = Belt_List.reduce(inputs, BTC.zero, (function (res, input) {
-          return res.plus(input[/* value */3]);
+          return input[/* value */3].plus(res);
         }));
   var totalOutValue = Belt_List.reduce(destinations, BTC.zero, (function (res, param) {
-          return res.plus(param[1]);
+          return param[1].plus(res);
         }));
-  var rest = totalInputValue.minus(totalOutValue.plus(fee));
-  var totalOutMisthosFee = BTC.timesRounded(1.5 / 100, totalOutValue);
-  return BTC.dividedByRounded(1 + 1.5 / 100, rest.minus(totalOutMisthosFee));
+  var rest = totalInputValue.minus(fee.plus(totalOutValue));
+  var totalOutMisthosFee = BTC.timesRounded(totalOutValue, 1.5 / 100);
+  return BTC.dividedByRounded(rest.minus(totalOutMisthosFee), 1 + 1.5 / 100);
 }
 
 function finalize(signedTransactions) {

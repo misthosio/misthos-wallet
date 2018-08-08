@@ -39,8 +39,11 @@ function updateSession(worker) {
   return /* () */0;
 }
 
-function create(name, worker) {
-  return Curry._2(postMessage, worker, /* Create */Block.__(1, [name]));
+function create(name, accountSettings, worker) {
+  return Curry._2(postMessage, worker, /* Create */Block.__(1, [
+                name,
+                accountSettings
+              ]));
 }
 
 function load(ventureId, worker) {

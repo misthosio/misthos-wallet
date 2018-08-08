@@ -95,7 +95,7 @@ exception DeadThread(Js.Promise.error);
 
 module Handle = {
   type ventureAction =
-    | Create(string)
+    | Create(string, AccountSettings.t)
     | Load(ventureId)
     | Reload(ventureId)
     | JoinVia(ventureId, userId);
@@ -137,9 +137,10 @@ module Handle = {
              |> Utils.mapOption(((data, ventures)) => {
                   let (ventureId, ventureThread) =
                     switch (ventureAction) {
-                    | Create(name) =>
+                    | Create(name, defaultAccountSettings) =>
                       open Venture.Cmd.Create;
-                      let (ventureId, venturePromise) = exec(data, ~name);
+                      let (ventureId, venturePromise) =
+                        exec(data, ~name, ~defaultAccountSettings);
                       (
                         ventureId,
                         venturePromise
@@ -312,10 +313,10 @@ module Handle = {
     logMessage("Handling 'JoinVia'");
     withVenture(JoinVia(ventureId, userId), _ => Js.Promise.resolve);
   };
-  let create = name => {
+  let create = (name, accountSettings) => {
     logMessage("Handling 'Create'");
     withVenture(
-      Create(name),
+      Create(name, accountSettings),
       (correlationId, venture) => {
         Notify.ventureCreated(~correlationId, venture);
         Js.Promise.resolve(venture);
@@ -787,7 +788,8 @@ let handleMessage =
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
   | Message.JoinVia(ventureId, userId) => Handle.joinVia(ventureId, userId)
-  | Message.Create(name) => Handle.create(name)
+  | Message.Create(name, accountSettings) =>
+    Handle.create(name, accountSettings)
   | Message.ProposePartner(ventureId, userId) =>
     Handle.proposePartner(ventureId, userId)
   | Message.RejectPartner(ventureId, processId) =>

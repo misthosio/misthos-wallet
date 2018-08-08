@@ -1,4 +1,4 @@
-let bufToHex = BufferExt.toStringWithEncoding("hex");
+let bufToHex = buf => buf |. BufferExt.toStringWithEncoding("hex");
 
 let bufFromHex = BufferExt.fromStringWithEncoding(~encoding="hex");
 
@@ -15,13 +15,13 @@ let keyFromPublicKey = (network, key) =>
 
 let signatureToDER = ecSignature =>
   Bitcoin.(Script.Signature.encode(ecSignature, Transaction.sighashAll))
-  |> BufferExt.slice(0, -1)
+  |. BufferExt.slice(0, -1)
   |> bufToHex;
 
 let signatureFromDER = ecSignature => {
   let sigHash = BufferExt.makeWithSize(1);
   sigHash
-  |> BufferExt.writeUInt8(Bitcoin.Transaction.sighashAll |> Obj.magic, 0);
+  |. BufferExt.writeUInt8(Bitcoin.Transaction.sighashAll |> Obj.magic, 0);
   (
     BufferExt.concat([|ecSignature |> bufFromHex, sigHash|])
     |. Bitcoin.Script.Signature.decode

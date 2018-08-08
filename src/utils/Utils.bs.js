@@ -9,8 +9,8 @@ var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 
-function bufToHex(param) {
-  return param.toString("hex");
+function bufToHex(buf) {
+  return buf.toString("hex");
 }
 
 function bufFromHex(param) {
@@ -28,7 +28,7 @@ function keyPairFromPrivateKey(network, key) {
 }
 
 function publicKeyFromKeyPair(pair) {
-  return bufToHex(pair.publicKey);
+  return pair.publicKey.toString("hex");
 }
 
 function keyFromPublicKey(network, key) {
@@ -38,7 +38,7 @@ function keyFromPublicKey(network, key) {
 }
 
 function signatureToDER(ecSignature) {
-  return bufToHex(BitcoinjsLib.script.signature.encode(ecSignature, BitcoinjsLib.Transaction.SIGHASH_ALL).slice(0, -1));
+  return BitcoinjsLib.script.signature.encode(ecSignature, BitcoinjsLib.Transaction.SIGHASH_ALL).slice(0, -1).toString("hex");
 }
 
 function signatureFromDER(ecSignature) {
@@ -51,7 +51,7 @@ function signatureFromDER(ecSignature) {
 }
 
 function hash(s) {
-  return bufToHex(BitcoinjsLib.crypto.sha256(s));
+  return BitcoinjsLib.crypto.sha256(s).toString("hex");
 }
 
 function hashCode(s) {

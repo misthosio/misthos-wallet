@@ -41,7 +41,7 @@ function selectUTXOs(utxos, totalAmount) {
   return List.fold_left((function (param, utxo) {
                 var total = param[1];
                 var result = param[0];
-                if (total.gt(totalAmount.plus(defaultFee))) {
+                if (total.gt(defaultFee.plus(totalAmount))) {
                   return /* tuple */[
                           result,
                           total
@@ -52,7 +52,7 @@ function selectUTXOs(utxos, totalAmount) {
                             utxo,
                             result
                           ],
-                          total.plus(utxo[/* amount */3])
+                          utxo[/* amount */3].plus(total)
                         ];
                 }
               }), /* tuple */[
@@ -91,7 +91,7 @@ function broadcastTransaction(tx) {
 
 function fundAddress(outputs, utxos) {
   var totalValues = List.fold_left((function (n, v) {
-          return n.plus(v);
+          return v.plus(n);
         }), BTC.zero, List.map((function (prim) {
               return prim[1];
             }), outputs));

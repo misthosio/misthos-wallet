@@ -16,7 +16,7 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         return /* record */[
-                /* network */$$event[0][/* network */6],
+                /* network */$$event[0][/* network */7],
                 /* keyChains */state[/* keyChains */1],
                 /* exposedAddresses */state[/* exposedAddresses */2]
               ];

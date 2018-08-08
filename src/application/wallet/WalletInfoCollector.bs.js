@@ -44,7 +44,7 @@ function totalUnusedBTC(accountIdx, param) {
           return Belt_List.reduceU(inputs, res, (function (param, input) {
                         return /* tuple */[
                                 Belt_Set.add(param[0], input),
-                                param[1].plus(input[/* value */3])
+                                input[/* value */3].plus(param[1])
                               ];
                       }));
         }));
@@ -52,18 +52,18 @@ function totalUnusedBTC(accountIdx, param) {
           return Belt_List.reduceU(inputs, res, (function (param, input) {
                         return /* tuple */[
                                 Belt_Set.add(param[0], input),
-                                param[1].plus(input[/* value */3])
+                                input[/* value */3].plus(param[1])
                               ];
                       }));
         }));
   return Belt_Set.reduceU(Belt_Set.diff(Belt_Map.getWithDefault(param[/* unlocked */3], accountIdx, Network.inputSet(/* () */0)), match[0]), match[1], (function (res, param) {
-                return res.plus(param[/* value */3]);
+                return param[/* value */3].plus(res);
               }));
 }
 
 function totalReservedBTC(accountIdx, param) {
   return Belt_Array.reduceU(Belt_Map.keysToArray(Belt_Map.getWithDefault(param[/* reserved */6], accountIdx, Network.inputMap(/* () */0))), BTC.zero, (function (res, param) {
-                return res.plus(param[/* value */3]);
+                return param[/* value */3].plus(res);
               }));
 }
 
@@ -578,7 +578,7 @@ function addToBalance(accountIdx, address, amount, state) {
                                           /* address */info[/* address */2],
                                           /* nCoSigners */info[/* nCoSigners */3],
                                           /* addressStatus */info[/* addressStatus */4],
-                                          /* balance */info[/* balance */5].plus(amount)
+                                          /* balance */amount.plus(info[/* balance */5])
                                         ];
                                 } else {
                                   return info;
@@ -693,7 +693,7 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         return /* record */[
-                /* network */$$event[0][/* network */6],
+                /* network */$$event[0][/* network */7],
                 /* spendable */state[/* spendable */1],
                 /* oldSpendable */state[/* oldSpendable */2],
                 /* unlocked */state[/* unlocked */3],
@@ -903,7 +903,7 @@ function apply($$event, state) {
           state$1 = state;
         }
         var init = Belt_Array.reduceU(payoutTx$3[/* usedInputs */1], state$1, (function (state, input) {
-                return addToBalance(accountIdx$5, input[/* address */2], BTC.timesRounded(-1, input[/* value */3]), removeInput(accountIdx$5, input, state));
+                return addToBalance(accountIdx$5, input[/* address */2], BTC.timesRounded(input[/* value */3], -1), removeInput(accountIdx$5, input, state));
               }));
         return /* record */[
                 /* network */init[/* network */0],

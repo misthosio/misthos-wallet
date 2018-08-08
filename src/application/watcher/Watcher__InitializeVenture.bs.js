@@ -6,10 +6,12 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../events/EventLog.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../wallet/WalletTypes.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
+var AccountSettings = require("../wallet/AccountSettings.bs.js");
 
 var defaultAccountName = "default";
 
@@ -118,7 +120,7 @@ function make(param, param$1, log) {
               if (typeof match$1 === "number") {
                 tmp$1 = match$1 === 0 ? /* tuple */[
                     env$1[0],
-                    Event.makePartnerProposed(env$1[2], Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], undefined, env$1[3], /* () */0)
+                    Event.makePartnerProposed(env$1[2], Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], undefined, env$1[4], /* () */0)
                   ] : undefined;
               } else {
                 switch (match$1.tag | 0) {
@@ -131,7 +133,7 @@ function make(param, param$1, log) {
                   case 2 : 
                       tmp$1 = /* tuple */[
                         env$1[0],
-                        Event.makeAccountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */11], env$1[3])
+                        Event.makeAccountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */11], Js_option.getWithDefault(AccountSettings.$$default, env$1[3]), env$1[4])
                       ];
                       break;
                   case 3 : 
@@ -143,7 +145,7 @@ function make(param, param$1, log) {
                   case 5 : 
                       tmp$1 = /* tuple */[
                         env$1[0],
-                        Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), undefined, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */11], env$1[3])
+                        Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), undefined, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */11], env$1[4])
                       ];
                       break;
                   case 6 : 
@@ -183,7 +185,8 @@ function make(param, param$1, log) {
     param[/* issuerKeyPair */2],
     creatorId,
     param$1[/* creatorPubKey */3],
-    param$1[/* metaPolicy */4]
+    param$1[/* defaultAccountSettings */4],
+    param$1[/* metaPolicy */5]
   ];
   var envs_001 = param[/* userId */0];
   var envs = [

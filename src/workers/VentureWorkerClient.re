@@ -20,8 +20,8 @@ let updateSession = worker =>
      )
   |> ignore;
 
-let create = (~name, worker) =>
-  worker |. postMessage(VentureWorkerMessage.Create(name));
+let create = (~name, ~accountSettings, worker) =>
+  worker |. postMessage(VentureWorkerMessage.Create(name, accountSettings));
 
 let load = (~ventureId, worker) =>
   worker |. postMessage(VentureWorkerMessage.Load(ventureId));

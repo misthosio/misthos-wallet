@@ -69,7 +69,7 @@ let summary =
            }
          )
     );
-  let networkFee = totalIn |> BTC.minus(totalOut);
+  let networkFee = totalIn |. BTC.minus(totalOut);
   let changeOut =
     changeAddress
     |> Utils.mapOption((changeAddress: Address.t) =>
@@ -85,7 +85,7 @@ let summary =
   {
     reserved: totalIn,
     destinations,
-    spentWithFees: totalOut |> BTC.plus(networkFee) |> BTC.minus(changeOut),
+    spentWithFees: totalOut |> BTC.plus(networkFee) |. BTC.minus(changeOut),
     misthosFee,
     networkFee,
   };
@@ -232,7 +232,7 @@ let rec findInput = (inputs, ammountMissing, fee) =>
   | [i] => Some(i)
   | [(i: input), ...rest] =>
     i.value
-    |> BTC.gte(
+    |. BTC.gte(
          ammountMissing
          |> BTC.plus(
               Fee.inputCost(
@@ -262,8 +262,8 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
              fee,
            ),
          )
-      |> BTC.minus(i.value);
-    if (BTC.zero |> BTC.gte(ammountMissing)) {
+      |. BTC.minus(i.value);
+    if (BTC.zero |. BTC.gte(ammountMissing)) {
       (addedInputs, true);
     } else {
       findInputs(
@@ -287,7 +287,7 @@ let addChangeOutput =
       ~txBuilder,
     ) =>
   if (totalInputs
-      |> BTC.gte(
+      |. BTC.gte(
            outTotal
            |> BTC.plus(currentFee)
            |> BTC.plus(
@@ -317,11 +317,11 @@ let addChangeOutput =
            ),
          );
     txBuilder
-    |> B.TxBuilder.addOutput(
+    |. B.TxBuilder.addOutput(
          changeAddress.displayAddress,
          totalInputs
-         |> BTC.minus(outTotal)
-         |> BTC.minus(currentFee)
+         |. BTC.minus(outTotal)
+         |. BTC.minus(currentFee)
          |> BTC.toSatoshisFloat,
        )
     |> ignore;
@@ -352,7 +352,7 @@ let build =
     |. Belt.Set.diff(unlockedInputs)
     |> Belt.Set.toList
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
-         i1.value |> BTC.comparedTo(i2.value)
+         i1.value |. BTC.comparedTo(i2.value)
        );
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
@@ -362,12 +362,12 @@ let build =
          (
            i.unlocked ?
              txB
-             |> B.TxBuilder.addInputWithSequence(
+             |. B.TxBuilder.addInputWithSequence(
                   i.txId,
                   i.txOutputN,
                   i.sequence |> Js.Option.getExn,
                 ) :
-             txB |> B.TxBuilder.addInput(i.txId, i.txOutputN),
+             txB |. B.TxBuilder.addInput(i.txId, i.txOutputN),
            i,
          )
        );
@@ -376,7 +376,7 @@ let build =
     |> List.fold_left(
          (total, (address, value)) => {
            txB
-           |> B.TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat)
+           |. B.TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat)
            |> ignore;
            total |> BTC.plus(value);
          },
@@ -384,9 +384,9 @@ let build =
        );
   let misthosFeeAddress = Network.incomeAddress(network);
   let misthosFee =
-    outTotalWithoutFee |> BTC.timesRounded(misthosFeePercent /. 100.);
+    outTotalWithoutFee |. BTC.timesRounded(misthosFeePercent /. 100.);
   txB
-  |> B.TxBuilder.addOutput(
+  |. B.TxBuilder.addOutput(
        misthosFeeAddress,
        misthosFee |> BTC.toSatoshisFloat,
      )
@@ -405,7 +405,7 @@ let build =
       satsPerByte,
       network |> Network.bitcoinNetwork,
     );
-  if (currentInputValue |> BTC.gte(outTotal |> BTC.plus(currentFee))) {
+  if (currentInputValue |. BTC.gte(outTotal |> BTC.plus(currentFee))) {
     let withChange =
       addChangeOutput(
         ~totalInputs=currentInputValue,
@@ -432,7 +432,7 @@ let build =
     let (inputs, success) =
       findInputs(
         optionalInputs,
-        outTotal |> BTC.plus(currentFee) |> BTC.minus(currentInputValue),
+        outTotal |> BTC.plus(currentFee) |. BTC.minus(currentInputValue),
         satsPerByte,
         [],
       );
@@ -453,7 +453,7 @@ let build =
                     ),
                   ),
                [
-                 (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
+                 (txB |. B.TxBuilder.addInput(i.txId, i.txOutputN), i),
                  ...usedInputs,
                ],
              ),
@@ -520,12 +520,12 @@ let max =
   let totalOutValue =
     destinations
     |. List.reduce(BTC.zero, (res, (_, outVal)) => res |> BTC.plus(outVal));
-  let rest = totalInputValue |> BTC.minus(totalOutValue |> BTC.plus(fee));
+  let rest = totalInputValue |. BTC.minus(totalOutValue |> BTC.plus(fee));
   let totalOutMisthosFee =
-    totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
+    totalOutValue |. BTC.timesRounded(misthosFeePercent /. 100.);
   rest
-  |> BTC.minus(totalOutMisthosFee)
-  |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.);
+  |. BTC.minus(totalOutMisthosFee)
+  |. BTC.dividedByRounded(1. +. misthosFeePercent /. 100.);
 };
 
 let finalize = signedTransactions => {

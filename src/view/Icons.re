@@ -3,7 +3,7 @@ include ViewCommon;
 let toBase64Encoding = icon =>
   ReactDOMServerRe.renderToStaticMarkup(icon)
   |> Node.Buffer.fromString
-  |> BufferExt.toStringWithEncoding("base64");
+  |. BufferExt.toStringWithEncoding("base64");
 
 let asDataUrl = icon =>
   "data:image/svg+xml;base64," ++ toBase64Encoding(icon);

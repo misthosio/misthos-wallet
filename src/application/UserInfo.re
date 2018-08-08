@@ -70,7 +70,7 @@ let hasSignedTAC = (tacHash, userInfo: Public.t) =>
   | Some(signature) =>
     let signature = signature |> Utils.signatureFromDER;
     Utils.keyFromPublicKey(Bitcoin.Networks.bitcoin, userInfo.appPubKey)
-    |> Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature);
+    |. Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature);
   | _ => false
   };
 
@@ -82,7 +82,7 @@ let signTAC = (tacHash, privateKey, network, userInfo: Public.t) => {
     );
   let signature =
     keyPair
-    |> Bitcoin.ECPair.sign(tacHash |> Utils.bufFromHex)
+    |. Bitcoin.ECPair.sign(tacHash |> Utils.bufFromHex)
     |> Utils.signatureToDER;
   {
     ...userInfo,

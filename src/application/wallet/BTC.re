@@ -9,7 +9,7 @@ let fromSatoshisFloat = satoshis => BigNumber.make(`Float(satoshis));
 
 let toSatoshisFloat = btc =>
   btc
-  |> BigNumber.integerValue(BigNumber.RoundingMode.ceil)
+  |. BigNumber.integerValue(BigNumber.RoundingMode.ceil)
   |> BigNumber.toNumber;
 
 let zero = BigNumber.make(`Float(0.));
@@ -19,21 +19,21 @@ let satoshisPerBTC = BigNumber.make(`String("1e8"));
 let fromString = btcString =>
   BigNumber.make(`String(btcString))
   |> BigNumber.times(satoshisPerBTC)
-  |> BigNumber.integerValue(BigNumber.RoundingMode.floor);
+  |. BigNumber.integerValue(BigNumber.RoundingMode.floor);
 
 let format = btc =>
-  btc |> BigNumber.dividedBy(satoshisPerBTC) |> BigNumber.toString;
+  btc |. BigNumber.dividedBy(satoshisPerBTC) |> BigNumber.toString;
 
 let fromFloat = btcFloat =>
   BigNumber.make(`Float(btcFloat)) |> BigNumber.times(satoshisPerBTC);
 
-let timesRounded = (n, btc) =>
-  btc |> timesFloat(n) |> BigNumber.integerValue(BigNumber.RoundingMode.ceil);
+let timesRounded = (btc, n) =>
+  btc |. timesFloat(n) |. BigNumber.integerValue(BigNumber.RoundingMode.ceil);
 
-let dividedByRounded = (n, btc) =>
+let dividedByRounded = (btc, n) =>
   btc
-  |> dividedByFloat(n)
-  |> BigNumber.integerValue(BigNumber.RoundingMode.floor);
+  |. dividedByFloat(n)
+  |. BigNumber.integerValue(BigNumber.RoundingMode.floor);
 
 let encode = toJSON;
 

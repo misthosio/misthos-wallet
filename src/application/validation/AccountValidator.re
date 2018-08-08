@@ -1,22 +1,26 @@
+open Belt;
+
 open WalletTypes;
 
 open Event;
 
 type t = {
-  accounts: list(accountIdx),
-  exists: accountIdx => bool,
+  accounts: AccountIndex.map(AccountSettings.t),
+  settings: accountIdx => option(AccountSettings.t),
 };
 
-let make = () => {accounts: [], exists: _ => false};
+let make = () => {accounts: AccountIndex.makeMap(), settings: _ => None};
 
 let update = (event, {accounts}) => {
   let accounts =
     switch (event) {
-    | AccountCreationAccepted({data: {accountIdx}}) => [
-        accountIdx,
-        ...accounts,
-      ]
+    | AccountCreationAccepted({data: {accountIdx, settings}}) =>
+      accounts
+      |. Map.set(
+           accountIdx,
+           settings |> Js.Option.getWithDefault(AccountSettings.default),
+         )
     | _ => accounts
     };
-  {accounts, exists: accountIdx => accounts |> List.mem(accountIdx)};
+  {accounts, settings: accountIdx => accounts |. Map.get(accountIdx)};
 };

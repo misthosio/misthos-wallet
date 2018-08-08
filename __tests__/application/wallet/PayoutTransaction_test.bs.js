@@ -295,10 +295,10 @@ describe("build", (function () {
                                                 return PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                                                             /* tuple */[
                                                               "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                                                              outMax.plus(BTC.fromSatoshis(/* int64 */[
-                                                                        /* hi */0,
-                                                                        /* lo */50
-                                                                      ]))
+                                                              BTC.fromSatoshis(/* int64 */[
+                                                                      /* hi */0,
+                                                                      /* lo */50
+                                                                    ]).plus(outMax)
                                                             ],
                                                             destinations
                                                           ], BTC.fromSatoshis(/* int64 */[

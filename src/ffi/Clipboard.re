@@ -15,4 +15,4 @@ let make = (selector, elementName) =>
 
 [@bs.send] external destroy : t => unit = "";
 
-[@bs.send.pipe: t] external on : (string, 'a => unit) => unit = "";
+[@bs.send] external on : (t, string, 'a => unit) => unit = "";

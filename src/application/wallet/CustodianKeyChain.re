@@ -55,10 +55,10 @@ let fromHardwareNode = (~hardwareId, ~accountIdx, ~keyChainIdx, hdNode) => {
 
 let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
   let misthosPurposeNode =
-    masterKeyChain |> HDNode.deriveHardened(misthosWalletPurposeIdx);
+    masterKeyChain |. HDNode.deriveHardened(misthosWalletPurposeIdx);
   let custodianKeyChain =
     masterKeyChain
-    |> HDNode.derivePath(
+    |. HDNode.derivePath(
          makePathToBip45Root(
            ~ventureId,
            ~accountIdx,
@@ -85,17 +85,17 @@ let toPublicKeyChain = keyChain => {
 
 let getPublicKey = (coSignerIdx, chainIdx, addressIdx, keyChain) =>
   keyChain.hdNode
-  |> HDNode.derive(coSignerIdx |> CoSignerIndex.toInt)
-  |> HDNode.derive(chainIdx |> ChainIndex.toInt)
-  |> HDNode.derive(addressIdx |> AddressIndex.toInt)
+  |. HDNode.derive(coSignerIdx |> CoSignerIndex.toInt)
+  |. HDNode.derive(chainIdx |> ChainIndex.toInt)
+  |. HDNode.derive(addressIdx |> AddressIndex.toInt)
   |> HDNode.getPublicKey
   |> Utils.bufToHex;
 
 let getSigningKey = (coSignerIdx, chainIdx, addressIdx, keyChain) =>
   keyChain.hdNode
-  |> HDNode.derive(coSignerIdx |> CoSignerIndex.toInt)
-  |> HDNode.derive(chainIdx |> ChainIndex.toInt)
-  |> HDNode.derive(addressIdx |> AddressIndex.toInt)
+  |. HDNode.derive(coSignerIdx |> CoSignerIndex.toInt)
+  |. HDNode.derive(chainIdx |> ChainIndex.toInt)
+  |. HDNode.derive(addressIdx |> AddressIndex.toInt)
   |> HDNode.getPrivateKey
   |. ECPair.fromPrivateKey({"network": keyChain.hdNode |. HDNode.getNetwork});
 

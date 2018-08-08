@@ -65,14 +65,14 @@ let () =
         BTC.fromSatoshis(1892L)
         |> BTC.plus(
              oneKeyChainSpendAmount
-             |> BTC.timesRounded(misthosFeePercent /. 100.),
+             |. BTC.timesRounded(misthosFeePercent /. 100.),
            );
       let twoKeyChainWalletTotal =
         oneKeyChainWalletTotal
         |> BTC.plus(address3Satoshis)
         |> BTC.plus(address4Satoshis)
-        |> BTC.minus(oneKeyChainSpendAmount)
-        |> BTC.minus(oneKeyChainExpectedFee);
+        |. BTC.minus(oneKeyChainSpendAmount)
+        |. BTC.minus(oneKeyChainExpectedFee);
       let twoKeyChainSpendAmount = BTC.fromSatoshis(25000L);
 
       beforeAllPromise(~timeout=40000, () =>
@@ -238,8 +238,8 @@ let () =
                |> expect
                |> toEqual(
                     oneKeyChainWalletTotal
-                    |> BTC.minus(oneKeyChainSpendAmount)
-                    |> BTC.minus(oneKeyChainExpectedFee),
+                    |. BTC.minus(oneKeyChainSpendAmount)
+                    |. BTC.minus(oneKeyChainExpectedFee),
                   )
                |> resolve
              )
@@ -322,7 +322,7 @@ let () =
                    BTC.fromSatoshis(5687L)
                    |> BTC.plus(
                         twoKeyChainSpendAmount
-                        |> BTC.timesRounded(misthosFeePercent /. 100.),
+                        |. BTC.timesRounded(misthosFeePercent /. 100.),
                       );
                  wallet
                  |> WalletHelpers.getExposedAddresses
@@ -337,8 +337,8 @@ let () =
                       |> expect
                       |> toEqual(
                            twoKeyChainWalletTotal
-                           |> BTC.minus(twoKeyChainSpendAmount)
-                           |> BTC.minus(expectedFee),
+                           |. BTC.minus(twoKeyChainSpendAmount)
+                           |. BTC.minus(expectedFee),
                          )
                       |> resolve
                     );

@@ -142,13 +142,13 @@ let make =
     |> List.map(chain => chain |> snd |> CustodianKeyChain.hdNode)
     |> List.map(node =>
          node
-         |> HDNode.derive(
+         |. HDNode.derive(
               Coordinates.coSignerIdx(coordinates) |> CoSignerIndex.toInt,
             )
-         |> HDNode.derive(
+         |. HDNode.derive(
               Coordinates.chainIdx(coordinates) |> ChainIndex.toInt,
             )
-         |> HDNode.derive(
+         |. HDNode.derive(
               Coordinates.addressIdx(coordinates) |> AddressIndex.toInt,
             )
        )

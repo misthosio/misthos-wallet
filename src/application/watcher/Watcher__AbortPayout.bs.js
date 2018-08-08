@@ -100,7 +100,7 @@ function make(proposal, log) {
               var $$event = param[/* event */0];
               switch ($$event.tag | 0) {
                 case 0 : 
-                    self$1[systemIssuer][0] = $$event[0][/* systemIssuer */5];
+                    self$1[systemIssuer][0] = $$event[0][/* systemIssuer */6];
                     return /* () */0;
                 case 19 : 
                     self$1[custodians][0] = Belt_Set.add(self$1[custodians][0], $$event[0][/* data */2][/* partnerId */0]);

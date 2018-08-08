@@ -6,7 +6,7 @@ open WalletTypes;
 
 type incoming =
   | UpdateSession(blockstackItems)
-  | Create(string)
+  | Create(string, AccountSettings.t)
   | Load(ventureId)
   | JoinVia(ventureId, userId)
   | ProposePartner(ventureId, userId)
@@ -183,9 +183,13 @@ let encodeIncoming =
         ("blockstackItems", WorkerLocalStorage.encodeItems(blockstackItems)),
       ])
     )
-  | Create(name) =>
+  | Create(name, accountSettings) =>
     Json.Encode.(
-      object_([("type", string("Create")), ("name", string(name))])
+      object_([
+        ("type", string("Create")),
+        ("name", string(name)),
+        ("accountSettings", AccountSettings.encode(accountSettings)),
+      ])
     )
   | Load(ventureId) =>
     Json.Encode.(
@@ -345,7 +349,9 @@ let decodeIncoming = raw => {
     UpdateSession(blockstackItems);
   | "Create" =>
     let name = raw |> Json.Decode.(field("name", string));
-    Create(name);
+    let accountSettings =
+      raw |> Json.Decode.(field("accountSettings", AccountSettings.decode));
+    Create(name, accountSettings);
   | "Load" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     Load(ventureId);

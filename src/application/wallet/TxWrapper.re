@@ -89,7 +89,7 @@ let sign =
       (
         keyPair |> B.ECPair.getPublicKey,
         keyPair
-        |> B.ECPair.sign(signatureHash)
+        |. B.ECPair.sign(signatureHash)
         |. B.Script.Signature.encode(B.Transaction.sighashAll),
       );
     };

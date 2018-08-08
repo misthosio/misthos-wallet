@@ -7,12 +7,14 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../events/EventLog.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../wallet/WalletTypes.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../wallet/AccountKeyChain.bs.js");
+var AccountSettings = require("../wallet/AccountSettings.bs.js");
 var CustodianKeyChain = require("../wallet/CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
@@ -23,11 +25,13 @@ var class_tables = [
 ];
 
 function make(param, param$1, log) {
-  var accountIdx = param$1[/* data */2][/* accountIdx */0];
+  var match = param$1[/* data */2];
+  var settings = match[/* settings */1];
+  var accountIdx = match[/* accountIdx */0];
   var issuerKeyPair = param[/* issuerKeyPair */2];
   var localUserId = param[/* userId */0];
   var identifiedEvent = function (keyChains, state) {
-    var $$event = Event.AccountKeyChainIdentified[/* make */0](AccountKeyChain.make(undefined, accountIdx, keyChains));
+    var $$event = Event.AccountKeyChainIdentified[/* make */0](AccountKeyChain.make(Js_option.getWithDefault(AccountSettings.$$default, settings), accountIdx, keyChains));
     var identifier = $$event[/* keyChain */0][/* identifier */1];
     var match = List.mem_assoc(identifier, state[/* identifiedKeyChains */2]);
     if (match) {
@@ -85,7 +89,7 @@ function make(param, param$1, log) {
                 case 0 : 
                     var init = self$1[state][0];
                     tmp = /* record */[
-                      /* systemIssuer */$$event[0][/* systemIssuer */5],
+                      /* systemIssuer */$$event[0][/* systemIssuer */6],
                       /* custodianKeyChains */init[/* custodianKeyChains */1],
                       /* identifiedKeyChains */init[/* identifiedKeyChains */2],
                       /* identifiedEvent */init[/* identifiedEvent */3],

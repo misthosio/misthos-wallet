@@ -68,7 +68,12 @@ module Cmd: {
       | Ok(Index.t, t)
       | CouldNotPersist(Js.Promise.error);
     let exec:
-      (SessionData.t, ~name: string) => (ventureId, Js.Promise.t(result));
+      (
+        SessionData.t,
+        ~name: string,
+        ~defaultAccountSettings: AccountSettings.t
+      ) =>
+      (ventureId, Js.Promise.t(result));
   };
   module SynchronizeLogs: {
     type result =

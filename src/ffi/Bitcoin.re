@@ -90,8 +90,8 @@ module ECPair = {
   [@bs.get] external getNetwork : t => Networks.t = "network";
   [@bs.get] external getPublicKey : t => Node.buffer = "publicKey";
   [@bs.get] external getPrivateKey : t => Node.buffer = "privateKey";
-  [@bs.send.pipe: t] external sign : Node.buffer => Node.buffer = "";
-  [@bs.send.pipe: t] external verify : (Node.buffer, Node.buffer) => bool = "";
+  [@bs.send] external sign : (t, Node.buffer) => Node.buffer = "";
+  [@bs.send] external verify : (t, Node.buffer, Node.buffer) => bool = "";
 };
 
 module HDNode = {
@@ -112,9 +112,9 @@ module HDNode = {
     };
   [@bs.module "bitcoinjs-lib"] [@bs.scope "bip32"]
   external fromSeed : (Node.buffer, Networks.t) => t = "";
-  [@bs.send.pipe: t] external derive : int => t = "";
-  [@bs.send.pipe: t] external deriveHardened : int => t = "";
-  [@bs.send.pipe: t] external derivePath : string => t = "";
+  [@bs.send] external derive : (t, int) => t = "";
+  [@bs.send] external deriveHardened : (t, int) => t = "";
+  [@bs.send] external derivePath : (t, string) => t = "";
   [@bs.get] external getPublicKey : t => Node.buffer = "publicKey";
   [@bs.get] external getPrivateKey : t => Node.buffer = "privateKey";
   [@bs.get] external getNetwork : t => Networks.t = "network";
@@ -156,16 +156,17 @@ module TxBuilder = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "TransactionBuilder"]
   external fromTransactionWithNetwork : (Transaction.t, Networks.t) => t =
     "fromTransaction";
-  [@bs.send.pipe: t] external addInput : (string, int) => int = "";
-  [@bs.send.pipe: t]
-  external addInputWithSequence : (string, int, int) => int = "addInput";
+  [@bs.send] external addInput : (t, string, int) => int = "";
+  [@bs.send]
+  external addInputWithSequence : (t, string, int, int) => int = "addInput";
   [@bs.send] external setLockTime : (t, int) => unit = "";
   [@bs.send] external setVersion : (t, int) => unit = "";
-  [@bs.send.pipe: t] external addOutput : (string, float) => int = "";
-  [@bs.send.pipe: t] external sign : (int, ECPair.t) => unit = "";
-  [@bs.send.pipe: t]
+  [@bs.send] external addOutput : (t, string, float) => int = "";
+  [@bs.send] external sign : (t, int, ECPair.t) => unit = "";
+  [@bs.send]
   external signSegwit :
     (
+      t,
       int,
       ECPair.t,
       ~redeemScript: Node.buffer,

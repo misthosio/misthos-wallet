@@ -280,17 +280,6 @@ let make =
           />
         </div>
       }
-      area5=(
-        status == PendingApproval ?
-          <MTypography variant=`Body1>
-            (
-              processType == Addition ?
-                PolicyText.partnerAddition(~userId) :
-                PolicyText.partnerRemoval(~userId)
-            )
-          </MTypography> :
-          ReasonReact.null
-      )
     />;
   },
 };

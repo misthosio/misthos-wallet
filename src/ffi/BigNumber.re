@@ -10,25 +10,25 @@ module RoundingMode = {
 external make : ([@bs.unwrap] [ | `String(string) | `Float(float)]) => t =
   "BigNumber";
 
-[@bs.send.pipe: t] external times : t => t = "";
+[@bs.send] external times : (t, t) => t = "";
 
-[@bs.send.pipe: t] external dividedBy : t => t = "";
+[@bs.send] external dividedBy : (t, t) => t = "";
 
-[@bs.send.pipe: t] external timesFloat : float => t = "times";
+[@bs.send] external timesFloat : (t, float) => t = "times";
 
-[@bs.send.pipe: t] external dividedByFloat : float => t = "dividedBy";
+[@bs.send] external dividedByFloat : (t, float) => t = "dividedBy";
 
-[@bs.send.pipe: t] external gte : t => bool = "";
+[@bs.send] external gte : (t, t) => bool = "";
 
-[@bs.send.pipe: t] external gt : t => bool = "";
+[@bs.send] external gt : (t, t) => bool = "";
 
-[@bs.send.pipe: t] external plus : t => t = "";
+[@bs.send] external plus : (t, t) => t = "";
 
-[@bs.send.pipe: t] external minus : t => t = "";
+[@bs.send] external minus : (t, t) => t = "";
 
-[@bs.send.pipe: t] external comparedTo : t => int = "";
+[@bs.send] external comparedTo : (t, t) => int = "";
 
-[@bs.send.pipe: t] external integerValue : RoundingMode.t => t = "";
+[@bs.send] external integerValue : (t, RoundingMode.t) => t = "";
 
 [@bs.send] external isNaN : t => bool = "";
 

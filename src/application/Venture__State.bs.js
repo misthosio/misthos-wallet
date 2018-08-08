@@ -120,10 +120,10 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         var match = $$event[0];
-        var metaPolicy = match[/* metaPolicy */4];
+        var metaPolicy = match[/* metaPolicy */5];
         return /* record */[
                 /* ventureName */match[/* ventureName */1],
-                /* systemIssuer */match[/* systemIssuer */5],
+                /* systemIssuer */match[/* systemIssuer */6],
                 /* policies : :: */[
                   /* tuple */[
                     Event.Partner[/* Removal */9][/* processName */1],

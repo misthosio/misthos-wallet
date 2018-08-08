@@ -72,7 +72,7 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         return /* record */[
-                /* network */$$event[0][/* network */6],
+                /* network */$$event[0][/* network */7],
                 /* localUser */state[/* localUser */1],
                 /* payouts */state[/* payouts */2],
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -230,7 +230,7 @@ function apply($$event, state) {
                                   /* explorerLink */income[/* explorerLink */1],
                                   /* date */income[/* date */2],
                                   /* txId */income[/* txId */3],
-                                  /* amount */income[/* amount */4].plus(amount),
+                                  /* amount */amount.plus(income[/* amount */4]),
                                   /* addresses */Belt_SetString.add(income[/* addresses */5], address)
                                 ];
                         } else {

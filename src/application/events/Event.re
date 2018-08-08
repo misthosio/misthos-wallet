@@ -10,15 +10,25 @@ module VentureCreated = {
     ventureName: string,
     creatorId: userId,
     creatorPubKey: string,
+    defaultAccountSettings: option(AccountSettings.t),
     metaPolicy: Policy.t,
     systemIssuer: Bitcoin.ECPair.t,
     network: Network.t,
   };
-  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~network) => {
+  let make =
+      (
+        ~ventureName,
+        ~creatorId,
+        ~creatorPubKey,
+        ~defaultAccountSettings,
+        ~metaPolicy,
+        ~network,
+      ) => {
     ventureId: VentureId.make(),
     ventureName,
     creatorId,
     creatorPubKey,
+    defaultAccountSettings: Some(defaultAccountSettings),
     metaPolicy,
     systemIssuer: Bitcoin.ECPair.makeRandom(),
     network,
@@ -31,6 +41,10 @@ module VentureCreated = {
         ("ventureName", string(event.ventureName)),
         ("creatorId", UserId.encode(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
+        (
+          "defaultAccountSettings",
+          nullable(AccountSettings.encode, event.defaultAccountSettings),
+        ),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
         ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
         ("network", Network.encode(event.network)),
@@ -42,6 +56,9 @@ module VentureCreated = {
       ventureName: raw |> field("ventureName", string),
       creatorId: raw |> field("creatorId", UserId.decode),
       creatorPubKey: raw |> field("creatorPubKey", string),
+      defaultAccountSettings:
+        raw
+        |> Utils.maybeField("defaultAccountSettings", AccountSettings.decode),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
         raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
@@ -128,17 +145,20 @@ module AccountCreation = {
   module Data = {
     type t = {
       accountIdx,
+      settings: option(AccountSettings.t),
       name: string,
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
+          ("settings", nullable(AccountSettings.encode, event.settings)),
           ("name", string(event.name)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
+        settings: raw |> Utils.maybeField("settings", AccountSettings.decode),
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
         name: raw |> field("name", string),
       };
@@ -630,13 +650,24 @@ let makePartnerRemovalProposed =
   );
 
 let makeAccountCreationProposed =
-    (~eligibleWhenProposing, ~proposerId, ~name, ~accountIdx, ~policy) =>
+    (
+      ~eligibleWhenProposing,
+      ~proposerId,
+      ~name,
+      ~accountIdx,
+      ~accountSettings,
+      ~policy,
+    ) =>
   AccountCreationProposed(
     AccountCreation.Proposed.make(
       ~eligibleWhenProposing,
       ~proposerId,
       ~policy,
-      AccountCreation.Data.{accountIdx, name},
+      AccountCreation.Data.{
+        settings: Some(accountSettings),
+        accountIdx,
+        name,
+      },
     ),
   );
 
