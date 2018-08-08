@@ -55,6 +55,9 @@ module LedgerKeysView = {
       Ledger.getCustodianKeyChain(
         ~network=walletInfoCollector |> WalletInfoCollector.network,
         ~ventureId,
+        ~ledgerId=
+          ledgerInfoCollector
+          |> LedgerInfoCollector.ledgerId(AccountIndex.default),
         ~accountIdx=AccountIndex.default,
         ~keyChainIdx=
           ledgerInfoCollector
@@ -423,6 +426,9 @@ module CreatePayoutView = {
         Ledger.signPayout(
           ventureId,
           localUser,
+          ledgerInfoCollector
+          |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+          |> Js.Option.getWithDefault(""),
           payoutTx,
           txHexs,
           walletInfoCollector |> WalletInfoCollector.accountKeyChains,

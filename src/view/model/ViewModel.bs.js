@@ -66,7 +66,7 @@ function fromViewModel(param) {
           /* ledgerId */LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
           /* ledgerUpToDate */LedgerInfoCollector.ledgerUpToDate(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
           /* getCustodianKeyChain */(function () {
-              return Ledger.getCustodianKeyChain(WalletInfoCollector.network(walletInfoCollector), ventureId, WalletTypes.AccountIndex[/* default */11], LedgerInfoCollector.nextKeyChainIdx(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector));
+              return Ledger.getCustodianKeyChain(WalletInfoCollector.network(walletInfoCollector), ventureId, LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector), WalletTypes.AccountIndex[/* default */11], LedgerInfoCollector.nextKeyChainIdx(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector));
             })
         ];
 }
@@ -223,6 +223,7 @@ var ViewPartnerView = /* module */[
 ];
 
 function fromViewModelState$3(param) {
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var ventureId = param[/* ventureId */1];
   var localUser = param[/* localUser */0];
@@ -268,7 +269,7 @@ function fromViewModelState$3(param) {
           /* createPayoutTx */(function (destinations, fee) {
               return PayoutTransaction.build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, fee, changeAddress, network);
             }),
-          /* requiresLedgerSig */Js_option.isSome(LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], param[/* ledgerInfoCollector */11])),
+          /* requiresLedgerSig */Js_option.isSome(LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector)),
           /* collectInputHexs */(function (knownHexs, param) {
               var usedInputs = param[/* usedInputs */1];
               var inputs = Belt_SetString.fromArray(Belt_Array.mapU(usedInputs, (function (param) {
@@ -286,7 +287,7 @@ function fromViewModelState$3(param) {
                           }));
             }),
           /* signPayoutTx */(function (payoutTx, txHexs) {
-              return Ledger.signPayout(ventureId, localUser, payoutTx, txHexs, WalletInfoCollector.accountKeyChains(walletInfoCollector));
+              return Ledger.signPayout(ventureId, localUser, Js_option.getWithDefault("", LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector)), payoutTx, txHexs, WalletInfoCollector.accountKeyChains(walletInfoCollector));
             })
         ];
 }

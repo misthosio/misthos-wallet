@@ -12,7 +12,6 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
-var CustodianKeyChain = require("../application/wallet/CustodianKeyChain.bs.js");
 
 var component = ReasonReact.reducerComponent("LedgerKeys");
 
@@ -88,16 +87,12 @@ function make(viewData, submitKeyChain, cmdStatus, _) {
                           (function (param) {
                               var send = param[/* send */3];
                               Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
-                                      if (param.tag) {
+                                      if (typeof param === "number") {
+                                        return Promise.resolve(Curry._1(send, /* FailedGettingKeys */[/* WrongHardwareId */0]));
+                                      } else if (param.tag) {
                                         return Promise.resolve(Curry._1(send, /* FailedGettingKeys */[/* LedgerError */[param[0]]]));
                                       } else {
-                                        var keyChain = param[0];
-                                        var match = viewData[/* ledgerId */0];
-                                        if (match !== undefined && Js_option.getExn(CustodianKeyChain.hardwareId(keyChain)) !== match) {
-                                          return Promise.resolve(Curry._1(send, /* FailedGettingKeys */[/* WrongHardwareId */0]));
-                                        } else {
-                                          return Promise.resolve(Curry._1(submitKeyChain, keyChain));
-                                        }
+                                        return Promise.resolve(Curry._1(submitKeyChain, param[0]));
                                       }
                                     }));
                               return /* () */0;

@@ -36,15 +36,9 @@ let make = (~viewData: ViewData.t, ~submitKeyChain, ~cmdStatus, _children) => {
               |> then_(
                    fun
                    | Ledger.Ok(keyChain) =>
-                     switch (viewData.ledgerId) {
-                     | Some(ledgerId)
-                         when
-                           keyChain
-                           |> CustodianKeyChain.hardwareId
-                           |> Js.Option.getExn != ledgerId =>
-                       send(FailedGettingKeys(WrongHardwareId)) |> resolve
-                     | _ => submitKeyChain(~keyChain) |> resolve
-                     }
+                     submitKeyChain(~keyChain) |> resolve
+                   | WrongDevice =>
+                     send(FailedGettingKeys(WrongHardwareId)) |> resolve
                    | Ledger.Error(error) =>
                      send(FailedGettingKeys(LedgerError(error))) |> resolve,
                  )

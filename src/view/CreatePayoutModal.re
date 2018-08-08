@@ -313,6 +313,11 @@ let make =
                        ~signatures,
                      )
                      |> resolve
+                   | WrongDevice =>
+                     commands.preSubmitError(
+                       "The device does not have the correct seed for signing",
+                     )
+                     |> resolve
                    | Error(Message(message)) =>
                      commands.preSubmitError(message) |> resolve
                    | Error(Unknown) =>

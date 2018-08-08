@@ -376,7 +376,9 @@ function make(viewData, commands, cmdStatus, _) {
                                                   return Curry._2(viewData[/* signPayoutTx */11], payoutTx, param[1]);
                                                 }))) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
                                       signatures.then((function (param) {
-                                              if (param.tag) {
+                                              if (typeof param === "number") {
+                                                return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
+                                              } else if (param.tag) {
                                                 var match = param[0];
                                                 if (match) {
                                                   return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
