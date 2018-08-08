@@ -40,6 +40,36 @@ let make =
       data: {explorerLink, summary, payoutStatus: status, txId, date},
     }: ViewData.payout =
       viewData.payout;
+    let executeEndorse = () => {
+      open Js.Promise;
+      let signatures =
+        if (viewData.requiresLedgerSig) {
+          commands.preSubmit(
+            "Please confirm this endorsement on your ledger device",
+          );
+          viewData.signPayout();
+        } else {
+          resolve(Ledger.Signatures([||]));
+        };
+      signatures
+      |> then_(
+           fun
+           | Ledger.Signatures(signatures) =>
+             commands.endorsePayout(~processId, ~signatures) |> resolve
+           | WrongDevice =>
+             commands.preSubmitError(
+               "The device does not have the correct seed for signing",
+             )
+             |> resolve
+           | Error(Message(message)) =>
+             commands.preSubmitError(message) |> resolve
+           | Error(Unknown) =>
+             commands.preSubmitError("An unknown error has occured")
+             |> resolve,
+         )
+      |> ignore;
+    };
+
     let destinationList =
       ReasonReact.array(
         Array.of_list(
@@ -154,7 +184,7 @@ let make =
             endorseText="Endorse Payout"
             rejectText="Reject Payout"
             canVote
-            onEndorse=(() => commands.endorsePayout(~processId))
+            onEndorse=executeEndorse
             onReject=(() => commands.rejectPayout(~processId))
             onCancel=(() => commands.reset())
             cmdStatus

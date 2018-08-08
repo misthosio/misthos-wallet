@@ -295,13 +295,28 @@ function fromViewModelState$3(param) {
 var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
 
 function fromViewModelState$4(processId, param) {
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var partnersCollector = param[/* partnersCollector */6];
+  var ventureId = param[/* ventureId */1];
+  var localUser = param[/* localUser */0];
   return Utils.mapOption((function (payout) {
+                var payoutTx = payout[/* data */5][/* payoutTx */1];
+                var txHexPromise = Curry._1(NetworkClient.transactionHex(WalletInfoCollector.network(walletInfoCollector)), Belt_Array.mapU(payoutTx[/* usedInputs */1], (function (param) {
+                            return param[/* txId */0];
+                          })));
                 return /* record */[
+                        /* requiresLedgerSig */Js_option.isSome(LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector)),
                         /* currentPartners */ViewModel__PartnersCollector.currentPartners(partnersCollector),
                         /* payout */payout,
-                        /* collidesWith */WalletInfoCollector.collidingProcesses(WalletTypes.AccountIndex[/* default */11], processId, walletInfoCollector)
+                        /* collidesWith */WalletInfoCollector.collidingProcesses(WalletTypes.AccountIndex[/* default */11], processId, walletInfoCollector),
+                        /* signPayout */(function () {
+                            return txHexPromise.then((function (txHexs) {
+                                          return Ledger.signPayout(ventureId, localUser, Js_option.getWithDefault("", LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector)), payoutTx, Belt_Array.map(txHexs, (function (prim) {
+                                                            return prim[1];
+                                                          })), WalletInfoCollector.accountKeyChains(walletInfoCollector));
+                                        }));
+                          })
                       ];
               }), ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]));
 }

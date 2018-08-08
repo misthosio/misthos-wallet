@@ -44,7 +44,7 @@ function make(commands, lastResponse, onProcessStarted, children) {
             /* proposePayout */(function (accountIdx, payoutTx, signatures) {
                 return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._3(commands[/* proposePayout */7], accountIdx, payoutTx, signatures)]));
               }),
-            /* endorsePayout */(function (processId) {
+            /* endorsePayout */(function (processId, _) {
                 return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePayout */8], processId)]));
               }),
             /* rejectPayout */(function (processId) {

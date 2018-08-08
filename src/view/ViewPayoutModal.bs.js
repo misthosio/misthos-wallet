@@ -6,6 +6,7 @@ var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
@@ -83,14 +84,32 @@ function make(viewData, commands, cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = viewData[/* payout */1];
+              var match = viewData[/* payout */2];
               var match$1 = match[/* data */5];
-              var date = match$1[/* date */4];
-              var txId = match$1[/* txId */3];
-              var explorerLink = match$1[/* explorerLink */2];
-              var summary = match$1[/* summary */1];
+              var date = match$1[/* date */5];
+              var txId = match$1[/* txId */4];
+              var explorerLink = match$1[/* explorerLink */3];
+              var summary = match$1[/* summary */2];
               var status = match$1[/* payoutStatus */0];
               var processId = match[/* processId */0];
+              var executeEndorse = function () {
+                var signatures = viewData[/* requiresLedgerSig */0] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this endorsement on your ledger device"), Curry._1(viewData[/* signPayout */4], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
+                signatures.then((function (param) {
+                        if (typeof param === "number") {
+                          return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
+                        } else if (param.tag) {
+                          var match = param[0];
+                          if (match) {
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                          } else {
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                          }
+                        } else {
+                          return Promise.resolve(Curry._2(commands[/* endorsePayout */9], processId, param[0]));
+                        }
+                      }));
+                return /* () */0;
+              };
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
                           return ReasonReact.element(String(idx), undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                           ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(param[0])]))])),
@@ -181,13 +200,11 @@ function make(viewData, commands, cmdStatus, _) {
                                                   }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, total, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
                                             ])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
-                                    }, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */0], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", undefined, "Reject Payout", match[/* canVote */3], (function () {
-                                                return Curry._1(commands[/* endorsePayout */9], processId);
-                                              }), (function () {
+                                    }, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */1], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", undefined, "Reject Payout", match[/* canVote */3], executeEndorse, (function () {
                                                 return Curry._1(commands[/* rejectPayout */10], processId);
                                               }), (function () {
                                                 return Curry._1(commands[/* reset */0], /* () */0);
-                                              }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */2]) > 0 ? ReasonReact.element(undefined, undefined, MaterialUi_SnackbarContent.make(undefined, undefined, Js_primitive.some(ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")), undefined, undefined, undefined, undefined, undefined, /* array */[])) : null)), Js_primitive.some(tmp), undefined, /* array */[]));
+                                              }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */3]) > 0 ? ReasonReact.element(undefined, undefined, MaterialUi_SnackbarContent.make(undefined, undefined, Js_primitive.some(ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")), undefined, undefined, undefined, undefined, undefined, /* array */[])) : null)), Js_primitive.some(tmp), undefined, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

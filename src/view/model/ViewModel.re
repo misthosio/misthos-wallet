@@ -445,19 +445,57 @@ module ViewPayoutView = {
   type voter = ProcessCollector.voter;
   type payout = TxDetailsCollector.payoutProcess;
   type t = {
+    requiresLedgerSig: bool,
     currentPartners: UserId.set,
     payout,
     collidesWith: ProcessId.set,
+    signPayout: unit => Js.Promise.t(Ledger.signResult),
   };
   let fromViewModelState =
       (
         processId,
-        {txDetailsCollector, walletInfoCollector, partnersCollector},
+        {
+          ventureId,
+          localUser,
+          txDetailsCollector,
+          ledgerInfoCollector,
+          walletInfoCollector,
+          partnersCollector,
+        },
       ) =>
     txDetailsCollector
     |> TxDetailsCollector.getPayout(processId)
-    |> Utils.mapOption(payout =>
+    |> Utils.mapOption(
+         ({data: {payoutTx: {usedInputs} as payoutTx}} as payout: payout) => {
+         open Belt;
+         let txHexPromise =
+           usedInputs
+           |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
+           |> NetworkClient.transactionHex(
+                walletInfoCollector |> WalletInfoCollector.network,
+              );
          {
+           signPayout: () =>
+             Js.Promise.(
+               txHexPromise
+               |> then_(txHexs =>
+                    Ledger.signPayout(
+                      ventureId,
+                      localUser,
+                      ledgerInfoCollector
+                      |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+                      |> Js.Option.getWithDefault(""),
+                      payoutTx,
+                      txHexs |. Array.map(snd),
+                      walletInfoCollector
+                      |> WalletInfoCollector.accountKeyChains,
+                    )
+                  )
+             ),
+           requiresLedgerSig:
+             ledgerInfoCollector
+             |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+             |> Js.Option.isSome,
            currentPartners:
              partnersCollector |> PartnersCollector.currentPartners,
            payout,
@@ -467,8 +505,8 @@ module ViewPayoutView = {
                   AccountIndex.default,
                   processId,
                 ),
-         }
-       );
+         };
+       });
 };
 
 let viewPayoutModal = ViewPayoutView.fromViewModelState;
