@@ -21,37 +21,40 @@ function make(commands, lastResponse, onProcessStarted, children) {
                 return Curry._1(send, /* Reset */0);
               }),
             /* proposePartner */(function (prospectId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* proposePartner */0], prospectId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* proposePartner */0], prospectId)]));
               }),
             /* endorsePartner */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* endorsePartner */1], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePartner */1], processId)]));
               }),
             /* rejectPartner */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* rejectPartner */2], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPartner */2], processId)]));
               }),
             /* proposePartnerRemoval */(function (partnerId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* proposePartnerRemoval */3], partnerId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* proposePartnerRemoval */3], partnerId)]));
               }),
             /* endorsePartnerRemoval */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* endorsePartnerRemoval */5], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePartnerRemoval */5], processId)]));
               }),
             /* rejectPartnerRemoval */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* rejectPartnerRemoval */4], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPartnerRemoval */4], processId)]));
               }),
             /* submitCustodianKeyChain */(function (keyChain) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* submitCustodianKeyChain */6], keyChain)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* submitCustodianKeyChain */6], keyChain)]));
               }),
             /* proposePayout */(function (accountIdx, payoutTx, signatures) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._3(commands[/* proposePayout */7], accountIdx, payoutTx, signatures)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._3(commands[/* proposePayout */7], accountIdx, payoutTx, signatures)]));
               }),
             /* endorsePayout */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* endorsePayout */8], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePayout */8], processId)]));
               }),
             /* rejectPayout */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(1, [Curry._1(commands[/* rejectPayout */9], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPayout */9], processId)]));
               }),
             /* preSubmit */(function (message) {
                 return Curry._1(send, /* PreSubmit */Block.__(0, [message]));
+              }),
+            /* preSubmitError */(function (message) {
+                return Curry._1(send, /* PreSubmitError */Block.__(1, [message]));
               })
           ];
   };
@@ -62,24 +65,24 @@ function make(commands, lastResponse, onProcessStarted, children) {
           /* willReceiveProps */(function (param) {
               var cmdStatus = param[/* state */1][/* cmdStatus */0];
               var tmp;
-              if (typeof cmdStatus === "number" || !(cmdStatus.tag === 1 && lastResponse !== undefined)) {
+              if (typeof cmdStatus === "number" || !(cmdStatus.tag === 2 && lastResponse !== undefined)) {
                 tmp = cmdStatus;
               } else {
                 var match = lastResponse;
                 if (cmdStatus[0] === match[0]) {
                   var response = match[1];
                   if (response.tag) {
-                    tmp = /* Error */Block.__(2, [response[0]]);
+                    tmp = /* Error */Block.__(3, [response[0]]);
                   } else {
                     var success = response[0];
                     if (typeof success === "number" || success.tag) {
-                      tmp = /* Success */Block.__(3, [success]);
+                      tmp = /* Success */Block.__(4, [success]);
                     } else {
                       var processId = success[0];
                       Utils.mapOption((function (fn) {
                               return Curry._1(fn, processId);
                             }), onProcessStarted);
-                      tmp = /* Success */Block.__(3, [/* ProcessStarted */Block.__(0, [processId])]);
+                      tmp = /* Success */Block.__(4, [/* ProcessStarted */Block.__(0, [processId])]);
                     }
                   }
                 } else {
@@ -103,10 +106,16 @@ function make(commands, lastResponse, onProcessStarted, children) {
           /* reducer */(function (action, _) {
               if (typeof action === "number") {
                 return /* Update */Block.__(0, [/* record */[/* cmdStatus : Idle */0]]);
-              } else if (action.tag) {
-                return /* Update */Block.__(0, [/* record */[/* cmdStatus : Pending */Block.__(1, [action[0]])]]);
               } else {
-                return /* Update */Block.__(0, [/* record */[/* cmdStatus : PreSubmit */Block.__(0, [action[0]])]]);
+                switch (action.tag | 0) {
+                  case 0 : 
+                      return /* Update */Block.__(0, [/* record */[/* cmdStatus : PreSubmit */Block.__(0, [action[0]])]]);
+                  case 1 : 
+                      return /* Update */Block.__(0, [/* record */[/* cmdStatus : PreSubmitError */Block.__(1, [action[0]])]]);
+                  case 2 : 
+                      return /* Update */Block.__(0, [/* record */[/* cmdStatus : Pending */Block.__(2, [action[0]])]]);
+                  
+                }
               }
             }),
           /* subscriptions */component[/* subscriptions */13],
@@ -149,6 +158,8 @@ function make$1(cmdStatus, action, _) {
                                           ]), undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
                             ];
                   case 1 : 
+                      return message(/* Error */1, cmdStatus[0]);
+                  case 2 : 
                       var tmp;
                       switch (action) {
                         case 0 : 
@@ -181,7 +192,7 @@ function make$1(cmdStatus, action, _) {
                                             /* [] */0
                                           ]), undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
                             ];
-                  case 2 : 
+                  case 3 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
                             return message(/* Error */1, "You are not a custodian of this venture");
@@ -201,7 +212,7 @@ function make$1(cmdStatus, action, _) {
                             return message(/* Error */1, "Your submission could not be persisted, probably due to network connectivity.");
                         
                       }
-                  case 3 : 
+                  case 4 : 
                       var tmp$1 = cmdStatus[0];
                       if (typeof tmp$1 === "number") {
                         return message(/* Success */0, "Your public Keys have been submitted");

@@ -301,16 +301,23 @@ let make =
                        viewData.signPayoutTx(payoutTx, inputs)
                      );
                 } else {
-                  resolve([||]);
+                  resolve(Ledger.Signatures([||]));
                 };
               signatures
-              |> then_(signatures =>
-                   commands.proposePayout(
-                     ~accountIdx=WalletTypes.AccountIndex.default,
-                     ~payoutTx,
-                     ~signatures,
-                   )
-                   |> resolve
+              |> then_(
+                   fun
+                   | Ledger.Signatures(signatures) =>
+                     commands.proposePayout(
+                       ~accountIdx=WalletTypes.AccountIndex.default,
+                       ~payoutTx,
+                       ~signatures,
+                     )
+                     |> resolve
+                   | Error(Message(message)) =>
+                     commands.preSubmitError(message) |> resolve
+                   | Error(Unknown) =>
+                     commands.preSubmitError("An unknown error has occured")
+                     |> resolve,
                  )
               |> ignore;
             },

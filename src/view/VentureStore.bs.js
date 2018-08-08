@@ -26,7 +26,7 @@ function loadVentureAndIndex(session, currentRoute, param) {
     var ventureId = currentRoute[0];
     return /* JoiningVenture */Block.__(1, [
               ventureId,
-              /* Pending */Block.__(1, [VentureWorkerClient.joinVia(ventureId, currentRoute[1], ventureWorker[0])])
+              /* Pending */Block.__(2, [VentureWorkerClient.joinVia(ventureId, currentRoute[1], ventureWorker[0])])
             ]);
   } else {
     var ventureId$1 = currentRoute[0];
@@ -40,7 +40,7 @@ function loadVentureAndIndex(session, currentRoute, param) {
       } else if (PrimitiveTypes.VentureId[/* neq */6](ventureId$1, loadedId)) {
         return /* LoadingVenture */Block.__(2, [
                   ventureId$1,
-                  /* Pending */Block.__(1, [VentureWorkerClient.load(ventureId$1, ventureWorker[0])])
+                  /* Pending */Block.__(2, [VentureWorkerClient.load(ventureId$1, ventureWorker[0])])
                 ]);
       } else {
         exit = 1;
@@ -49,7 +49,7 @@ function loadVentureAndIndex(session, currentRoute, param) {
     if (exit === 1) {
       return /* LoadingVenture */Block.__(2, [
                 ventureId$1,
-                /* Pending */Block.__(1, [VentureWorkerClient.load(ventureId$1, ventureWorker[0])])
+                /* Pending */Block.__(2, [VentureWorkerClient.load(ventureId$1, ventureWorker[0])])
               ]);
     }
     
@@ -144,7 +144,7 @@ function make(currentRoute, session, children) {
                       var createCmdId = VentureWorkerClient.create(action[0], action[1], state[/* ventureWorker */5][0]);
                       return /* Update */Block.__(0, [/* record */[
                                   /* index */state[/* index */0],
-                                  /* selectedVenture : CreatingVenture */Block.__(0, [/* Pending */Block.__(1, [createCmdId])]),
+                                  /* selectedVenture : CreatingVenture */Block.__(0, [/* Pending */Block.__(2, [createCmdId])]),
                                   /* session */state[/* session */2],
                                   /* dataWorker */state[/* dataWorker */3],
                                   /* persistWorker */state[/* persistWorker */4],
@@ -322,11 +322,11 @@ function make(currentRoute, session, children) {
                                 switch (match$2.tag | 0) {
                                   case 0 : 
                                       var match$3 = match$2[0];
-                                      if (typeof match$3 === "number" || !(match$3.tag === 1 && correlationId === match$3[0])) {
+                                      if (typeof match$3 === "number" || !(match$3.tag === 2 && correlationId === match$3[0])) {
                                         return /* NoUpdate */0;
                                       } else {
                                         var tmp;
-                                        tmp = response.tag ? /* Error */Block.__(2, [response[0]]) : /* Success */Block.__(3, [response[0]]);
+                                        tmp = response.tag ? /* Error */Block.__(3, [response[0]]) : /* Success */Block.__(4, [response[0]]);
                                         return /* Update */Block.__(0, [/* record */[
                                                     /* index */state[/* index */0],
                                                     /* selectedVenture : CreatingVenture */Block.__(0, [tmp]),
@@ -338,11 +338,11 @@ function make(currentRoute, session, children) {
                                       }
                                   case 1 : 
                                       var match$4 = match$2[1];
-                                      if (typeof match$4 === "number" || !(match$4.tag === 1 && correlationId === match$4[0])) {
+                                      if (typeof match$4 === "number" || !(match$4.tag === 2 && correlationId === match$4[0])) {
                                         return /* NoUpdate */0;
                                       } else {
                                         var tmp$1;
-                                        tmp$1 = response.tag ? /* Error */Block.__(2, [response[0]]) : /* Success */Block.__(3, [response[0]]);
+                                        tmp$1 = response.tag ? /* Error */Block.__(3, [response[0]]) : /* Success */Block.__(4, [response[0]]);
                                         return /* Update */Block.__(0, [/* record */[
                                                     /* index */state[/* index */0],
                                                     /* selectedVenture : JoiningVenture */Block.__(1, [
@@ -357,11 +357,11 @@ function make(currentRoute, session, children) {
                                       }
                                   case 2 : 
                                       var match$5 = match$2[1];
-                                      if (typeof match$5 === "number" || !(match$5.tag === 1 && correlationId === match$5[0])) {
+                                      if (typeof match$5 === "number" || !(match$5.tag === 2 && correlationId === match$5[0])) {
                                         return /* NoUpdate */0;
                                       } else {
                                         var tmp$2;
-                                        tmp$2 = response.tag ? /* Error */Block.__(2, [response[0]]) : /* Success */Block.__(3, [response[0]]);
+                                        tmp$2 = response.tag ? /* Error */Block.__(3, [response[0]]) : /* Success */Block.__(4, [response[0]]);
                                         return /* Update */Block.__(0, [/* record */[
                                                     /* index */state[/* index */0],
                                                     /* selectedVenture : LoadingVenture */Block.__(2, [

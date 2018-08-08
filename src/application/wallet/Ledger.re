@@ -97,6 +97,9 @@ let getCustodianKeyChain = (~network, ~ventureId, ~accountIdx, ~keyChainIdx) =>
 
 let dummyPath = "0'";
 let dummyPubKey = "DUMMY";
+type signResult =
+  | Signatures(array(option((string, string))))
+  | Error(LedgerJS.error);
 let signPayout =
     (
       ventureId,
@@ -172,8 +175,10 @@ let signPayout =
               |. Array.mapU((. (pubKey, signature)) =>
                    pubKey == dummyPubKey ? None : Some((pubKey, signature))
                  )
+              |. Signatures
               |> resolve
-            );
+            )
+         |> catch(error => error |> L.decodeError |. Error |> resolve);
        })
   );
 };

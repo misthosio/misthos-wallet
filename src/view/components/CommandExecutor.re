@@ -6,6 +6,7 @@ open WalletTypes;
 
 type action =
   | PreSubmit(string)
+  | PreSubmitError(string)
   | CommandExecuted(WebWorker.correlationId)
   | Reset;
 
@@ -28,11 +29,13 @@ type commands = {
   endorsePayout: (~processId: processId) => unit,
   rejectPayout: (~processId: processId) => unit,
   preSubmit: string => unit,
+  preSubmitError: string => unit,
 };
 
 type cmdStatus =
   | Idle
   | PreSubmit(string)
+  | PreSubmitError(string)
   | Pending(WebWorker.correlationId)
   | Error(VentureWorkerMessage.cmdError)
   | Success(VentureWorkerMessage.cmdSuccess);
@@ -75,6 +78,7 @@ let make =
     rejectPayout: (~processId) =>
       send(CommandExecuted(commands.rejectPayout(~processId))),
     preSubmit: message => send(PreSubmit(message)),
+    preSubmitError: message => send(PreSubmitError(message)),
   };
   {
     ...component,
@@ -98,6 +102,8 @@ let make =
       switch (action) {
       | PreSubmit(message) =>
         ReasonReact.Update({cmdStatus: PreSubmit(message)})
+      | PreSubmitError(message) =>
+        ReasonReact.Update({cmdStatus: PreSubmitError(message)})
       | CommandExecuted(correlationId) =>
         ReasonReact.Update({cmdStatus: Pending(correlationId)})
       | Reset => ReasonReact.Update({cmdStatus: Idle})
@@ -168,6 +174,7 @@ module Status = {
             className=Css.(style([marginTop(px(Theme.space(1)))]))
           />,
         |])
+      | PreSubmitError(error) => error |> message(Error)
       | Error(error) =>
         switch (error) {
         | CouldNotPersistVenture =>

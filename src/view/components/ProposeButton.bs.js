@@ -77,10 +77,17 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
                     ];
                     break;
                 case 2 : 
-                    if (typeof cmdStatus === "number" || cmdStatus.tag === 2) {
+                    if (typeof cmdStatus === "number") {
                       exit = 1;
                     } else {
-                      tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))];
+                      switch (cmdStatus.tag | 0) {
+                        case 1 : 
+                        case 3 : 
+                            exit = 1;
+                            break;
+                        default:
+                          tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))];
+                      }
                     }
                     break;
                 

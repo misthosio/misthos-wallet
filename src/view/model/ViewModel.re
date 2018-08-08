@@ -303,8 +303,7 @@ module CreatePayoutView = {
       (Map.String.t(string), PayoutTransaction.t) =>
       Js.Promise.t((Map.String.t(string), array(string))),
     signPayoutTx:
-      (PayoutTransaction.t, array(string)) =>
-      Js.Promise.t(array(option((string, string)))),
+      (PayoutTransaction.t, array(string)) => Js.Promise.t(Ledger.signResult),
   };
   let fromViewModelState =
       (

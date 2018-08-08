@@ -66,7 +66,7 @@ function make(onCreateVenture, cmdStatus, _) {
           /* reducer */(function (action, state) {
               var match = state[/* cmdStatus */1];
               var exit = 0;
-              if (typeof match === "number" || match.tag !== 1) {
+              if (typeof match === "number" || match.tag !== 2) {
                 exit = 1;
               } else {
                 return /* NoUpdate */0;

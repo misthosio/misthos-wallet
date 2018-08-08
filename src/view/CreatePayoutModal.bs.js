@@ -354,16 +354,13 @@ function make(viewData, commands, cmdStatus, _) {
                 }
               } else {
                 switch (cmdStatus.tag | 0) {
-                  case 0 : 
-                  case 1 : 
-                      exit = 1;
-                      break;
-                  case 2 : 
                   case 3 : 
+                  case 4 : 
                       canInput = match$1;
                       exit = 2;
                       break;
-                  
+                  default:
+                    exit = 1;
                 }
               }
               switch (exit) {
@@ -377,9 +374,18 @@ function make(viewData, commands, cmdStatus, _) {
                               setTimeout((function () {
                                       var signatures = viewData[/* requiresLedgerSig */9] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device"), Curry._2(viewData[/* collectInputHexs */10], state[/* txHexs */10], payoutTx).then((function (param) {
                                                   return Curry._2(viewData[/* signPayoutTx */11], payoutTx, param[1]);
-                                                }))) : Promise.resolve(/* array */[]);
-                                      signatures.then((function (signatures) {
-                                              return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, signatures));
+                                                }))) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
+                                      signatures.then((function (param) {
+                                              if (param.tag) {
+                                                var match = param[0];
+                                                if (match) {
+                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                                                } else {
+                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                                                }
+                                              } else {
+                                                return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, param[0]));
+                                              }
                                             }));
                                       return /* () */0;
                                     }), 0);

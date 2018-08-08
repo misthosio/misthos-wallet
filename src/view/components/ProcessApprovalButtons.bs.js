@@ -106,7 +106,7 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
               if (exit$1 === 3) {
                 if (typeof cmdStatus === "number") {
                   exit = canVote ? 2 : 1;
-                } else if (cmdStatus.tag === 2) {
+                } else if (cmdStatus.tag === 3) {
                   if (state >= 4) {
                     tmp = /* array */[
                       ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */5, /* array */[])),

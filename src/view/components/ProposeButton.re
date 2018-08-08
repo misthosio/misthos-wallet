@@ -85,7 +85,7 @@ let make =
                   </MButton>
                 </MTypography>,
               |]
-            | (_, Error(_) | Idle)
+            | (_, PreSubmitError(_) | Error(_) | Idle)
             | (NoDecision, _) => [|
                 <MButton
                   fullWidth=true onClick=(_e => send(Propose)) submitBtn=true>
