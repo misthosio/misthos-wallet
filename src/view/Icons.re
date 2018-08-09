@@ -454,7 +454,7 @@ let settings =
     <g
       fill="none"
       fillRule="evenodd"
-      stroke="#000"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2"

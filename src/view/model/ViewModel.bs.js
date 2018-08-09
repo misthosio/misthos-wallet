@@ -330,6 +330,7 @@ function fromViewModelState$5(txId, param) {
 var ViewIncomeView = /* module */[/* fromViewModelState */fromViewModelState$5];
 
 function fromViewModelState$6(param) {
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var transactionCollector = param[/* transactionCollector */7];
   var partnersCollector = param[/* partnersCollector */6];
@@ -351,6 +352,7 @@ function fromViewModelState$6(param) {
                     return param[/* balance */5].gt(BTC.zero);
                   }
                 })),
+          /* keyRotationWarning */Js_option.isSome(LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector)) && !LedgerInfoCollector.ledgerUpToDate(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
           /* ventureName */param[/* ventureName */3],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
           /* partners */partnersCollector[/* partners */1],

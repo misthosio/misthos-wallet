@@ -21,10 +21,10 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var WarningsText = require("./text/WarningsText.bs.js");
-var ProposeButton = require("./components/ProposeButton.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var BitcoinFeesClient = require("../application/wallet/BitcoinFeesClient.bs.js");
+var SingleActionButton = require("./components/SingleActionButton.bs.js");
 var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
 var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
 var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
@@ -311,13 +311,13 @@ function make(viewData, commands, cmdStatus, _) {
                                                 React.createElement("div", {
                                                       className: spaceBetween(/* baseline */287825029) + (" " + total)
                                                     }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                              ])), ReasonReact.element(undefined, undefined, ProposeButton.make("Propose Payout", undefined, (function () {
+                                              ])), ReasonReact.element(undefined, undefined, SingleActionButton.make("Propose Payout", undefined, (function () {
                                                   return Curry._1(send, /* ProposePayout */2);
                                                 }), (function () {
                                                   return Curry._1(send, /* Freeze */3);
                                                 }), (function () {
                                                   return Curry._1(send, /* Reset */4);
-                                                }), match[/* canSubmitProposal */5], undefined, cmdStatus, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]))), warning, /* array */[]));
+                                                }), match[/* canSubmitProposal */5], undefined, undefined, cmdStatus, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]))), warning, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

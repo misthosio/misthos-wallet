@@ -4,6 +4,11 @@ include ViewCommon;
 
 module ViewData = ViewModel.VentureSettingsView;
 
+module Styles = {
+  open Css;
+  let atRiskKeyStatus = style([color(Colors.error)]);
+};
+
 let component = ReasonReact.statelessComponent("VentureSettings");
 let make =
     (
@@ -45,7 +50,7 @@ let make =
           )
         | (Some(_), false) => (
             "You have integrated your ledger device.",
-            "Needs rotating.",
+            "Needs rotating",
           )
         | _ => (
             "You currently have no ledger device integrated into this venture.",
@@ -77,6 +82,8 @@ let make =
            )
         |. Array.slice(~offset=1, ~len=10)
         |> ReasonReact.array;
+      let needsKeyRotation =
+        ! viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome;
       <Grid
         title1=("Venture Settings" |> text)
         area3={
@@ -134,17 +141,21 @@ let make =
             <MTypography variant=`Body2 gutterBottom=true>
               (ledgerIntegrater |> text)
             </MTypography>
-            <MTypography variant=`Body2>
-              ("Key status: " ++ keyStatus |> text)
+            <MTypography variant=`Body2> ("Key status:" |> text) </MTypography>
+            <MTypography
+              variant=`Body2
+              className=(needsKeyRotation ? Styles.atRiskKeyStatus : "")>
+              (keyStatus |> text)
             </MTypography>
             (
               viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
                 ReasonReact.null :
-                <ProposeButton
+                <SingleActionButton
                   onSubmit=executeSubmit
-                  canSubmitProposal=true
+                  canSubmitAction=true
                   withConfirmation=false
-                  proposeText="Submit public keys"
+                  action=CommandExecutor.Status.SubmitKeys
+                  buttonText="Submit public keys"
                   cmdStatus
                 />
             )

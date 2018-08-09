@@ -35,7 +35,7 @@ let make =
     },
   render: ({send, state}) => {
     let onSubmit = ignoreEvent(() => send(CreateVenture));
-    let onClick = ignoreEvent(() => send(CreateVenture));
+    let onClick = () => send(CreateVenture);
     <Grid
       title1=("Create a Venture" |> text)
       area3={
@@ -60,11 +60,15 @@ let make =
             autoFocus=true
             fullWidth=true
           />
-          <MButton fullWidth=true onClick submitBtn=true>
-            ("create venture" |> text)
-          </MButton>
+          <SingleActionButton
+            onSubmit=onClick
+            canSubmitAction=true
+            withConfirmation=false
+            action=CommandExecutor.Status.CreateVenture
+            buttonText="create venture"
+            cmdStatus
+          />
           <ContactUsShoutOut />
-          <CommandExecutor.Status action=CreateVenture cmdStatus />
         </form>
       }
       area4={<VentureInfoBox />}

@@ -17,7 +17,7 @@ type action =
   | Propose
   | ConfirmProposal;
 
-let component = ReasonReact.reducerComponent("ProposeButton");
+let component = ReasonReact.reducerComponent("SingleActionButton");
 
 module Styles = {
   open Css;
@@ -27,13 +27,14 @@ module Styles = {
 
 let make =
     (
-      ~proposeText,
+      ~buttonText,
       ~alertText=?,
       ~onSubmit,
       ~onPropose=?,
       ~onCancel=?,
-      ~canSubmitProposal,
+      ~canSubmitAction,
       ~withConfirmation=true,
+      ~action=CommandExecutor.Status.Proposal,
       ~cmdStatus: CommandExecutor.cmdStatus,
       _children,
     ) => {
@@ -41,7 +42,7 @@ let make =
   initialState: () => {buttonState: NoDecision, cmdStatus: Idle},
   willReceiveProps: ({state}) => {...state, cmdStatus},
   reducer: (action, state) =>
-    switch (action, withConfirmation, canSubmitProposal) {
+    switch (action, withConfirmation, canSubmitAction) {
     | (_, _, false) => ReasonReact.NoUpdate
     | (Propose, true, _) =>
       ReasonReact.UpdateWithSideEffects(
@@ -72,7 +73,7 @@ let make =
                   (alertText |> Js.Option.getWithDefault("") |> text)
                 </MTypography>,
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
-                  (proposeText |> text)
+                  (buttonText |> text)
                   <MButton
                     gutterTop=false
                     variant=Flat
@@ -89,12 +90,12 @@ let make =
             | (NoDecision, _) => [|
                 <MButton
                   fullWidth=true onClick=(_e => send(Propose)) submitBtn=true>
-                  (text(proposeText))
+                  (text(buttonText))
                 </MButton>,
-                <CommandExecutor.Status cmdStatus action=Proposal />,
+                <CommandExecutor.Status cmdStatus action />,
               |]
             | (ProposalSubmited, _) => [|
-                <CommandExecutor.Status cmdStatus action=Proposal />,
+                <CommandExecutor.Status cmdStatus action />,
               |]
             },
           |]),

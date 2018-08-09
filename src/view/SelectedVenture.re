@@ -28,6 +28,13 @@ module Styles = {
     style([
       marginTop(px(Theme.space(2) * (-1))),
       marginBottom(px(Theme.space(1) * (-1))),
+      color(Colors.black),
+    ]);
+  let atRiskSettingsButtonIcon =
+    style([
+      marginTop(px(Theme.space(2) * (-1))),
+      marginBottom(px(Theme.space(1) * (-1))),
+      color(Colors.error),
     ]);
   let atRiskAddressButtonIcon =
     style([
@@ -300,11 +307,14 @@ let make = (~viewData: ViewData.t, _children) => {
               (viewData.atRiskWarning ? Icons.alert : Icons.clock)
             </MaterialUi.IconButton>
             <MaterialUi.IconButton
-              className=Styles.settingsButtonIcon
+              className=(
+                viewData.keyRotationWarning ?
+                  Styles.atRiskSettingsButtonIcon : Styles.settingsButtonIcon
+              )
               onClick=(
                 Router.clickToRoute(Venture(viewData.ventureId, Settings))
               )>
-              (viewData.atRiskWarning ? Icons.alert : Icons.settings)
+              Icons.settings
             </MaterialUi.IconButton>
           </MTypography>
           <Balance

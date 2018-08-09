@@ -547,12 +547,12 @@ let make =
                       </MTypography>
                     </div>
                   </ScrollList>
-                  <ProposeButton
+                  <SingleActionButton
                     onPropose=(() => send(Freeze))
                     onSubmit=(() => send(ProposePayout))
                     onCancel=(() => send(Reset))
-                    canSubmitProposal
-                    proposeText="Propose Payout"
+                    canSubmitAction=canSubmitProposal
+                    buttonText="Propose Payout"
                     cmdStatus
                   />
                 </div>;

@@ -533,6 +533,7 @@ module SelectedVentureView = {
   type t = {
     ventureId,
     atRiskWarning: bool,
+    keyRotationWarning: bool,
     ventureName: string,
     readOnly: bool,
     partners: list(partner),
@@ -553,6 +554,7 @@ module SelectedVentureView = {
           transactionCollector,
           txDetailsCollector,
           walletInfoCollector,
+          ledgerInfoCollector,
         },
       ) => {
     let reserved =
@@ -570,6 +572,14 @@ module SelectedVentureView = {
     {
       ventureId,
       ventureName,
+      keyRotationWarning:
+        ledgerInfoCollector
+        |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+        |> Js.Option.isSome
+        && ! (
+             ledgerInfoCollector
+             |> LedgerInfoCollector.ledgerUpToDate(AccountIndex.default)
+           ),
       readOnly:
         partnersCollector |> PartnersCollector.isPartner(localUser) == false,
       atRiskWarning:

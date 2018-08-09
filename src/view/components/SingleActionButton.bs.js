@@ -15,7 +15,7 @@ var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var CommandExecutor = require("./CommandExecutor.bs.js");
 
-var component = ReasonReact.reducerComponent("ProposeButton");
+var component = ReasonReact.reducerComponent("SingleActionButton");
 
 var inlineConfirm = Css.style(/* :: */[
       Css.display(/* flex */-1010954439),
@@ -35,8 +35,9 @@ var Styles = /* module */[
   /* warning */warning
 ];
 
-function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitProposal, $staropt$star, cmdStatus, _) {
+function make(buttonText, alertText, onSubmit, onPropose, onCancel, canSubmitAction, $staropt$star, $staropt$star$1, cmdStatus, _) {
   var withConfirmation = $staropt$star !== undefined ? $staropt$star : true;
+  var action = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Proposal */4;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -66,7 +67,7 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
                     tmp = /* array */[
                       ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, warning, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(Js_option.getWithDefault("", alertText))])),
                       ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, undefined, /* array */[
-                                ViewCommon.text(proposeText),
+                                ViewCommon.text(buttonText),
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* ConfirmProposal */2);
                                           }), undefined, undefined, /* Flat */0, undefined, false, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("yes")])),
@@ -86,7 +87,7 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
                             exit = 1;
                             break;
                         default:
-                          tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))];
+                          tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, action, /* array */[]))];
                       }
                     }
                     break;
@@ -96,8 +97,8 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
                 tmp = /* array */[
                   ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                               return Curry._1(send, /* Propose */1);
-                            }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, true, /* array */[ViewCommon.text(proposeText)])),
-                  ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */4, /* array */[]))
+                            }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, true, /* array */[ViewCommon.text(buttonText)])),
+                  ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, action, /* array */[]))
                 ];
               }
               return React.createElement("div", undefined, Belt_Array.concatMany(/* array */[tmp]));
@@ -110,7 +111,7 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              if (canSubmitProposal) {
+              if (canSubmitAction) {
                 switch (action) {
                   case 0 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
