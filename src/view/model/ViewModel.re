@@ -83,6 +83,7 @@ module AddressesView = {
   };
   type addressDetails = {
     custodians: UserId.set,
+    usingHardwareKey: UserId.set,
     nCoSigners: int,
     nCustodians: int,
     addressType,
@@ -126,6 +127,7 @@ module AddressesView = {
       addressDetails: addressInfo => {
         isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
         custodians: addressInfo.custodians,
+        usingHardwareKey: addressInfo.usingHardwareKey,
         nCustodians: addressInfo.custodians |> Belt.Set.size,
         nCoSigners: addressInfo.nCoSigners,
         addressType: addressInfo.addressType,

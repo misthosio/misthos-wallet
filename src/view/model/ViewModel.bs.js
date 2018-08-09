@@ -95,6 +95,7 @@ function fromViewModelState(param) {
           /* addressDetails */(function (addressInfo) {
               return /* record */[
                       /* custodians */addressInfo[/* custodians */1],
+                      /* usingHardwareKey */addressInfo[/* usingHardwareKey */2],
                       /* nCoSigners */addressInfo[/* nCoSigners */4],
                       /* nCustodians */Belt_Set.size(addressInfo[/* custodians */1]),
                       /* addressType */addressInfo[/* addressType */0],
