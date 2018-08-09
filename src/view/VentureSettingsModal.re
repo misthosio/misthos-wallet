@@ -159,6 +159,24 @@ let make =
                   cmdStatus
                 />
             )
+            <MTypography variant=`Title gutterTop=true gutterBottom=true>
+              ("Policy Settings" |> text)
+            </MTypography>
+            <MTypography variant=`Body2 gutterBottom=true>
+              (
+                "The policies determin the threshold at which a proposal will be accepted. This Venture has the following policies:"
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              ("Partner addition: Unanmious" |> text)
+            </MTypography>
+            <MTypography variant=`Body2>
+              ("Partner removal: Unanmious minus 1" |> text)
+            </MTypography>
+            <MTypography variant=`Body2>
+              ("Payout: Unanmious" |> text)
+            </MTypography>
           </div>
         }
       />;
