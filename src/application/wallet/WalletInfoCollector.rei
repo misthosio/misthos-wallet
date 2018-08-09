@@ -15,6 +15,7 @@ type addressType =
 type addressInfo = {
   addressType,
   custodians: UserId.set,
+  usingHardwareKey: UserId.set,
   address: string,
   nCoSigners: int,
   addressStatus,
@@ -27,6 +28,7 @@ let make: unit => t;
 
 let addressInfos: (accountIdx, t) => list(addressInfo);
 let collidingProcesses: (accountIdx, processId, t) => ProcessId.set;
+let getPayoutTx: (processId, t) => PayoutTransaction.t;
 
 let exposedCoordinates: t => list(Address.Coordinates.t);
 
@@ -54,4 +56,3 @@ let allUnspentInputs: t => Network.inputSet;
 let inputsFor: (accountIdx, addressInfo, t) => list(Network.txInput);
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
-let fakeChangeAddress: (accountIdx, userId, t) => Address.t;

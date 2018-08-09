@@ -9,6 +9,7 @@ type state = {
   pendingEvent: option(unit => (Bitcoin.ECPair.t, Event.t)),
   selfRemoved: bool,
   pubKeyPresent: bool,
+  hardwareIdPresent: bool,
   nextKeyChainIdx: custodianKeyChainIdx,
 };
 
@@ -28,6 +29,7 @@ let make =
         pendingEvent: None,
         selfRemoved: false,
         pubKeyPresent: false,
+        hardwareIdPresent: false,
         nextKeyChainIdx: CustodianKeyChainIndex.first,
       });
     pub receive = ({event}: EventLog.item) => {
@@ -136,6 +138,8 @@ let make =
                    ) => {
               ...state^,
               pendingEvent: None,
+              hardwareIdPresent:
+                keyChain |> CustodianKeyChain.hardwareId |> Js.Option.isSome,
               nextKeyChainIdx:
                 state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
             }
@@ -147,6 +151,8 @@ let make =
                      accountIdx,
                    ) => {
               ...state^,
+              hardwareIdPresent:
+                keyChain |> CustodianKeyChain.hardwareId |> Js.Option.isSome,
               pendingEvent:
                 state^.pendingEvent
                 |> Utils.mapOption((_, ()) =>
@@ -180,7 +186,7 @@ let make =
     pub processCompleted = () =>
       UserId.neq(userId, custodianId) || state^.selfRemoved;
     pub pendingEvent = () =>
-      state^.pubKeyPresent ?
+      ! state^.hardwareIdPresent && state^.pubKeyPresent ?
         state^.pendingEvent |> Utils.mapOption(f => f()) : None
   };
   if (process#processCompleted() == false) {

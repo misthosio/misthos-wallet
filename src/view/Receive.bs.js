@@ -109,7 +109,7 @@ function make(commands, _) {
                           /* record */[/* address */undefined],
                           (function (param) {
                               var send = param[/* send */3];
-                              Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */11]).then((function (address) {
+                              Curry._1(commands[/* exposeIncomeAddress */10], WalletTypes.AccountIndex[/* default */11]).then((function (address) {
                                       return Promise.resolve(Curry._1(send, /* UpdateAddress */[address]));
                                     }));
                               return /* () */0;

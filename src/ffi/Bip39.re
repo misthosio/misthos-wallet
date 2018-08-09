@@ -6,3 +6,5 @@ module Wordlist = {
 
 [@bs.module "bip39"]
 external entropyToMnemonic : (Node.buffer, Wordlist.t) => string = "";
+
+[@bs.module "bip39"] external mnemonicToSeed : string => Node.buffer = "";

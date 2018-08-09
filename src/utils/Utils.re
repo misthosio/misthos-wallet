@@ -10,8 +10,8 @@ let keyPairFromPrivateKey = (network, key) =>
 let publicKeyFromKeyPair = pair =>
   Bitcoin.(pair |> ECPair.getPublicKey |> bufToHex);
 
-let keyFromPublicKey = key =>
-  key |> bufFromHex |> Bitcoin.ECPair.fromPublicKey;
+let keyFromPublicKey = (network, key) =>
+  key |> bufFromHex |. Bitcoin.ECPair.fromPublicKey({"network": network});
 
 let signatureToDER = ecSignature =>
   Bitcoin.(Script.Signature.encode(ecSignature, Transaction.sighashAll))

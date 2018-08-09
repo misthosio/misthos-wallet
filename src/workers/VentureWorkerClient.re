@@ -59,21 +59,21 @@ let endorsePartnerRemoval = (worker, ventureId, ~processId: processId) =>
        VentureWorkerMessage.EndorsePartnerRemoval(ventureId, processId),
      );
 
+let submitCustodianKeyChain = (worker, ventureId, ~keyChain) =>
+  worker
+  |. postMessage(
+       VentureWorkerMessage.SubmitCustodianKeyChain(ventureId, keyChain),
+     );
+
 let proposePayout =
-    (
-      worker,
-      ventureId,
-      ~accountIdx: accountIdx,
-      ~destinations: list((string, BTC.t)),
-      ~fee: BTC.t,
-    ) =>
+    (worker, ventureId, ~accountIdx: accountIdx, ~payoutTx, ~signatures) =>
   worker
   |. postMessage(
        VentureWorkerMessage.ProposePayout(
          ventureId,
          accountIdx,
-         destinations,
-         fee,
+         payoutTx,
+         signatures,
        ),
      );
 
@@ -81,9 +81,11 @@ let rejectPayout = (worker, ventureId, ~processId: processId) =>
   worker
   |. postMessage(VentureWorkerMessage.RejectPayout(ventureId, processId));
 
-let endorsePayout = (worker, ventureId, ~processId: processId) =>
+let endorsePayout = (worker, ventureId, ~signatures, ~processId: processId) =>
   worker
-  |. postMessage(VentureWorkerMessage.EndorsePayout(ventureId, processId));
+  |. postMessage(
+       VentureWorkerMessage.EndorsePayout(ventureId, signatures, processId),
+     );
 
 let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
   worker
@@ -107,14 +109,21 @@ module Cmd = {
     proposePartnerRemoval: (~partnerId: userId) => WebWorker.correlationId,
     rejectPartnerRemoval: (~processId: processId) => WebWorker.correlationId,
     endorsePartnerRemoval: (~processId: processId) => WebWorker.correlationId,
+    submitCustodianKeyChain:
+      (~keyChain: CustodianKeyChain.public) => WebWorker.correlationId,
     proposePayout:
       (
         ~accountIdx: accountIdx,
-        ~destinations: list((string, BTC.t)),
-        ~fee: BTC.t
+        ~payoutTx: PayoutTransaction.t,
+        ~signatures: array(option((string, string)))
       ) =>
       WebWorker.correlationId,
-    endorsePayout: (~processId: processId) => WebWorker.correlationId,
+    endorsePayout:
+      (
+        ~signatures: array(option((string, string))),
+        ~processId: processId
+      ) =>
+      WebWorker.correlationId,
     rejectPayout: (~processId: processId) => WebWorker.correlationId,
     exposeIncomeAddress: (~accountIdx: accountIdx) => Js.Promise.t(string),
   };
@@ -125,6 +134,7 @@ module Cmd = {
     proposePartnerRemoval: proposePartnerRemoval(worker, ventureId),
     rejectPartnerRemoval: rejectPartnerRemoval(worker, ventureId),
     endorsePartnerRemoval: endorsePartnerRemoval(worker, ventureId),
+    submitCustodianKeyChain: submitCustodianKeyChain(worker, ventureId),
     proposePayout: proposePayout(worker, ventureId),
     rejectPayout: rejectPayout(worker, ventureId),
     endorsePayout: endorsePayout(worker, ventureId),

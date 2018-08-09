@@ -23,7 +23,7 @@ describe("ECPair", (function () {
 
 describe("Address", (function () {
         return Jest.test("can return an address from a key pair", (function () {
-                      return Jest.Expect[/* toEqual */12]("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", Jest.Expect[/* expect */0](Bitcoin.Address[/* fromKeyPair */1](pair)));
+                      return Jest.Expect[/* toEqual */12]("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", Jest.Expect[/* expect */0](Bitcoin.Address[/* fromKeyPair */2](pair)));
                     }));
       }));
 

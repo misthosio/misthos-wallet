@@ -85,6 +85,23 @@ let getTransactionInfo = (config, transactions) =>
     )
     |> then_(res => res |> List.fromArray |> resolve)
   );
+let getTransactionHex = (config, transactions) =>
+  Js.Promise.(
+    all(
+      transactions
+      |. Array.mapU((. txId) =>
+           Fetch.fetch(
+             "https://"
+             ++ config.subdomain
+             ++ "blockchain.info/rawtx/"
+             ++ txId
+             ++ "?format=hex&cors=true",
+           )
+           |> then_(Fetch.Response.text)
+           |> then_(hex => (txId, hex) |> resolve)
+         ),
+    )
+  );
 let getCurrentBlockHeight = (config, ()) =>
   Js.Promise.(
     Fetch.fetch(
@@ -130,6 +147,7 @@ let make = (config, network) : (module WalletTypes.NetworkClientInterface) =>
      let network = network;
      let getUTXOs = getUTXOs(config);
      let getTransactionInfo = getTransactionInfo(config);
+     let getTransactionHex = getTransactionHex(config);
      let getCurrentBlockHeight = getCurrentBlockHeight(config);
      let broadcastTransaction = broadcastTransaction(config);
    });

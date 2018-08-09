@@ -185,6 +185,9 @@ function make(config, network) {
   var getTransactionInfo = function () {
     return Promise.resolve(/* [] */0);
   };
+  var getTransactionHex = function () {
+    return Promise.resolve(/* array */[]);
+  };
   var getCurrentBlockHeight = function () {
     return Promise.resolve(1);
   };
@@ -195,6 +198,7 @@ function make(config, network) {
           /* network */network,
           /* getUTXOs */getUTXOs$1,
           /* getTransactionInfo */getTransactionInfo,
+          /* getTransactionHex */getTransactionHex,
           /* getCurrentBlockHeight */getCurrentBlockHeight,
           /* broadcastTransaction */broadcastTransaction$1
         ];

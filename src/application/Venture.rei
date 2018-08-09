@@ -102,6 +102,14 @@ module Cmd: {
       ) =>
       Js.Promise.t(result);
   };
+  module SubmitCustodianKeyChain: {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | NotACustodian
+      | CouldNotPersist(Js.Promise.error);
+    let exec:
+      (~keyChain: CustodianKeyChain.public, t) => Js.Promise.t(result);
+  };
   module ProposePartner: {
     type result =
       | Ok(processId, t, array(EventLog.item))
@@ -157,8 +165,8 @@ module Cmd: {
     let exec:
       (
         ~accountIdx: accountIdx,
-        ~destinations: list((string, BTC.t)),
-        ~fee: BTC.t,
+        ~payoutTx: PayoutTransaction.t,
+        ~signatures: array(option((string, string))),
         t
       ) =>
       Js.Promise.t(result);
@@ -173,6 +181,12 @@ module Cmd: {
     type result =
       | Ok(t, array(EventLog.item))
       | CouldNotPersist(Js.Promise.error);
-    let exec: (~processId: processId, t) => Js.Promise.t(result);
+    let exec:
+      (
+        ~processId: processId,
+        ~signatures: array(option((string, string))),
+        t
+      ) =>
+      Js.Promise.t(result);
   };
 };

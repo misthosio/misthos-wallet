@@ -1,3 +1,5 @@
+open Belt;
+
 include ViewCommon;
 
 module View = ViewModel.CreatePayoutView;
@@ -17,6 +19,8 @@ type state = {
   frozen: bool,
   fee: BTC.t,
   summary: PayoutTransaction.summary,
+  payoutTx: option(PayoutTransaction.t),
+  txHexs: Map.String.t(string),
   inputs,
 };
 
@@ -25,6 +29,7 @@ type action =
   | ChangeBTCAmount(string)
   | RemoveDestination(int)
   | SetFee(BTC.t)
+  | InputHexsCollected(Map.String.t(string))
   | EnterMax
   | AddToSummary
   | ProposePayout
@@ -84,11 +89,12 @@ let updateState =
     let (inputAmount, btcAmount) =
       inputAmount |. BTC.gt(max) ?
         (max, max |> BTC.format) : (inputAmount, btcAmount);
-    let summary =
-      viewData.summary(
+    let payoutTx =
+      viewData.createPayoutTx(
         [(inputDestination, inputAmount), ...destinations],
         fee,
       );
+    let summary = viewData.summary(payoutTx);
     {
       ...state,
       viewData,
@@ -97,13 +103,15 @@ let updateState =
       addressValid,
       canSubmitProposal: summary.spentWithFees |. BTC.gt(summary.networkFee),
       summary,
+      payoutTx: Some(payoutTx),
       inputs: {
         btcAmount,
         recipientAddress,
       },
     };
   } else {
-    let summary = viewData.summary(destinations, fee);
+    let payoutTx = viewData.createPayoutTx(destinations, fee);
+    let summary = viewData.summary(payoutTx);
     {
       ...state,
       viewData,
@@ -112,6 +120,7 @@ let updateState =
       addressValid,
       canSubmitProposal: summary.spentWithFees |. BTC.gt(summary.networkFee),
       summary,
+      payoutTx: Some(payoutTx),
       inputs: {
         btcAmount,
         recipientAddress,
@@ -119,6 +128,24 @@ let updateState =
     };
   };
 };
+
+let updateInputTxs = (send, state) =>
+  switch (state.payoutTx) {
+  | Some(payoutTx) =>
+    Js.Global.setTimeout(
+      () =>
+        Js.Promise.(
+          state.viewData.collectInputHexs(state.txHexs, payoutTx)
+          |> then_(((knownHexs, _inputs)) =>
+               send(InputHexsCollected(knownHexs)) |> resolve
+             )
+          |> ignore
+        ),
+      0,
+    )
+    |> ignore
+  | None => ()
+  };
 
 let make =
     (
@@ -136,6 +163,8 @@ let make =
     destinations: [],
     addressValid: true,
     summary: viewData.initialSummary,
+    payoutTx: None,
+    txHexs: Map.String.empty,
     inputDestination: "",
     inputAmount: BTC.zero,
     inputs: {
@@ -166,7 +195,7 @@ let make =
       switch (action) {
       | SetFee(fee) => ReasonReact.Update({...state, fee})
       | RemoveDestination(removeIdx) =>
-        ReasonReact.Update(
+        let state =
           {
             ...state,
             destinations:
@@ -176,10 +205,14 @@ let make =
                  )
               |. Belt.List.keepMapU((. d) => d),
           }
-          |> updateState,
-        )
+          |> updateState;
+
+        ReasonReact.UpdateWithSideEffects(
+          state,
+          (({send, state}) => updateInputTxs(send, state)),
+        );
       | ChangeRecipientAddress(address) when canInput == true =>
-        ReasonReact.Update(
+        let state =
           {
             ...state,
             inputs: {
@@ -187,10 +220,13 @@ let make =
               recipientAddress: address |> Js.String.trim,
             },
           }
-          |> updateState,
-        )
+          |> updateState;
+        ReasonReact.UpdateWithSideEffects(
+          state,
+          (({send, state}) => updateInputTxs(send, state)),
+        );
       | ChangeBTCAmount(amount) when canInput == true =>
-        ReasonReact.Update(
+        let state =
           {
             ...state,
             inputs: {
@@ -198,8 +234,11 @@ let make =
               btcAmount: amount == "." ? "0." : amount,
             },
           }
-          |> updateState,
-        )
+          |> updateState;
+        ReasonReact.UpdateWithSideEffects(
+          state,
+          (({send, state}) => updateInputTxs(send, state)),
+        );
       | AddToSummary when canInput == true =>
         if (state.inputDestination != ""
             && state.inputAmount
@@ -232,10 +271,14 @@ let make =
           {...state, frozen: false},
           (_ => commands.reset()),
         )
+      | InputHexsCollected(knownHexs) =>
+        ReasonReact.Update({...state, txHexs: knownHexs})
       | _ => ReasonReact.NoUpdate
       }
     | _ =>
       switch (action) {
+      | InputHexsCollected(knownHexs) =>
+        ReasonReact.Update({...state, txHexs: knownHexs})
       | Freeze => ReasonReact.Update({...state, frozen: true})
       | Reset =>
         ReasonReact.UpdateWithSideEffects(
@@ -243,22 +286,56 @@ let make =
           (_ => commands.reset()),
         )
       | ProposePayout =>
-        let destinations =
-          if (state.inputDestination != ""
-              && state.inputAmount
-              |. BTC.gt(BTC.zero)) {
-            [
-              (state.inputDestination, state.inputAmount),
-              ...state.destinations,
-            ];
+        switch (state.payoutTx) {
+        | Some(payoutTx) =>
+          if (! viewData.requiresLedgerSig) {
+            commands.proposePayout(
+              ~accountIdx=WalletTypes.AccountIndex.default,
+              ~payoutTx,
+              ~signatures=[||],
+            );
           } else {
-            state.destinations;
+            Js.Global.setTimeout(
+              () =>
+                Js.Promise.(
+                  viewData.collectInputHexs(state.txHexs, payoutTx)
+                  |> then_(((_, inputs)) =>
+                       viewData.signPayoutTx(payoutTx, inputs)
+                     )
+                  |> then_(
+                       fun
+                       | Ledger.Signatures(signatures) =>
+                         commands.proposePayout(
+                           ~accountIdx=WalletTypes.AccountIndex.default,
+                           ~payoutTx,
+                           ~signatures,
+                         )
+                         |> resolve
+                       | WrongDevice =>
+                         commands.preSubmitError(
+                           "The device does not have the correct seed for signing",
+                         )
+                         |> resolve
+                       | Error(Message(message)) =>
+                         commands.preSubmitError(message) |> resolve
+                       | Error(Unknown) =>
+                         commands.preSubmitError(
+                           "An unknown error has occured",
+                         )
+                         |> resolve,
+                     )
+                  |> ignore
+                ),
+              1,
+            )
+            |> ignore;
+            commands.preSubmit(
+              "Please confirm this proposal on your ledger device (BTC app)",
+            );
           };
-        commands.proposePayout(
-          ~accountIdx=WalletTypes.AccountIndex.default,
-          ~destinations,
-          ~fee=state.fee,
-        );
+          ();
+        | None => ()
+        };
         ReasonReact.NoUpdate;
       | _ => ReasonReact.NoUpdate
       }
@@ -276,6 +353,7 @@ let make =
           inputs,
           destinations,
           summary,
+          payoutTx,
         },
       },
     ) => {
@@ -318,7 +396,7 @@ let make =
       );
     let destinationList =
       ReasonReact.array(
-        Array.of_list([
+        List.toArray([
           destinationRow(
             ~withRemoveBtn=false,
             0,
@@ -326,162 +404,190 @@ let make =
             inputAmount,
           ),
           ...destinations
-             |> List.mapi((idx, (address, amount)) =>
+             |. List.mapWithIndex((idx, (address, amount)) =>
                   destinationRow(idx + 1, address, amount)
                 ),
         ]),
       );
-    <Grid
-      ?warning
-      title1=("Propose A Payout" |> text)
-      area3={
-        <div>
-          <MTypography gutterBottom=true variant=`Title>
-            ("ADD A RECIPIENT" |> text)
-          </MTypography>
-          <MTypography variant=`Body2>
+    switch (cmdStatus) {
+    | PreSubmit(_) =>
+      <LedgerConfirmation
+        action=CommandExecutor.Status.Proposal
+        onCancel=(() => send(Reset))
+        summary
+        misthosFeeAddress=(
+          payoutTx
+          |> Utils.mapOption((tx: PayoutTransaction.t) =>
+               tx.misthosFeeAddress
+             )
+        )
+        changeAddress=(
+          payoutTx
+          |> Utils.mapOption((tx: PayoutTransaction.t) => tx.changeAddress)
+          |> Js.Option.getWithDefault(None)
+        )
+        cmdStatus
+      />
+    | _ =>
+      <Grid
+        ?warning
+        title1=("Propose A Payout" |> text)
+        area3={
+          <div>
+            <MTypography gutterBottom=true variant=`Title>
+              ("ADD A RECIPIENT" |> text)
+            </MTypography>
+            <MTypography variant=`Body2>
+              (
+                "AVAILABLE BALANCE: "
+                ++ (viewData.balance.currentSpendable |> BTC.format)
+                ++ " BTC"
+                |> text
+              )
+            </MTypography>
             (
-              "AVAILABLE BALANCE: "
-              ++ (viewData.balance.currentSpendable |> BTC.format)
-              ++ " BTC"
-              |> text
-            )
-          </MTypography>
-          (
-            if (viewData.allowCreation == true) {
-              let error = addressValid ? None : Some("Address is BAD");
-              <div>
-                <MInput
-                  placeholder="Recipient Address"
-                  value=(`String(inputs.recipientAddress))
-                  onChange=(
-                    e => send(ChangeRecipientAddress(extractString(e)))
-                  )
-                  autoFocus=false
-                  fullWidth=true
-                  ?error
-                />
-                <MInput
-                  placeholder="BTC amount"
-                  value=(`String(inputs.btcAmount))
-                  onChange=(e => send(ChangeBTCAmount(extractString(e))))
-                  autoFocus=false
-                  fullWidth=true
-                  ensuring=true
-                  endAdornment=MaterialUi.(
-                                 <InputAdornment position=`End>
-                                   <MButton
-                                     gutterTop=false
-                                     className=Styles.maxButton
-                                     size=`Small
-                                     variant=Flat
-                                     onClick=(_e => send(EnterMax))>
-                                     (text("Max"))
-                                   </MButton>
-                                 </InputAdornment>
-                               )
-                />
-                <MButton
-                  size=`Small
-                  variant=Flat
-                  fullWidth=true
-                  onClick=(_e => send(AddToSummary))>
-                  (text("+ Add Another Recipient"))
-                </MButton>
-              </div>;
-            } else {
-              ReasonReact.null;
-            }
-          )
-        </div>
-      }
-      area4=(
-              if (viewData.allowCreation == false) {
+              if (viewData.allowCreation == true) {
+                let error = addressValid ? None : Some("Address is BAD");
                 <div>
-                  <MTypography variant=`Body2>
-                    (
-                      "You cannot create a Payout without an unreserved balance."
-                      |> text
+                  <MInput
+                    placeholder="Recipient Address"
+                    value=(`String(inputs.recipientAddress))
+                    onChange=(
+                      e => send(ChangeRecipientAddress(extractString(e)))
                     )
-                  </MTypography>
+                    autoFocus=false
+                    fullWidth=true
+                    ?error
+                  />
+                  <MInput
+                    placeholder="BTC amount"
+                    value=(`String(inputs.btcAmount))
+                    onChange=(e => send(ChangeBTCAmount(extractString(e))))
+                    autoFocus=false
+                    fullWidth=true
+                    ensuring=true
+                    endAdornment=MaterialUi.(
+                                   <InputAdornment position=`End>
+                                     <MButton
+                                       gutterTop=false
+                                       className=Styles.maxButton
+                                       size=`Small
+                                       variant=Flat
+                                       onClick=(_e => send(EnterMax))>
+                                       (text("Max"))
+                                     </MButton>
+                                   </InputAdornment>
+                                 )
+                  />
+                  <MButton
+                    size=`Small
+                    variant=Flat
+                    fullWidth=true
+                    onClick=(_e => send(AddToSummary))>
+                    (text("+ Add Another Recipient"))
+                  </MButton>
                 </div>;
               } else {
-                <div className=ScrollList.containerStyles>
-                  <MTypography variant=`Title>
-                    (text("Summary"))
-                  </MTypography>
-                  <ScrollList>
-                    MaterialUi.(
-                      <Table>
-                        <TableBody>
-                          destinationList
-                          <TableRow key="networkFee">
-                            <TableCell className=Styles.noBorder padding=`None>
-                              <MTypography variant=`Body2>
-                                ("NETWORK FEE" |> text)
-                              </MTypography>
-                            </TableCell>
-                            <TableCell
-                              numeric=true
-                              className=(
-                                Styles.maxWidth ++ " " ++ Styles.noBorder
-                              )
-                              padding=`None>
-                              <MTypography variant=`Body2>
-                                (
-                                  BTC.format(summary.networkFee)
-                                  ++ " BTC"
-                                  |> text
-                                )
-                              </MTypography>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow key="misthosFee">
-                            <TableCell className=Styles.noBorder padding=`None>
-                              <MTypography variant=`Body2>
-                                ("MISTHOS FEE" |> text)
-                              </MTypography>
-                            </TableCell>
-                            <TableCell
-                              numeric=true
-                              className=Styles.noBorder
-                              padding=`None>
-                              <MTypography variant=`Body2>
-                                (
-                                  BTC.format(summary.misthosFee)
-                                  ++ " BTC"
-                                  |> text
-                                )
-                              </MTypography>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    )
-                    <div
-                      className=(
-                        Styles.spaceBetween(`baseline) ++ " " ++ Styles.total
-                      )>
-                      <MaterialUi.Typography variant=`Body2>
-                        ("TOTAL PAYOUT" |> text)
-                      </MaterialUi.Typography>
-                      <MTypography variant=`Subheading>
-                        (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
-                      </MTypography>
-                    </div>
-                  </ScrollList>
-                  <ProposeButton
-                    onPropose=(() => send(Freeze))
-                    onSubmit=(() => send(ProposePayout))
-                    onCancel=(() => send(Reset))
-                    canSubmitProposal
-                    proposeText="Propose Payout"
-                    cmdStatus
-                  />
-                </div>;
+                ReasonReact.null;
               }
             )
-      area5={<MTypography variant=`Body1> PolicyText.payout </MTypography>}
-    />;
+          </div>
+        }
+        area4=(
+                if (viewData.allowCreation == false) {
+                  <div>
+                    <MTypography variant=`Body2>
+                      (
+                        "You cannot create a Payout without an unreserved balance."
+                        |> text
+                      )
+                    </MTypography>
+                  </div>;
+                } else {
+                  <div className=ScrollList.containerStyles>
+                    <MTypography variant=`Title>
+                      (text("Summary"))
+                    </MTypography>
+                    <ScrollList>
+                      MaterialUi.(
+                        <Table>
+                          <TableBody>
+                            destinationList
+                            <TableRow key="networkFee">
+                              <TableCell
+                                className=Styles.noBorder padding=`None>
+                                <MTypography variant=`Body2>
+                                  ("NETWORK FEE" |> text)
+                                </MTypography>
+                              </TableCell>
+                              <TableCell
+                                numeric=true
+                                className=(
+                                  Styles.maxWidth ++ " " ++ Styles.noBorder
+                                )
+                                padding=`None>
+                                <MTypography variant=`Body2>
+                                  (
+                                    BTC.format(summary.networkFee)
+                                    ++ " BTC"
+                                    |> text
+                                  )
+                                </MTypography>
+                              </TableCell>
+                            </TableRow>
+                            <TableRow key="misthosFee">
+                              <TableCell
+                                className=Styles.noBorder padding=`None>
+                                <MTypography variant=`Body2>
+                                  ("MISTHOS FEE" |> text)
+                                </MTypography>
+                              </TableCell>
+                              <TableCell
+                                numeric=true
+                                className=Styles.noBorder
+                                padding=`None>
+                                <MTypography variant=`Body2>
+                                  (
+                                    BTC.format(summary.misthosFee)
+                                    ++ " BTC"
+                                    |> text
+                                  )
+                                </MTypography>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      )
+                      <div
+                        className=(
+                          Styles.spaceBetween(`baseline)
+                          ++ " "
+                          ++ Styles.total
+                        )>
+                        <MaterialUi.Typography variant=`Body2>
+                          ("TOTAL PAYOUT" |> text)
+                        </MaterialUi.Typography>
+                        <MTypography variant=`Subheading>
+                          (
+                            BTC.format(summary.spentWithFees) ++ " BTC" |> text
+                          )
+                        </MTypography>
+                      </div>
+                    </ScrollList>
+                    <SingleActionButton
+                      onPropose=(() => send(Freeze))
+                      onSubmit=(() => send(ProposePayout))
+                      onCancel=(() => send(Reset))
+                      canSubmitAction=canSubmitProposal
+                      buttonText="Propose Payout"
+                      cmdStatus
+                    />
+                  </div>;
+                }
+              )
+        area5={<MTypography variant=`Body1> PolicyText.payout </MTypography>}
+      />
+    };
   },
+  /* } */
 };

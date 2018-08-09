@@ -22,6 +22,7 @@ type addressType =
 type addressInfo = {
   addressType,
   custodians: UserId.set,
+  usingHardwareKey: UserId.set,
   address: string,
   nCoSigners: int,
   addressStatus,
@@ -45,6 +46,8 @@ type t = {
   addressInfos: AccountIndex.map(list(addressInfo)),
   currentCustodians: AccountIndex.map(UserId.set),
 };
+let getPayoutTx = (processId, {payoutProcesses}) =>
+  payoutProcesses |. Map.getExn(processId);
 
 let addressInfos = (accountIdx, {addressInfos}) =>
   addressInfos |. Map.get(accountIdx) |> Js.Option.getWithDefault([]);
@@ -202,26 +205,6 @@ let nextChangeAddress = (accountIdx, userId, collector) => {
   let nextChangeCoordinates =
     Coordinates.nextInternal(userId, coordinates, accountKeyChain);
   Address.find(nextChangeCoordinates, collector.keyChains);
-};
-
-let fakeChangeAddress = (accountIdx, userId, collector) => {
-  let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
-  let accountKeyChain =
-    collector.keyChains
-    |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
-  let coordinates =
-    collector.exposedCoordinates |> Coordinates.allForAccount(accountIdx);
-  let nextChangeCoordinates =
-    Coordinates.nextInternal(userId, coordinates, accountKeyChain);
-  {
-    nCoSigners: accountKeyChain.nCoSigners,
-    nPubKeys: accountKeyChain.custodianKeyChains |> List.length,
-    coordinates: nextChangeCoordinates,
-    witnessScript: "",
-    redeemScript: "",
-    displayAddress: Network.exampleOfLongestAddress(collector.network),
-    sequence: accountKeyChain.nCoSigners > 1 ? Some(1) : None,
-  };
 };
 
 let make = () => {
@@ -615,7 +598,7 @@ let apply = (event, state) =>
       ),
     ) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;
-    let custodians =
+    let (custodians, hardwareCustodians) =
       (
         state.keyChains
         |> AccountKeyChain.Collection.lookup(
@@ -624,8 +607,20 @@ let apply = (event, state) =>
            )
       ).
         custodianKeyChains
-      |. List.map(fst)
+      |. List.mapU((. (userId, keyChain)) =>
+           (
+             userId,
+             keyChain
+             |> CustodianKeyChain.hardwareId
+             |> Utils.mapOption(_ => userId),
+           )
+         )
       |> List.toArray
+      |> Array.unzip;
+    let custodians = custodians |> Set.mergeMany(UserId.emptySet);
+    let usingHardwareKey =
+      hardwareCustodians
+      |. Array.keepMapU((. a) => a)
       |> Set.mergeMany(UserId.emptySet);
     {
       ...state,
@@ -648,6 +643,7 @@ let apply = (event, state) =>
                    addressType: Income(partnerId),
                    nCoSigners,
                    custodians,
+                   usingHardwareKey,
                    balance: BTC.zero,
                  },
                  ...infos,
@@ -828,7 +824,7 @@ let apply = (event, state) =>
         |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
       ) {
       | Some(changeInput) =>
-        let custodians =
+        let (custodians, hardwareCustodians) =
           (
             state.keyChains
             |> AccountKeyChain.Collection.lookup(
@@ -837,8 +833,20 @@ let apply = (event, state) =>
                )
           ).
             custodianKeyChains
-          |. List.map(fst)
+          |. List.mapU((. (userId, keyChain)) =>
+               (
+                 userId,
+                 keyChain
+                 |> CustodianKeyChain.hardwareId
+                 |> Utils.mapOption(_ => userId),
+               )
+             )
           |> List.toArray
+          |> Array.unzip;
+        let custodians = custodians |> Set.mergeMany(UserId.emptySet);
+        let usingHardwareKey =
+          hardwareCustodians
+          |. Array.keepMapU((. a) => a)
           |> Set.mergeMany(UserId.emptySet);
         let addressStatus =
           determinAddressStatus(
@@ -861,6 +869,7 @@ let apply = (event, state) =>
                        addressType: Change,
                        nCoSigners: changeInput.nCoSigners,
                        custodians,
+                       usingHardwareKey,
                        balance: BTC.zero,
                      },
                      ...infos,

@@ -20,7 +20,7 @@ describe("Watcher__AccountKeyChain", (function () {
                 var user1 = Fixtures.threeUserSessions[0];
                 var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                var log$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var log$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log));
@@ -43,11 +43,11 @@ describe("Watcher__AccountKeyChain", (function () {
                 var user1 = Fixtures.threeUserSessions[0];
                 var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log));
-                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
                           user1,
                           /* :: */[
                             user2,
@@ -57,7 +57,7 @@ describe("Watcher__AccountKeyChain", (function () {
                               user1,
                               /* [] */0
                             ], Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta)))));
-                var log$1 = Generators.Log[/* withCustodianKeyChain */38](1, undefined, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
+                var log$1 = Generators.Log[/* withCustodianKeyChain */38](1, undefined, undefined, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
                           user1,
                           /* [] */0
                         ], Generators.Log[/* withCustodianRemoved */37](user2, /* :: */[
@@ -82,7 +82,7 @@ describe("Watcher__AccountKeyChain", (function () {
                 var user1 = Fixtures.threeUserSessions[0];
                 var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log));
@@ -106,7 +106,7 @@ describe("Watcher__AccountKeyChain", (function () {
                 var user1 = match[0];
                 var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log));
@@ -118,11 +118,11 @@ describe("Watcher__AccountKeyChain", (function () {
                 var user1 = Fixtures.threeUserSessions[0];
                 var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log));
-                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
                           user1,
                           /* :: */[
                             user2,
@@ -156,11 +156,11 @@ describe("Watcher__AccountKeyChain", (function () {
                 var user1 = match[0];
                 var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log));
-                var log$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user2, Generators.Log[/* withPartnerRemoved */23](user1, /* :: */[
+                var log$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withPartnerRemoved */23](user1, /* :: */[
                           user2,
                           /* [] */0
                         ], Generators.Log[/* withCustodian */33](user2, /* :: */[
@@ -181,11 +181,11 @@ describe("Watcher__AccountKeyChain", (function () {
                 var user1 = match[0];
                 var log = Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)));
                 var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log));
-                var log$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, user2, Generators.Log[/* withCustodianRemoved */37](user1, /* :: */[
+                var log$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withCustodianRemoved */37](user1, /* :: */[
                           user2,
                           /* [] */0
                         ], Generators.Log[/* withCustodian */33](user2, /* :: */[

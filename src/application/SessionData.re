@@ -30,10 +30,11 @@ let fromUserData = (userData, network) =>
       masterKeyChain:
         Bitcoin.(
           HDNode.fromPrivateKey(
-            issuerKeyPair |> ECPair.getPrivateKey,
-            Utils.bufFromHex(
-              "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb",
-            ),
+            ~privateKey=issuerKeyPair |> ECPair.getPrivateKey,
+            ~chainCode=
+              Utils.bufFromHex(
+                "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb",
+              ),
             issuerKeyPair |> ECPair.getNetwork,
           )
         ),

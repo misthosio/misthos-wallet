@@ -32,6 +32,7 @@ var ViewPartnerModal = require("./ViewPartnerModal.bs.js");
 var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
 var ViewAddressesModal = require("./ViewAddressesModal.bs.js");
 var ManagePartnersModal = require("./ManagePartnersModal.bs.js");
+var VentureSettingsModal = require("./VentureSettingsModal.bs.js");
 var TermsAndConditionsModal = require("./TermsAndConditionsModal.bs.js");
 
 var component = ReasonReact.statelessComponent("App");
@@ -59,28 +60,14 @@ function make(session, updateSession, signTAC, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
-                  var commands = selectedVenture[2];
                   var venture = selectedVenture[1];
-                  var ventureId = selectedVenture[0];
                   var match$1 = ViewModel.readOnly(venture);
                   if (match$1) {
                     return undefined;
                   } else {
                     return /* tuple */[
-                            ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture), (function (processId) {
-                                        return Router.goTo(/* Venture */Block.__(0, [
-                                                      ventureId,
-                                                      /* Partner */Block.__(0, [processId])
-                                                    ]));
-                                      }), (function (proposePartnerCmds, proposeCmdStatus) {
-                                        return ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture), (function (processId) {
-                                                          return Router.goTo(/* Venture */Block.__(0, [
-                                                                        ventureId,
-                                                                        /* Partner */Block.__(0, [processId])
-                                                                      ]));
-                                                        }), (function (removePartnerCmds, removeCmdStatus) {
-                                                          return ReasonReact.element(undefined, undefined, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, /* array */[]));
-                                                        })));
+                            ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture), undefined, (function (commands, cmdStatus) {
+                                        return ReasonReact.element(undefined, undefined, VentureSettingsModal.make(ViewModel.ventureSettingsView(venture), commands, cmdStatus, /* array */[]));
                                       }))),
                             (function () {
                                 return Router.goTo(/* Venture */Block.__(0, [
@@ -95,20 +82,56 @@ function make(session, updateSession, signTAC, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
+                  var commands = selectedVenture[2];
                   var venture$1 = selectedVenture[1];
-                  var ventureId$1 = selectedVenture[0];
+                  var ventureId = selectedVenture[0];
                   var match$2 = ViewModel.readOnly(venture$1);
                   if (match$2) {
                     return undefined;
                   } else {
                     return /* tuple */[
-                            ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$1), (function (processId) {
+                            ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture$1), (function (processId) {
+                                        return Router.goTo(/* Venture */Block.__(0, [
+                                                      ventureId,
+                                                      /* Partner */Block.__(0, [processId])
+                                                    ]));
+                                      }), (function (proposePartnerCmds, proposeCmdStatus) {
+                                        return ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture$1), (function (processId) {
+                                                          return Router.goTo(/* Venture */Block.__(0, [
+                                                                        ventureId,
+                                                                        /* Partner */Block.__(0, [processId])
+                                                                      ]));
+                                                        }), (function (removePartnerCmds, removeCmdStatus) {
+                                                          return ReasonReact.element(undefined, undefined, ManagePartnersModal.make(ViewModel.managePartnersModal(venture$1), proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, /* array */[]));
+                                                        })));
+                                      }))),
+                            (function () {
+                                return Router.goTo(/* Venture */Block.__(0, [
+                                              selected,
+                                              /* None */0
+                                            ]));
+                              })
+                          ];
+                  }
+                }
+            case 3 : 
+                if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
+                  return undefined;
+                } else {
+                  var venture$2 = selectedVenture[1];
+                  var ventureId$1 = selectedVenture[0];
+                  var match$3 = ViewModel.readOnly(venture$2);
+                  if (match$3) {
+                    return undefined;
+                  } else {
+                    return /* tuple */[
+                            ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$2), (function (processId) {
                                         return Router.goTo(/* Venture */Block.__(0, [
                                                       ventureId$1,
                                                       /* Payout */Block.__(1, [processId])
                                                     ]));
                                       }), (function (commands, cmdStatus) {
-                                        return ReasonReact.element(undefined, undefined, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), commands, cmdStatus, /* array */[]));
+                                        return ReasonReact.element(undefined, undefined, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$2), commands, cmdStatus, /* array */[]));
                                       }))),
                             (function () {
                                 return Router.goTo(/* Venture */Block.__(0, [
@@ -120,9 +143,9 @@ function make(session, updateSession, signTAC, _) {
                   }
                 }
             case 0 : 
-            case 3 : 
-                return undefined;
             case 4 : 
+                return undefined;
+            case 5 : 
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
@@ -136,12 +159,12 @@ function make(session, updateSession, signTAC, _) {
                             })
                         ];
                 }
-            case 5 : 
+            case 6 : 
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
-                  var match$3 = ViewModel.readOnly(selectedVenture[1]);
-                  if (match$3) {
+                  var match$4 = ViewModel.readOnly(selectedVenture[1]);
+                  if (match$4) {
                     return undefined;
                   } else {
                     return /* tuple */[
@@ -163,16 +186,16 @@ function make(session, updateSession, signTAC, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
-                  var venture$2 = selectedVenture[1];
-                  var match$4 = ViewModel.readOnly(venture$2);
-                  if (match$4) {
+                  var venture$3 = selectedVenture[1];
+                  var match$5 = ViewModel.readOnly(venture$3);
+                  if (match$5) {
                     return undefined;
                   } else {
-                    var match$5 = ViewModel.viewPartnerModal(match[0], venture$2);
+                    var match$6 = ViewModel.viewPartnerModal(match[0], venture$3);
                     var tmp;
-                    if (match$5 !== undefined) {
-                      var viewData = match$5;
-                      tmp = ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$2), undefined, (function (commands, cmdStatus) {
+                    if (match$6 !== undefined) {
+                      var viewData = match$6;
+                      tmp = ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), undefined, (function (commands, cmdStatus) {
                                   return ReasonReact.element(undefined, undefined, ViewPartnerModal.make(viewData, commands, cmdStatus, /* array */[]));
                                 })));
                     } else {
@@ -193,16 +216,16 @@ function make(session, updateSession, signTAC, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
-                  var venture$3 = selectedVenture[1];
-                  var match$6 = ViewModel.readOnly(venture$3);
-                  if (match$6) {
+                  var venture$4 = selectedVenture[1];
+                  var match$7 = ViewModel.readOnly(venture$4);
+                  if (match$7) {
                     return undefined;
                   } else {
-                    var match$7 = ViewModel.viewPayoutModal(match[0], venture$3);
+                    var match$8 = ViewModel.viewPayoutModal(match[0], venture$4);
                     var tmp$1;
-                    if (match$7 !== undefined) {
-                      var viewData$1 = match$7;
-                      tmp$1 = ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), undefined, (function (commands, cmdStatus) {
+                    if (match$8 !== undefined) {
+                      var viewData$1 = match$8;
+                      tmp$1 = ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$4), undefined, (function (commands, cmdStatus) {
                                   return ReasonReact.element(undefined, undefined, ViewPayoutModal.make(viewData$1, commands, cmdStatus, /* array */[]));
                                 })));
                     } else {
@@ -223,14 +246,14 @@ function make(session, updateSession, signTAC, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
-                  var venture$4 = selectedVenture[1];
-                  var match$8 = ViewModel.readOnly(venture$4);
-                  if (match$8) {
+                  var venture$5 = selectedVenture[1];
+                  var match$9 = ViewModel.readOnly(venture$5);
+                  if (match$9) {
                     return undefined;
                   } else {
-                    var match$9 = ViewModel.viewIncomeModal(match[0], venture$4);
+                    var match$10 = ViewModel.viewIncomeModal(match[0], venture$5);
                     return /* tuple */[
-                            match$9 !== undefined ? ReasonReact.element(undefined, undefined, ViewIncomeModal.make(match$9, /* array */[])) : ReasonReact.element(undefined, undefined, NotFoundModal.make(/* Income */1, /* array */[])),
+                            match$10 !== undefined ? ReasonReact.element(undefined, undefined, ViewIncomeModal.make(match$10, /* array */[])) : ReasonReact.element(undefined, undefined, NotFoundModal.make(/* Income */1, /* array */[])),
                             (function () {
                                 return Router.goTo(/* Venture */Block.__(0, [
                                               selected,
@@ -298,7 +321,7 @@ function make(session, updateSession, signTAC, _) {
         exit$3 = 4;
       } else {
         var match = currentRoute[1];
-        if (typeof match === "number" && !(match !== 3 || typeof selectedVenture === "number" || selectedVenture.tag !== 3)) {
+        if (typeof match === "number" && !(match !== 4 || typeof selectedVenture === "number" || selectedVenture.tag !== 3)) {
           return ReasonReact.element(undefined, undefined, LogOutput.make(selectedVenture[0], /* array */[]));
         } else {
           exit$3 = 4;

@@ -4,16 +4,16 @@
 var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
-var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
+var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
 var MInput = require("./components/MInput.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var PolicyText = require("./text/PolicyText.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -23,9 +23,11 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var WarningsText = require("./text/WarningsText.bs.js");
-var ProposeButton = require("./components/ProposeButton.bs.js");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var BitcoinFeesClient = require("../application/wallet/BitcoinFeesClient.bs.js");
+var LedgerConfirmation = require("./components/LedgerConfirmation.bs.js");
+var SingleActionButton = require("./components/SingleActionButton.bs.js");
 var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
 var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
 var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
@@ -101,7 +103,7 @@ var Styles = /* module */[
 ];
 
 function updateState(state) {
-  var match = state[/* inputs */9];
+  var match = state[/* inputs */11];
   var btcAmount = match[/* btcAmount */1];
   var recipientAddress = match[/* recipientAddress */0];
   var fee = state[/* fee */7];
@@ -146,13 +148,14 @@ function updateState(state) {
         btcAmount$1
       ];
     var inputAmount$2 = match$4[0];
-    var summary = Curry._2(viewData[/* summary */7], /* :: */[
+    var payoutTx = Curry._2(viewData[/* createPayoutTx */8], /* :: */[
           /* tuple */[
             inputDestination,
             inputAmount$2
           ],
           destinations
         ], fee);
+    var summary = Curry._1(viewData[/* summary */7], payoutTx);
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
@@ -163,13 +166,16 @@ function updateState(state) {
             /* frozen */state[/* frozen */6],
             /* fee */state[/* fee */7],
             /* summary */summary,
+            /* payoutTx */payoutTx,
+            /* txHexs */state[/* txHexs */10],
             /* inputs : record */[
               /* recipientAddress */recipientAddress$1,
               /* btcAmount */match$4[1]
             ]
           ];
   } else {
-    var summary$1 = Curry._2(viewData[/* summary */7], destinations, fee);
+    var payoutTx$1 = Curry._2(viewData[/* createPayoutTx */8], destinations, fee);
+    var summary$1 = Curry._1(viewData[/* summary */7], payoutTx$1);
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
@@ -180,11 +186,29 @@ function updateState(state) {
             /* frozen */state[/* frozen */6],
             /* fee */state[/* fee */7],
             /* summary */summary$1,
+            /* payoutTx */payoutTx$1,
+            /* txHexs */state[/* txHexs */10],
             /* inputs : record */[
               /* recipientAddress */recipientAddress$1,
               /* btcAmount */btcAmount$1
             ]
           ];
+  }
+}
+
+function updateInputTxs(send, state) {
+  var match = state[/* payoutTx */9];
+  if (match !== undefined) {
+    var payoutTx = match;
+    setTimeout((function () {
+            Curry._2(state[/* viewData */0][/* collectInputHexs */10], state[/* txHexs */10], payoutTx).then((function (param) {
+                    return Promise.resolve(Curry._1(send, /* InputHexsCollected */Block.__(4, [param[0]])));
+                  }));
+            return /* () */0;
+          }), 0);
+    return /* () */0;
+  } else {
+    return /* () */0;
   }
 }
 
@@ -205,7 +229,9 @@ function make(viewData, commands, cmdStatus, _) {
                       /* frozen */state[/* frozen */6],
                       /* fee */state[/* fee */7],
                       /* summary */state[/* summary */8],
-                      /* inputs */state[/* inputs */9]
+                      /* payoutTx */state[/* payoutTx */9],
+                      /* txHexs */state[/* txHexs */10],
+                      /* inputs */state[/* inputs */11]
                     ];
             }),
           /* didMount */(function (param) {
@@ -222,7 +248,8 @@ function make(viewData, commands, cmdStatus, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              var inputs = match[/* inputs */9];
+              var inputs = match[/* inputs */11];
+              var payoutTx = match[/* payoutTx */9];
               var summary = match[/* summary */8];
               var viewData = match[/* viewData */0];
               var match$1 = Environment.get(/* () */0)[/* network */5];
@@ -244,57 +271,72 @@ function make(viewData, commands, cmdStatus, _) {
                   return null;
                 }
               };
-              var destinationList = $$Array.of_list(/* :: */[
+              var destinationList = Belt_List.toArray(/* :: */[
                     destinationRow(false, 0, match[/* inputDestination */2], match[/* inputAmount */3]),
-                    List.mapi((function (idx, param) {
+                    Belt_List.mapWithIndex(match[/* destinations */1], (function (idx, param) {
                             return destinationRow(undefined, idx + 1 | 0, param[0], param[1]);
-                          }), match[/* destinations */1])
+                          }))
                   ]);
-              var tmp;
-              if (viewData[/* allowCreation */0] === true) {
-                var error = match[/* addressValid */4] ? undefined : "Address is BAD";
-                tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MInput.make("Recipient Address", /* `String */[
-                              -976970511,
-                              inputs[/* recipientAddress */0]
-                            ], (function (e) {
-                                return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
-                              }), false, true, undefined, error, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, MInput.make("BTC amount", /* `String */[
-                              -976970511,
-                              inputs[/* btcAmount */1]
-                            ], (function (e) {
-                                return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
-                              }), false, true, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_InputAdornment.make(undefined, undefined, undefined, /* End */3455931, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
-                                                      return Curry._1(send, /* EnterMax */0);
-                                                    }), /* Small */311976103, undefined, /* Flat */0, maxButton, false, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Max")]))]))), undefined, undefined, undefined, undefined, true, /* array */[])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
-                                return Curry._1(send, /* AddToSummary */1);
-                              }), /* Small */311976103, true, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("+ Add Another Recipient")])));
+              var exit = 0;
+              if (typeof cmdStatus === "number" || cmdStatus.tag) {
+                exit = 1;
               } else {
-                tmp = null;
+                return ReasonReact.element(undefined, undefined, LedgerConfirmation.make(/* Proposal */4, (function () {
+                                  return Curry._1(send, /* Reset */4);
+                                }), summary, Utils.mapOption((function (tx) {
+                                      return tx[/* misthosFeeAddress */2];
+                                    }), payoutTx), Js_option.getWithDefault(undefined, Utils.mapOption((function (tx) {
+                                          return tx[/* changeAddress */3];
+                                        }), payoutTx)), cmdStatus, /* array */[]));
               }
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Propose A Payout")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("ADD A RECIPIENT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("AVAILABLE BALANCE: " + (BTC.format(viewData[/* balance */1][/* currentSpendable */0]) + " BTC"))])), tmp)), Js_primitive.some(viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("You cannot create a Payout without an unreserved balance.")]))) : React.createElement("div", {
-                                        className: ScrollList.containerStyles
-                                      }, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
-                                                ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[
-                                                                    destinationList,
-                                                                    ReasonReact.element("networkFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("NETWORK FEE")]))])),
-                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(maxWidth + (" " + noBorder), undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* networkFee */4]) + " BTC")]))]))
-                                                                            ])),
-                                                                    ReasonReact.element("misthosFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("MISTHOS FEE")]))])),
-                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")]))]))
-                                                                            ]))
-                                                                  ]))])),
-                                                React.createElement("div", {
-                                                      className: spaceBetween(/* baseline */287825029) + (" " + total)
-                                                    }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                              ])), ReasonReact.element(undefined, undefined, ProposeButton.make("Propose Payout", undefined, (function () {
-                                                  return Curry._1(send, /* ProposePayout */2);
-                                                }), (function () {
-                                                  return Curry._1(send, /* Freeze */3);
-                                                }), (function () {
-                                                  return Curry._1(send, /* Reset */4);
-                                                }), match[/* canSubmitProposal */5], undefined, cmdStatus, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]))), warning, /* array */[]));
+              if (exit === 1) {
+                var tmp;
+                if (viewData[/* allowCreation */0] === true) {
+                  var error = match[/* addressValid */4] ? undefined : "Address is BAD";
+                  tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MInput.make("Recipient Address", /* `String */[
+                                -976970511,
+                                inputs[/* recipientAddress */0]
+                              ], (function (e) {
+                                  return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
+                                }), false, true, undefined, error, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, MInput.make("BTC amount", /* `String */[
+                                -976970511,
+                                inputs[/* btcAmount */1]
+                              ], (function (e) {
+                                  return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
+                                }), false, true, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_InputAdornment.make(undefined, undefined, undefined, /* End */3455931, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                                                        return Curry._1(send, /* EnterMax */0);
+                                                      }), /* Small */311976103, undefined, /* Flat */0, maxButton, false, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Max")]))]))), undefined, undefined, undefined, undefined, true, /* array */[])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                                  return Curry._1(send, /* AddToSummary */1);
+                                }), /* Small */311976103, true, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("+ Add Another Recipient")])));
+                } else {
+                  tmp = null;
+                }
+                return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Propose A Payout")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("ADD A RECIPIENT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("AVAILABLE BALANCE: " + (BTC.format(viewData[/* balance */1][/* currentSpendable */0]) + " BTC"))])), tmp)), Js_primitive.some(viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("You cannot create a Payout without an unreserved balance.")]))) : React.createElement("div", {
+                                          className: ScrollList.containerStyles
+                                        }, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                                  ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[
+                                                                      destinationList,
+                                                                      ReasonReact.element("networkFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                                ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("NETWORK FEE")]))])),
+                                                                                ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(maxWidth + (" " + noBorder), undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* networkFee */4]) + " BTC")]))]))
+                                                                              ])),
+                                                                      ReasonReact.element("misthosFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                                ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("MISTHOS FEE")]))])),
+                                                                                ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")]))]))
+                                                                              ]))
+                                                                    ]))])),
+                                                  React.createElement("div", {
+                                                        className: spaceBetween(/* baseline */287825029) + (" " + total)
+                                                      }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
+                                                ])), ReasonReact.element(undefined, undefined, SingleActionButton.make("Propose Payout", undefined, (function () {
+                                                    return Curry._1(send, /* ProposePayout */2);
+                                                  }), (function () {
+                                                    return Curry._1(send, /* Freeze */3);
+                                                  }), (function () {
+                                                    return Curry._1(send, /* Reset */4);
+                                                  }), match[/* canSubmitProposal */5], undefined, undefined, cmdStatus, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]))), warning, /* array */[]));
+              }
+              
             }),
           /* initialState */(function () {
               return /* record */[
@@ -307,6 +349,8 @@ function make(viewData, commands, cmdStatus, _) {
                       /* frozen */false,
                       /* fee */BTC.zero,
                       /* summary */viewData[/* initialSummary */4],
+                      /* payoutTx */undefined,
+                      /* txHexs */Belt_MapString.empty,
                       /* inputs : record */[
                         /* recipientAddress */"",
                         /* btcAmount */""
@@ -329,33 +373,48 @@ function make(viewData, commands, cmdStatus, _) {
                 }
               } else {
                 switch (cmdStatus.tag | 0) {
-                  case 0 : 
-                      exit = 1;
-                      break;
-                  case 1 : 
-                  case 2 : 
+                  case 3 : 
+                  case 4 : 
                       canInput = match$1;
                       exit = 2;
                       break;
-                  
+                  default:
+                    exit = 1;
                 }
               }
               switch (exit) {
                 case 1 : 
                     if (typeof action === "number") {
                       switch (action) {
-                        case 0 : 
-                        case 1 : 
-                            return /* NoUpdate */0;
                         case 2 : 
-                            var destinations = state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero) ? /* :: */[
-                                /* tuple */[
-                                  state[/* inputDestination */2],
-                                  state[/* inputAmount */3]
-                                ],
-                                state[/* destinations */1]
-                              ] : state[/* destinations */1];
-                            Curry._3(commands[/* proposePayout */7], WalletTypes.AccountIndex[/* default */11], destinations, state[/* fee */7]);
+                            var match$2 = state[/* payoutTx */9];
+                            if (match$2 !== undefined) {
+                              var payoutTx = match$2;
+                              if (viewData[/* requiresLedgerSig */9]) {
+                                setTimeout((function () {
+                                        Curry._2(viewData[/* collectInputHexs */10], state[/* txHexs */10], payoutTx).then((function (param) {
+                                                  return Curry._2(viewData[/* signPayoutTx */11], payoutTx, param[1]);
+                                                })).then((function (param) {
+                                                if (typeof param === "number") {
+                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
+                                                } else if (param.tag) {
+                                                  var match = param[0];
+                                                  if (match) {
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                                                  } else {
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                                                  }
+                                                } else {
+                                                  return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, param[0]));
+                                                }
+                                              }));
+                                        return /* () */0;
+                                      }), 1);
+                                Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device (BTC app)");
+                              } else {
+                                Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, /* array */[]);
+                              }
+                            }
                             return /* NoUpdate */0;
                         case 3 : 
                             return /* Update */Block.__(0, [/* record */[
@@ -368,7 +427,9 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */true,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* txHexs */state[/* txHexs */10],
+                                        /* inputs */state[/* inputs */11]
                                       ]]);
                         case 4 : 
                             return /* UpdateWithSideEffects */Block.__(2, [
@@ -382,14 +443,32 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */false,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* txHexs */state[/* txHexs */10],
+                                        /* inputs */state[/* inputs */11]
                                       ],
                                       (function () {
                                           return Curry._1(commands[/* reset */0], /* () */0);
                                         })
                                     ]);
-                        
+                        default:
+                          return /* NoUpdate */0;
                       }
+                    } else if (action.tag === 4) {
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* destinations */state[/* destinations */1],
+                                  /* inputDestination */state[/* inputDestination */2],
+                                  /* inputAmount */state[/* inputAmount */3],
+                                  /* addressValid */state[/* addressValid */4],
+                                  /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                  /* frozen */state[/* frozen */6],
+                                  /* fee */state[/* fee */7],
+                                  /* summary */state[/* summary */8],
+                                  /* payoutTx */state[/* payoutTx */9],
+                                  /* txHexs */action[0],
+                                  /* inputs */state[/* inputs */11]
+                                ]]);
                     } else {
                       return /* NoUpdate */0;
                     }
@@ -423,6 +502,8 @@ function make(viewData, commands, cmdStatus, _) {
                                           /* frozen */state[/* frozen */6],
                                           /* fee */state[/* fee */7],
                                           /* summary */state[/* summary */8],
+                                          /* payoutTx */state[/* payoutTx */9],
+                                          /* txHexs */state[/* txHexs */10],
                                           /* inputs : record */[
                                             /* recipientAddress */"",
                                             /* btcAmount */""
@@ -444,7 +525,9 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */true,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* txHexs */state[/* txHexs */10],
+                                        /* inputs */state[/* inputs */11]
                                       ]]);
                         case 4 : 
                             return /* UpdateWithSideEffects */Block.__(2, [
@@ -458,7 +541,9 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */false,
                                         /* fee */state[/* fee */7],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* txHexs */state[/* txHexs */10],
+                                        /* inputs */state[/* inputs */11]
                                       ],
                                       (function () {
                                           return Curry._1(commands[/* reset */0], /* () */0);
@@ -470,71 +555,95 @@ function make(viewData, commands, cmdStatus, _) {
                       switch (action.tag | 0) {
                         case 0 : 
                             if (canInput === true) {
-                              var init = state[/* inputs */9];
-                              return /* Update */Block.__(0, [updateState(/* record */[
-                                              /* viewData */state[/* viewData */0],
-                                              /* destinations */state[/* destinations */1],
-                                              /* inputDestination */state[/* inputDestination */2],
-                                              /* inputAmount */state[/* inputAmount */3],
-                                              /* addressValid */state[/* addressValid */4],
-                                              /* canSubmitProposal */state[/* canSubmitProposal */5],
-                                              /* frozen */state[/* frozen */6],
-                                              /* fee */state[/* fee */7],
-                                              /* summary */state[/* summary */8],
-                                              /* inputs : record */[
-                                                /* recipientAddress */action[0].trim(),
-                                                /* btcAmount */init[/* btcAmount */1]
-                                              ]
-                                            ])]);
+                              var init = state[/* inputs */11];
+                              var state$1 = updateState(/* record */[
+                                    /* viewData */state[/* viewData */0],
+                                    /* destinations */state[/* destinations */1],
+                                    /* inputDestination */state[/* inputDestination */2],
+                                    /* inputAmount */state[/* inputAmount */3],
+                                    /* addressValid */state[/* addressValid */4],
+                                    /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                    /* frozen */state[/* frozen */6],
+                                    /* fee */state[/* fee */7],
+                                    /* summary */state[/* summary */8],
+                                    /* payoutTx */state[/* payoutTx */9],
+                                    /* txHexs */state[/* txHexs */10],
+                                    /* inputs : record */[
+                                      /* recipientAddress */action[0].trim(),
+                                      /* btcAmount */init[/* btcAmount */1]
+                                    ]
+                                  ]);
+                              return /* UpdateWithSideEffects */Block.__(2, [
+                                        state$1,
+                                        (function (param) {
+                                            return updateInputTxs(param[/* send */3], param[/* state */1]);
+                                          })
+                                      ]);
                             } else {
                               return /* NoUpdate */0;
                             }
                         case 1 : 
                             if (canInput === true) {
                               var amount = action[0];
-                              var init$1 = state[/* inputs */9];
-                              var match$2 = amount === ".";
-                              return /* Update */Block.__(0, [updateState(/* record */[
-                                              /* viewData */state[/* viewData */0],
-                                              /* destinations */state[/* destinations */1],
-                                              /* inputDestination */state[/* inputDestination */2],
-                                              /* inputAmount */state[/* inputAmount */3],
-                                              /* addressValid */state[/* addressValid */4],
-                                              /* canSubmitProposal */state[/* canSubmitProposal */5],
-                                              /* frozen */state[/* frozen */6],
-                                              /* fee */state[/* fee */7],
-                                              /* summary */state[/* summary */8],
-                                              /* inputs : record */[
-                                                /* recipientAddress */init$1[/* recipientAddress */0],
-                                                /* btcAmount */match$2 ? "0." : amount
-                                              ]
-                                            ])]);
+                              var init$1 = state[/* inputs */11];
+                              var match$3 = amount === ".";
+                              var state$2 = updateState(/* record */[
+                                    /* viewData */state[/* viewData */0],
+                                    /* destinations */state[/* destinations */1],
+                                    /* inputDestination */state[/* inputDestination */2],
+                                    /* inputAmount */state[/* inputAmount */3],
+                                    /* addressValid */state[/* addressValid */4],
+                                    /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                    /* frozen */state[/* frozen */6],
+                                    /* fee */state[/* fee */7],
+                                    /* summary */state[/* summary */8],
+                                    /* payoutTx */state[/* payoutTx */9],
+                                    /* txHexs */state[/* txHexs */10],
+                                    /* inputs : record */[
+                                      /* recipientAddress */init$1[/* recipientAddress */0],
+                                      /* btcAmount */match$3 ? "0." : amount
+                                    ]
+                                  ]);
+                              return /* UpdateWithSideEffects */Block.__(2, [
+                                        state$2,
+                                        (function (param) {
+                                            return updateInputTxs(param[/* send */3], param[/* state */1]);
+                                          })
+                                      ]);
                             } else {
                               return /* NoUpdate */0;
                             }
                         case 2 : 
                             var removeIdx = action[0];
-                            return /* Update */Block.__(0, [updateState(/* record */[
-                                            /* viewData */state[/* viewData */0],
-                                            /* destinations */Belt_List.keepMapU(Belt_List.mapWithIndexU(state[/* destinations */1], (function (idx, destination) {
-                                                        var match = idx === removeIdx;
-                                                        if (match) {
-                                                          return undefined;
-                                                        } else {
-                                                          return destination;
-                                                        }
-                                                      })), (function (d) {
-                                                    return d;
-                                                  })),
-                                            /* inputDestination */state[/* inputDestination */2],
-                                            /* inputAmount */state[/* inputAmount */3],
-                                            /* addressValid */state[/* addressValid */4],
-                                            /* canSubmitProposal */state[/* canSubmitProposal */5],
-                                            /* frozen */state[/* frozen */6],
-                                            /* fee */state[/* fee */7],
-                                            /* summary */state[/* summary */8],
-                                            /* inputs */state[/* inputs */9]
-                                          ])]);
+                            var state$3 = updateState(/* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* destinations */Belt_List.keepMapU(Belt_List.mapWithIndexU(state[/* destinations */1], (function (idx, destination) {
+                                              var match = idx === removeIdx;
+                                              if (match) {
+                                                return undefined;
+                                              } else {
+                                                return destination;
+                                              }
+                                            })), (function (d) {
+                                          return d;
+                                        })),
+                                  /* inputDestination */state[/* inputDestination */2],
+                                  /* inputAmount */state[/* inputAmount */3],
+                                  /* addressValid */state[/* addressValid */4],
+                                  /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                  /* frozen */state[/* frozen */6],
+                                  /* fee */state[/* fee */7],
+                                  /* summary */state[/* summary */8],
+                                  /* payoutTx */state[/* payoutTx */9],
+                                  /* txHexs */state[/* txHexs */10],
+                                  /* inputs */state[/* inputs */11]
+                                ]);
+                            return /* UpdateWithSideEffects */Block.__(2, [
+                                      state$3,
+                                      (function (param) {
+                                          return updateInputTxs(param[/* send */3], param[/* state */1]);
+                                        })
+                                    ]);
                         case 3 : 
                             return /* Update */Block.__(0, [/* record */[
                                         /* viewData */state[/* viewData */0],
@@ -546,7 +655,24 @@ function make(viewData, commands, cmdStatus, _) {
                                         /* frozen */state[/* frozen */6],
                                         /* fee */action[0],
                                         /* summary */state[/* summary */8],
-                                        /* inputs */state[/* inputs */9]
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* txHexs */state[/* txHexs */10],
+                                        /* inputs */state[/* inputs */11]
+                                      ]]);
+                        case 4 : 
+                            return /* Update */Block.__(0, [/* record */[
+                                        /* viewData */state[/* viewData */0],
+                                        /* destinations */state[/* destinations */1],
+                                        /* inputDestination */state[/* inputDestination */2],
+                                        /* inputAmount */state[/* inputAmount */3],
+                                        /* addressValid */state[/* addressValid */4],
+                                        /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                        /* frozen */state[/* frozen */6],
+                                        /* fee */state[/* fee */7],
+                                        /* summary */state[/* summary */8],
+                                        /* payoutTx */state[/* payoutTx */9],
+                                        /* txHexs */action[0],
+                                        /* inputs */state[/* inputs */11]
                                       ]]);
                         
                       }
@@ -574,5 +700,6 @@ exports.View = View;
 exports.component = component;
 exports.Styles = Styles;
 exports.updateState = updateState;
+exports.updateInputTxs = updateInputTxs;
 exports.make = make;
 /* component Not a pure module */

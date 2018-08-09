@@ -164,17 +164,6 @@ function incomeAddress(param) {
   }
 }
 
-function exampleOfLongestAddress(param) {
-  switch (param) {
-    case 0 : 
-    case 1 : 
-        return "2N3z4kw675LC8gD8uio2zrrsJRtArokaUnY";
-    case 2 : 
-        return "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
-    
-  }
-}
-
 exports.encode = encode;
 exports.decode = decode;
 exports.TxInputCmp = TxInputCmp;
@@ -185,5 +174,4 @@ exports.decodeInput = decodeInput;
 exports.bitcoinNetwork = bitcoinNetwork;
 exports.testnetIncomeAddress = testnetIncomeAddress;
 exports.incomeAddress = incomeAddress;
-exports.exampleOfLongestAddress = exampleOfLongestAddress;
 /* include Not a pure module */

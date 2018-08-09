@@ -26,12 +26,12 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var WarningsText = require("./text/WarningsText.bs.js");
-var ProposeButton = require("./components/ProposeButton.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Paper = require("@jsiebern/bs-material-ui/src/MaterialUi_Paper.bs.js");
 var MaterialUi_Radio = require("@jsiebern/bs-material-ui/src/MaterialUi_Radio.bs.js");
+var SingleActionButton = require("./components/SingleActionButton.bs.js");
 var MaterialUi_MenuItem = require("@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js");
 var Match = require("autosuggest-highlight/match");
 var Parse = require("autosuggest-highlight/parse");
@@ -307,15 +307,15 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                               onChange: (function (_, change) {
                                                   return Curry._1(send, /* ChangeNewPartnerId */Block.__(2, [change.newValue]));
                                                 })
-                                            }, /* array */[])), ReasonReact.element(undefined, undefined, ProposeButton.make("Propose partner addition", undefined, onSubmit, undefined, undefined, state[/* canSubmitProposal */2], false, proposeCmdStatus, /* array */[])))), Js_primitive.some(React.createElement("div", {
+                                            }, /* array */[])), ReasonReact.element(undefined, undefined, SingleActionButton.make("Propose partner addition", undefined, onSubmit, undefined, undefined, state[/* canSubmitProposal */2], false, undefined, proposeCmdStatus, /* array */[])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
-                                    }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("\n               To propose the removal of a Partner from this Venture,\n               select his or her name below and submit your proposal.\n               When enough Partners endorse this proposal, the Partner will be removed.\n               ")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, true, undefined, undefined, undefined, /* array */[partners]))])), ReasonReact.element(undefined, undefined, ProposeButton.make("Propose Partner Removal", state[/* alertText */1], (function () {
+                                    }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("\n               To propose the removal of a Partner from this Venture,\n               select his or her name below and submit your proposal.\n               When enough Partners endorse this proposal, the Partner will be removed.\n               ")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, true, undefined, undefined, undefined, /* array */[partners]))])), ReasonReact.element(undefined, undefined, SingleActionButton.make("Propose Partner Removal", state[/* alertText */1], (function () {
                                                 return Curry._1(send, /* RemovePartner */2);
                                               }), (function () {
                                                 return Curry._1(send, /* FreezeRemoval */4);
                                               }), (function () {
                                                 return Curry._1(send, /* ResetRemoval */5);
-                                              }), Js_option.isSome(inputs[/* removePartnerId */1]), undefined, removeCmdStatus, /* array */[])))), undefined, undefined, /* array */[]));
+                                              }), Js_option.isSome(inputs[/* removePartnerId */1]), undefined, undefined, removeCmdStatus, /* array */[])))), undefined, undefined, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -463,13 +463,12 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                         }
                       } else {
                         switch (removeCmdStatus.tag | 0) {
-                          case 0 : 
-                              return /* NoUpdate */0;
-                          case 1 : 
-                          case 2 : 
+                          case 3 : 
+                          case 4 : 
                               exit = 1;
                               break;
-                          
+                          default:
+                            return /* NoUpdate */0;
                         }
                       }
                       if (exit === 1) {

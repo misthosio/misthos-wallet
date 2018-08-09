@@ -1,24 +1,6 @@
 [@bs.module]
 external autosuggest : ReasonReact.reactClass = "react-autosuggest";
 
-/* [@bs.deriving abstract] */
-/* type jsProps('a, 's, 'p) = { */
-/*   suggestions: array('s), */
-/*   onSuggestionsFetchRequested: {. "value": string} => unit, */
-/*   onSuggestionsClearRequested: unit => unit, */
-/*   getSuggestionValue: 's => string, */
-/*   renderSuggestion: 's => ReasonReact.reactElement, */
-/*   renderSuggestionsContainer: */
-/*     { */
-/*       . */
-/*       "containerProps": 'a, */
-/*       "children": ReasonReact.reactElement, */
-/*     } => */
-/*     ReasonReact.reactElement, */
-/*   renderInputComponent: 'p => ReasonReact.reactElement, */
-/*   inputProps: 'p, */
-/* }; */
-
 let make =
     (
       ~theme,

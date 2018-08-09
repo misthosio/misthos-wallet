@@ -157,12 +157,14 @@ let signPayout =
       ~masterKeyChain: B.HDNode.t,
       ~accountKeyChains: AccountKeyChain.Collection.t,
       ~payoutTx as payout: t,
+      ~signatures,
     ) => {
   let txW = ref(TxWrapper.make(payout.txHex));
   let signed =
     payout.usedInputs
     |> Array.mapi((idx, input: input) => {
-         let needsSigning = txW^ |> TxWrapper.needsSigning(idx);
+         let needsSigning =
+           txW^ |> TxWrapper.needsSigning(idx, input.nCoSigners);
          if (needsSigning) {
            try (
              {
@@ -207,6 +209,10 @@ let signPayout =
                       ~redeemScript=address.redeemScript,
                       ~witnessValue=input.value,
                       ~witnessScript=address.witnessScript,
+                      ~signature=
+                        signatures
+                        |. Belt.Array.get(idx)
+                        |> Js.Option.getWithDefault(None),
                     );
                true;
              }
@@ -350,7 +356,6 @@ let build =
          i1.value |. BTC.comparedTo(i2.value)
        );
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
-  txB |. B.TxBuilder.setVersion(2);
   let usedInputs =
     mandatoryInputs
     |> Belt.Set.toList

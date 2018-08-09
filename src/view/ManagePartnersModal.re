@@ -358,11 +358,11 @@ let make =
                 send(ChangeNewPartnerId(change##newValue)),
             }
           />
-          <ProposeButton
+          <SingleActionButton
             onSubmit
-            canSubmitProposal
+            canSubmitAction=canSubmitProposal
             withConfirmation=false
-            proposeText="Propose partner addition"
+            buttonText="Propose partner addition"
             cmdStatus=proposeCmdStatus
           />
         </form>
@@ -382,12 +382,12 @@ let make =
           <ScrollList>
             <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
           </ScrollList>
-          <ProposeButton
+          <SingleActionButton
             onPropose=(() => send(FreezeRemoval))
             onSubmit=(() => send(RemovePartner))
             onCancel=(() => send(ResetRemoval))
-            canSubmitProposal=(inputs.removePartnerId |> Js.Option.isSome)
-            proposeText="Propose Partner Removal"
+            canSubmitAction=(inputs.removePartnerId |> Js.Option.isSome)
+            buttonText="Propose Partner Removal"
             ?alertText
             cmdStatus=removeCmdStatus
           />

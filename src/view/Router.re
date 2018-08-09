@@ -3,6 +3,7 @@ open PrimitiveTypes;
 module Config = {
   type ventureSubRoute =
     | None
+    | Settings
     | ManagePartners
     | CreatePayout
     | Partner(processId)
@@ -11,6 +12,7 @@ module Config = {
     | HiddenOutputLog
     | Addresses
     | Receive;
+
   type route =
     | Home
     | Venture(ventureId, ventureSubRoute)
@@ -44,6 +46,8 @@ module Config = {
       Venture(id |> VentureId.fromString, Income(transactionId))
     | ["ventures", id, "receive"] =>
       Venture(id |> VentureId.fromString, Receive)
+    | ["ventures", id, "settings"] =>
+      Venture(id |> VentureId.fromString, Settings)
     | ["ventures", id, "joinvia", userId] =>
       JoinVenture(id |> VentureId.fromString, userId |> UserId.fromString)
     | ["typographystack"] => TypographyStack
@@ -76,6 +80,8 @@ module Config = {
       "/ventures/" ++ (id |> VentureId.toString) ++ "/income/" ++ txId
     | Venture(id, Receive) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/receive"
+    | Venture(id, Settings) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/settings"
     | JoinVenture(id, userId) =>
       "/ventures/"
       ++ (id |> VentureId.toString)

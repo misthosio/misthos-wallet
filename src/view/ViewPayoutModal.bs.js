@@ -6,6 +6,7 @@ var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
@@ -20,6 +21,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
+var LedgerConfirmation = require("./components/LedgerConfirmation.bs.js");
 var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
 var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
 var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
@@ -83,14 +85,33 @@ function make(viewData, commands, cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = viewData[/* payout */1];
+              var match = viewData[/* payout */2];
               var match$1 = match[/* data */5];
-              var date = match$1[/* date */4];
-              var txId = match$1[/* txId */3];
-              var explorerLink = match$1[/* explorerLink */2];
-              var summary = match$1[/* summary */1];
+              var date = match$1[/* date */5];
+              var txId = match$1[/* txId */4];
+              var explorerLink = match$1[/* explorerLink */3];
+              var summary = match$1[/* summary */2];
+              var payoutTx = match$1[/* payoutTx */1];
               var status = match$1[/* payoutStatus */0];
               var processId = match[/* processId */0];
+              var executeEndorse = function () {
+                var signatures = viewData[/* requiresLedgerSig */0] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this endorsement on your ledger device (BTC app)"), Curry._1(viewData[/* signPayout */4], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
+                signatures.then((function (param) {
+                        if (typeof param === "number") {
+                          return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
+                        } else if (param.tag) {
+                          var match = param[0];
+                          if (match) {
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                          } else {
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                          }
+                        } else {
+                          return Promise.resolve(Curry._2(commands[/* endorsePayout */9], param[0], processId));
+                        }
+                      }));
+                return /* () */0;
+              };
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
                           return ReasonReact.element(String(idx), undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                           ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(param[0])]))])),
@@ -145,49 +166,58 @@ function make(viewData, commands, cmdStatus, _) {
                 ];
               }
               var payoutStatus = ReasonReact.element(undefined, undefined, StatusChip.make(match$2[1], match$2[0], /* array */[]));
-              var tmp;
               var exit = 0;
-              if (txId !== undefined && explorerLink !== undefined) {
-                tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
-                                    className: link,
-                                    href: explorerLink,
-                                    target: "_blank"
-                                  }, ViewCommon.text(txId))])));
-              } else {
+              if (typeof cmdStatus === "number" || cmdStatus.tag) {
                 exit = 1;
+              } else {
+                return ReasonReact.element(undefined, undefined, LedgerConfirmation.make(/* Endorsement */5, (function () {
+                                  return Curry._1(commands[/* reset */0], /* () */0);
+                                }), summary, payoutTx[/* misthosFeeAddress */2], payoutTx[/* changeAddress */3], cmdStatus, /* array */[]));
               }
               if (exit === 1) {
-                tmp = ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]));
+                var tmp;
+                var exit$1 = 0;
+                if (txId !== undefined && explorerLink !== undefined) {
+                  tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
+                                      className: link,
+                                      href: explorerLink,
+                                      target: "_blank"
+                                    }, ViewCommon.text(txId))])));
+                } else {
+                  exit$1 = 2;
+                }
+                if (exit$1 === 2) {
+                  tmp = ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]));
+                }
+                return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Payout Details")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
+                                        className: ScrollList.containerStyles
+                                      }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[date !== undefined ? ViewCommon.text("Payout completed on " + Js_primitive.valFromOption(date).toDateString()) : ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match[/* proposedBy */2]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                ViewCommon.text("Status: "),
+                                                payoutStatus
+                                              ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Payout")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                                ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[
+                                                                    destinationList,
+                                                                    ReasonReact.element("networkFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("NETWORK FEE")]))])),
+                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* networkFee */4]) + " BTC")]))]))
+                                                                            ])),
+                                                                    ReasonReact.element("misthosFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("MISTHOS FEE")]))])),
+                                                                              ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")]))]))
+                                                                            ]))
+                                                                  ]))])),
+                                                React.createElement("div", {
+                                                      className: total
+                                                    }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, total, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
+                                              ])))), Js_primitive.some(React.createElement("div", {
+                                        className: ScrollList.containerStyles
+                                      }, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */1], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", undefined, "Reject Payout", match[/* canVote */3], executeEndorse, (function () {
+                                                  return Curry._1(commands[/* rejectPayout */10], processId);
+                                                }), (function () {
+                                                  return Curry._1(commands[/* reset */0], /* () */0);
+                                                }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */3]) > 0 ? ReasonReact.element(undefined, undefined, MaterialUi_SnackbarContent.make(undefined, undefined, Js_primitive.some(ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")), undefined, undefined, undefined, undefined, undefined, /* array */[])) : null)), Js_primitive.some(tmp), undefined, /* array */[]));
               }
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Payout Details")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
-                                      className: ScrollList.containerStyles
-                                    }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[date !== undefined ? ViewCommon.text("Payout completed on " + Js_primitive.valFromOption(date).toDateString()) : ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match[/* proposedBy */2]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                              ViewCommon.text("Status: "),
-                                              payoutStatus
-                                            ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Payout")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
-                                              ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[
-                                                                  destinationList,
-                                                                  ReasonReact.element("networkFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("NETWORK FEE")]))])),
-                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* networkFee */4]) + " BTC")]))]))
-                                                                          ])),
-                                                                  ReasonReact.element("misthosFee", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("MISTHOS FEE")]))])),
-                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")]))]))
-                                                                          ]))
-                                                                ]))])),
-                                              React.createElement("div", {
-                                                    className: total
-                                                  }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, total, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                            ])))), Js_primitive.some(React.createElement("div", {
-                                      className: ScrollList.containerStyles
-                                    }, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */0], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", undefined, "Reject Payout", match[/* canVote */3], (function () {
-                                                return Curry._1(commands[/* endorsePayout */8], processId);
-                                              }), (function () {
-                                                return Curry._1(commands[/* rejectPayout */9], processId);
-                                              }), (function () {
-                                                return Curry._1(commands[/* reset */0], /* () */0);
-                                              }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */2]) > 0 ? ReasonReact.element(undefined, undefined, MaterialUi_SnackbarContent.make(undefined, undefined, Js_primitive.some(ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")), undefined, undefined, undefined, undefined, undefined, /* array */[])) : null)), Js_primitive.some(tmp), undefined, /* array */[]));
+              
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

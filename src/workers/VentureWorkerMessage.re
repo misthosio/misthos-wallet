@@ -15,9 +15,15 @@ type incoming =
   | ProposePartnerRemoval(ventureId, userId)
   | RejectPartnerRemoval(ventureId, processId)
   | EndorsePartnerRemoval(ventureId, processId)
-  | ProposePayout(ventureId, accountIdx, list((string, BTC.t)), BTC.t)
+  | SubmitCustodianKeyChain(ventureId, CustodianKeyChain.public)
+  | ProposePayout(
+      ventureId,
+      accountIdx,
+      PayoutTransaction.t,
+      array(option((string, string))),
+    )
   | RejectPayout(ventureId, processId)
-  | EndorsePayout(ventureId, processId)
+  | EndorsePayout(ventureId, array(option((string, string))), processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
   | NewItemsDetected(ventureId, array(EventLog.item), userId)
   | SyncWallet(
@@ -33,11 +39,13 @@ type incoming =
 type encodedIncoming = Js.Json.t;
 
 type cmdSuccess =
+  | KeyChainSubmitted
   | ProcessStarted(processId)
   | ProcessEndorsed(processId)
   | ProcessRejected(processId);
 
 type cmdError =
+  | NotACustodian
   | CouldNotJoinVenture
   | CouldNotLoadVenture
   | MaxPartnersReached
@@ -66,6 +74,8 @@ exception UnknownMessage(Js.Json.t);
 
 let encodeSuccess =
   fun
+  | KeyChainSubmitted =>
+    Json.Encode.(object_([("type", string("KeyChainSubmitted"))]))
   | ProcessStarted(processId) =>
     Json.Encode.(
       object_([
@@ -91,6 +101,7 @@ let encodeSuccess =
 let decodeSuccess = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
+  | "KeyChainSubmitted" => KeyChainSubmitted
   | "ProcessStarted" =>
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     ProcessStarted(processId);
@@ -106,6 +117,8 @@ let decodeSuccess = raw => {
 
 let encodeError =
   fun
+  | NotACustodian =>
+    Json.Encode.(object_([("type", string("NotACustodian"))]))
   | CouldNotJoinVenture =>
     Json.Encode.(object_([("type", string("CouldNotJoinVenture"))]))
   | CouldNotLoadVenture =>
@@ -241,14 +254,22 @@ let encodeIncoming =
         ("processId", ProcessId.encode(processId)),
       ])
     )
-  | ProposePayout(ventureId, accountIdx, destinations, fee) =>
+  | SubmitCustodianKeyChain(ventureId, keyChain) =>
+    Json.Encode.(
+      object_([
+        ("type", string("SubmitCustodianKeyChain")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("keyChain", CustodianKeyChain.encode(keyChain)),
+      ])
+    )
+  | ProposePayout(ventureId, accountIdx, payoutTx, signatures) =>
     Json.Encode.(
       object_([
         ("type", string("ProposePayout")),
         ("ventureId", VentureId.encode(ventureId)),
         ("accountIdx", AccountIndex.encode(accountIdx)),
-        ("destinations", list(tuple2(string, BTC.encode), destinations)),
-        ("fee", BTC.encode(fee)),
+        ("payoutTx", PayoutTransaction.encode(payoutTx)),
+        ("signatures", array(nullable(pair(string, string)), signatures)),
       ])
     )
   | RejectPayout(ventureId, processId) =>
@@ -259,11 +280,12 @@ let encodeIncoming =
         ("processId", ProcessId.encode(processId)),
       ])
     )
-  | EndorsePayout(ventureId, processId) =>
+  | EndorsePayout(ventureId, signatures, processId) =>
     Json.Encode.(
       object_([
         ("type", string("EndorsePayout")),
         ("ventureId", VentureId.encode(ventureId)),
+        ("signatures", array(nullable(pair(string, string)), signatures)),
         ("processId", ProcessId.encode(processId)),
       ])
     )
@@ -362,17 +384,24 @@ let decodeIncoming = raw => {
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     EndorsePartnerRemoval(ventureId, processId);
+  | "SubmitCustodianKeyChain" =>
+    let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
+    let keyChain =
+      raw |> Json.Decode.field("keyChain", CustodianKeyChain.decode);
+    SubmitCustodianKeyChain(ventureId, keyChain);
+
   | "ProposePayout" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let accountIdx =
       raw |> Json.Decode.field("accountIdx", AccountIndex.decode);
-    let destinations =
+    let payoutTx =
+      raw |> Json.Decode.(field("payoutTx", PayoutTransaction.decode));
+    let signatures =
       raw
       |> Json.Decode.(
-           field("destinations", list(tuple2(string, BTC.decode)))
+           field("signatures", array(optional(pair(string, string))))
          );
-    let fee = raw |> Json.Decode.field("fee", BTC.decode);
-    ProposePayout(ventureId, accountIdx, destinations, fee);
+    ProposePayout(ventureId, accountIdx, payoutTx, signatures);
   | "RejectPayout" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
@@ -380,7 +409,12 @@ let decodeIncoming = raw => {
   | "EndorsePayout" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
-    EndorsePayout(ventureId, processId);
+    let signatures =
+      raw
+      |> Json.Decode.(
+           field("signatures", array(optional(pair(string, string))))
+         );
+    EndorsePayout(ventureId, signatures, processId);
   | "ExposeIncomeAddress" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let accountIdx =

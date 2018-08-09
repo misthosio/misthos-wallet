@@ -86,6 +86,7 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.addProposal(state[/* localUser */1], $$event[0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : PendingApproval */0,
+                                /* payoutTx */data[/* payoutTx */1],
                                 /* summary */PayoutTransaction.summary(state[/* network */0], data[/* payoutTx */1]),
                                 /* explorerLink */undefined,
                                 /* txId */undefined,
@@ -122,10 +123,11 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.updateData(accepted[/* processId */0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : Accepted */1,
-                                /* summary */data[/* summary */1],
-                                /* explorerLink */data[/* explorerLink */2],
-                                /* txId */data[/* txId */3],
-                                /* date */data[/* date */4]
+                                /* payoutTx */data[/* payoutTx */1],
+                                /* summary */data[/* summary */2],
+                                /* explorerLink */data[/* explorerLink */3],
+                                /* txId */data[/* txId */4],
+                                /* date */data[/* date */5]
                               ];
                       }), ProcessCollector.addAcceptance(accepted, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -140,10 +142,11 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.updateData(abort[/* processId */0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : Aborted */3,
-                                /* summary */data[/* summary */1],
-                                /* explorerLink */data[/* explorerLink */2],
-                                /* txId */data[/* txId */3],
-                                /* date */data[/* date */4]
+                                /* payoutTx */data[/* payoutTx */1],
+                                /* summary */data[/* summary */2],
+                                /* explorerLink */data[/* explorerLink */3],
+                                /* txId */data[/* txId */4],
+                                /* date */data[/* date */5]
                               ];
                       }), ProcessCollector.addAbort(abort, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -158,10 +161,11 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.updateData(denial[/* processId */0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : Denied */2,
-                                /* summary */data[/* summary */1],
-                                /* explorerLink */data[/* explorerLink */2],
-                                /* txId */data[/* txId */3],
-                                /* date */data[/* date */4]
+                                /* payoutTx */data[/* payoutTx */1],
+                                /* summary */data[/* summary */2],
+                                /* explorerLink */data[/* explorerLink */3],
+                                /* txId */data[/* txId */4],
+                                /* date */data[/* date */5]
                               ];
                       }), ProcessCollector.addDenial(denial, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -180,7 +184,8 @@ function apply($$event, state) {
                         var match = Js_option.isSome(txDate);
                         return /* record */[
                                 /* payoutStatus */match ? /* Confirmed */5 : /* Unconfirmed */4,
-                                /* summary */data[/* summary */1],
+                                /* payoutTx */data[/* payoutTx */1],
+                                /* summary */data[/* summary */2],
                                 /* explorerLink */getExplorerLink(state[/* network */0], txId),
                                 /* txId */txId,
                                 /* date */txDate
@@ -200,10 +205,11 @@ function apply($$event, state) {
                         var match = data[/* payoutStatus */0] !== /* Unconfirmed */4 && data[/* payoutStatus */0] !== /* Confirmed */5;
                         return /* record */[
                                 /* payoutStatus */match ? /* Failed */[errorMessage] : data[/* payoutStatus */0],
-                                /* summary */data[/* summary */1],
-                                /* explorerLink */data[/* explorerLink */2],
-                                /* txId */data[/* txId */3],
-                                /* date */data[/* date */4]
+                                /* payoutTx */data[/* payoutTx */1],
+                                /* summary */data[/* summary */2],
+                                /* explorerLink */data[/* explorerLink */3],
+                                /* txId */data[/* txId */4],
+                                /* date */data[/* date */5]
                               ];
                       }), state[/* payouts */2]),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -257,9 +263,10 @@ function apply($$event, state) {
                 /* payouts */processId$1 !== undefined ? ProcessCollector.updateData(Js_primitive.valFromOption(processId$1), (function (data) {
                           return /* record */[
                                   /* payoutStatus : Confirmed */5,
-                                  /* summary */data[/* summary */1],
-                                  /* explorerLink */data[/* explorerLink */2],
-                                  /* txId */data[/* txId */3],
+                                  /* payoutTx */data[/* payoutTx */1],
+                                  /* summary */data[/* summary */2],
+                                  /* explorerLink */data[/* explorerLink */3],
+                                  /* txId */data[/* txId */4],
                                   /* date */Js_primitive.some(txDate$2)
                                 ];
                         }), state[/* payouts */2]) : state[/* payouts */2],

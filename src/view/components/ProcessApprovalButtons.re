@@ -43,7 +43,16 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => {buttonState: NoDecision, cmdStatus: Idle},
+  initialState: () => {
+    buttonState:
+      switch (cmdStatus) {
+      | PreSubmit(_)
+      | PreSubmitError(_)
+      | Pending(_) => EndorsementSubmited
+      | _ => NoDecision
+      },
+    cmdStatus,
+  },
   willReceiveProps: ({state}) => {...state, cmdStatus},
   reducer: (action, state) =>
     switch (action) {
@@ -113,7 +122,7 @@ let make =
                   (text(rejectText))
                 </MButton>,
               |]
-            | (Error(_), RejectionSubmited, _) => [|
+            | (PreSubmitError(_) | Error(_), RejectionSubmited, _) => [|
                 <CommandExecutor.Status cmdStatus action=Endorsement />,
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
                   <MButton variant=Flat onClick=(_e => send(Cancel))>
@@ -121,7 +130,7 @@ let make =
                   </MButton>
                 </MTypography>,
               |]
-            | (Error(CouldNotPersistVenture), EndorsementSubmited, _) => [|
+            | (PreSubmitError(_) | Error(_), EndorsementSubmited, _) => [|
                 <CommandExecutor.Status cmdStatus action=Rejection />,
                 <MButton variant=Flat onClick=(_e => send(Cancel))>
                   (text("Try Again"))

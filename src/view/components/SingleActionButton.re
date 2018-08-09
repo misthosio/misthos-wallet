@@ -17,7 +17,7 @@ type action =
   | Propose
   | ConfirmProposal;
 
-let component = ReasonReact.reducerComponent("ProcessApprovalButtons");
+let component = ReasonReact.reducerComponent("SingleActionButton");
 
 module Styles = {
   open Css;
@@ -27,21 +27,30 @@ module Styles = {
 
 let make =
     (
-      ~proposeText,
+      ~buttonText,
       ~alertText=?,
       ~onSubmit,
       ~onPropose=?,
       ~onCancel=?,
-      ~canSubmitProposal,
+      ~canSubmitAction,
       ~withConfirmation=true,
+      ~action=CommandExecutor.Status.Proposal,
       ~cmdStatus: CommandExecutor.cmdStatus,
       _children,
     ) => {
   ...component,
-  initialState: () => {buttonState: NoDecision, cmdStatus: Idle},
+  initialState: () => {
+    buttonState:
+      switch (cmdStatus) {
+      | PreSubmit(_)
+      | Pending(_) => ProposalSubmited
+      | _ => NoDecision
+      },
+    cmdStatus,
+  },
   willReceiveProps: ({state}) => {...state, cmdStatus},
   reducer: (action, state) =>
-    switch (action, withConfirmation, canSubmitProposal) {
+    switch (action, withConfirmation, canSubmitAction) {
     | (_, _, false) => ReasonReact.NoUpdate
     | (Propose, true, _) =>
       ReasonReact.UpdateWithSideEffects(
@@ -72,7 +81,7 @@ let make =
                   (alertText |> Js.Option.getWithDefault("") |> text)
                 </MTypography>,
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
-                  (proposeText |> text)
+                  (buttonText |> text)
                   <MButton
                     gutterTop=false
                     variant=Flat
@@ -85,16 +94,16 @@ let make =
                   </MButton>
                 </MTypography>,
               |]
-            | (_, Error(_) | Idle)
+            | (_, PreSubmitError(_) | Error(_) | Idle)
             | (NoDecision, _) => [|
                 <MButton
                   fullWidth=true onClick=(_e => send(Propose)) submitBtn=true>
-                  (text(proposeText))
+                  (text(buttonText))
                 </MButton>,
-                <CommandExecutor.Status cmdStatus action=Proposal />,
+                <CommandExecutor.Status cmdStatus action />,
               |]
             | (ProposalSubmited, _) => [|
-                <CommandExecutor.Status cmdStatus action=Proposal />,
+                <CommandExecutor.Status cmdStatus action />,
               |]
             },
           |]),

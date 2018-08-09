@@ -61,30 +61,12 @@ let preparePayoutTx =
       ~eligibleWhenProposing,
       {userId, masterKeyChain}: SessionData.t,
       accountIdx,
-      destinations,
-      satsPerByte,
+      payoutTx,
+      signatures,
       {ventureId, payoutPolicy, walletInfoCollector},
     ) =>
   try (
     {
-      let payoutTx =
-        PayoutTransaction.build(
-          ~optionalInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.currentSpendableInputs(accountIdx),
-          ~mandatoryInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.oldSpendableInputs(accountIdx),
-          ~unlockedInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.unlockedInputs(accountIdx),
-          ~destinations,
-          ~satsPerByte,
-          ~changeAddress=
-            walletInfoCollector
-            |> WalletInfoCollector.nextChangeAddress(accountIdx, userId),
-          ~network=walletInfoCollector |> WalletInfoCollector.network,
-        );
       let payoutTx =
         switch (
           PayoutTransaction.signPayout(
@@ -94,6 +76,7 @@ let preparePayoutTx =
             ~accountKeyChains=
               walletInfoCollector |> WalletInfoCollector.accountKeyChains,
             ~payoutTx,
+            ~signatures,
           )
         ) {
         | Signed(payout) => payout
@@ -112,4 +95,32 @@ let preparePayoutTx =
     }
   ) {
   | PayoutTransaction.NotEnoughFunds => NotEnoughFunds
+  };
+
+let endorsePayout =
+    (
+      processId,
+      signatures,
+      {userId, masterKeyChain}: SessionData.t,
+      {ventureId, walletInfoCollector},
+    ) =>
+  switch (
+    PayoutTransaction.signPayout(
+      ~ventureId,
+      ~userId,
+      ~masterKeyChain,
+      ~accountKeyChains=
+        walletInfoCollector |> WalletInfoCollector.accountKeyChains,
+      ~payoutTx=
+        walletInfoCollector |> WalletInfoCollector.getPayoutTx(processId),
+      ~signatures,
+    )
+  ) {
+  | Signed(payoutTx) => [
+      PayoutSigned(
+        Event.Payout.Signed.make(~processId, ~custodianId=userId, ~payoutTx),
+      ),
+      Event.makePayoutEndorsed(~processId, ~supporterId=userId),
+    ]
+  | NotSigned => [Event.makePayoutEndorsed(~processId, ~supporterId=userId)]
   };

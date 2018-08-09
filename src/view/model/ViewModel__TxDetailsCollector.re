@@ -21,6 +21,7 @@ type payoutStatus =
 
 type data = {
   payoutStatus,
+  payoutTx: PayoutTransaction.t,
   summary: PayoutTransaction.summary,
   explorerLink: option(string),
   txId: option(string),
@@ -96,6 +97,7 @@ let apply = (event, state) =>
                txId: None,
                date: None,
                payoutStatus: PendingApproval,
+               payoutTx: data.payoutTx,
                summary:
                  data.payoutTx |> PayoutTransaction.summary(state.network),
              }

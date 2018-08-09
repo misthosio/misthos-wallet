@@ -7,15 +7,14 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
-var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var VentureInfoBox = require("./components/VentureInfoBox.bs.js");
 var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
-var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var ContactUsShoutOut = require("./components/ContactUsShoutOut.bs.js");
+var SingleActionButton = require("./components/SingleActionButton.bs.js");
 
 var component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -42,10 +41,8 @@ function make(onCreateVenture, cmdStatus, _) {
                               return Curry._1(send, /* CreateVenture */0);
                             }), param);
               };
-              var onClick = function (param) {
-                return ViewCommon.ignoreEvent((function () {
-                              return Curry._1(send, /* CreateVenture */0);
-                            }), param);
+              var onClick = function () {
+                return Curry._1(send, /* CreateVenture */0);
               };
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Create a Venture")), undefined, undefined, undefined, Js_primitive.some(React.createElement("form", {
                                       onSubmit: onSubmit
@@ -54,7 +51,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                               param[/* state */1][/* newVenture */0]
                                             ], (function (e) {
                                                 return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
-                                              }), true, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, MButton.make(undefined, onClick, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, true, /* array */[ViewCommon.text("create venture")])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(/* array */[])), ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* CreateVenture */0, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
+                                              }), true, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, SingleActionButton.make("create venture", undefined, onClick, undefined, undefined, true, false, /* CreateVenture */0, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(/* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -66,7 +63,7 @@ function make(onCreateVenture, cmdStatus, _) {
           /* reducer */(function (action, state) {
               var match = state[/* cmdStatus */1];
               var exit = 0;
-              if (typeof match === "number" || match.tag) {
+              if (typeof match === "number" || match.tag !== 2) {
                 exit = 1;
               } else {
                 return /* NoUpdate */0;

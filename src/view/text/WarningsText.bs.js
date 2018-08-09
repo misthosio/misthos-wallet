@@ -23,7 +23,7 @@ var testnet = /* array */[
 function atRiskFunds(ventureId) {
   var route = /* Venture */Block.__(0, [
       ventureId,
-      /* CreatePayout */2
+      /* CreatePayout */3
     ]);
   return /* array */[
           ViewCommon.text("Some of your addresses contain at-risk funds. Please "),

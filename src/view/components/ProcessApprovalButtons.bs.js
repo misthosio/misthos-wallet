@@ -67,7 +67,7 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
               switch (state) {
                 case 0 : 
                     if (canVote) {
-                      exit = 2;
+                      exit = 3;
                     } else {
                       tmp = /* array */[null];
                     }
@@ -99,47 +99,42 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
                     break;
                 case 2 : 
                 case 4 : 
-                    exit$1 = 3;
+                    exit$1 = 4;
                     break;
                 
               }
-              if (exit$1 === 3) {
+              if (exit$1 === 4) {
                 if (typeof cmdStatus === "number") {
-                  exit = canVote ? 2 : 1;
+                  exit = canVote ? 3 : 2;
                 } else {
                   switch (cmdStatus.tag | 0) {
                     case 1 : 
-                        if (state >= 4) {
-                          tmp = /* array */[
-                            ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[])),
-                            ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
-                                                  return Curry._1(send, /* Cancel */0);
-                                                }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Try Again")]))]))
-                          ];
-                        } else if (cmdStatus[0] >= 6) {
-                          tmp = /* array */[
-                            ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[])),
-                            ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
-                                        return Curry._1(send, /* Cancel */0);
-                                      }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Try Again")]))
-                          ];
-                        } else {
-                          exit = 1;
-                        }
-                        break;
-                    case 0 : 
-                    case 2 : 
+                    case 3 : 
                         exit = 1;
                         break;
-                    
+                    default:
+                      exit = 2;
                   }
                 }
               }
               switch (exit) {
                 case 1 : 
-                    tmp = state >= 4 ? /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[]))] : /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[]))];
+                    tmp = state >= 4 ? /* array */[
+                        ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */5, /* array */[])),
+                        ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                                              return Curry._1(send, /* Cancel */0);
+                                            }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Try Again")]))]))
+                      ] : /* array */[
+                        ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */6, /* array */[])),
+                        ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                                    return Curry._1(send, /* Cancel */0);
+                                  }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Try Again")]))
+                      ];
                     break;
                 case 2 : 
+                    tmp = state >= 4 ? /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */6, /* array */[]))] : /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */5, /* array */[]))];
+                    break;
+                case 3 : 
                     tmp = /* array */[
                       ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                   return Curry._1(send, /* Endorse */1);
@@ -154,9 +149,23 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
               return React.createElement("div", undefined, Belt_Array.concatMany(/* array */[tmp]));
             }),
           /* initialState */(function () {
+              var tmp;
+              if (typeof cmdStatus === "number") {
+                tmp = /* NoDecision */0;
+              } else {
+                switch (cmdStatus.tag | 0) {
+                  case 0 : 
+                  case 1 : 
+                  case 2 : 
+                      tmp = /* EndorsementSubmited */2;
+                      break;
+                  default:
+                    tmp = /* NoDecision */0;
+                }
+              }
               return /* record */[
-                      /* buttonState : NoDecision */0,
-                      /* cmdStatus : Idle */0
+                      /* buttonState */tmp,
+                      /* cmdStatus */cmdStatus
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],

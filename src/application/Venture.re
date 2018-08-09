@@ -447,6 +447,33 @@ module Cmd = {
       );
     };
   };
+  module SubmitCustodianKeyChain = {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | NotACustodian
+      | CouldNotPersist(Js.Promise.error);
+    let exec = (~keyChain, {session: {userId}, state} as venture) =>
+      Js.Promise.(
+        switch (state |> State.custodianAcceptedFor(userId)) {
+        | None => NotACustodian |> resolve
+        | Some((accepted: Event.Custodian.Accepted.t)) =>
+          CustodianKeyChainUpdated(
+            Event.CustodianKeyChainUpdated.make(
+              ~custodianApprovalProcess=accepted.processId,
+              ~custodianId=userId,
+              ~keyChain,
+            ),
+          )
+          |. apply(venture)
+          |> persist
+          |> then_(
+               fun
+               | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+               | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+             )
+        }
+      );
+  };
   module ProposePartner = {
     let maxNPartners = 12;
     type result =
@@ -752,8 +779,8 @@ module Cmd = {
     let exec =
         (
           ~accountIdx,
-          ~destinations,
-          ~fee,
+          ~payoutTx,
+          ~signatures,
           {state, wallet, session} as venture,
         ) => {
       logMessage("Executing 'ProposePayout' command");
@@ -762,8 +789,8 @@ module Cmd = {
           ~eligibleWhenProposing=state |> State.currentPartners,
           session,
           accountIdx,
-          destinations,
-          fee,
+          payoutTx,
+          signatures,
           wallet,
         )
         |> (
@@ -813,16 +840,17 @@ module Cmd = {
     type result =
       | Ok(t, array(EventLog.item))
       | CouldNotPersist(Js.Promise.error);
-    let exec = (~processId, {session} as venture) => {
+    let exec =
+        (
+          ~processId,
+          ~signatures: array(option((string, string))),
+          {session, wallet} as venture,
+        ) => {
       logMessage("Executing 'EndorsePayout' command");
       Js.Promise.(
-        venture
-        |> apply(
-             Event.makePayoutEndorsed(
-               ~processId,
-               ~supporterId=session.userId,
-             ),
-           )
+        wallet
+        |> Wallet.endorsePayout(processId, signatures, session)
+        |> applyMany(venture)
         |> persist
         |> then_(
              fun

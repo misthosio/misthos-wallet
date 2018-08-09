@@ -12,8 +12,8 @@ describe("Identifier", (function () {
         return Jest.test("Creates uniq hash of the custodianKeyChains", (function () {
                       var user2 = Fixtures.threeUserSessions[1];
                       var user1 = Fixtures.threeUserSessions[0];
-                      var custodianKeyChain1 = Generators.custodianKeyChain(undefined, PrimitiveTypes.VentureId[/* fromString */1]("test"), 0, user1);
-                      var custodianKeyChain2 = Generators.custodianKeyChain(undefined, PrimitiveTypes.VentureId[/* fromString */1]("test"), 0, user2);
+                      var custodianKeyChain1 = Generators.custodianKeyChain(undefined, undefined, PrimitiveTypes.VentureId[/* fromString */1]("test"), 0, user1);
+                      var custodianKeyChain2 = Generators.custodianKeyChain(undefined, undefined, PrimitiveTypes.VentureId[/* fromString */1]("test"), 0, user2);
                       var identifier = AccountKeyChain.Identifier[/* make */2](1, /* :: */[
                             /* tuple */[
                               user1[/* userId */0],

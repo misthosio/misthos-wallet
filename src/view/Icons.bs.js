@@ -417,43 +417,6 @@ var avatar = React.createElement("svg", {
               strokeWidth: "4"
             })));
 
-var alert = React.createElement("svg", {
-      height: "26px",
-      width: "26px",
-      version: "1.1",
-      viewBox: "0 0 26 26",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, React.createElement("defs", undefined, React.createElement("linearGradient", {
-              id: "linearGradient-1",
-              x1: "-1.81611636%",
-              x2: "86.9122276%",
-              y1: "69.5150335%",
-              y2: "46.0422442%"
-            }, React.createElement("stop", {
-                  offset: "0%",
-                  stopColor: "#FF006D"
-                }), React.createElement("stop", {
-                  offset: "100%",
-                  stopColor: "#F65E25"
-                }))), React.createElement("g", {
-          id: "Wallet-Details",
-          fill: "none",
-          fillRule: "evenodd",
-          stroke: "none",
-          strokeWidth: "1"
-        }, React.createElement("g", {
-              id: "Desktop:-Venture-View-with-Wallet-History-Icon,-Alert",
-              fill: "url(#linearGradient-1)",
-              fillRule: "nonzero",
-              transform: "translate(-299.000000, -153.000000)"
-            }, React.createElement("g", {
-                  id: "alert",
-                  transform: "translate(299.000000, 153.000000)"
-                }, React.createElement("path", {
-                      id: "Combined-Shape",
-                      d: "M13,0 C20.1851914,0 26,5.81430078 26,13 C26,20.1851914 20.1856992,26 13,26 C5.81480859,26 0,20.1856992 0,13 C0,5.81480859 5.81430078,0 13,0 Z M13,6.54453516 C13.5609297,6.54453516 14.015625,6.99923047 14.015625,7.56016016 L14.015625,14.1004297 C14.015625,14.6613594 13.5609297,15.1160547 13,15.1160547 C12.4390703,15.1160547 11.984375,14.6613594 11.984375,14.1004297 L11.984375,7.56016016 C11.984375,6.99923047 12.4390703,6.54453516 13,6.54453516 Z M13,20.1852083 C12.2427658,20.1852083 11.6289062,19.5713488 11.6289062,18.8141146 C11.6289062,18.0568804 12.2427658,17.4430208 13,17.4430208 C13.7572342,17.4430208 14.3710938,18.0568804 14.3710938,18.8141146 C14.3710938,19.5713488 13.7572342,20.1852083 13,20.1852083 Z M13,23.96875 C19.0625195,23.96875 23.96875,19.0629258 23.96875,13 C23.96875,6.93748047 19.0629258,2.03125 13,2.03125 C6.93748047,2.03125 2.03125,6.93707422 2.03125,13 C2.03125,19.0625195 6.93707422,23.96875 13,23.96875 Z"
-                    })))));
-
 var send = React.createElement("svg", {
       version: "1.1",
       viewBox: "0 0 18 18",
@@ -476,6 +439,48 @@ var send = React.createElement("svg", {
                         }), React.createElement("polygon", {
                           points: "16 0 10.4 16 7.2 8.8 0 5.6"
                         }))))));
+
+var clock = React.createElement("svg", {
+      height: "22",
+      width: "22",
+      viewBox: "0 0 22 22",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("g", {
+          fill: "none",
+          fillRule: "evenodd",
+          stroke: "currentColor",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          transform: "translate(1 1)"
+        }, React.createElement("circle", {
+              cx: "10",
+              cy: "10",
+              r: "10"
+            }), React.createElement("path", {
+              d: "M10 4v6l4 2"
+            })));
+
+var settings = React.createElement("svg", {
+      height: "22",
+      width: "22",
+      viewBox: "0 0 22 22",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("g", {
+          fill: "none",
+          fillRule: "evenodd",
+          stroke: "currentColor",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          transform: "translate(1 1)"
+        }, React.createElement("circle", {
+              cx: "10",
+              cy: "10",
+              r: "2.727"
+            }), React.createElement("path", {
+              d: "M16.727 12.727a1.5 1.5 0 0 0 .3 1.655l.055.054a1.818 1.818 0 1 1-2.573 2.573l-.054-.054a1.5 1.5 0 0 0-1.655-.3 1.5 1.5 0 0 0-.91 1.372v.155a1.818 1.818 0 1 1-3.635 0V18.1a1.5 1.5 0 0 0-.982-1.373 1.5 1.5 0 0 0-1.655.3l-.054.055a1.818 1.818 0 1 1-2.573-2.573l.054-.054a1.5 1.5 0 0 0 .3-1.655 1.5 1.5 0 0 0-1.372-.91h-.155a1.818 1.818 0 1 1 0-3.635H1.9a1.5 1.5 0 0 0 1.373-.982 1.5 1.5 0 0 0-.3-1.655l-.055-.054A1.818 1.818 0 1 1 5.491 2.99l.054.054a1.5 1.5 0 0 0 1.655.3h.073a1.5 1.5 0 0 0 .909-1.372v-.155a1.818 1.818 0 0 1 3.636 0V1.9a1.5 1.5 0 0 0 .91 1.373 1.5 1.5 0 0 0 1.654-.3l.054-.055a1.818 1.818 0 1 1 2.573 2.573l-.054.054a1.5 1.5 0 0 0-.3 1.655v.073a1.5 1.5 0 0 0 1.372.909h.155a1.818 1.818 0 1 1 0 3.636H18.1a1.5 1.5 0 0 0-1.373.91z"
+            })));
 
 var text = ViewCommon.text;
 
@@ -507,6 +512,7 @@ exports.medium = medium;
 exports.chevronDown = chevronDown;
 exports.arrowDownBig = arrowDownBig;
 exports.avatar = avatar;
-exports.alert = alert;
 exports.send = send;
+exports.clock = clock;
+exports.settings = settings;
 /* arrowRight Not a pure module */

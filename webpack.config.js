@@ -70,6 +70,7 @@ const config = {
     }),
   ],
   devServer: {
+    https: true,
     compress: true,
     clientLogLevel: 'none',
     port: 3000,

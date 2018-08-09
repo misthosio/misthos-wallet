@@ -25,6 +25,7 @@ type t = {
   txDetailsCollector: TxDetailsCollector.t,
   oldInputCollector: OldInputCollector.t,
   walletInfoCollector: WalletInfoCollector.t,
+  ledgerInfoCollector: LedgerInfoCollector.t,
 };
 
 let readOnly = ({localUser, partnersCollector}) =>
@@ -36,6 +37,35 @@ let captureResponse = (correlationId, response, state) => {
 };
 
 let lastResponse = ({lastResponse}) => lastResponse;
+
+module VentureSettingsView = {
+  type t = {
+    ledgerId: option(string),
+    ledgerUpToDate: bool,
+    getCustodianKeyChain: unit => Js.Promise.t(Ledger.result),
+  };
+  let fromViewModel = ({ventureId, walletInfoCollector, ledgerInfoCollector}) => {
+    ledgerId:
+      ledgerInfoCollector
+      |> LedgerInfoCollector.ledgerId(AccountIndex.default),
+    ledgerUpToDate:
+      ledgerInfoCollector
+      |> LedgerInfoCollector.ledgerUpToDate(AccountIndex.default),
+    getCustodianKeyChain: () =>
+      Ledger.getCustodianKeyChain(
+        ~network=walletInfoCollector |> WalletInfoCollector.network,
+        ~ventureId,
+        ~ledgerId=
+          ledgerInfoCollector
+          |> LedgerInfoCollector.ledgerId(AccountIndex.default),
+        ~accountIdx=AccountIndex.default,
+        ~keyChainIdx=
+          ledgerInfoCollector
+          |> LedgerInfoCollector.nextKeyChainIdx(AccountIndex.default),
+      ),
+  };
+};
+let ventureSettingsView = VentureSettingsView.fromViewModel;
 
 module AddressesView = {
   open Belt;
@@ -53,6 +83,7 @@ module AddressesView = {
   };
   type addressDetails = {
     custodians: UserId.set,
+    usingHardwareKey: UserId.set,
     nCoSigners: int,
     nCustodians: int,
     addressType,
@@ -96,6 +127,7 @@ module AddressesView = {
       addressDetails: addressInfo => {
         isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
         custodians: addressInfo.custodians,
+        usingHardwareKey: addressInfo.usingHardwareKey,
         nCustodians: addressInfo.custodians |> Belt.Set.size,
         nCoSigners: addressInfo.nCoSigners,
         addressType: addressInfo.addressType,
@@ -256,6 +288,7 @@ module ViewPartnerView = {
 let viewPartnerModal = ViewPartnerView.fromViewModelState;
 
 module CreatePayoutView = {
+  open Belt;
   type balance = {
     currentSpendable: BTC.t,
     reserved: BTC.t,
@@ -268,10 +301,25 @@ module CreatePayoutView = {
     initialSummary: PayoutTransaction.summary,
     isAddressValid: string => bool,
     max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
-    summary: (list((string, BTC.t)), BTC.t) => PayoutTransaction.summary,
+    summary: PayoutTransaction.t => PayoutTransaction.summary,
+    createPayoutTx: (list((string, BTC.t)), BTC.t) => PayoutTransaction.t,
+    requiresLedgerSig: bool,
+    collectInputHexs:
+      (Map.String.t(string), PayoutTransaction.t) =>
+      Js.Promise.t((Map.String.t(string), array(string))),
+    signPayoutTx:
+      (PayoutTransaction.t, array(string)) => Js.Promise.t(Ledger.signResult),
   };
   let fromViewModelState =
-      ({ventureId, localUser, ventureName, walletInfoCollector}) => {
+      (
+        {
+          ventureId,
+          localUser,
+          ledgerInfoCollector,
+          ventureName,
+          walletInfoCollector,
+        },
+      ) => {
     let reserved =
       walletInfoCollector
       |> WalletInfoCollector.totalReservedBTC(AccountIndex.default);
@@ -298,7 +346,7 @@ module CreatePayoutView = {
       |. Belt.Set.union(unlockedInputs);
     let changeAddress =
       walletInfoCollector
-      |> WalletInfoCollector.fakeChangeAddress(
+      |> WalletInfoCollector.nextChangeAddress(
            AccountIndex.default,
            localUser,
          );
@@ -335,7 +383,8 @@ module CreatePayoutView = {
           ~satsPerByte=fee,
           ~network,
         ),
-      summary: (destinations, fee) =>
+      summary: PayoutTransaction.summary(network),
+      createPayoutTx: (destinations, fee) =>
         PayoutTransaction.build(
           ~mandatoryInputs,
           ~unlockedInputs,
@@ -344,8 +393,48 @@ module CreatePayoutView = {
           ~satsPerByte=fee,
           ~changeAddress,
           ~network,
-        )
-        |> PayoutTransaction.summary(network),
+        ),
+      requiresLedgerSig:
+        ledgerInfoCollector
+        |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+        |> Js.Option.isSome,
+      collectInputHexs: (knownHexs, {usedInputs}) => {
+        let inputs =
+          usedInputs
+          |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
+          |> Set.String.fromArray;
+        let knownIds =
+          knownHexs |. Map.String.keysToArray |> Set.String.fromArray;
+        Js.Promise.(
+          Set.String.diff(inputs, knownIds)
+          |> Set.String.toArray
+          |> NetworkClient.transactionHex(network)
+          |> then_(txs => {
+               let knownHexs = knownHexs |. Map.String.mergeMany(txs);
+               (
+                 knownHexs,
+                 usedInputs
+                 |. Array.mapU((. {txId}: PayoutTransaction.input) =>
+                      knownHexs
+                      |. Map.String.get(txId)
+                      |> Js.Option.getWithDefault("")
+                    ),
+               )
+               |> resolve;
+             })
+        );
+      },
+      signPayoutTx: (payoutTx, txHexs) =>
+        Ledger.signPayout(
+          ventureId,
+          localUser,
+          ledgerInfoCollector
+          |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+          |> Js.Option.getWithDefault(""),
+          payoutTx,
+          txHexs,
+          walletInfoCollector |> WalletInfoCollector.accountKeyChains,
+        ),
     };
   };
 };
@@ -358,19 +447,57 @@ module ViewPayoutView = {
   type voter = ProcessCollector.voter;
   type payout = TxDetailsCollector.payoutProcess;
   type t = {
+    requiresLedgerSig: bool,
     currentPartners: UserId.set,
     payout,
     collidesWith: ProcessId.set,
+    signPayout: unit => Js.Promise.t(Ledger.signResult),
   };
   let fromViewModelState =
       (
         processId,
-        {txDetailsCollector, walletInfoCollector, partnersCollector},
+        {
+          ventureId,
+          localUser,
+          txDetailsCollector,
+          ledgerInfoCollector,
+          walletInfoCollector,
+          partnersCollector,
+        },
       ) =>
     txDetailsCollector
     |> TxDetailsCollector.getPayout(processId)
-    |> Utils.mapOption(payout =>
+    |> Utils.mapOption(
+         ({data: {payoutTx: {usedInputs} as payoutTx}} as payout: payout) => {
+         open Belt;
+         let txHexPromise =
+           usedInputs
+           |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
+           |> NetworkClient.transactionHex(
+                walletInfoCollector |> WalletInfoCollector.network,
+              );
          {
+           signPayout: () =>
+             Js.Promise.(
+               txHexPromise
+               |> then_(txHexs =>
+                    Ledger.signPayout(
+                      ventureId,
+                      localUser,
+                      ledgerInfoCollector
+                      |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+                      |> Js.Option.getWithDefault(""),
+                      payoutTx,
+                      txHexs |. Array.map(snd),
+                      walletInfoCollector
+                      |> WalletInfoCollector.accountKeyChains,
+                    )
+                  )
+             ),
+           requiresLedgerSig:
+             ledgerInfoCollector
+             |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+             |> Js.Option.isSome,
            currentPartners:
              partnersCollector |> PartnersCollector.currentPartners,
            payout,
@@ -380,8 +507,8 @@ module ViewPayoutView = {
                   AccountIndex.default,
                   processId,
                 ),
-         }
-       );
+         };
+       });
 };
 
 let viewPayoutModal = ViewPayoutView.fromViewModelState;
@@ -408,6 +535,7 @@ module SelectedVentureView = {
   type t = {
     ventureId,
     atRiskWarning: bool,
+    keyRotationWarning: bool,
     ventureName: string,
     readOnly: bool,
     partners: list(partner),
@@ -428,6 +556,7 @@ module SelectedVentureView = {
           transactionCollector,
           txDetailsCollector,
           walletInfoCollector,
+          ledgerInfoCollector,
         },
       ) => {
     let reserved =
@@ -445,6 +574,14 @@ module SelectedVentureView = {
     {
       ventureId,
       ventureName,
+      keyRotationWarning:
+        ledgerInfoCollector
+        |> LedgerInfoCollector.ledgerId(AccountIndex.default)
+        |> Js.Option.isSome
+        && ! (
+             ledgerInfoCollector
+             |> LedgerInfoCollector.ledgerUpToDate(AccountIndex.default)
+           ),
       readOnly:
         partnersCollector |> PartnersCollector.isPartner(localUser) == false,
       atRiskWarning:
@@ -487,6 +624,7 @@ let make = localUser => {
   txDetailsCollector: TxDetailsCollector.make(localUser),
   oldInputCollector: OldInputCollector.make(),
   walletInfoCollector: WalletInfoCollector.make(),
+  ledgerInfoCollector: LedgerInfoCollector.make(localUser),
 };
 
 let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
@@ -505,6 +643,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.walletInfoCollector |> WalletInfoCollector.apply(event),
       oldInputCollector:
         state.oldInputCollector |> OldInputCollector.apply(event),
+      ledgerInfoCollector:
+        state.ledgerInfoCollector |> LedgerInfoCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {

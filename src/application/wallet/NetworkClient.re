@@ -3,6 +3,7 @@ open WalletTypes;
 module Make = (Client: NetworkClientInterface) => {
   let network = Client.network;
   let transactionInfo = Client.getTransactionInfo;
+  let transactionHex = Client.getTransactionHex;
   let currentBlockHeight = Client.getCurrentBlockHeight;
   let transactionInputs = addresses =>
     Belt.(
@@ -86,6 +87,12 @@ let transactionInfo =
   | Network.Regtest => Regtest.transactionInfo
   | Network.Testnet => Testnet.transactionInfo
   | Network.Mainnet => Mainnet.transactionInfo;
+
+let transactionHex =
+  fun
+  | Network.Regtest => Regtest.transactionHex
+  | Network.Testnet => Testnet.transactionHex
+  | Network.Mainnet => Mainnet.transactionHex;
 
 let currentBlockHeight =
   fun

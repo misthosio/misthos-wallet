@@ -8,6 +8,26 @@ type t;
 
 type public;
 
+let misthosWalletPurposePath: string;
+
+let makePathToBip45Root:
+  (
+    ~ventureId: ventureId,
+    ~accountIdx: accountIdx,
+    ~keyChainIdx: custodianKeyChainIdx,
+    HDNode.t
+  ) =>
+  string;
+
+let fromHardwareNode:
+  (
+    ~hardwareId: string,
+    ~accountIdx: accountIdx,
+    ~keyChainIdx: custodianKeyChainIdx,
+    HDNode.t
+  ) =>
+  public;
+
 let make:
   (
     ~ventureId: ventureId,
@@ -19,10 +39,11 @@ let make:
 
 let toPublicKeyChain: t => public;
 
+let hardwareId: public => option(string);
 let accountIdx: public => accountIdx;
-
 let keyChainIdx: public => custodianKeyChainIdx;
 
+let getPublicKey: (coSignerIdx, chainIdx, addressIdx, public) => string;
 let getSigningKey: (coSignerIdx, chainIdx, addressIdx, t) => ECPair.t;
 
 let hdNode: public => HDNode.t;

@@ -31,8 +31,10 @@ function publicKeyFromKeyPair(pair) {
   return pair.publicKey.toString("hex");
 }
 
-function keyFromPublicKey(key) {
-  return BitcoinjsLib.ECPair.fromPublicKey(bufFromHex(key));
+function keyFromPublicKey(network, key) {
+  return BitcoinjsLib.ECPair.fromPublicKey(bufFromHex(key), {
+              network: network
+            });
 }
 
 function signatureToDER(ecSignature) {

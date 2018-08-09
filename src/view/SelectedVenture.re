@@ -21,13 +21,28 @@ module Styles = {
   let addressesButtonIcon =
     style([
       marginTop(px(Theme.space(2) * (-1))),
+      marginLeft(px(Theme.space(1))),
       marginBottom(px(Theme.space(1) * (-1))),
-      transform(rotate(deg(90))),
+      color(Colors.black),
     ]);
   let atRiskAddressButtonIcon =
     style([
       marginTop(px(Theme.space(2) * (-1))),
+      marginLeft(px(Theme.space(1))),
       marginBottom(px(Theme.space(1) * (-1))),
+      color(Colors.error),
+    ]);
+  let settingsButtonIcon =
+    style([
+      marginTop(px(Theme.space(2) * (-1))),
+      marginBottom(px(Theme.space(1) * (-1))),
+      color(Colors.black),
+    ]);
+  let atRiskSettingsButtonIcon =
+    style([
+      marginTop(px(Theme.space(2) * (-1))),
+      marginBottom(px(Theme.space(1) * (-1))),
+      color(Colors.error),
     ]);
 };
 
@@ -291,7 +306,17 @@ let make = (~viewData: ViewData.t, _children) => {
               onClick=(
                 Router.clickToRoute(Venture(viewData.ventureId, Addresses))
               )>
-              (viewData.atRiskWarning ? Icons.alert : Icons.arrowUpCircle)
+              Icons.clock
+            </MaterialUi.IconButton>
+            <MaterialUi.IconButton
+              className=(
+                viewData.keyRotationWarning ?
+                  Styles.atRiskSettingsButtonIcon : Styles.settingsButtonIcon
+              )
+              onClick=(
+                Router.clickToRoute(Venture(viewData.ventureId, Settings))
+              )>
+              Icons.settings
             </MaterialUi.IconButton>
           </MTypography>
           <Balance

@@ -99,31 +99,39 @@ function endorsePartnerRemoval(worker, ventureId, processId) {
               ]));
 }
 
-function proposePayout(worker, ventureId, accountIdx, destinations, fee) {
-  return Curry._2(postMessage, worker, /* ProposePayout */Block.__(10, [
+function submitCustodianKeyChain(worker, ventureId, keyChain) {
+  return Curry._2(postMessage, worker, /* SubmitCustodianKeyChain */Block.__(10, [
+                ventureId,
+                keyChain
+              ]));
+}
+
+function proposePayout(worker, ventureId, accountIdx, payoutTx, signatures) {
+  return Curry._2(postMessage, worker, /* ProposePayout */Block.__(11, [
                 ventureId,
                 accountIdx,
-                destinations,
-                fee
+                payoutTx,
+                signatures
               ]));
 }
 
 function rejectPayout(worker, ventureId, processId) {
-  return Curry._2(postMessage, worker, /* RejectPayout */Block.__(11, [
+  return Curry._2(postMessage, worker, /* RejectPayout */Block.__(12, [
                 ventureId,
                 processId
               ]));
 }
 
-function endorsePayout(worker, ventureId, processId) {
-  return Curry._2(postMessage, worker, /* EndorsePayout */Block.__(12, [
+function endorsePayout(worker, ventureId, signatures, processId) {
+  return Curry._2(postMessage, worker, /* EndorsePayout */Block.__(13, [
                 ventureId,
+                signatures,
                 processId
               ]));
 }
 
 function exposeIncomeAddress(worker, ventureId, accountIdx) {
-  return Curry._2(postMessageSync, worker, /* ExposeIncomeAddress */Block.__(13, [
+  return Curry._2(postMessageSync, worker, /* ExposeIncomeAddress */Block.__(14, [
                   ventureId,
                   accountIdx
                 ])).then((function (param) {
@@ -155,11 +163,14 @@ function make(worker, ventureId) {
           /* endorsePartnerRemoval */(function (param) {
               return endorsePartnerRemoval(worker, ventureId, param);
             }),
+          /* submitCustodianKeyChain */(function (param) {
+              return submitCustodianKeyChain(worker, ventureId, param);
+            }),
           /* proposePayout */(function (param, param$1, param$2) {
               return proposePayout(worker, ventureId, param, param$1, param$2);
             }),
-          /* endorsePayout */(function (param) {
-              return endorsePayout(worker, ventureId, param);
+          /* endorsePayout */(function (param, param$1) {
+              return endorsePayout(worker, ventureId, param, param$1);
             }),
           /* rejectPayout */(function (param) {
               return rejectPayout(worker, ventureId, param);
@@ -194,6 +205,7 @@ exports.endorsePartner = endorsePartner;
 exports.proposePartnerRemoval = proposePartnerRemoval;
 exports.rejectPartnerRemoval = rejectPartnerRemoval;
 exports.endorsePartnerRemoval = endorsePartnerRemoval;
+exports.submitCustodianKeyChain = submitCustodianKeyChain;
 exports.proposePayout = proposePayout;
 exports.rejectPayout = rejectPayout;
 exports.endorsePayout = endorsePayout;

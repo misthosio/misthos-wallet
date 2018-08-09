@@ -119,6 +119,7 @@ module Styles = {
     ]);
   let changeAddress =
     style([color(Colors.grayedOut), textTransform(uppercase)]);
+  let ledgerBacked = style([fontSize(px(12)), color(Colors.black)]);
 };
 
 let make = (~viewData: ViewData.t, _children) => {
@@ -169,8 +170,27 @@ let make = (~viewData: ViewData.t, _children) => {
         </MTypography>
         <MaterialUi.List>
           (
-            Array.map(details.custodians |> Set.toArray, (partnerId: UserId.t) =>
-              <Partner partnerId ex=(partnerId |> details.isPartner |> (!)) />
+            Array.map(
+              details.custodians |> Set.toArray,
+              (partnerId: UserId.t) => {
+                let ex = partnerId |> details.isPartner |> (!);
+                let hardwareKey =
+                  details.usingHardwareKey |. Set.has(partnerId);
+                <Partner
+                  partnerId
+                  status=(
+                    ! ex && hardwareKey ?
+                      Some(
+                        <MTypography
+                          variant=`Body2 className=Styles.ledgerBacked>
+                          ("LEDGER BACKED" |> text)
+                        </MTypography>,
+                      ) :
+                      None
+                  )
+                  ex
+                />;
+              },
             )
             |> ReasonReact.array
           )

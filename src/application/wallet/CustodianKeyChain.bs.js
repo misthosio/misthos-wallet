@@ -10,23 +10,42 @@ var WalletTypes = require("./WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 
+function hardwareId($$public) {
+  return $$public[/* hardwareId */0];
+}
+
 function accountIdx($$public) {
-  return $$public[/* accountIdx */0];
+  return $$public[/* accountIdx */1];
 }
 
 function keyChainIdx($$public) {
-  return $$public[/* keyChainIdx */1];
+  return $$public[/* keyChainIdx */2];
 }
 
 function hdNode($$public) {
-  return $$public[/* hdNode */2];
+  return $$public[/* hdNode */3];
+}
+
+function makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode) {
+  var salt = Utils.hash(Utils.bufToHex(misthosPurposeNode.publicKey));
+  var ventureIdx = Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt));
+  return String(0) + ("'/" + (String(ventureIdx) + ("'/" + (String(0) + ("'/" + (String(WalletTypes.AccountIndex[/* toInt */0](accountIdx)) + ("'/" + (String(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)) + ("'/" + (String(45) + "'"))))))))));
+}
+
+function fromHardwareNode(hardwareId, accountIdx, keyChainIdx, hdNode) {
+  return /* record */[
+          /* hardwareId */hardwareId,
+          /* accountIdx */accountIdx,
+          /* keyChainIdx */keyChainIdx,
+          /* hdNode */hdNode.neutered()
+        ];
 }
 
 function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
-  var misthosKeyChain = masterKeyChain.deriveHardened(0);
-  var salt = Utils.hash(Utils.bufToHex(misthosKeyChain.publicKey));
-  var custodianKeyChain = misthosKeyChain.deriveHardened(Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt))).deriveHardened(0).deriveHardened(WalletTypes.AccountIndex[/* toInt */0](accountIdx)).deriveHardened(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)).deriveHardened(45);
+  var misthosPurposeNode = masterKeyChain.deriveHardened(0);
+  var custodianKeyChain = masterKeyChain.derivePath(makePathToBip45Root(ventureId, accountIdx, keyChainIdx, misthosPurposeNode));
   return /* record */[
+          /* hardwareId */undefined,
           /* accountIdx */accountIdx,
           /* keyChainIdx */keyChainIdx,
           /* hdNode */custodianKeyChain
@@ -35,35 +54,48 @@ function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
 
 function toPublicKeyChain(keyChain) {
   return /* record */[
-          /* accountIdx */keyChain[/* accountIdx */0],
-          /* keyChainIdx */keyChain[/* keyChainIdx */1],
-          /* hdNode */keyChain[/* hdNode */2].neutered()
+          /* hardwareId */keyChain[/* hardwareId */0],
+          /* accountIdx */keyChain[/* accountIdx */1],
+          /* keyChainIdx */keyChain[/* keyChainIdx */2],
+          /* hdNode */keyChain[/* hdNode */3].neutered()
         ];
 }
 
+function getPublicKey(coSignerIdx, chainIdx, addressIdx, keyChain) {
+  return Utils.bufToHex(keyChain[/* hdNode */3].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).publicKey);
+}
+
 function getSigningKey(coSignerIdx, chainIdx, addressIdx, keyChain) {
-  return BitcoinjsLib.ECPair.fromPrivateKey(keyChain[/* hdNode */2].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).privateKey, {
-              network: keyChain[/* hdNode */2].network
+  return BitcoinjsLib.ECPair.fromPrivateKey(keyChain[/* hdNode */3].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).privateKey, {
+              network: keyChain[/* hdNode */3].network
             });
 }
 
 function encode(keyChain) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "accountIndex",
-                WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
+                "hardwareId",
+                Json_encode.nullable((function (prim) {
+                        return prim;
+                      }), keyChain[/* hardwareId */0])
               ],
               /* :: */[
                 /* tuple */[
-                  "keyChainIndex",
-                  WalletTypes.CustodianKeyChainIndex[/* encode */3](keyChain[/* keyChainIdx */1])
+                  "accountIndex",
+                  WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */1])
                 ],
                 /* :: */[
                   /* tuple */[
-                    "hdNode",
-                    keyChain[/* hdNode */2].toBase58()
+                    "keyChainIndex",
+                    WalletTypes.CustodianKeyChainIndex[/* encode */3](keyChain[/* keyChainIdx */2])
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "hdNode",
+                      keyChain[/* hdNode */3].toBase58()
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]);
@@ -71,6 +103,7 @@ function encode(keyChain) {
 
 function decode(raw) {
   return /* record */[
+          /* hardwareId */Utils.maybeField("hardwareId", Json_decode.string)(raw),
           /* accountIdx */Json_decode.field("accountIndex", WalletTypes.AccountIndex[/* decode */5], raw),
           /* keyChainIdx */Json_decode.field("keyChainIndex", WalletTypes.CustodianKeyChainIndex[/* decode */4], raw),
           /* hdNode */Bitcoin.HDNode[/* fromBase58 */0](Json_decode.field("hdNode", Json_decode.string, raw))
@@ -81,10 +114,17 @@ function eq(a, b) {
   return Caml_obj.caml_equal(encode(a), encode(b));
 }
 
+var misthosWalletPurposePath = "0'";
+
+exports.misthosWalletPurposePath = misthosWalletPurposePath;
+exports.makePathToBip45Root = makePathToBip45Root;
+exports.fromHardwareNode = fromHardwareNode;
 exports.make = make;
 exports.toPublicKeyChain = toPublicKeyChain;
+exports.hardwareId = hardwareId;
 exports.accountIdx = accountIdx;
 exports.keyChainIdx = keyChainIdx;
+exports.getPublicKey = getPublicKey;
 exports.getSigningKey = getSigningKey;
 exports.hdNode = hdNode;
 exports.encode = encode;

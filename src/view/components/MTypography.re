@@ -20,8 +20,9 @@ let make =
     let style =
       switch (variant, gutterTop) {
       | (`Title, true)
-      | (`Headline, true) => Styles.margin(4)
-      | (_, _) => Styles.margin(0)
+      | (`Headline, true)
+      | (`Body2, true) => Styles.margin(4)
+      | _ => Styles.margin(0)
       };
     <MaterialUi.Typography
       ?component

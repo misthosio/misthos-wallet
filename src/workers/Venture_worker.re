@@ -542,13 +542,52 @@ module Handle = {
       )
     );
   };
-  let proposePayout = (ventureId, accountIdx, destinations, fee) => {
+  let submitCustodianKeyChain = (ventureId, keyChain) => {
+    logMessage("Handling 'SubmitCustodianKeyChain'");
+    withVenture(Load(ventureId), (correlationId, venture) =>
+      Js.Promise.(
+        Venture.Cmd.SubmitCustodianKeyChain.(
+          venture
+          |> exec(~keyChain)
+          |> then_(
+               fun
+               | Ok(venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     KeyChainSubmitted,
+                   );
+                   venture |> resolve;
+                 }
+               | NotACustodian => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
+  let proposePayout = (ventureId, accountIdx, payoutTx, signatures) => {
     logMessage("Handling 'ProposePayout'");
     withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePayout.(
           venture
-          |> exec(~accountIdx, ~destinations, ~fee)
+          |> exec(~accountIdx, ~payoutTx, ~signatures)
           |> then_(
                fun
                | Ok(processId, venture, newItems) => {
@@ -608,13 +647,13 @@ module Handle = {
       )
     );
   };
-  let endorsePayout = (ventureId, processId) => {
+  let endorsePayout = (ventureId, signatures, processId) => {
     logMessage("Handling 'EndorsePayout'");
     withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePayout.(
           venture
-          |> exec(~processId)
+          |> exec(~processId, ~signatures)
           |> then_(
                fun
                | Ok(venture, newItems) => {
@@ -763,12 +802,14 @@ let handleMessage =
     Handle.rejectPartnerRemoval(ventureId, processId)
   | Message.EndorsePartnerRemoval(ventureId, processId) =>
     Handle.endorsePartnerRemoval(ventureId, processId)
-  | Message.ProposePayout(ventureId, accountIdx, destinations, fee) =>
-    Handle.proposePayout(ventureId, accountIdx, destinations, fee)
+  | SubmitCustodianKeyChain(ventureId, keyChain) =>
+    Handle.submitCustodianKeyChain(ventureId, keyChain)
+  | Message.ProposePayout(ventureId, accountIdx, payoutTx, signatures) =>
+    Handle.proposePayout(ventureId, accountIdx, payoutTx, signatures)
   | Message.RejectPayout(ventureId, processId) =>
     Handle.rejectPayout(ventureId, processId)
-  | Message.EndorsePayout(ventureId, processId) =>
-    Handle.endorsePayout(ventureId, processId)
+  | Message.EndorsePayout(ventureId, signatures, processId) =>
+    Handle.endorsePayout(ventureId, signatures, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(ventureId, accountIdx)
   | SyncWallet(

@@ -67,7 +67,10 @@ module Make = (Event: Encodable) => {
          let hashCheck = makeItemHash(issuerPubKey, event);
          if (hashCheck |> Utils.bufToHex != hash) {
            None;
-         } else if (Utils.keyFromPublicKey(issuerPubKey)
+         } else if (Utils.keyFromPublicKey(
+                      Bitcoin.Networks.bitcoin,
+                      issuerPubKey,
+                    )
                     |. Bitcoin.ECPair.verify(hashCheck, signature)) {
            Some(item);
          } else {

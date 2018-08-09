@@ -15,7 +15,7 @@ var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var CommandExecutor = require("./CommandExecutor.bs.js");
 
-var component = ReasonReact.reducerComponent("ProcessApprovalButtons");
+var component = ReasonReact.reducerComponent("SingleActionButton");
 
 var inlineConfirm = Css.style(/* :: */[
       Css.display(/* flex */-1010954439),
@@ -35,8 +35,9 @@ var Styles = /* module */[
   /* warning */warning
 ];
 
-function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitProposal, $staropt$star, cmdStatus, _) {
+function make(buttonText, alertText, onSubmit, onPropose, onCancel, canSubmitAction, $staropt$star, $staropt$star$1, cmdStatus, _) {
   var withConfirmation = $staropt$star !== undefined ? $staropt$star : true;
+  var action = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Proposal */4;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -60,13 +61,13 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
               var exit = 0;
               switch (match[/* buttonState */0]) {
                 case 0 : 
-                    exit = 2;
+                    exit = 1;
                     break;
                 case 1 : 
                     tmp = /* array */[
                       ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, warning, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(Js_option.getWithDefault("", alertText))])),
                       ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, undefined, /* array */[
-                                ViewCommon.text(proposeText),
+                                ViewCommon.text(buttonText),
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* ConfirmProposal */2);
                                           }), undefined, undefined, /* Flat */0, undefined, false, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("yes")])),
@@ -78,47 +79,52 @@ function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitPr
                     break;
                 case 2 : 
                     if (typeof cmdStatus === "number") {
-                      exit = 2;
+                      exit = 1;
                     } else {
                       switch (cmdStatus.tag | 0) {
                         case 1 : 
-                            exit = 2;
-                            break;
-                        case 0 : 
-                        case 2 : 
+                        case 3 : 
                             exit = 1;
                             break;
-                        
+                        default:
+                          tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, action, /* array */[]))];
                       }
                     }
                     break;
                 
               }
-              switch (exit) {
-                case 1 : 
-                    tmp = /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */3, /* array */[]))];
-                    break;
-                case 2 : 
-                    tmp = /* array */[
-                      ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
-                                  return Curry._1(send, /* Propose */1);
-                                }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, true, /* array */[ViewCommon.text(proposeText)])),
-                      ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */3, /* array */[]))
-                    ];
-                    break;
-                
+              if (exit === 1) {
+                tmp = /* array */[
+                  ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                              return Curry._1(send, /* Propose */1);
+                            }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, true, /* array */[ViewCommon.text(buttonText)])),
+                  ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, action, /* array */[]))
+                ];
               }
               return React.createElement("div", undefined, Belt_Array.concatMany(/* array */[tmp]));
             }),
           /* initialState */(function () {
+              var tmp;
+              if (typeof cmdStatus === "number") {
+                tmp = /* NoDecision */0;
+              } else {
+                switch (cmdStatus.tag | 0) {
+                  case 0 : 
+                  case 2 : 
+                      tmp = /* ProposalSubmited */2;
+                      break;
+                  default:
+                    tmp = /* NoDecision */0;
+                }
+              }
               return /* record */[
-                      /* buttonState : NoDecision */0,
-                      /* cmdStatus : Idle */0
+                      /* buttonState */tmp,
+                      /* cmdStatus */cmdStatus
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              if (canSubmitProposal) {
+              if (canSubmitAction) {
                 switch (action) {
                   case 0 : 
                       return /* UpdateWithSideEffects */Block.__(2, [

@@ -118,9 +118,15 @@ function fiveUserSessions() {
         ];
 }
 
-function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
-  var accountIdx = $staropt$star !== undefined ? Js_primitive.valFromOption($staropt$star) : WalletTypes.AccountIndex[/* default */11];
-  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
+function custodianKeyChain($staropt$star, $staropt$star$1, ventureId, keyChainIdx, param) {
+  var hardwareId = $staropt$star !== undefined ? $staropt$star : false;
+  var accountIdx = $staropt$star$1 !== undefined ? Js_primitive.valFromOption($staropt$star$1) : WalletTypes.AccountIndex[/* default */11];
+  var keyChain = CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
+  if (hardwareId) {
+    return CustodianKeyChain.fromHardwareNode("hardwareId", accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), CustodianKeyChain.hdNode(keyChain));
+  } else {
+    return keyChain;
+  }
 }
 
 function accountKeyChainFrom($staropt$star) {
@@ -141,7 +147,7 @@ function accountKeyChain($staropt$star, $staropt$star$1, users) {
   return accountKeyChainFrom(undefined)(List.map((function (user) {
                     return /* tuple */[
                             user[/* userId */0],
-                            custodianKeyChain(undefined, ventureId, keyChainIdx, user)
+                            custodianKeyChain(undefined, undefined, ventureId, keyChainIdx, user)
                           ];
                   }), users));
 }
@@ -666,8 +672,9 @@ function withCustodianRemoved(user, supporters, log) {
   }
 }
 
-function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
+function withCustodianKeyChain($staropt$star, $staropt$star$1, issuer, custodian, l) {
   var keyChainIdx = $staropt$star !== undefined ? $staropt$star : 0;
+  var hardwareId = $staropt$star$1 !== undefined ? $staropt$star$1 : false;
   var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           if ($$event.tag === 19) {
@@ -683,7 +690,7 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
             return res;
           }
         }), /* [] */0, l[/* log */3]);
-  var keyChain = custodianKeyChain(undefined, l[/* ventureId */0], keyChainIdx, custodian);
+  var keyChain = custodianKeyChain(hardwareId, undefined, l[/* ventureId */0], keyChainIdx, custodian);
   var issuerKeyPair = Js_option.getWithDefault(custodian[/* issuerKeyPair */2], Utils.mapOption((function (issuer) {
               return issuer[/* issuerKeyPair */2];
             }), issuer));

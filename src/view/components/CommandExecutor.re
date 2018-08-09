@@ -5,6 +5,8 @@ open PrimitiveTypes;
 open WalletTypes;
 
 type action =
+  | PreSubmit(string)
+  | PreSubmitError(string)
   | CommandExecuted(WebWorker.correlationId)
   | Reset;
 
@@ -16,19 +18,26 @@ type commands = {
   proposePartnerRemoval: (~partnerId: userId) => unit,
   endorsePartnerRemoval: (~processId: processId) => unit,
   rejectPartnerRemoval: (~processId: processId) => unit,
+  submitCustodianKeyChain: (~keyChain: CustodianKeyChain.public) => unit,
   proposePayout:
     (
       ~accountIdx: accountIdx,
-      ~destinations: list((string, BTC.t)),
-      ~fee: BTC.t
+      ~payoutTx: PayoutTransaction.t,
+      ~signatures: array(option((string, string)))
     ) =>
     unit,
-  endorsePayout: (~processId: processId) => unit,
+  endorsePayout:
+    (~signatures: array(option((string, string))), ~processId: processId) =>
+    unit,
   rejectPayout: (~processId: processId) => unit,
+  preSubmit: string => unit,
+  preSubmitError: string => unit,
 };
 
 type cmdStatus =
   | Idle
+  | PreSubmit(string)
+  | PreSubmitError(string)
   | Pending(WebWorker.correlationId)
   | Error(VentureWorkerMessage.cmdError)
   | Success(VentureWorkerMessage.cmdSuccess);
@@ -58,16 +67,22 @@ let make =
       send(CommandExecuted(commands.endorsePartnerRemoval(~processId))),
     rejectPartnerRemoval: (~processId) =>
       send(CommandExecuted(commands.rejectPartnerRemoval(~processId))),
-    proposePayout: (~accountIdx, ~destinations, ~fee) =>
+    submitCustodianKeyChain: (~keyChain) =>
+      send(CommandExecuted(commands.submitCustodianKeyChain(~keyChain))),
+    proposePayout: (~accountIdx, ~payoutTx, ~signatures) =>
       send(
         CommandExecuted(
-          commands.proposePayout(~accountIdx, ~destinations, ~fee),
+          commands.proposePayout(~accountIdx, ~payoutTx, ~signatures),
         ),
       ),
-    endorsePayout: (~processId) =>
-      send(CommandExecuted(commands.endorsePayout(~processId))),
+    endorsePayout: (~signatures, ~processId) =>
+      send(
+        CommandExecuted(commands.endorsePayout(~signatures, ~processId)),
+      ),
     rejectPayout: (~processId) =>
       send(CommandExecuted(commands.rejectPayout(~processId))),
+    preSubmit: message => send(PreSubmit(message)),
+    preSubmitError: message => send(PreSubmitError(message)),
   };
   {
     ...component,
@@ -89,6 +104,10 @@ let make =
     },
     reducer: (action, _state) =>
       switch (action) {
+      | PreSubmit(message) =>
+        ReasonReact.Update({cmdStatus: PreSubmit(message)})
+      | PreSubmitError(message) =>
+        ReasonReact.Update({cmdStatus: PreSubmitError(message)})
       | CommandExecuted(correlationId) =>
         ReasonReact.Update({cmdStatus: Pending(correlationId)})
       | Reset => ReasonReact.Update({cmdStatus: Idle})
@@ -103,6 +122,7 @@ module Status = {
     | CreateVenture
     | JoinVenture
     | LoadVenture
+    | SubmitKeys
     | Proposal
     | Endorsement
     | Rejection;
@@ -129,15 +149,25 @@ module Status = {
     render: _ =>
       switch (cmdStatus) {
       | Idle => ReasonReact.null
+      | PreSubmit(message) =>
+        ReasonReact.array([|
+          <MTypography variant=`Body2 gutterTop=true>
+            (message |> text)
+          </MTypography>,
+          <MaterialUi.LinearProgress
+            className=Css.(style([marginTop(px(Theme.space(1)))]))
+          />,
+        |])
       | Pending(_) =>
         ReasonReact.array([|
-          <MTypography variant=`Body2>
+          <MTypography variant=`Body2 gutterTop=true>
             (
               (
                 switch (action) {
                 | CreateVenture => "Venture is being created"
                 | JoinVenture => "Joining venture"
                 | LoadVenture => "Loading venture"
+                | SubmitKeys => "Your public keys are being submitted"
                 | Proposal => "Your proposal is being submitted"
                 | Endorsement => "Your endorsement is being submitted"
                 | Rejection => "Your rejection is being submitted"
@@ -150,11 +180,14 @@ module Status = {
             className=Css.(style([marginTop(px(Theme.space(1)))]))
           />,
         |])
+      | PreSubmitError(error) => error |> message(Error)
       | Error(error) =>
         switch (error) {
         | CouldNotPersistVenture =>
           "Your submission could not be persisted, probably due to network connectivity."
           |> message(Error)
+        | NotACustodian =>
+          "You are not a custodian of this venture" |> message(Error)
         | UserIdDoesNotExist =>
           "Blockstack id does not exist, or is corrupted" |> message(Error)
         | MaxPartnersReached =>
@@ -173,6 +206,8 @@ module Status = {
         }
       | Success(success) =>
         switch (success) {
+        | KeyChainSubmitted =>
+          "Your public Keys have been submitted" |> message(Success)
         | ProcessStarted(_) =>
           "Your proposal has been submitted" |> message(Success)
         | ProcessEndorsed(_) =>
