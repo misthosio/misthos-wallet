@@ -71,7 +71,7 @@ function fromViewModel(param) {
         ];
 }
 
-var LedgerKeysView = /* module */[/* fromViewModel */fromViewModel];
+var VentureSettingsView = /* module */[/* fromViewModel */fromViewModel];
 
 function fromViewModelState(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
@@ -459,7 +459,7 @@ var TxDetailsCollector = 0;
 
 var OldInputCollector = 0;
 
-var ledgerKeysView = fromViewModel;
+var ventureSettingsView = fromViewModel;
 
 var viewAddressesModal = fromViewModelState;
 
@@ -483,8 +483,8 @@ exports.OldInputCollector = OldInputCollector;
 exports.readOnly = readOnly;
 exports.captureResponse = captureResponse;
 exports.lastResponse = lastResponse;
-exports.LedgerKeysView = LedgerKeysView;
-exports.ledgerKeysView = ledgerKeysView;
+exports.VentureSettingsView = VentureSettingsView;
+exports.ventureSettingsView = ventureSettingsView;
 exports.AddressesView = AddressesView;
 exports.viewAddressesModal = viewAddressesModal;
 exports.ManagePartnersView = ManagePartnersView;

@@ -5,17 +5,25 @@ var Grid = require("./components/Grid.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var ProposeButton = require("./components/ProposeButton.bs.js");
+var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
+var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
+var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
+var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
+var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
+var MaterialUi_TableHead = require("@jsiebern/bs-material-ui/src/MaterialUi_TableHead.bs.js");
 
 var component = ReasonReact.statelessComponent("VentureSettings");
 
 function make(viewData, commands, cmdStatus, _) {
   var executeSubmit = function () {
-    Curry._1(commands[/* preSubmit */11], "Please connect your ledger device");
+    Curry._1(commands[/* preSubmit */11], "Please connect your ledger device and open the BTC app");
     Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
             if (typeof param === "number") {
               return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "This device has the wrong seed"));
@@ -57,8 +65,28 @@ function make(viewData, commands, cmdStatus, _) {
                   "You currently have no ledger device integrated into this venture.",
                   "Not submitted"
                 ];
+              var nSigs = Belt_Array.slice(Belt_Array.mapWithIndexU(AccountSettings.defaultCoSignerList, (function (idx, nCoSigners) {
+                          return ReasonReact.element(undefined, undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                          ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(String(idx))]))])),
+                                          ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(String(nCoSigners) + ("-of-" + String(idx)))]))]))
+                                        ]));
+                        })), 1, 10);
               var match$3 = viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Venture Settings")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Hardware Wallet Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text(match$2[0])])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Key status: " + match$2[1])])), match$3 ? null : ReasonReact.element(undefined, undefined, ProposeButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, cmdStatus, /* array */[])))), undefined, undefined, undefined, /* array */[]));
+              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Venture Settings")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
+                                      className: ScrollList.containerStyles
+                                    }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Wallet Settings")])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Degrading multisig is enabled.")])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The unlock time is " + (String(AccountSettings.defaultSequence) + (" blocks (approximately " + (String(AccountSettings.defaultSequence / 144 | 0) + " days)."))))])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Here is an overview of the required signatures depending on the number of Custodians backing an address:")])),
+                                              ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[
+                                                        ReasonReact.element(undefined, undefined, MaterialUi_TableHead.make(undefined, undefined, /* array */[ReasonReact.element("header", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Number of Partners")]))])),
+                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Signatures Required")]))]))
+                                                                          ]))])),
+                                                        ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[nSigs]))
+                                                      ]))
+                                            ])))), Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Hardware Wallet Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text(match$2[0])])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Key status: " + match$2[1])])), match$3 ? null : ReasonReact.element(undefined, undefined, ProposeButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, cmdStatus, /* array */[])))), undefined, undefined, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

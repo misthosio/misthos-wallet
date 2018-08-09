@@ -38,7 +38,7 @@ let captureResponse = (correlationId, response, state) => {
 
 let lastResponse = ({lastResponse}) => lastResponse;
 
-module LedgerKeysView = {
+module VentureSettingsView = {
   type t = {
     ledgerId: option(string),
     ledgerUpToDate: bool,
@@ -65,7 +65,7 @@ module LedgerKeysView = {
       ),
   };
 };
-let ledgerKeysView = LedgerKeysView.fromViewModel;
+let ventureSettingsView = VentureSettingsView.fromViewModel;
 
 module AddressesView = {
   open Belt;

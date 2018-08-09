@@ -67,7 +67,7 @@ function make(session, updateSession, signTAC, _) {
                   } else {
                     return /* tuple */[
                             ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture), undefined, (function (commands, cmdStatus) {
-                                        return ReasonReact.element(undefined, undefined, VentureSettingsModal.make(ViewModel.ledgerKeysView(venture), commands, cmdStatus, /* array */[]));
+                                        return ReasonReact.element(undefined, undefined, VentureSettingsModal.make(ViewModel.ventureSettingsView(venture), commands, cmdStatus, /* array */[]));
                                       }))),
                             (function () {
                                 return Router.goTo(/* Venture */Block.__(0, [

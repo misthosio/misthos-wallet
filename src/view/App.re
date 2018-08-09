@@ -183,7 +183,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
             ...(
                  (~commands, ~cmdStatus) =>
                    <VentureSettingsModal
-                     viewData=(venture |> ViewModel.ledgerKeysView)
+                     viewData=(venture |> ViewModel.ventureSettingsView)
                      commands
                      cmdStatus
                    />

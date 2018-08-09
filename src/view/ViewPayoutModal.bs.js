@@ -93,7 +93,7 @@ function make(viewData, commands, cmdStatus, _) {
               var status = match$1[/* payoutStatus */0];
               var processId = match[/* processId */0];
               var executeEndorse = function () {
-                var signatures = viewData[/* requiresLedgerSig */0] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this endorsement on your ledger device"), Curry._1(viewData[/* signPayout */4], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
+                var signatures = viewData[/* requiresLedgerSig */0] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this endorsement on your ledger device (BTC app)"), Curry._1(viewData[/* signPayout */4], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
                 signatures.then((function (param) {
                         if (typeof param === "number") {
                           return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));

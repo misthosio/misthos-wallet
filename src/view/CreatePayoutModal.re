@@ -330,7 +330,7 @@ let make =
             )
             |> ignore;
             commands.preSubmit(
-              "Please confirm this proposal on your ledger device",
+              "Please confirm this proposal on your ledger device (BTC app)",
             );
           };
           ();

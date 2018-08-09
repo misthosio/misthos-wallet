@@ -391,7 +391,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               }));
                                         return /* () */0;
                                       }), 1);
-                                Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device");
+                                Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device (BTC app)");
                               } else {
                                 Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, /* array */[]);
                               }

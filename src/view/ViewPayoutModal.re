@@ -45,7 +45,7 @@ let make =
       let signatures =
         if (viewData.requiresLedgerSig) {
           commands.preSubmit(
-            "Please confirm this endorsement on your ledger device",
+            "Please confirm this endorsement on your ledger device (BTC app)",
           );
           viewData.signPayout();
         } else {
