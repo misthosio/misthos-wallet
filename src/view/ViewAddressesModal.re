@@ -178,7 +178,7 @@ let make = (~viewData: ViewData.t, _children) => {
                   details.usingHardwareKey |. Set.has(partnerId);
                 <Partner
                   partnerId
-                  status=(
+                  status=?(
                     ! ex && hardwareKey ?
                       Some(
                         <MTypography
