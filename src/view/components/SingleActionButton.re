@@ -39,7 +39,15 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => {buttonState: NoDecision, cmdStatus: Idle},
+  initialState: () => {
+    buttonState:
+      switch (cmdStatus) {
+      | PreSubmit(_)
+      | Pending(_) => ProposalSubmited
+      | _ => NoDecision
+      },
+    cmdStatus,
+  },
   willReceiveProps: ({state}) => {...state, cmdStatus},
   reducer: (action, state) =>
     switch (action, withConfirmation, canSubmitAction) {
