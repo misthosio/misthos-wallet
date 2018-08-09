@@ -37,7 +37,14 @@ let make =
       voters,
       status: processStatus,
       canVote,
-      data: {explorerLink, summary, payoutStatus: status, txId, date},
+      data: {
+        payoutTx,
+        explorerLink,
+        summary,
+        payoutStatus: status,
+        txId,
+        date,
+      },
     }: ViewData.payout =
       viewData.payout;
     let executeEndorse = () => {
@@ -106,123 +113,137 @@ let make =
         };
       <StatusChip label status />;
     };
-    <Grid
-      title1=("Payout Details" |> text)
-      area3={
-        <div className=ScrollList.containerStyles>
-          <MTypography variant=`Body2 gutterBottom=true>
+    switch (cmdStatus) {
+    | CommandExecutor.PreSubmit(_) =>
+      <LedgerConfirmation
+        action=CommandExecutor.Status.Endorsement
+        onCancel=(() => commands.reset())
+        summary
+        misthosFeeAddress=(Some(payoutTx.misthosFeeAddress))
+        changeAddress=payoutTx.changeAddress
+        cmdStatus
+      />
+
+    | _ =>
+      <Grid
+        title1=("Payout Details" |> text)
+        area3={
+          <div className=ScrollList.containerStyles>
+            <MTypography variant=`Body2 gutterBottom=true>
+              (
+                switch (date) {
+                | Some(date) =>
+                  "Payout completed on " ++ Js.Date.toDateString(date) |> text
+                | None =>
+                  "Proposed by " ++ UserId.toString(proposedBy) |> text
+                }
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              ("Status: " |> text)
+              payoutStatus
+            </MTypography>
+            <MTypography variant=`Title gutterTop=true>
+              ("Payout" |> text)
+            </MTypography>
+            <ScrollList>
+              MaterialUi.(
+                <Table>
+                  <TableBody>
+                    destinationList
+                    <TableRow key="networkFee">
+                      <TableCell className=Styles.noBorder padding=`None>
+                        <MTypography variant=`Body2>
+                          ("NETWORK FEE" |> text)
+                        </MTypography>
+                      </TableCell>
+                      <TableCell
+                        numeric=true className=Styles.noBorder padding=`None>
+                        <MTypography variant=`Body2>
+                          (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                        </MTypography>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow key="misthosFee">
+                      <TableCell className=Styles.noBorder padding=`None>
+                        <MTypography variant=`Body2>
+                          ("MISTHOS FEE" |> text)
+                        </MTypography>
+                      </TableCell>
+                      <TableCell
+                        numeric=true className=Styles.noBorder padding=`None>
+                        <MTypography variant=`Body2>
+                          (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                        </MTypography>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              )
+              MaterialUi.(
+                <div className=Styles.total>
+                  <Typography variant=`Body2>
+                    ("TOTAL PAYOUT" |> text)
+                  </Typography>
+                  <MTypography className=Styles.total variant=`Subheading>
+                    (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
+                  </MTypography>
+                </div>
+              )
+            </ScrollList>
+          </div>
+        }
+        area4={
+          <div className=ScrollList.containerStyles>
+            <Voters
+              voters
+              currentPartners=viewData.currentPartners
+              processStatus
+            />
+            <ProcessApprovalButtons
+              endorseText="Endorse Payout"
+              rejectText="Reject Payout"
+              canVote
+              onEndorse=executeEndorse
+              onReject=(() => commands.rejectPayout(~processId))
+              onCancel=(() => commands.reset())
+              cmdStatus
+            />
             (
-              switch (date) {
-              | Some(date) =>
-                "Payout completed on " ++ Js.Date.toDateString(date) |> text
-              | None => "Proposed by " ++ UserId.toString(proposedBy) |> text
-              }
-            )
-          </MTypography>
-          <MTypography variant=`Body2>
-            ("Status: " |> text)
-            payoutStatus
-          </MTypography>
-          <MTypography variant=`Title gutterTop=true>
-            ("Payout" |> text)
-          </MTypography>
-          <ScrollList>
-            MaterialUi.(
-              <Table>
-                <TableBody>
-                  destinationList
-                  <TableRow key="networkFee">
-                    <TableCell className=Styles.noBorder padding=`None>
-                      <MTypography variant=`Body2>
-                        ("NETWORK FEE" |> text)
-                      </MTypography>
-                    </TableCell>
-                    <TableCell
-                      numeric=true className=Styles.noBorder padding=`None>
-                      <MTypography variant=`Body2>
-                        (BTC.format(summary.networkFee) ++ " BTC" |> text)
-                      </MTypography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow key="misthosFee">
-                    <TableCell className=Styles.noBorder padding=`None>
-                      <MTypography variant=`Body2>
-                        ("MISTHOS FEE" |> text)
-                      </MTypography>
-                    </TableCell>
-                    <TableCell
-                      numeric=true className=Styles.noBorder padding=`None>
-                      <MTypography variant=`Body2>
-                        (BTC.format(summary.misthosFee) ++ " BTC" |> text)
-                      </MTypography>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            )
-            MaterialUi.(
-              <div className=Styles.total>
-                <Typography variant=`Body2>
-                  ("TOTAL PAYOUT" |> text)
-                </Typography>
-                <MTypography className=Styles.total variant=`Subheading>
-                  (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
-                </MTypography>
-              </div>
-            )
-          </ScrollList>
-        </div>
-      }
-      area4={
-        <div className=ScrollList.containerStyles>
-          <Voters
-            voters
-            currentPartners=viewData.currentPartners
-            processStatus
-          />
-          <ProcessApprovalButtons
-            endorseText="Endorse Payout"
-            rejectText="Reject Payout"
-            canVote
-            onEndorse=executeEndorse
-            onReject=(() => commands.rejectPayout(~processId))
-            onCancel=(() => commands.reset())
-            cmdStatus
-          />
-          (
-            if (viewData.collidesWith |> Belt.Set.size > 0) {
-              <MaterialUi.SnackbarContent
-                message=(
-                  {|
+              if (viewData.collidesWith |> Belt.Set.size > 0) {
+                <MaterialUi.SnackbarContent
+                  message=(
+                    {|
                    This Proposal is reusing inputs reserved by another payout.
                    We recommend that you coordinate with your Partners
                    to only endorse one Proposal and reject the other one.
                    |}
-                  |> text
-                )
-              />;
-            } else {
-              ReasonReact.null;
-            }
-          )
-        </div>
-      }
-      area5=(
-        switch (txId, explorerLink) {
-        | (Some(txId), Some(explorerLink)) =>
-          <div>
-            <MTypography variant=`Title>
-              ("Transaction ID" |> text)
-            </MTypography>
-            <MTypography variant=`Body2>
-              <a className=Styles.link href=explorerLink target="_blank">
-                (txId |> text)
-              </a>
-            </MTypography>
+                    |> text
+                  )
+                />;
+              } else {
+                ReasonReact.null;
+              }
+            )
           </div>
-        | _ => <MTypography variant=`Body1> PolicyText.payout </MTypography>
         }
-      )
-    />;
+        area5=(
+          switch (txId, explorerLink) {
+          | (Some(txId), Some(explorerLink)) =>
+            <div>
+              <MTypography variant=`Title>
+                ("Transaction ID" |> text)
+              </MTypography>
+              <MTypography variant=`Body2>
+                <a className=Styles.link href=explorerLink target="_blank">
+                  (txId |> text)
+                </a>
+              </MTypography>
+            </div>
+          | _ => <MTypography variant=`Body1> PolicyText.payout </MTypography>
+          }
+        )
+      />
+    };
   },
 };

@@ -149,9 +149,23 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
               return React.createElement("div", undefined, Belt_Array.concatMany(/* array */[tmp]));
             }),
           /* initialState */(function () {
+              var tmp;
+              if (typeof cmdStatus === "number") {
+                tmp = /* NoDecision */0;
+              } else {
+                switch (cmdStatus.tag | 0) {
+                  case 0 : 
+                  case 1 : 
+                  case 2 : 
+                      tmp = /* EndorsementSubmited */2;
+                      break;
+                  default:
+                    tmp = /* NoDecision */0;
+                }
+              }
               return /* record */[
-                      /* buttonState : NoDecision */0,
-                      /* cmdStatus : Idle */0
+                      /* buttonState */tmp,
+                      /* cmdStatus */cmdStatus
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],

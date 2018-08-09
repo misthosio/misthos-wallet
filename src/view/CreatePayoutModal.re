@@ -11,7 +11,6 @@ type inputs = {
 
 type state = {
   viewData: View.t,
-  cmdStatus: CommandExecutor.cmdStatus,
   destinations: list((string, BTC.t)),
   inputDestination: string,
   inputAmount: BTC.t,
@@ -160,7 +159,6 @@ let make =
     frozen: false,
     fee: BTC.zero,
     viewData,
-    cmdStatus,
     canSubmitProposal: false,
     destinations: [],
     addressValid: true,
@@ -174,7 +172,7 @@ let make =
       btcAmount: "",
     },
   },
-  willReceiveProps: ({state}) => {...state, viewData, cmdStatus},
+  willReceiveProps: ({state}) => {...state, viewData},
   didMount: ({send}) =>
     Js.Promise.(
       BitcoinFeesClient.fetchFees()
@@ -183,7 +181,7 @@ let make =
          )
     )
     |> ignore,
-  reducer: (action, {viewData, cmdStatus} as state) =>
+  reducer: (action, {viewData} as state) =>
     switch (
       cmdStatus,
       state.frozen,
@@ -349,7 +347,6 @@ let make =
         state: {
           canSubmitProposal,
           viewData,
-          cmdStatus,
           addressValid,
           inputDestination,
           inputAmount,
