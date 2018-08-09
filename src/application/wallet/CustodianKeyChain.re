@@ -66,15 +66,6 @@ let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
            misthosPurposeNode,
          ),
        );
-  /* let custodianKeyChain = */
-  /*   misthosKeyChain */
-  /*   |> HDNode.deriveHardened( */
-  /*        Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode, */
-  /*      ) */
-  /*   |> HDNode.deriveHardened(coinTypeBitcoin) */
-  /*   |> HDNode.deriveHardened(accountIdx |> AccountIndex.toInt) */
-  /*   |> HDNode.deriveHardened(keyChainIdx |> CustodianKeyChainIndex.toInt) */
-  /*   |> HDNode.deriveHardened(bip45Purpose); */
   {hardwareId: None, accountIdx, keyChainIdx, hdNode: custodianKeyChain};
 };
 
