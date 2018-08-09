@@ -141,11 +141,11 @@ let make =
             <MTypography variant=`Body2 gutterBottom=true>
               (ledgerIntegrater |> text)
             </MTypography>
-            <MTypography variant=`Body2> ("Key status:" |> text) </MTypography>
-            <MTypography
-              variant=`Body2
-              className=(needsKeyRotation ? Styles.atRiskKeyStatus : "")>
-              (keyStatus |> text)
+            <MTypography variant=`Body2>
+              ("Key status: " |> text)
+              <span className=(needsKeyRotation ? Styles.atRiskKeyStatus : "")>
+                (keyStatus |> text)
+              </span>
             </MTypography>
             (
               viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
