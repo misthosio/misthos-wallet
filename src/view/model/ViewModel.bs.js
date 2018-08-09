@@ -84,21 +84,21 @@ function fromViewModelState(param) {
           /* infos */infos,
           /* ventureId */ventureId,
           /* atRiskWarning */Belt_List.reduceU(infos, false, (function (res, param) {
-                  if (param[/* addressStatus */4] !== 1) {
+                  if (param[/* addressStatus */5] !== 1) {
                     return res;
                   } else if (res) {
                     return true;
                   } else {
-                    return param[/* balance */5].gt(BTC.zero);
+                    return param[/* balance */6].gt(BTC.zero);
                   }
                 })),
           /* addressDetails */(function (addressInfo) {
               return /* record */[
                       /* custodians */addressInfo[/* custodians */1],
-                      /* nCoSigners */addressInfo[/* nCoSigners */3],
+                      /* nCoSigners */addressInfo[/* nCoSigners */4],
                       /* nCustodians */Belt_Set.size(addressInfo[/* custodians */1]),
                       /* addressType */addressInfo[/* addressType */0],
-                      /* addressStatus */addressInfo[/* addressStatus */4],
+                      /* addressStatus */addressInfo[/* addressStatus */5],
                       /* unspentIncome */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
                               var txId = param[/* txId */0];
                               var match = ViewModel__TxDetailsCollector.getDateAndStatus(txId, txDetailsCollector);
@@ -119,7 +119,7 @@ function fromViewModelState(param) {
                                       /* detailsLink */detailsLink
                                     ];
                             })),
-                      /* spentIncome */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
+                      /* spentIncome */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */3], oldInputCollector), (function (param) {
                               var txId = param[/* txId */0];
                               var match = ViewModel__TxDetailsCollector.getDateAndStatus(txId, txDetailsCollector);
                               var match$1 = addressInfo[/* addressType */0];
@@ -155,7 +155,7 @@ function fromViewModelState$1(param) {
           /* ventureName */param[/* ventureName */3],
           /* partners */param[/* partnersCollector */6][/* partners */1],
           /* alertPartners */Belt_List.reduceU(infos, PrimitiveTypes.UserId[/* emptySet */9], (function (res, param) {
-                  var addressStatus = param[/* addressStatus */4];
+                  var addressStatus = param[/* addressStatus */5];
                   var exit = 0;
                   if (addressStatus !== 1 && addressStatus !== 3) {
                     return res;
@@ -163,7 +163,7 @@ function fromViewModelState$1(param) {
                     exit = 1;
                   }
                   if (exit === 1) {
-                    if (param[/* balance */5].gt(BTC.zero)) {
+                    if (param[/* balance */6].gt(BTC.zero)) {
                       return Belt_Set.union(res, param[/* custodians */1]);
                     } else {
                       return res;
@@ -192,7 +192,7 @@ function fromViewModelState$2(processId, param) {
                         /* partnerProcess */partnerProcess,
                         /* currentPartners */ViewModel__PartnersCollector.currentPartners(partnersCollector),
                         /* atRiskWarning */match ? false : Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
-                                  var addressStatus = param[/* addressStatus */4];
+                                  var addressStatus = param[/* addressStatus */5];
                                   var exit = 0;
                                   if (addressStatus !== 1 && addressStatus !== 3) {
                                     return res;
@@ -344,12 +344,12 @@ function fromViewModelState$6(param) {
   return /* record */[
           /* ventureId */param[/* ventureId */1],
           /* atRiskWarning */Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
-                  if (param[/* addressStatus */4] !== 1) {
+                  if (param[/* addressStatus */5] !== 1) {
                     return res;
                   } else if (res) {
                     return true;
                   } else {
-                    return param[/* balance */5].gt(BTC.zero);
+                    return param[/* balance */6].gt(BTC.zero);
                   }
                 })),
           /* keyRotationWarning */Js_option.isSome(LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector)) && !LedgerInfoCollector.ledgerUpToDate(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),

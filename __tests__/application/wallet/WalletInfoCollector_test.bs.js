@@ -90,7 +90,7 @@ describe("WalletInfoCollector-addressInfo", (function () {
                             ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$5))))));
                 var log = Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$6)));
                 var testInfo = function (custodians, type_, status, info) {
-                  describe("AddressInfo of address " + info[/* address */2], (function () {
+                  describe("AddressInfo of address " + info[/* address */3], (function () {
                           Jest.test("Custodians are correct", (function () {
                                   return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](Belt_Set.eq(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_Array.mapU(custodians, (function (u) {
                                                                 return u[/* userId */0];
@@ -102,7 +102,7 @@ describe("WalletInfoCollector-addressInfo", (function () {
                                                     status
                                                   ], Jest.Expect[/* expect */0](/* tuple */[
                                                         info[/* addressType */0],
-                                                        info[/* addressStatus */4]
+                                                        info[/* addressStatus */5]
                                                       ]));
                                       }));
                         }));

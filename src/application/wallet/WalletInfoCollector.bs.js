@@ -15,6 +15,7 @@ var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
+var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 var PayoutTransaction = require("./PayoutTransaction.bs.js");
 
 function getPayoutTx(processId, param) {
@@ -27,7 +28,7 @@ function addressInfos(accountIdx, param) {
 
 function addressInfoFor(accountIdx, findAddress, collector) {
   return Js_option.getExn(Belt_List.getByU(addressInfos(accountIdx, collector), (function (param) {
-                    return param[/* address */2] === findAddress;
+                    return param[/* address */3] === findAddress;
                   })));
 }
 
@@ -89,7 +90,7 @@ function accountKeyChains(param) {
 }
 
 function inputsFor(accountIdx, info, state) {
-  var match = info[/* addressStatus */4];
+  var match = info[/* addressStatus */5];
   var tmp;
   switch (match) {
     case 0 : 
@@ -107,7 +108,7 @@ function inputsFor(accountIdx, info, state) {
         break;
     
   }
-  return Belt_MapString.getWithDefault(Belt_Map.getWithDefault(tmp, accountIdx, Belt_MapString.empty), info[/* address */2], /* [] */0);
+  return Belt_MapString.getWithDefault(Belt_Map.getWithDefault(tmp, accountIdx, Belt_MapString.empty), info[/* address */3], /* [] */0);
 }
 
 function currentSpendableInputs(accountIdx, param) {
@@ -118,7 +119,7 @@ function currentSpendableInputs(accountIdx, param) {
 
 function unlockedInputs(accountIdx, collector) {
   return Belt_Set.keepU(Belt_Map.getWithDefault(collector[/* unlocked */3], accountIdx, Network.inputSet(/* () */0)), (function (param) {
-                return addressInfoFor(accountIdx, param[/* address */2], collector)[/* addressStatus */4] !== /* Inaccessible */4;
+                return addressInfoFor(accountIdx, param[/* address */2], collector)[/* addressStatus */5] !== /* Inaccessible */4;
               }));
 }
 
@@ -325,13 +326,13 @@ function updateAddressInfos(accountIdx, currentCustodians, state) {
   var state_011 = /* addressInfos */Belt_Map.updateU(state[/* addressInfos */11], accountIdx, (function (infos) {
           var infos$1 = Js_option.getWithDefault(/* [] */0, infos);
           return Belt_List.mapU(infos$1, (function (info) {
-                        var newStatus = determinAddressStatus(custodians, info[/* custodians */1], info[/* nCoSigners */3]);
-                        if (newStatus !== info[/* addressStatus */4]) {
+                        var newStatus = determinAddressStatus(custodians, info[/* custodians */1], info[/* nCoSigners */4]);
+                        if (newStatus !== info[/* addressStatus */5]) {
                           updates[0] = /* :: */[
                             /* tuple */[
-                              info[/* address */2],
+                              info[/* address */3],
                               newStatus,
-                              info[/* addressStatus */4]
+                              info[/* addressStatus */5]
                             ],
                             updates[0]
                           ];
@@ -339,10 +340,11 @@ function updateAddressInfos(accountIdx, currentCustodians, state) {
                         return /* record */[
                                 /* addressType */info[/* addressType */0],
                                 /* custodians */info[/* custodians */1],
-                                /* address */info[/* address */2],
-                                /* nCoSigners */info[/* nCoSigners */3],
+                                /* usingHardwareKey */info[/* usingHardwareKey */2],
+                                /* address */info[/* address */3],
+                                /* nCoSigners */info[/* nCoSigners */4],
                                 /* addressStatus */newStatus,
-                                /* balance */info[/* balance */5]
+                                /* balance */info[/* balance */6]
                               ];
                       }));
         }));
@@ -574,15 +576,16 @@ function addToBalance(accountIdx, address, amount, state) {
           /* exposedCoordinates */state[/* exposedCoordinates */10],
           /* addressInfos */Belt_Map.updateU(state[/* addressInfos */11], accountIdx, (function (infos) {
                   return Belt_List.mapU(Js_option.getWithDefault(/* [] */0, infos), (function (info) {
-                                var match = info[/* address */2] === address;
+                                var match = info[/* address */3] === address;
                                 if (match) {
                                   return /* record */[
                                           /* addressType */info[/* addressType */0],
                                           /* custodians */info[/* custodians */1],
-                                          /* address */info[/* address */2],
-                                          /* nCoSigners */info[/* nCoSigners */3],
-                                          /* addressStatus */info[/* addressStatus */4],
-                                          /* balance */amount.plus(info[/* balance */5])
+                                          /* usingHardwareKey */info[/* usingHardwareKey */2],
+                                          /* address */info[/* address */3],
+                                          /* nCoSigners */info[/* nCoSigners */4],
+                                          /* addressStatus */info[/* addressStatus */5],
+                                          /* balance */amount.plus(info[/* balance */6])
                                         ];
                                 } else {
                                   return info;
@@ -616,7 +619,7 @@ function removeInputFromUtxoMap(accountIdx, input, inputMap) {
 
 function removeInput(accountIdx, input, state) {
   var info = addressInfoFor(accountIdx, input[/* address */2], state);
-  var match = info[/* addressStatus */4];
+  var match = info[/* addressStatus */5];
   var exit = 0;
   switch (match) {
     case 0 : 
@@ -871,9 +874,19 @@ function apply($$event, state) {
         var state$1;
         if (match$4 !== undefined) {
           var changeInput = match$4;
-          var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$5, Address.Coordinates[/* keyChainIdent */4](changeInput[/* coordinates */6]), state[/* keyChains */7])[/* custodianKeyChains */4], (function (prim) {
-                          return prim[0];
+          var match$5 = Belt_Array.unzip(Belt_List.toArray(Belt_List.mapU(AccountKeyChain.Collection[/* lookup */2](accountIdx$5, Address.Coordinates[/* keyChainIdent */4](changeInput[/* coordinates */6]), state[/* keyChains */7])[/* custodianKeyChains */4], (function (param) {
+                          var userId = param[0];
+                          return /* tuple */[
+                                  userId,
+                                  Utils.mapOption((function () {
+                                          return userId;
+                                        }), CustodianKeyChain.hardwareId(param[1]))
+                                ];
                         }))));
+          var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], match$5[0]);
+          var usingHardwareKey = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_Array.keepMapU(match$5[1], (function (a) {
+                      return a;
+                    })));
           var addressStatus = determinAddressStatus(Belt_Map.getExn(state[/* currentCustodians */12], accountIdx$5), custodians, changeInput[/* nCoSigners */4]);
           state$1 = addToBalance(accountIdx$5, changeInput[/* address */2], changeInput[/* value */3], addTxInput(addressStatus, accountIdx$5, changeInput, /* record */[
                     /* network */state[/* network */0],
@@ -893,6 +906,7 @@ function apply($$event, state) {
                                     /* record */[
                                       /* addressType : Change */0,
                                       /* custodians */custodians,
+                                      /* usingHardwareKey */usingHardwareKey,
                                       /* address */changeInput[/* address */2],
                                       /* nCoSigners */changeInput[/* nCoSigners */4],
                                       /* addressStatus */addressStatus,
@@ -961,8 +975,8 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 39 : 
-        var match$5 = $$event[0];
-        var accountIdx$7 = match$5[/* accountIdx */0];
+        var match$6 = $$event[0];
+        var accountIdx$7 = match$6[/* accountIdx */0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* spendable */state[/* spendable */1],
@@ -978,8 +992,8 @@ function apply($$event, state) {
                     accountIdx$7,
                     /* :: */[
                       /* tuple */[
-                        match$5[/* custodianId */1],
-                        match$5[/* identifier */2]
+                        match$6[/* custodianId */1],
+                        match$6[/* identifier */2]
                       ],
                       Js_option.getExn(Belt_List.getAssoc(state[/* activatedKeyChain */9], accountIdx$7, WalletTypes.AccountIndex[/* eq */7]))
                     ]
@@ -991,16 +1005,26 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 40 : 
-        var match$6 = $$event[0];
-        var match$7 = match$6[/* address */1];
-        var displayAddress = match$7[/* displayAddress */5];
-        var coordinates = match$7[/* coordinates */2];
-        var nCoSigners = match$7[/* nCoSigners */0];
-        var partnerId$1 = match$6[/* partnerId */0];
+        var match$7 = $$event[0];
+        var match$8 = match$7[/* address */1];
+        var displayAddress = match$8[/* displayAddress */5];
+        var coordinates = match$8[/* coordinates */2];
+        var nCoSigners = match$8[/* nCoSigners */0];
+        var partnerId$1 = match$7[/* partnerId */0];
         var accountIdx$8 = Address.Coordinates[/* accountIdx */3](coordinates);
-        var custodians$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$8, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */7])[/* custodianKeyChains */4], (function (prim) {
-                        return prim[0];
+        var match$9 = Belt_Array.unzip(Belt_List.toArray(Belt_List.mapU(AccountKeyChain.Collection[/* lookup */2](accountIdx$8, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */7])[/* custodianKeyChains */4], (function (param) {
+                        var userId = param[0];
+                        return /* tuple */[
+                                userId,
+                                Utils.mapOption((function () {
+                                        return userId;
+                                      }), CustodianKeyChain.hardwareId(param[1]))
+                              ];
                       }))));
+        var custodians$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], match$9[0]);
+        var usingHardwareKey$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_Array.keepMapU(match$9[1], (function (a) {
+                    return a;
+                  })));
         return /* record */[
                 /* network */state[/* network */0],
                 /* spendable */state[/* spendable */1],
@@ -1022,6 +1046,7 @@ function apply($$event, state) {
                                 /* record */[
                                   /* addressType : Income */[partnerId$1],
                                   /* custodians */custodians$1,
+                                  /* usingHardwareKey */usingHardwareKey$1,
                                   /* address */displayAddress,
                                   /* nCoSigners */nCoSigners,
                                   /* addressStatus */determinAddressStatus(Belt_Map.getExn(state[/* currentCustodians */12], accountIdx$8), custodians$1, nCoSigners),
@@ -1033,15 +1058,15 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 41 : 
-        var match$8 = $$event[0];
-        var amount = match$8[/* amount */4];
-        var coordinates$1 = match$8[/* coordinates */1];
-        var address = match$8[/* address */0];
+        var match$10 = $$event[0];
+        var amount = match$10[/* amount */4];
+        var coordinates$1 = match$10[/* coordinates */1];
+        var address = match$10[/* address */0];
         var accountIdx$9 = Address.Coordinates[/* accountIdx */3](coordinates$1);
-        var addressStatus$1 = addressInfoFor(accountIdx$9, address, state)[/* addressStatus */4];
+        var addressStatus$1 = addressInfoFor(accountIdx$9, address, state)[/* addressStatus */5];
         var keyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx$9, Address.Coordinates[/* keyChainIdent */4](coordinates$1), state[/* keyChains */7]);
-        var input_000 = /* txId */match$8[/* txId */2];
-        var input_001 = /* txOutputN */match$8[/* txOutputN */3];
+        var input_000 = /* txId */match$10[/* txId */2];
+        var input_001 = /* txOutputN */match$10[/* txOutputN */3];
         var input_004 = /* nCoSigners */keyChain[/* nCoSigners */2];
         var input_005 = /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */4]);
         var input_007 = /* sequence */keyChain[/* sequence */3];
@@ -1060,7 +1085,7 @@ function apply($$event, state) {
     case 42 : 
         var input$1 = $$event[0][/* input */0];
         var accountIdx$10 = Address.Coordinates[/* accountIdx */3](input$1[/* coordinates */6]);
-        var addressStatus$2 = addressInfoFor(accountIdx$10, input$1[/* address */2], state)[/* addressStatus */4];
+        var addressStatus$2 = addressInfoFor(accountIdx$10, input$1[/* address */2], state)[/* addressStatus */5];
         var updateInput = function (input, utxoMap) {
           return Belt_Map.updateU(utxoMap, accountIdx$10, (function (inputs) {
                         return Js_primitive.some(Belt_MapString.updateU(Js_option.getWithDefault(Belt_MapString.empty, inputs), input[/* address */2], (function (inputs) {

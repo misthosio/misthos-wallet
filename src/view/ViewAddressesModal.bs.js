@@ -255,16 +255,16 @@ function make(viewData, _) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var infos = Belt_List.toArray(Belt_List.keepMapU(viewData[/* infos */0], (function (info) {
-                          if (info[/* addressType */0] !== /* Change */0 || info[/* balance */5].gt(BTC.zero)) {
+                          if (info[/* addressType */0] !== /* Change */0 || info[/* balance */6].gt(BTC.zero)) {
                             var details$1 = Curry._1(viewData[/* addressDetails */3], info);
                             var expand = Caml_obj.caml_equal(state[/* expandedAddress */0], info);
                             var match = info[/* addressType */0];
                             return /* array */[
-                                    ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, undefined, /* array */[match ? ViewCommon.text(info[/* address */2]) : React.createElement("span", {
+                                    ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, undefined, /* array */[match ? ViewCommon.text(info[/* address */3]) : React.createElement("span", {
                                                       className: changeAddress
                                                     }, ViewCommon.text("(hidden change address)"))])),
-                                    ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(info[/* balance */5]) + " BTC")])),
-                                    statusToLabel(summary, calcAddressStatus(info[/* addressStatus */4], info[/* balance */5], Belt_List.map(details$1[/* unspentIncome */5], (function (i) {
+                                    ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(info[/* balance */6]) + " BTC")])),
+                                    statusToLabel(summary, calcAddressStatus(info[/* addressStatus */5], info[/* balance */6], Belt_List.map(details$1[/* unspentIncome */5], (function (i) {
                                                     return i[/* unlocked */1];
                                                   })))),
                                     ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(chevron(expand), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {

@@ -22,6 +22,7 @@ type addressType =
 type addressInfo = {
   addressType,
   custodians: UserId.set,
+  usingHardwareKey: UserId.set,
   address: string,
   nCoSigners: int,
   addressStatus,
@@ -597,7 +598,7 @@ let apply = (event, state) =>
       ),
     ) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;
-    let custodians =
+    let (custodians, hardwareCustodians) =
       (
         state.keyChains
         |> AccountKeyChain.Collection.lookup(
@@ -606,8 +607,20 @@ let apply = (event, state) =>
            )
       ).
         custodianKeyChains
-      |. List.map(fst)
+      |. List.mapU((. (userId, keyChain)) =>
+           (
+             userId,
+             keyChain
+             |> CustodianKeyChain.hardwareId
+             |> Utils.mapOption(_ => userId),
+           )
+         )
       |> List.toArray
+      |> Array.unzip;
+    let custodians = custodians |> Set.mergeMany(UserId.emptySet);
+    let usingHardwareKey =
+      hardwareCustodians
+      |. Array.keepMapU((. a) => a)
       |> Set.mergeMany(UserId.emptySet);
     {
       ...state,
@@ -630,6 +643,7 @@ let apply = (event, state) =>
                    addressType: Income(partnerId),
                    nCoSigners,
                    custodians,
+                   usingHardwareKey,
                    balance: BTC.zero,
                  },
                  ...infos,
@@ -810,7 +824,7 @@ let apply = (event, state) =>
         |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
       ) {
       | Some(changeInput) =>
-        let custodians =
+        let (custodians, hardwareCustodians) =
           (
             state.keyChains
             |> AccountKeyChain.Collection.lookup(
@@ -819,8 +833,20 @@ let apply = (event, state) =>
                )
           ).
             custodianKeyChains
-          |. List.map(fst)
+          |. List.mapU((. (userId, keyChain)) =>
+               (
+                 userId,
+                 keyChain
+                 |> CustodianKeyChain.hardwareId
+                 |> Utils.mapOption(_ => userId),
+               )
+             )
           |> List.toArray
+          |> Array.unzip;
+        let custodians = custodians |> Set.mergeMany(UserId.emptySet);
+        let usingHardwareKey =
+          hardwareCustodians
+          |. Array.keepMapU((. a) => a)
           |> Set.mergeMany(UserId.emptySet);
         let addressStatus =
           determinAddressStatus(
@@ -843,6 +869,7 @@ let apply = (event, state) =>
                        addressType: Change,
                        nCoSigners: changeInput.nCoSigners,
                        custodians,
+                       usingHardwareKey,
                        balance: BTC.zero,
                      },
                      ...infos,

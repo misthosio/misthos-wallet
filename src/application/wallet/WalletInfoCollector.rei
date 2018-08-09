@@ -15,6 +15,7 @@ type addressType =
 type addressInfo = {
   addressType,
   custodians: UserId.set,
+  usingHardwareKey: UserId.set,
   address: string,
   nCoSigners: int,
   addressStatus,
