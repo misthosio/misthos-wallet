@@ -477,6 +477,48 @@ var send = React.createElement("svg", {
                           points: "16 0 10.4 16 7.2 8.8 0 5.6"
                         }))))));
 
+var clock = React.createElement("svg", {
+      height: "22",
+      width: "22",
+      viewBox: "0 0 22 22",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("g", {
+          fill: "none",
+          fillRule: "evenodd",
+          stroke: "#000",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          transform: "translate(1 1)"
+        }, React.createElement("circle", {
+              cx: "10",
+              cy: "10",
+              r: "10"
+            }), React.createElement("path", {
+              d: "M10 4v6l4 2"
+            })));
+
+var settings = React.createElement("svg", {
+      height: "22",
+      width: "22",
+      viewBox: "0 0 22 22",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("g", {
+          fill: "none",
+          fillRule: "evenodd",
+          stroke: "#000",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2",
+          transform: "translate(1 1)"
+        }, React.createElement("circle", {
+              cx: "10",
+              cy: "10",
+              r: "2.727"
+            }), React.createElement("path", {
+              d: "M16.727 12.727a1.5 1.5 0 0 0 .3 1.655l.055.054a1.818 1.818 0 1 1-2.573 2.573l-.054-.054a1.5 1.5 0 0 0-1.655-.3 1.5 1.5 0 0 0-.91 1.372v.155a1.818 1.818 0 1 1-3.635 0V18.1a1.5 1.5 0 0 0-.982-1.373 1.5 1.5 0 0 0-1.655.3l-.054.055a1.818 1.818 0 1 1-2.573-2.573l.054-.054a1.5 1.5 0 0 0 .3-1.655 1.5 1.5 0 0 0-1.372-.91h-.155a1.818 1.818 0 1 1 0-3.635H1.9a1.5 1.5 0 0 0 1.373-.982 1.5 1.5 0 0 0-.3-1.655l-.055-.054A1.818 1.818 0 1 1 5.491 2.99l.054.054a1.5 1.5 0 0 0 1.655.3h.073a1.5 1.5 0 0 0 .909-1.372v-.155a1.818 1.818 0 0 1 3.636 0V1.9a1.5 1.5 0 0 0 .91 1.373 1.5 1.5 0 0 0 1.654-.3l.054-.055a1.818 1.818 0 1 1 2.573 2.573l-.054.054a1.5 1.5 0 0 0-.3 1.655v.073a1.5 1.5 0 0 0 1.372.909h.155a1.818 1.818 0 1 1 0 3.636H18.1a1.5 1.5 0 0 0-1.373.91z"
+            })));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -509,4 +551,6 @@ exports.arrowDownBig = arrowDownBig;
 exports.avatar = avatar;
 exports.alert = alert;
 exports.send = send;
+exports.clock = clock;
+exports.settings = settings;
 /* arrowRight Not a pure module */

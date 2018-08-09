@@ -37,15 +37,15 @@ var component = ReasonReact.reducerComponent("SelectedVenture");
 var addressesButtonIcon = Css.style(/* :: */[
       Css.marginTop(Css.px(Caml_int32.imul(Theme.space(2), -1))),
       /* :: */[
-        Css.marginBottom(Css.px(Caml_int32.imul(Theme.space(1), -1))),
+        Css.marginLeft(Css.px(Theme.space(1))),
         /* :: */[
-          Css.transform(Css.rotate(Css.deg(90))),
+          Css.marginBottom(Css.px(Caml_int32.imul(Theme.space(1), -1))),
           /* [] */0
         ]
       ]
     ]);
 
-var atRiskAddressButtonIcon = Css.style(/* :: */[
+var settingsButtonIcon = Css.style(/* :: */[
       Css.marginTop(Css.px(Caml_int32.imul(Theme.space(2), -1))),
       /* :: */[
         Css.marginBottom(Css.px(Caml_int32.imul(Theme.space(1), -1))),
@@ -53,8 +53,20 @@ var atRiskAddressButtonIcon = Css.style(/* :: */[
       ]
     ]);
 
+var atRiskAddressButtonIcon = Css.style(/* :: */[
+      Css.marginTop(Css.px(Caml_int32.imul(Theme.space(2), -1))),
+      /* :: */[
+        Css.marginLeft(Css.px(Theme.space(1))),
+        /* :: */[
+          Css.marginBottom(Css.px(Caml_int32.imul(Theme.space(1), -1))),
+          /* [] */0
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* addressesButtonIcon */addressesButtonIcon,
+  /* settingsButtonIcon */settingsButtonIcon,
   /* atRiskAddressButtonIcon */atRiskAddressButtonIcon
 ];
 
@@ -239,7 +251,8 @@ function make(viewData, _) {
                   /* Addresses */4
                 ]);
               var match$4 = viewData[/* atRiskWarning */1];
-              var match$5 = viewData[/* readOnly */3];
+              var match$5 = viewData[/* atRiskWarning */1];
+              var match$6 = viewData[/* readOnly */3];
               var partial_arg_000$1 = viewData[/* ventureId */0];
               var partial_arg$1 = /* Venture */Block.__(0, [
                   partial_arg_000$1,
@@ -249,7 +262,8 @@ function make(viewData, _) {
                                               ViewCommon.text(viewData[/* ventureName */2]),
                                               ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(match$3 ? atRiskAddressButtonIcon : addressesButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
                                                           return Router.clickToRoute(partial_arg, param);
-                                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[match$4 ? Icons.alert : Icons.arrowUpCircle]))
+                                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[match$4 ? Icons.alert : Icons.clock])),
+                                              ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(settingsButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[match$5 ? Icons.alert : Icons.settings]))
                                             ])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */10][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */10][/* reserved */1]), /* array */[])))), Js_primitive.some(React.createElement("div", {
                                       className: Css.style(/* :: */[
                                             Css.display(/* flex */-1010954439),
@@ -268,7 +282,7 @@ function make(viewData, _) {
                                                 /* CreatePayout */2
                                               ]), /* array */[ViewCommon.text("PAY OUT")])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
-                                    }, match$5 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, true, undefined, undefined, undefined, /* array */[partners]))])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function (param) {
+                                    }, match$6 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, true, undefined, undefined, undefined, /* array */[partners]))])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function (param) {
                                                 return Router.clickToRoute(partial_arg$1, param);
                                               }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Add or Remove Partners")])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
