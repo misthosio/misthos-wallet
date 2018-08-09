@@ -15,7 +15,7 @@ var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var CommandExecutor = require("./CommandExecutor.bs.js");
 
-var component = ReasonReact.reducerComponent("ProcessApprovalButtons");
+var component = ReasonReact.reducerComponent("ProposeButton");
 
 var inlineConfirm = Css.style(/* :: */[
       Css.display(/* flex */-1010954439),

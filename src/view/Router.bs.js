@@ -36,7 +36,7 @@ function routeFromUrl(url) {
                       } else {
                         return /* Venture */Block.__(0, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  /* Addresses */4
+                                  /* Addresses */5
                                 ]);
                       }
                   case "hidden" : 
@@ -45,7 +45,7 @@ function routeFromUrl(url) {
                       } else {
                         return /* Venture */Block.__(0, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  /* HiddenOutputLog */3
+                                  /* HiddenOutputLog */4
                                 ]);
                       }
                   case "income" : 
@@ -68,65 +68,37 @@ function routeFromUrl(url) {
                       } else {
                         return /* Home */0;
                       }
-                  case "ledger" : 
+                  case "partners" : 
                       var match$5 = match$2[1];
                       if (match$5) {
-                        switch (match$5[0]) {
-                          case "keys" : 
-                              if (match$5[1]) {
-                                return /* Home */0;
-                              } else {
-                                return /* Venture */Block.__(0, [
-                                          PrimitiveTypes.VentureId[/* fromString */1](id),
-                                          /* LedgerKeys */6
-                                        ]);
-                              }
-                          case "sign" : 
-                              if (match$5[1]) {
-                                return /* Home */0;
-                              } else {
-                                return /* Venture */Block.__(0, [
-                                          PrimitiveTypes.VentureId[/* fromString */1](id),
-                                          /* LedgerSign */7
-                                        ]);
-                              }
-                          default:
-                            return /* Home */0;
-                        }
-                      } else {
-                        return /* Home */0;
-                      }
-                  case "partners" : 
-                      var match$6 = match$2[1];
-                      if (match$6) {
-                        if (match$6[1]) {
+                        if (match$5[1]) {
                           return /* Home */0;
                         } else {
                           return /* Venture */Block.__(0, [
                                     PrimitiveTypes.VentureId[/* fromString */1](id),
-                                    /* Partner */Block.__(0, [PrimitiveTypes.ProcessId[/* fromString */1](match$6[0])])
+                                    /* Partner */Block.__(0, [PrimitiveTypes.ProcessId[/* fromString */1](match$5[0])])
                                   ]);
                         }
                       } else {
                         return /* Venture */Block.__(0, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  /* ManagePartners */1
+                                  /* ManagePartners */2
                                 ]);
                       }
                   case "payouts" : 
-                      var match$7 = match$2[1];
-                      if (match$7) {
-                        var processId = match$7[0];
+                      var match$6 = match$2[1];
+                      if (match$6) {
+                        var processId = match$6[0];
                         if (processId === "new") {
-                          if (match$7[1]) {
+                          if (match$6[1]) {
                             return /* Home */0;
                           } else {
                             return /* Venture */Block.__(0, [
                                       PrimitiveTypes.VentureId[/* fromString */1](id),
-                                      /* CreatePayout */2
+                                      /* CreatePayout */3
                                     ]);
                           }
-                        } else if (match$7[1]) {
+                        } else if (match$6[1]) {
                           return /* Home */0;
                         } else {
                           return /* Venture */Block.__(0, [
@@ -143,7 +115,16 @@ function routeFromUrl(url) {
                       } else {
                         return /* Venture */Block.__(0, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  /* Receive */5
+                                  /* Receive */6
+                                ]);
+                      }
+                  case "settings" : 
+                      if (match$2[1]) {
+                        return /* Home */0;
+                      } else {
+                        return /* Venture */Block.__(0, [
+                                  PrimitiveTypes.VentureId[/* fromString */1](id),
+                                  /* Settings */1
                                 ]);
                       }
                   default:
@@ -190,19 +171,17 @@ function routeToUrl(route) {
         case 0 : 
             return "/ventures/" + PrimitiveTypes.VentureId[/* toString */0](id);
         case 1 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/partners");
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/settings");
         case 2 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/payouts/new");
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/partners");
         case 3 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/hidden");
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/payouts/new");
         case 4 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/addresses");
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/hidden");
         case 5 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/receive");
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/addresses");
         case 6 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/ledger/keys");
-        case 7 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/ledger/sign");
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/receive");
         
       }
     } else {

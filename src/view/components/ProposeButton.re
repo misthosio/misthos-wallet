@@ -17,7 +17,7 @@ type action =
   | Propose
   | ConfirmProposal;
 
-let component = ReasonReact.reducerComponent("ProcessApprovalButtons");
+let component = ReasonReact.reducerComponent("ProposeButton");
 
 module Styles = {
   open Css;

@@ -248,22 +248,29 @@ function make(viewData, _) {
               var partial_arg_000 = viewData[/* ventureId */0];
               var partial_arg = /* Venture */Block.__(0, [
                   partial_arg_000,
-                  /* Addresses */4
+                  /* Addresses */5
                 ]);
               var match$4 = viewData[/* atRiskWarning */1];
-              var match$5 = viewData[/* atRiskWarning */1];
-              var match$6 = viewData[/* readOnly */3];
               var partial_arg_000$1 = viewData[/* ventureId */0];
               var partial_arg$1 = /* Venture */Block.__(0, [
                   partial_arg_000$1,
-                  /* ManagePartners */1
+                  /* Settings */1
+                ]);
+              var match$5 = viewData[/* atRiskWarning */1];
+              var match$6 = viewData[/* readOnly */3];
+              var partial_arg_000$2 = viewData[/* ventureId */0];
+              var partial_arg$2 = /* Venture */Block.__(0, [
+                  partial_arg_000$2,
+                  /* ManagePartners */2
                 ]);
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Partners")), Js_primitive.some(ViewCommon.text("Transactions")), Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[
                                               ViewCommon.text(viewData[/* ventureName */2]),
                                               ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(match$3 ? atRiskAddressButtonIcon : addressesButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
                                                           return Router.clickToRoute(partial_arg, param);
                                                         }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[match$4 ? Icons.alert : Icons.clock])),
-                                              ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(settingsButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[match$5 ? Icons.alert : Icons.settings]))
+                                              ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(settingsButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
+                                                          return Router.clickToRoute(partial_arg$1, param);
+                                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[match$5 ? Icons.alert : Icons.settings]))
                                             ])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */10][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */10][/* reserved */1]), /* array */[])))), Js_primitive.some(React.createElement("div", {
                                       className: Css.style(/* :: */[
                                             Css.display(/* flex */-1010954439),
@@ -271,7 +278,7 @@ function make(viewData, _) {
                                           ])
                                     }, ReasonReact.element(undefined, undefined, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
                                                 viewData[/* ventureId */0],
-                                                /* Receive */5
+                                                /* Receive */6
                                               ]), /* array */[ViewCommon.text("RECEIVE")])), React.createElement("div", {
                                           className: Css.style(/* :: */[
                                                 Css.width(Css.px(Theme.space(8))),
@@ -279,11 +286,11 @@ function make(viewData, _) {
                                               ])
                                         }), ReasonReact.element(undefined, undefined, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
                                                 viewData[/* ventureId */0],
-                                                /* CreatePayout */2
+                                                /* CreatePayout */3
                                               ]), /* array */[ViewCommon.text("PAY OUT")])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
                                     }, match$6 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, true, undefined, undefined, undefined, /* array */[partners]))])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function (param) {
-                                                return Router.clickToRoute(partial_arg$1, param);
+                                                return Router.clickToRoute(partial_arg$2, param);
                                               }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Add or Remove Partners")])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
                                     }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[

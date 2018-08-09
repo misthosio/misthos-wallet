@@ -299,7 +299,11 @@ let make = (~viewData: ViewData.t, _children) => {
               )>
               (viewData.atRiskWarning ? Icons.alert : Icons.clock)
             </MaterialUi.IconButton>
-            <MaterialUi.IconButton className=Styles.settingsButtonIcon>
+            <MaterialUi.IconButton
+              className=Styles.settingsButtonIcon
+              onClick=(
+                Router.clickToRoute(Venture(viewData.ventureId, Settings))
+              )>
               (viewData.atRiskWarning ? Icons.alert : Icons.settings)
             </MaterialUi.IconButton>
           </MTypography>

@@ -3,6 +3,7 @@ open PrimitiveTypes;
 module Config = {
   type ventureSubRoute =
     | None
+    | Settings
     | ManagePartners
     | CreatePayout
     | Partner(processId)
@@ -10,9 +11,7 @@ module Config = {
     | Income(string)
     | HiddenOutputLog
     | Addresses
-    | Receive
-    | LedgerKeys
-    | LedgerSign;
+    | Receive;
 
   type route =
     | Home
@@ -47,10 +46,8 @@ module Config = {
       Venture(id |> VentureId.fromString, Income(transactionId))
     | ["ventures", id, "receive"] =>
       Venture(id |> VentureId.fromString, Receive)
-    | ["ventures", id, "ledger", "keys"] =>
-      Venture(id |> VentureId.fromString, LedgerKeys)
-    | ["ventures", id, "ledger", "sign"] =>
-      Venture(id |> VentureId.fromString, LedgerSign)
+    | ["ventures", id, "settings"] =>
+      Venture(id |> VentureId.fromString, Settings)
     | ["ventures", id, "joinvia", userId] =>
       JoinVenture(id |> VentureId.fromString, userId |> UserId.fromString)
     | ["typographystack"] => TypographyStack
@@ -83,10 +80,8 @@ module Config = {
       "/ventures/" ++ (id |> VentureId.toString) ++ "/income/" ++ txId
     | Venture(id, Receive) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/receive"
-    | Venture(id, LedgerKeys) =>
-      "/ventures/" ++ (id |> VentureId.toString) ++ "/ledger/keys"
-    | Venture(id, LedgerSign) =>
-      "/ventures/" ++ (id |> VentureId.toString) ++ "/ledger/sign"
+    | Venture(id, Settings) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/settings"
     | JoinVenture(id, userId) =>
       "/ventures/"
       ++ (id |> VentureId.toString)
