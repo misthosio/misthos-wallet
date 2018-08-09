@@ -32,11 +32,16 @@ function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, componen
           /* willUpdate */statelessComponent[/* willUpdate */7],
           /* shouldUpdate */statelessComponent[/* shouldUpdate */8],
           /* render */(function () {
-              var style = variant !== 579538228 ? (
-                  variant !== 594052472 || !gutterTop ? margin(0) : margin(4)
-                ) : (
-                  gutterTop ? margin(4) : margin(0)
-                );
+              var style;
+              var exit = 0;
+              if (variant !== -904051920 && variant !== 579538228 && variant !== 594052472) {
+                style = margin(0);
+              } else {
+                exit = 1;
+              }
+              if (exit === 1) {
+                style = gutterTop ? margin(4) : margin(0);
+              }
               return ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, style + (" " + className), color, component, gutterBottom, undefined, undefined, undefined, variant, undefined, undefined, /* array */[children]));
             }),
           /* initialState */statelessComponent[/* initialState */10],

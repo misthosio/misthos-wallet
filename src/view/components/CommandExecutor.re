@@ -151,14 +151,16 @@ module Status = {
       | Idle => ReasonReact.null
       | PreSubmit(message) =>
         ReasonReact.array([|
-          <MTypography variant=`Body2> (message |> text) </MTypography>,
+          <MTypography variant=`Body2 gutterTop=true>
+            (message |> text)
+          </MTypography>,
           <MaterialUi.LinearProgress
             className=Css.(style([marginTop(px(Theme.space(1)))]))
           />,
         |])
       | Pending(_) =>
         ReasonReact.array([|
-          <MTypography variant=`Body2>
+          <MTypography variant=`Body2 gutterTop=true>
             (
               (
                 switch (action) {

@@ -151,7 +151,7 @@ function make$1(cmdStatus, action, _) {
                 switch (cmdStatus.tag | 0) {
                   case 0 : 
                       return /* array */[
-                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(cmdStatus[0])])),
+                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text(cmdStatus[0])])),
                               ReasonReact.element(undefined, undefined, MaterialUi_LinearProgress.make(Css.style(/* :: */[
                                             Css.marginTop(Css.px(Theme.space(1))),
                                             /* [] */0
@@ -186,7 +186,7 @@ function make$1(cmdStatus, action, _) {
                         
                       }
                       return /* array */[
-                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(tmp)])),
+                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text(tmp)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_LinearProgress.make(Css.style(/* :: */[
                                             Css.marginTop(Css.px(Theme.space(1))),
                                             /* [] */0
