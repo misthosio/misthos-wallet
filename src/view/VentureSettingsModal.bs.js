@@ -32,7 +32,7 @@ var component = ReasonReact.statelessComponent("VentureSettings");
 
 function make(viewData, commands, cmdStatus, _) {
   var executeSubmit = function () {
-    Curry._1(commands[/* preSubmit */11], "Please connect your ledger device and open the BTC app");
+    Curry._1(commands[/* preSubmit */11], "Please connect your Ledger device and open the BTC app");
     Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
             if (typeof param === "number") {
               return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "This device has the wrong seed"));
@@ -64,14 +64,14 @@ function make(viewData, commands, cmdStatus, _) {
               var match$1 = viewData[/* ledgerUpToDate */1];
               var match$2 = match !== undefined ? (
                   match$1 ? /* tuple */[
-                      "You have integrated your ledger device.",
+                      "You have integrated your Ledger device.",
                       "Up to date"
                     ] : /* tuple */[
-                      "You have integrated your ledger device.",
+                      "You have integrated your Ledger device.",
                       "Needs rotating"
                     ]
                 ) : /* tuple */[
-                  "You currently have no ledger device integrated into this venture.",
+                  "You currently have no Ledger device integrated into this venture.",
                   "Not submitted"
                 ];
               var nSigs = Belt_Array.slice(Belt_Array.mapWithIndexU(AccountSettings.defaultCoSignerList, (function (idx, nCoSigners) {
@@ -101,7 +101,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               React.createElement("span", {
                                                     className: needsKeyRotation ? atRiskKeyStatus : ""
                                                   }, ViewCommon.text(match$2[1]))
-                                            ])), match$3 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, /* SubmitKeys */3, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Policy Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The policies determin the threshold at which a proposal will be accepted. This Venture has the following policies:")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition: Unanmious")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal: Unanmious minus 1")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout: Unanmious")])))), undefined, undefined, /* array */[]));
+                                            ])), match$3 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, /* SubmitKeys */3, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Policy Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition: Unanmious")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal: Unanmious minus 1")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout: Unanmious")])))), undefined, undefined, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

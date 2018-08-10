@@ -19,7 +19,7 @@ let make =
     ) => {
   let executeSubmit = () => {
     commands.preSubmit(
-      "Please connect your ledger device and open the BTC app",
+      "Please connect your Ledger device and open the BTC app",
     );
     Js.Promise.(
       viewData.getCustodianKeyChain()
@@ -45,15 +45,15 @@ let make =
       let (ledgerIntegrater, keyStatus) =
         switch (viewData.ledgerId, viewData.ledgerUpToDate) {
         | (Some(_), true) => (
-            "You have integrated your ledger device.",
+            "You have integrated your Ledger device.",
             "Up to date",
           )
         | (Some(_), false) => (
-            "You have integrated your ledger device.",
+            "You have integrated your Ledger device.",
             "Needs rotating",
           )
         | _ => (
-            "You currently have no ledger device integrated into this venture.",
+            "You currently have no Ledger device integrated into this venture.",
             "Not submitted",
           )
         };
@@ -164,7 +164,7 @@ let make =
             </MTypography>
             <MTypography variant=`Body2 gutterBottom=true>
               (
-                "The policies determin the threshold at which a proposal will be accepted. This Venture has the following policies:"
+                "The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:"
                 |> text
               )
             </MTypography>
