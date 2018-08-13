@@ -1984,9 +1984,9 @@ bs-fetch@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/bs-fetch/-/bs-fetch-0.3.0.tgz#60c64457359d0c7e0798d5a04db8987d16c4f8f3"
 
-bs-platform@4.0.4:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-4.0.4.tgz#ec092e91a9a4b540c4dfab4c067be0d856d7538c"
+bs-platform@4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-4.0.5.tgz#d4fd9bbdd11765af5b75110a5655065ece05eed6"
 
 bs-webapi@0.11.0:
   version "0.11.0"
