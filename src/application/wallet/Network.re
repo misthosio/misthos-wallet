@@ -101,4 +101,4 @@ let incomeAddress =
   fun
   | Regtest => testnetIncomeAddress
   | Testnet => testnetIncomeAddress
-  | Mainnet => "3DxDUdPvQwGeZid9SFGwygkufyRWLLUcYQ";
+  | Mainnet => "3LSfn8iuxcy9Ty1D7te1DtiiLR6nekgHPm";
