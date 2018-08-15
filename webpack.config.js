@@ -45,9 +45,7 @@ const config = {
     minimizer: [
       new UglifyJsPlugin({
         uglifyOptions: {
-          mangle: {
-            reserved: ['BigInteger','ECPair','Point']
-          },
+          mangle: true,
         }
       }),
     ],
