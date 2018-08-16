@@ -77,9 +77,8 @@ function theme($staropt$star, _) {
                   lineHeight: "32px"
                 },
                 subheading: {
-                  fontSize: "30px",
-                  letterSpacing: "0.5px",
-                  fontWeight: 600,
+                  fontSize: "18px",
+                  fontWeight: 300,
                   lineHeight: "normal"
                 },
                 body2: {
