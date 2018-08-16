@@ -68,7 +68,7 @@ module Styles = {
 
   let title =
     style([
-      lineHeight(0.92),
+      lineHeight(`abs(0.92)),
       lg([fontSize(px(124))]),
       sm([fontSize(px(72))]),
       xs([fontSize(px(68))]),

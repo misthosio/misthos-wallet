@@ -20,7 +20,10 @@ var balance = Css.style(/* :: */[
           /* :: */[
             Css.fontStyle(Css.normal),
             /* :: */[
-              Css.lineHeight(1.0),
+              Css.lineHeight(/* `abs */[
+                    4845682,
+                    1.0
+                  ]),
               /* :: */[
                 Css.letterSpacing(Css.px(1)),
                 /* :: */[

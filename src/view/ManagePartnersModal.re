@@ -47,7 +47,7 @@ module Styles = {
       fontWeight(600),
       fontSize(px(18)),
       fontStyle(normal),
-      lineHeight(1.0),
+      lineHeight(`abs(1.0)),
       letterSpacing(px(1)),
       unsafe("fill", "#" ++ Colors.uBlack),
     ]);

@@ -14,7 +14,7 @@ module Styles = {
       width(px(lenght)),
       height(px(lenght)),
       fontSize(px(24)),
-      lineHeight(1.0),
+      lineHeight(`abs(1.0)),
       fontWeight(600),
     ]);
   let primary = ex =>

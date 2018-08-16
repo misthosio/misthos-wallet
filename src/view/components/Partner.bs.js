@@ -39,7 +39,10 @@ var avatar = Css.style(/* :: */[
             /* :: */[
               Css.fontSize(Css.px(24)),
               /* :: */[
-                Css.lineHeight(1.0),
+                Css.lineHeight(/* `abs */[
+                      4845682,
+                      1.0
+                    ]),
                 /* :: */[
                   Css.fontWeight(600),
                   /* [] */0
