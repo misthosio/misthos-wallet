@@ -67,19 +67,58 @@ var UnanimousMinusOne = /* module */[
   /* encode */encode$1
 ];
 
-function fulfilled$2(param) {
-  if (param) {
-    return fulfilled$1;
+function fulfilled$2(eligible, endorsed) {
+  var endorsed$1 = Belt_Set.intersect(eligible, endorsed);
+  var eligibleSize = Belt_Set.size(eligible);
+  if ((Belt_Set.size(endorsed$1) << 1) > eligibleSize && eligibleSize > 0) {
+    return true;
   } else {
-    return fulfilled;
+    return fulfilled(eligible, endorsed$1);
   }
 }
 
-function canBeFulfilled$2(param) {
-  if (param) {
-    return canBeFulfilled$1;
-  } else {
-    return canBeFulfilled;
+function canBeFulfilled$2(eligible, rejected) {
+  var releventRejections = Belt_Set.intersect(eligible, rejected);
+  return (Belt_Set.size(releventRejections) << 1) < Belt_Set.size(eligible);
+}
+
+function encode$2() {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "Majority"
+              ],
+              /* [] */0
+            ]);
+}
+
+var Majority = /* module */[
+  /* fulfilled */fulfilled$2,
+  /* canBeFulfilled */canBeFulfilled$2,
+  /* encode */encode$2
+];
+
+function fulfilled$3(param) {
+  switch (param) {
+    case 0 : 
+        return fulfilled;
+    case 1 : 
+        return fulfilled$1;
+    case 2 : 
+        return fulfilled$2;
+    
+  }
+}
+
+function canBeFulfilled$3(param) {
+  switch (param) {
+    case 0 : 
+        return canBeFulfilled;
+    case 1 : 
+        return canBeFulfilled$1;
+    case 2 : 
+        return canBeFulfilled$2;
+    
   }
 }
 
@@ -87,11 +126,15 @@ var eq = Caml_obj.caml_equal;
 
 var neq = Caml_obj.caml_notequal;
 
-function encode$2(policy) {
-  if (policy) {
-    return encode$1(policy);
-  } else {
-    return encode(policy);
+function encode$3(policy) {
+  switch (policy) {
+    case 0 : 
+        return encode(policy);
+    case 1 : 
+        return encode$1(policy);
+    case 2 : 
+        return encode$2(policy);
+    
   }
 }
 
@@ -100,6 +143,8 @@ var UnknownPolicy = Caml_exceptions.create("Policy.UnknownPolicy");
 function decode(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
+    case "Majority" : 
+        return /* Majority */2;
     case "Unanimous" : 
         return /* Unanimous */0;
     case "UnanimousMinusOne" : 
@@ -124,27 +169,27 @@ function encodeInitialPolicies(policies) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "addPartner",
-                encode$2(policies[/* addPartner */0])
+                encode$3(policies[/* addPartner */0])
               ],
               /* :: */[
                 /* tuple */[
                   "addCustodian",
-                  encode$2(policies[/* addCustodian */1])
+                  encode$3(policies[/* addCustodian */1])
                 ],
                 /* :: */[
                   /* tuple */[
                     "removePartner",
-                    encode$2(policies[/* removePartner */2])
+                    encode$3(policies[/* removePartner */2])
                   ],
                   /* :: */[
                     /* tuple */[
                       "removeCustodian",
-                      encode$2(policies[/* removeCustodian */3])
+                      encode$3(policies[/* removeCustodian */3])
                     ],
                     /* :: */[
                       /* tuple */[
                         "payout",
-                        encode$2(policies[/* payout */4])
+                        encode$3(policies[/* payout */4])
                       ],
                       /* [] */0
                     ]
@@ -168,6 +213,8 @@ var unanimous = /* Unanimous */0;
 
 var unanimousMinusOne = /* UnanimousMinusOne */1;
 
+var majority = /* Majority */2;
+
 var defaultMetaPolicy = /* Unanimous */0;
 
 var defaultAddPartner = /* Unanimous */0;
@@ -182,13 +229,15 @@ var defaultPayout = /* Unanimous */0;
 
 exports.Unanimous = Unanimous;
 exports.UnanimousMinusOne = UnanimousMinusOne;
+exports.Majority = Majority;
 exports.unanimous = unanimous;
 exports.unanimousMinusOne = unanimousMinusOne;
-exports.fulfilled = fulfilled$2;
-exports.canBeFulfilled = canBeFulfilled$2;
+exports.majority = majority;
+exports.fulfilled = fulfilled$3;
+exports.canBeFulfilled = canBeFulfilled$3;
 exports.eq = eq;
 exports.neq = neq;
-exports.encode = encode$2;
+exports.encode = encode$3;
 exports.UnknownPolicy = UnknownPolicy;
 exports.decode = decode;
 exports.defaultMetaPolicy = defaultMetaPolicy;
