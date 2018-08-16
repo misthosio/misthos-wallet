@@ -112,6 +112,58 @@ function decode(raw) {
   }
 }
 
+var defaultInitialPolicies = /* record */[
+  /* addPartner : Unanimous */0,
+  /* addCustodian : Unanimous */0,
+  /* removePartner : UnanimousMinusOne */1,
+  /* removeCustodian : UnanimousMinusOne */1,
+  /* payout : Unanimous */0
+];
+
+function encodeInitialPolicies(policies) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "addPartner",
+                encode$2(policies[/* addPartner */0])
+              ],
+              /* :: */[
+                /* tuple */[
+                  "addCustodian",
+                  encode$2(policies[/* addCustodian */1])
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "removePartner",
+                    encode$2(policies[/* removePartner */2])
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "removeCustodian",
+                      encode$2(policies[/* removeCustodian */3])
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "payout",
+                        encode$2(policies[/* payout */4])
+                      ],
+                      /* [] */0
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function decodeInitialPolicies(raw) {
+  return /* record */[
+          /* addPartner */Json_decode.field("addPartner", decode, raw),
+          /* addCustodian */Json_decode.field("addCustodian", decode, raw),
+          /* removePartner */Json_decode.field("removePartner", decode, raw),
+          /* removeCustodian */Json_decode.field("removeCustodian", decode, raw),
+          /* payout */Json_decode.field("payout", decode, raw)
+        ];
+}
+
 var unanimous = /* Unanimous */0;
 
 var unanimousMinusOne = /* UnanimousMinusOne */1;
@@ -145,4 +197,7 @@ exports.defaultAddCustodian = defaultAddCustodian;
 exports.defaultRemovePartner = defaultRemovePartner;
 exports.defaultRemoveCustodian = defaultRemoveCustodian;
 exports.defaultPayout = defaultPayout;
+exports.defaultInitialPolicies = defaultInitialPolicies;
+exports.encodeInitialPolicies = encodeInitialPolicies;
+exports.decodeInitialPolicies = decodeInitialPolicies;
 /* Json_encode Not a pure module */

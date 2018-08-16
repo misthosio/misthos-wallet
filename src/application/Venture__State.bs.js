@@ -118,19 +118,11 @@ function lastPartnerAccepted(partnerId, param) {
   return List.assoc(partnerId, param[/* partnerAccepted */11]);
 }
 
-var defaultInitialPolicies = /* record */[
-  /* addPartner */Policy.defaultAddPartner,
-  /* addCustodian */Policy.defaultAddCustodian,
-  /* removePartner */Policy.defaultRemovePartner,
-  /* removeCustodian */Policy.defaultRemoveCustodian,
-  /* payout */Policy.unanimousMinusOne
-];
-
 function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         var match = $$event[0];
-        var initialPolicies = Js_option.getWithDefault(defaultInitialPolicies, match[/* initialPolicies */6]);
+        var initialPolicies = Js_option.getWithDefault(Policy.defaultInitialPolicies, match[/* initialPolicies */6]);
         return /* record */[
                 /* ventureName */match[/* ventureName */1],
                 /* systemIssuer */match[/* systemIssuer */7],
@@ -377,11 +369,7 @@ function apply($$event, state) {
   }
 }
 
-var defaultMetaPolicy = Policy.defaultMetaPolicy;
-
 exports.make = make;
-exports.defaultMetaPolicy = defaultMetaPolicy;
-exports.defaultInitialPolicies = defaultInitialPolicies;
 exports.systemIssuer = systemIssuer;
 exports.ventureName = ventureName;
 exports.currentPolicy = currentPolicy;

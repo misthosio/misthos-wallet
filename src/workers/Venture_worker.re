@@ -95,7 +95,7 @@ exception DeadThread(Js.Promise.error);
 
 module Handle = {
   type ventureAction =
-    | Create(string, AccountSettings.t)
+    | Create(string, AccountSettings.t, Policy.initialPolicies)
     | Load(ventureId)
     | Reload(ventureId)
     | JoinVia(ventureId, userId);
@@ -137,10 +137,15 @@ module Handle = {
              |> Utils.mapOption(((data, ventures)) => {
                   let (ventureId, ventureThread) =
                     switch (ventureAction) {
-                    | Create(name, defaultAccountSettings) =>
+                    | Create(name, defaultAccountSettings, initialPolicies) =>
                       open Venture.Cmd.Create;
                       let (ventureId, venturePromise) =
-                        exec(data, ~name, ~defaultAccountSettings);
+                        exec(
+                          data,
+                          ~name,
+                          ~defaultAccountSettings,
+                          ~initialPolicies,
+                        );
                       (
                         ventureId,
                         venturePromise
@@ -313,10 +318,10 @@ module Handle = {
     logMessage("Handling 'JoinVia'");
     withVenture(JoinVia(ventureId, userId), _ => Js.Promise.resolve);
   };
-  let create = (name, accountSettings) => {
+  let create = (name, accountSettings, initialPolicies) => {
     logMessage("Handling 'Create'");
     withVenture(
-      Create(name, accountSettings),
+      Create(name, accountSettings, initialPolicies),
       (correlationId, venture) => {
         Notify.ventureCreated(~correlationId, venture);
         Js.Promise.resolve(venture);
@@ -788,8 +793,8 @@ let handleMessage =
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
   | Message.JoinVia(ventureId, userId) => Handle.joinVia(ventureId, userId)
-  | Message.Create(name, accountSettings) =>
-    Handle.create(name, accountSettings)
+  | Message.Create(name, accountSettings, initialPolicies) =>
+    Handle.create(name, accountSettings, initialPolicies)
   | Message.ProposePartner(ventureId, userId) =>
     Handle.proposePartner(ventureId, userId)
   | Message.RejectPartner(ventureId, processId) =>

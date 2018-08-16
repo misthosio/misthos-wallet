@@ -4,6 +4,7 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../application/events/Event.bs.js");
+var Policy = require("../application/Policy.bs.js");
 var Venture = require("../application/Venture.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
@@ -272,7 +273,13 @@ function encodeIncoming(param) {
                           "accountSettings",
                           AccountSettings.encode(param[1])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "initialPolicies",
+                            Policy.encodeInitialPolicies(param[2])
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]);
@@ -664,9 +671,11 @@ function decodeIncoming(raw) {
     case "Create" : 
         var name = Json_decode.field("name", Json_decode.string, raw);
         var accountSettings = Json_decode.field("accountSettings", AccountSettings.decode, raw);
+        var initialPolicies = Json_decode.field("initialPolicies", Policy.decodeInitialPolicies, raw);
         return /* Create */Block.__(1, [
                   name,
-                  accountSettings
+                  accountSettings,
+                  initialPolicies
                 ]);
     case "EndorsePartner" : 
         var ventureId = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);

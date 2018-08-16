@@ -89,19 +89,13 @@ let lastPartnerAccepted = (partnerId, {partnerAccepted}) =>
   partnerAccepted |> List.assoc(partnerId);
 
 let defaultMetaPolicy = Policy.defaultMetaPolicy;
-let defaultInitialPolicies: VentureCreated.initialPolicies = {
-  addPartner: Policy.defaultAddPartner,
-  addCustodian: Policy.defaultAddCustodian,
-  removePartner: Policy.defaultRemovePartner,
-  removeCustodian: Policy.defaultRemoveCustodian,
-  payout: Policy.unanimousMinusOne,
-};
 
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({ventureName, initialPolicies, systemIssuer}) =>
-    let initialPolicies =
-      initialPolicies |> Js.Option.getWithDefault(defaultInitialPolicies);
+    let initialPolicies: Policy.initialPolicies =
+      initialPolicies
+      |> Js.Option.getWithDefault(Policy.defaultInitialPolicies);
     {
       ...state,
       ventureName,

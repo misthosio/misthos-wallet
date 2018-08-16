@@ -71,7 +71,8 @@ module Cmd: {
       (
         SessionData.t,
         ~name: string,
-        ~defaultAccountSettings: AccountSettings.t
+        ~defaultAccountSettings: AccountSettings.t,
+        ~initialPolicies: Policy.initialPolicies
       ) =>
       (ventureId, Js.Promise.t(result));
   };

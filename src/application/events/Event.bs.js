@@ -38,40 +38,6 @@ function make(ventureName, creatorId, creatorPubKey, defaultAccountSettings, met
         ];
 }
 
-function encodeInitialPolicies(policies) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "addPartner",
-                Policy.encode(policies[/* addPartner */0])
-              ],
-              /* :: */[
-                /* tuple */[
-                  "addCustodian",
-                  Policy.encode(policies[/* addCustodian */1])
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "removePartner",
-                    Policy.encode(policies[/* removePartner */2])
-                  ],
-                  /* :: */[
-                    /* tuple */[
-                      "removeCustodian",
-                      Policy.encode(policies[/* removeCustodian */3])
-                    ],
-                    /* :: */[
-                      /* tuple */[
-                        "payout",
-                        Policy.encode(policies[/* payout */4])
-                      ],
-                      /* [] */0
-                    ]
-                  ]
-                ]
-              ]
-            ]);
-}
-
 function encode($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
@@ -106,7 +72,7 @@ function encode($$event) {
                         /* :: */[
                           /* tuple */[
                             "initialPolicies",
-                            Json_encode.nullable(encodeInitialPolicies, $$event[/* initialPolicies */6])
+                            Json_encode.nullable(Policy.encodeInitialPolicies, $$event[/* initialPolicies */6])
                           ],
                           /* :: */[
                             /* tuple */[
@@ -136,16 +102,6 @@ function encode($$event) {
             ]);
 }
 
-function decodeInitialPolicies(raw) {
-  return /* record */[
-          /* addPartner */Json_decode.field("addPartner", Policy.decode, raw),
-          /* addCustodian */Json_decode.field("addCustodian", Policy.decode, raw),
-          /* removePartner */Json_decode.field("removePartner", Policy.decode, raw),
-          /* removeCustodian */Json_decode.field("removeCustodian", Policy.decode, raw),
-          /* payout */Json_decode.field("payout", Policy.decode, raw)
-        ];
-}
-
 function decode(raw) {
   return /* record */[
           /* ventureId */Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw),
@@ -154,7 +110,7 @@ function decode(raw) {
           /* creatorPubKey */Json_decode.field("creatorPubKey", Json_decode.string, raw),
           /* defaultAccountSettings */Utils.maybeField("defaultAccountSettings", AccountSettings.decode)(raw),
           /* metaPolicy */Json_decode.field("metaPolicy", Policy.decode, raw),
-          /* initialPolicies */Utils.maybeField("initialPolicies", decodeInitialPolicies)(raw),
+          /* initialPolicies */Utils.maybeField("initialPolicies", Policy.decodeInitialPolicies)(raw),
           /* systemIssuer */BitcoinjsLib.ECPair.fromWIF(Json_decode.field("systemIssuer", Json_decode.string, raw)),
           /* network */Json_decode.field("network", Network.decode, raw)
         ];
@@ -162,9 +118,7 @@ function decode(raw) {
 
 var VentureCreated = /* module */[
   /* make */make,
-  /* encodeInitialPolicies */encodeInitialPolicies,
   /* encode */encode,
-  /* decodeInitialPolicies */decodeInitialPolicies,
   /* decode */decode
 ];
 

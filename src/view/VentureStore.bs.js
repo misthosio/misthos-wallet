@@ -105,10 +105,11 @@ function make(currentRoute, session, children) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              return Curry._3(children, match[/* index */0], match[/* selectedVenture */1], (function (name, accountSettings) {
+              return Curry._3(children, match[/* index */0], match[/* selectedVenture */1], (function (name, accountSettings, initialPolicies) {
                             return Curry._1(send, /* CreateVenture */Block.__(0, [
                                           name,
-                                          accountSettings
+                                          accountSettings,
+                                          initialPolicies
                                         ]));
                           }));
             }),
@@ -141,7 +142,7 @@ function make(currentRoute, session, children) {
                 var sessionData = match[0];
                 switch (action.tag | 0) {
                   case 0 : 
-                      var createCmdId = VentureWorkerClient.create(action[0], action[1], state[/* ventureWorker */5][0]);
+                      var createCmdId = VentureWorkerClient.create(action[0], action[1], action[2], state[/* ventureWorker */5][0]);
                       return /* Update */Block.__(0, [/* record */[
                                   /* index */state[/* index */0],
                                   /* selectedVenture : CreatingVenture */Block.__(0, [/* Pending */Block.__(2, [createCmdId])]),

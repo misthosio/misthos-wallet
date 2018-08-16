@@ -29,7 +29,11 @@ let make =
       switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
       | name =>
-        onCreateVenture(name, AccountSettings.default);
+        onCreateVenture(
+          name,
+          AccountSettings.default,
+          Policy.defaultInitialPolicies,
+        );
         ReasonReact.NoUpdate;
       }
     },

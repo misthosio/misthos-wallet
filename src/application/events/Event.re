@@ -5,13 +5,6 @@ open PrimitiveTypes;
 open WalletTypes;
 
 module VentureCreated = {
-  type initialPolicies = {
-    addPartner: Policy.t,
-    addCustodian: Policy.t,
-    removePartner: Policy.t,
-    removeCustodian: Policy.t,
-    payout: Policy.t,
-  };
   type t = {
     ventureId,
     ventureName: string,
@@ -19,7 +12,7 @@ module VentureCreated = {
     creatorPubKey: string,
     defaultAccountSettings: option(AccountSettings.t),
     metaPolicy: Policy.t,
-    initialPolicies: option(initialPolicies),
+    initialPolicies: option(Policy.initialPolicies),
     systemIssuer: Bitcoin.ECPair.t,
     network: Network.t,
   };
@@ -43,16 +36,6 @@ module VentureCreated = {
     systemIssuer: Bitcoin.ECPair.makeRandom(),
     network,
   };
-  let encodeInitialPolicies = policies =>
-    Json.Encode.(
-      object_([
-        ("addPartner", Policy.encode(policies.addPartner)),
-        ("addCustodian", Policy.encode(policies.addCustodian)),
-        ("removePartner", Policy.encode(policies.removePartner)),
-        ("removeCustodian", Policy.encode(policies.removeCustodian)),
-        ("payout", Policy.encode(policies.payout)),
-      ])
-    );
   let encode = event =>
     Json.Encode.(
       object_([
@@ -67,21 +50,13 @@ module VentureCreated = {
         ),
         (
           "initialPolicies",
-          nullable(encodeInitialPolicies, event.initialPolicies),
+          nullable(Policy.encodeInitialPolicies, event.initialPolicies),
         ),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
         ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
         ("network", Network.encode(event.network)),
       ])
     );
-  let decodeInitialPolicies = raw =>
-    Json.Decode.{
-      addPartner: raw |> field("addPartner", Policy.decode),
-      addCustodian: raw |> field("addCustodian", Policy.decode),
-      removePartner: raw |> field("removePartner", Policy.decode),
-      removeCustodian: raw |> field("removeCustodian", Policy.decode),
-      payout: raw |> field("payout", Policy.decode),
-    };
   let decode = raw =>
     Json.Decode.{
       ventureId: raw |> field("ventureId", VentureId.decode),
@@ -93,7 +68,8 @@ module VentureCreated = {
         |> Utils.maybeField("defaultAccountSettings", AccountSettings.decode),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       initialPolicies:
-        raw |> Utils.maybeField("initialPolicies", decodeInitialPolicies),
+        raw
+        |> Utils.maybeField("initialPolicies", Policy.decodeInitialPolicies),
       systemIssuer:
         raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
       network: raw |> field("network", Network.decode),

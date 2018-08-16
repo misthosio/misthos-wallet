@@ -86,9 +86,7 @@ let apply = (event: Event.t, state) =>
       ...state,
       partnerPolicy:
         initialPolicies
-        |> Utils.mapOption((p: Event.VentureCreated.initialPolicies) =>
-             p.addPartner
-           )
+        |> Utils.mapOption((p: Policy.initialPolicies) => p.addPartner)
         |> Js.Option.getWithDefault(Policy.defaultAddPartner),
     }
   | CustodianKeyChainUpdated({custodianId}) =>

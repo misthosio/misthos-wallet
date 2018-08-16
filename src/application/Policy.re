@@ -72,3 +72,36 @@ let defaultAddCustodian = unanimous;
 let defaultRemovePartner = unanimousMinusOne;
 let defaultRemoveCustodian = unanimousMinusOne;
 let defaultPayout = unanimous;
+
+type initialPolicies = {
+  addPartner: t,
+  addCustodian: t,
+  removePartner: t,
+  removeCustodian: t,
+  payout: t,
+};
+let defaultInitialPolicies = {
+  addPartner: defaultAddPartner,
+  addCustodian: defaultAddCustodian,
+  removePartner: defaultRemovePartner,
+  removeCustodian: defaultRemoveCustodian,
+  payout: defaultPayout,
+};
+let encodeInitialPolicies = policies =>
+  Json.Encode.(
+    object_([
+      ("addPartner", encode(policies.addPartner)),
+      ("addCustodian", encode(policies.addCustodian)),
+      ("removePartner", encode(policies.removePartner)),
+      ("removeCustodian", encode(policies.removeCustodian)),
+      ("payout", encode(policies.payout)),
+    ])
+  );
+let decodeInitialPolicies = raw =>
+  Json.Decode.{
+    addPartner: raw |> field("addPartner", decode),
+    addCustodian: raw |> field("addCustodian", decode),
+    removePartner: raw |> field("removePartner", decode),
+    removeCustodian: raw |> field("removeCustodian", decode),
+    payout: raw |> field("payout", decode),
+  };

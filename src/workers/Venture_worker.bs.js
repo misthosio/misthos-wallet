@@ -165,7 +165,7 @@ function withVenture($staropt$star, ventureAction, f, correlationId, param) {
                             var match;
                             switch (ventureAction.tag | 0) {
                               case 0 : 
-                                  var match$1 = Curry._3(Venture.Cmd[/* Create */0][/* exec */0], data, ventureAction[0], ventureAction[1]);
+                                  var match$1 = Curry._4(Venture.Cmd[/* Create */0][/* exec */0], data, ventureAction[0], ventureAction[1], ventureAction[2]);
                                   var ventureId = match$1[0];
                                   match = /* tuple */[
                                     ventureId,
@@ -343,11 +343,12 @@ function joinVia(ventureId, userId) {
     });
 }
 
-function create(name, accountSettings) {
+function create(name, accountSettings, initialPolicies) {
   logMessage("Handling 'Create'");
   var partial_arg = /* Create */Block.__(0, [
       name,
-      accountSettings
+      accountSettings,
+      initialPolicies
     ]);
   return (function (param, param$1) {
       return withVenture(undefined, partial_arg, (function (correlationId, venture) {
@@ -685,7 +686,7 @@ function handleMessage(param) {
             return updateSession(partial_arg, param, param$1);
           });
     case 1 : 
-        return create(param[0], param[1]);
+        return create(param[0], param[1], param[2]);
     case 2 : 
         return load(param[0]);
     case 3 : 

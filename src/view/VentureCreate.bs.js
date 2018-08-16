@@ -6,6 +6,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
+var Policy = require("../application/Policy.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -79,7 +80,7 @@ function make(onCreateVenture, cmdStatus, _) {
                   if (name === "") {
                     return /* NoUpdate */0;
                   } else {
-                    Curry._2(onCreateVenture, name, AccountSettings.$$default);
+                    Curry._3(onCreateVenture, name, AccountSettings.$$default, Policy.defaultInitialPolicies);
                     return /* NoUpdate */0;
                   }
                 }

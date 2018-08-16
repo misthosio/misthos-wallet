@@ -91,7 +91,7 @@ let make =
                 ~prospectPubKey=creatorPubKey,
                 ~policy=
                   initialPolicies
-                  |> Utils.mapOption((p: VentureCreated.initialPolicies) =>
+                  |> Utils.mapOption((p: Policy.initialPolicies) =>
                        p.addPartner
                      )
                   |> Js.Option.getWithDefault(Policy.defaultAddPartner),
@@ -139,7 +139,7 @@ let make =
                 ~accountIdx=AccountIndex.default,
                 ~policy=
                   initialPolicies
-                  |> Utils.mapOption((p: VentureCreated.initialPolicies) =>
+                  |> Utils.mapOption((p: Policy.initialPolicies) =>
                        p.addPartner
                      )
                   |> Js.Option.getWithDefault(Policy.defaultAddPartner),

@@ -8,6 +8,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
+var Policy = require("./Policy.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("./events/EventLog.bs.js");
 var UserInfo = require("./UserInfo.bs.js");
@@ -340,9 +341,9 @@ function getEventLog(param) {
   return param[/* log */2];
 }
 
-function exec(session, ventureName, defaultAccountSettings) {
+function exec(session, ventureName, defaultAccountSettings, initialPolicies) {
   logMessage("Executing 'Create' command");
-  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), defaultAccountSettings, Venture__State.defaultMetaPolicy, Venture__State.defaultInitialPolicies, session[/* network */5]);
+  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), defaultAccountSettings, Policy.defaultMetaPolicy, initialPolicies, session[/* network */5]);
   var makeResult = make(session, ventureCreated[/* ventureId */0]);
   return /* tuple */[
           ventureCreated[/* ventureId */0],

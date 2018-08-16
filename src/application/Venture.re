@@ -262,6 +262,7 @@ module Cmd = {
           session: SessionData.t,
           ~name as ventureName,
           ~defaultAccountSettings,
+          ~initialPolicies,
         ) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
@@ -270,8 +271,8 @@ module Cmd = {
           ~creatorId=session.userId,
           ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
           ~defaultAccountSettings,
-          ~metaPolicy=State.defaultMetaPolicy,
-          ~initialPolicies=State.defaultInitialPolicies,
+          ~metaPolicy=Policy.defaultMetaPolicy,
+          ~initialPolicies,
           ~network=session.network,
         );
       (

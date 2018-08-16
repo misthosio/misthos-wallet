@@ -29,7 +29,7 @@ let apply = (event: Event.t, state) => {
       ventureId,
       payoutPolicy:
         initialPolicies
-        |> Utils.mapOption((p: VentureCreated.initialPolicies) => p.payout)
+        |> Utils.mapOption((p: Policy.initialPolicies) => p.payout)
         |> Js.Option.getWithDefault(Policy.defaultPayout),
     }
   | _ => state

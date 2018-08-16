@@ -39,10 +39,11 @@ function updateSession(worker) {
   return /* () */0;
 }
 
-function create(name, accountSettings, worker) {
+function create(name, accountSettings, initialPolicies, worker) {
   return Curry._2(postMessage, worker, /* Create */Block.__(1, [
                 name,
-                accountSettings
+                accountSettings,
+                initialPolicies
               ]));
 }
 
