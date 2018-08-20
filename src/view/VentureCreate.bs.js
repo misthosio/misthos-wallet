@@ -8,14 +8,24 @@ var React = require("react");
 var MInput = require("./components/MInput.bs.js");
 var Policy = require("../application/Policy.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var VentureInfoBox = require("./components/VentureInfoBox.bs.js");
 var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
+var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var ContactUsShoutOut = require("./components/ContactUsShoutOut.bs.js");
+var MaterialUi_Select = require("@jsiebern/bs-material-ui/src/MaterialUi_Select.bs.js");
 var SingleActionButton = require("./components/SingleActionButton.bs.js");
+var MaterialUi_MenuItem = require("@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js");
+var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
+var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
+var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
+var MaterialUi_TableHead = require("@jsiebern/bs-material-ui/src/MaterialUi_TableHead.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -25,9 +35,11 @@ function make(onCreateVenture, cmdStatus, _) {
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
+              var state = param[/* state */1];
               return /* record */[
-                      /* newVenture */param[/* state */1][/* newVenture */0],
-                      /* cmdStatus */cmdStatus
+                      /* newVenture */state[/* newVenture */0],
+                      /* cmdStatus */cmdStatus,
+                      /* accountSettings */state[/* accountSettings */2]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -37,6 +49,7 @@ function make(onCreateVenture, cmdStatus, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
+              var state = param[/* state */1];
               var onSubmit = function (param) {
                 return ViewCommon.ignoreEvent((function () {
                               return Curry._1(send, /* CreateVenture */0);
@@ -45,19 +58,56 @@ function make(onCreateVenture, cmdStatus, _) {
               var onClick = function () {
                 return Curry._1(send, /* CreateVenture */0);
               };
+              var stringOfMultiSig = function (nCoSigners, requiredSigners) {
+                return ViewCommon.text(String(requiredSigners) + ("-of-" + String(nCoSigners)));
+              };
+              var getMenuItems = function (nCoSigners) {
+                return Belt_Array.mapU(Belt_Array.range(1, nCoSigners), (function (idx) {
+                              return ReasonReact.element(undefined, undefined, MaterialUi_MenuItem.make(undefined, undefined, undefined, undefined, /* `Int */[
+                                              3654863,
+                                              idx
+                                            ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[stringOfMultiSig(nCoSigners, idx)]));
+                            }));
+              };
+              var nSigs = Belt_Array.slice(Belt_Array.mapWithIndexU(state[/* accountSettings */2][/* coSignerList */0], (function (idx, nCoSigners) {
+                          return ReasonReact.element(undefined, undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                          ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(String(idx))]))])),
+                                          ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Select.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e, _) {
+                                                                return Curry._1(send, /* ChangeNumberOfCoSinger */Block.__(1, [/* tuple */[
+                                                                                idx,
+                                                                                ViewCommon.extractString(e)
+                                                                              ]]));
+                                                              }), undefined, undefined, undefined, undefined, undefined, /* `Int */[
+                                                              3654863,
+                                                              nCoSigners
+                                                            ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[getMenuItems(idx)]))]))
+                                        ]));
+                        })), 1, 10);
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Create a Venture")), undefined, undefined, undefined, Js_primitive.some(React.createElement("form", {
+                                      className: ScrollList.containerStyles,
                                       onSubmit: onSubmit
                                     }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("\n                 Set up a new Venture with yourself as the initial Partner.\n                 You can add and remove Partners once the Venture is created.\n                 But first, let’s start with a name.\n                ")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Venture Name")])), ReasonReact.element(undefined, undefined, MInput.make("Enter a Venture Name", /* `String */[
                                               -976970511,
-                                              param[/* state */1][/* newVenture */0]
+                                              state[/* newVenture */0]
                                             ], (function (e) {
-                                                return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
-                                              }), true, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, SingleActionButton.make("create venture", undefined, onClick, undefined, undefined, true, false, /* CreateVenture */0, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(/* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
+                                                return Curry._1(send, /* ChangeNewVenture */Block.__(0, [ViewCommon.extractString(e)]));
+                                              }), true, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Required Signatures")])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Select the number of signatures your Venture will\n                       require for transactions, depending on the number of\n                       Partners:")])),
+                                              ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[
+                                                        ReasonReact.element(undefined, undefined, MaterialUi_TableHead.make(undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("NUMBER OF PARTNERS")]))])),
+                                                                            ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("REQUIRED SIGNATURES")]))]))
+                                                                          ]))])),
+                                                        ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[nSigs]))
+                                                      ]))
+                                            ])), ReasonReact.element(undefined, undefined, SingleActionButton.make("create venture", undefined, onClick, undefined, undefined, true, false, /* CreateVenture */0, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(/* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
                       /* newVenture */"",
-                      /* cmdStatus */cmdStatus
+                      /* cmdStatus */cmdStatus,
+                      /* accountSettings */AccountSettings.$$default
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -70,18 +120,52 @@ function make(onCreateVenture, cmdStatus, _) {
                 return /* NoUpdate */0;
               }
               if (exit === 1) {
-                if (action) {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* newVenture */action[0],
-                              /* cmdStatus */state[/* cmdStatus */1]
-                            ]]);
-                } else {
+                if (typeof action === "number") {
                   var name = $$String.trim(state[/* newVenture */0]);
                   if (name === "") {
                     return /* NoUpdate */0;
                   } else {
-                    Curry._3(onCreateVenture, name, AccountSettings.$$default, Policy.defaultInitialPolicies);
+                    Curry._3(onCreateVenture, name, state[/* accountSettings */2], Policy.defaultInitialPolicies);
                     return /* NoUpdate */0;
+                  }
+                } else {
+                  switch (action.tag | 0) {
+                    case 0 : 
+                        return /* Update */Block.__(0, [/* record */[
+                                    /* newVenture */action[0],
+                                    /* cmdStatus */state[/* cmdStatus */1],
+                                    /* accountSettings */state[/* accountSettings */2]
+                                  ]]);
+                    case 1 : 
+                        var match$1 = action[0];
+                        var nCoSigners = match$1[1];
+                        var idx = match$1[0];
+                        var init = state[/* accountSettings */2];
+                        return /* Update */Block.__(0, [/* record */[
+                                    /* newVenture */state[/* newVenture */0],
+                                    /* cmdStatus */state[/* cmdStatus */1],
+                                    /* accountSettings : record */[
+                                      /* coSignerList */Belt_Array.mapWithIndex(state[/* accountSettings */2][/* coSignerList */0], (function (i, x) {
+                                              var match = idx === i;
+                                              if (match) {
+                                                return nCoSigners;
+                                              } else {
+                                                return x;
+                                              }
+                                            })),
+                                      /* sequence */init[/* sequence */1]
+                                    ]
+                                  ]]);
+                    case 2 : 
+                        throw [
+                              Caml_builtin_exceptions.match_failure,
+                              /* tuple */[
+                                "VentureCreate.re",
+                                32,
+                                4
+                              ]
+                            ];
+                    
                   }
                 }
               }
