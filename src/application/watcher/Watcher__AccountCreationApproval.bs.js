@@ -97,7 +97,7 @@ function make(proposal, log) {
                 var arg = EligibilityCollector.currentEligible(self$1[state][0][/* eligibilityCollector */0]);
                 var arg$1 = self$1[state][0][/* endorsements */1];
                 tmp$1 = (function (param) {
-                      return Policy.fulfilled(param)(arg, arg$1);
+                      return Curry._2(Policy.fulfilled(param), arg, arg$1);
                     })(self$1[state][0][/* policy */2]);
               }
               if (tmp$1) {

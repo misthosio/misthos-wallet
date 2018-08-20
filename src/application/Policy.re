@@ -14,15 +14,31 @@ module Unanimous = {
   let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
 };
 
-module UnanimousMinusOne = {
-  let fulfilled = (~eligible: UserId.set, ~endorsed: UserId.set) => {
+module UnanimousMinusN = {
+  type t = {n: int};
+  let fulfilled = ({n}, ~eligible: UserId.set, ~endorsed: UserId.set) => {
     let endorsed = Set.intersect(eligible, endorsed);
-    endorsed |> Set.size >= Set.size(eligible) - 1 && eligible |> Set.size > 0;
+    let nEndorsed = endorsed |> Set.size;
+    nEndorsed >= 1
+    && nEndorsed >= Set.size(eligible)
+    - n
+    && eligible
+    |> Set.size > 0;
   };
-  let canBeFulfilled = (~eligible: UserId.set, ~rejected: UserId.set) => {
+  let canBeFulfilled = ({n}, ~eligible: UserId.set, ~rejected: UserId.set) => {
     let releventRejections = Set.intersect(eligible, rejected);
-    releventRejections |> Set.size <= 1;
+    releventRejections |> Set.size <= n;
   };
+  let encode = ({n}) =>
+    Json.Encode.(
+      object_([("type", string("UnanimousMinusN")), ("n", int(n))])
+    );
+  let decode = raw => Json.Decode.{n: raw |> field("n", int)};
+};
+
+module UnanimousMinusOne = {
+  let fulfilled = UnanimousMinusN.fulfilled({n: 1});
+  let canBeFulfilled = UnanimousMinusN.canBeFulfilled({n: 1});
   let encode = _p =>
     Json.Encode.(object_([("type", string("UnanimousMinusOne"))]));
 };
@@ -46,23 +62,27 @@ module Majority = {
 type t =
   | Unanimous
   | UnanimousMinusOne
-  | Majority;
+  | Majority
+  | UnanimousMinusN(UnanimousMinusN.t);
 
 let unanimous = Unanimous;
 let unanimousMinusOne = UnanimousMinusOne;
 let majority = Majority;
+let unanimousMinusN = n => UnanimousMinusN({n: n});
 
 let fulfilled =
   fun
   | Unanimous => Unanimous.fulfilled
   | UnanimousMinusOne => UnanimousMinusOne.fulfilled
-  | Majority => Majority.fulfilled;
+  | Majority => Majority.fulfilled
+  | UnanimousMinusN(t) => UnanimousMinusN.fulfilled(t);
 
 let canBeFulfilled =
   fun
   | Unanimous => Unanimous.canBeFulfilled
   | UnanimousMinusOne => UnanimousMinusOne.canBeFulfilled
-  | Majority => Majority.canBeFulfilled;
+  | Majority => Majority.canBeFulfilled
+  | UnanimousMinusN(t) => UnanimousMinusN.canBeFulfilled(t);
 
 let eq = (p1, p2) => p1 == p2;
 
@@ -73,6 +93,7 @@ let encode = policy =>
   | Unanimous => Unanimous.encode(policy)
   | UnanimousMinusOne => UnanimousMinusOne.encode(policy)
   | Majority => Majority.encode(policy)
+  | UnanimousMinusN(p) => UnanimousMinusN.encode(p)
   };
 
 exception UnknownPolicy(Js.Json.t);
@@ -83,6 +104,7 @@ let decode = raw => {
   | "Unanimous" => Unanimous
   | "UnanimousMinusOne" => UnanimousMinusOne
   | "Majority" => Majority
+  | "UnanimousMinusN" => UnanimousMinusN(UnanimousMinusN.decode(raw))
   | _ => raise(UnknownPolicy(raw))
   };
 };

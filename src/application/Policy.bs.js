@@ -37,21 +37,61 @@ var Unanimous = /* module */[
   /* encode */encode
 ];
 
-function fulfilled$1(eligible, endorsed) {
+function fulfilled$1(param, eligible, endorsed) {
   var endorsed$1 = Belt_Set.intersect(eligible, endorsed);
-  if (Belt_Set.size(endorsed$1) >= (Belt_Set.size(eligible) - 1 | 0)) {
+  var nEndorsed = Belt_Set.size(endorsed$1);
+  if (nEndorsed >= 1 && nEndorsed >= (Belt_Set.size(eligible) - param[/* n */0] | 0)) {
     return Belt_Set.size(eligible) > 0;
   } else {
     return false;
   }
 }
 
-function canBeFulfilled$1(eligible, rejected) {
+function canBeFulfilled$1(param, eligible, rejected) {
   var releventRejections = Belt_Set.intersect(eligible, rejected);
-  return Belt_Set.size(releventRejections) <= 1;
+  return Belt_Set.size(releventRejections) <= param[/* n */0];
 }
 
-function encode$1() {
+function encode$1(param) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "UnanimousMinusN"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "n",
+                  param[/* n */0]
+                ],
+                /* [] */0
+              ]
+            ]);
+}
+
+function decode(raw) {
+  return /* record */[/* n */Json_decode.field("n", Json_decode.$$int, raw)];
+}
+
+var UnanimousMinusN = /* module */[
+  /* fulfilled */fulfilled$1,
+  /* canBeFulfilled */canBeFulfilled$1,
+  /* encode */encode$1,
+  /* decode */decode
+];
+
+var partial_arg = /* record */[/* n */1];
+
+function fulfilled$2(param, param$1) {
+  return fulfilled$1(partial_arg, param, param$1);
+}
+
+var partial_arg$1 = /* record */[/* n */1];
+
+function canBeFulfilled$2(param, param$1) {
+  return canBeFulfilled$1(partial_arg$1, param, param$1);
+}
+
+function encode$2() {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -62,12 +102,12 @@ function encode$1() {
 }
 
 var UnanimousMinusOne = /* module */[
-  /* fulfilled */fulfilled$1,
-  /* canBeFulfilled */canBeFulfilled$1,
-  /* encode */encode$1
+  /* fulfilled */fulfilled$2,
+  /* canBeFulfilled */canBeFulfilled$2,
+  /* encode */encode$2
 ];
 
-function fulfilled$2(eligible, endorsed) {
+function fulfilled$3(eligible, endorsed) {
   var endorsed$1 = Belt_Set.intersect(eligible, endorsed);
   var eligibleSize = Belt_Set.size(eligible);
   if ((Belt_Set.size(endorsed$1) << 1) > eligibleSize && eligibleSize > 0) {
@@ -77,12 +117,12 @@ function fulfilled$2(eligible, endorsed) {
   }
 }
 
-function canBeFulfilled$2(eligible, rejected) {
+function canBeFulfilled$3(eligible, rejected) {
   var releventRejections = Belt_Set.intersect(eligible, rejected);
   return (Belt_Set.size(releventRejections) << 1) < Belt_Set.size(eligible);
 }
 
-function encode$2() {
+function encode$3() {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -93,32 +133,50 @@ function encode$2() {
 }
 
 var Majority = /* module */[
-  /* fulfilled */fulfilled$2,
-  /* canBeFulfilled */canBeFulfilled$2,
-  /* encode */encode$2
+  /* fulfilled */fulfilled$3,
+  /* canBeFulfilled */canBeFulfilled$3,
+  /* encode */encode$3
 ];
 
-function fulfilled$3(param) {
-  switch (param) {
-    case 0 : 
-        return fulfilled;
-    case 1 : 
-        return fulfilled$1;
-    case 2 : 
-        return fulfilled$2;
-    
+function unanimousMinusN(n) {
+  return /* UnanimousMinusN */[/* record */[/* n */n]];
+}
+
+function fulfilled$4(param) {
+  if (typeof param === "number") {
+    switch (param) {
+      case 0 : 
+          return fulfilled;
+      case 1 : 
+          return fulfilled$2;
+      case 2 : 
+          return fulfilled$3;
+      
+    }
+  } else {
+    var partial_arg = param[0];
+    return (function (param, param$1) {
+        return fulfilled$1(partial_arg, param, param$1);
+      });
   }
 }
 
-function canBeFulfilled$3(param) {
-  switch (param) {
-    case 0 : 
-        return canBeFulfilled;
-    case 1 : 
-        return canBeFulfilled$1;
-    case 2 : 
-        return canBeFulfilled$2;
-    
+function canBeFulfilled$4(param) {
+  if (typeof param === "number") {
+    switch (param) {
+      case 0 : 
+          return canBeFulfilled;
+      case 1 : 
+          return canBeFulfilled$2;
+      case 2 : 
+          return canBeFulfilled$3;
+      
+    }
+  } else {
+    var partial_arg = param[0];
+    return (function (param, param$1) {
+        return canBeFulfilled$1(partial_arg, param, param$1);
+      });
   }
 }
 
@@ -126,27 +184,33 @@ var eq = Caml_obj.caml_equal;
 
 var neq = Caml_obj.caml_notequal;
 
-function encode$3(policy) {
-  switch (policy) {
-    case 0 : 
-        return encode(policy);
-    case 1 : 
-        return encode$1(policy);
-    case 2 : 
-        return encode$2(policy);
-    
+function encode$4(policy) {
+  if (typeof policy === "number") {
+    switch (policy) {
+      case 0 : 
+          return encode(policy);
+      case 1 : 
+          return encode$2(policy);
+      case 2 : 
+          return encode$3(policy);
+      
+    }
+  } else {
+    return encode$1(policy[0]);
   }
 }
 
 var UnknownPolicy = Caml_exceptions.create("Policy.UnknownPolicy");
 
-function decode(raw) {
+function decode$1(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "Majority" : 
         return /* Majority */2;
     case "Unanimous" : 
         return /* Unanimous */0;
+    case "UnanimousMinusN" : 
+        return /* UnanimousMinusN */[decode(raw)];
     case "UnanimousMinusOne" : 
         return /* UnanimousMinusOne */1;
     default:
@@ -169,27 +233,27 @@ function encodeInitialPolicies(policies) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "addPartner",
-                encode$3(policies[/* addPartner */0])
+                encode$4(policies[/* addPartner */0])
               ],
               /* :: */[
                 /* tuple */[
                   "addCustodian",
-                  encode$3(policies[/* addCustodian */1])
+                  encode$4(policies[/* addCustodian */1])
                 ],
                 /* :: */[
                   /* tuple */[
                     "removePartner",
-                    encode$3(policies[/* removePartner */2])
+                    encode$4(policies[/* removePartner */2])
                   ],
                   /* :: */[
                     /* tuple */[
                       "removeCustodian",
-                      encode$3(policies[/* removeCustodian */3])
+                      encode$4(policies[/* removeCustodian */3])
                     ],
                     /* :: */[
                       /* tuple */[
                         "payout",
-                        encode$3(policies[/* payout */4])
+                        encode$4(policies[/* payout */4])
                       ],
                       /* [] */0
                     ]
@@ -201,11 +265,11 @@ function encodeInitialPolicies(policies) {
 
 function decodeInitialPolicies(raw) {
   return /* record */[
-          /* addPartner */Json_decode.field("addPartner", decode, raw),
-          /* addCustodian */Json_decode.field("addCustodian", decode, raw),
-          /* removePartner */Json_decode.field("removePartner", decode, raw),
-          /* removeCustodian */Json_decode.field("removeCustodian", decode, raw),
-          /* payout */Json_decode.field("payout", decode, raw)
+          /* addPartner */Json_decode.field("addPartner", decode$1, raw),
+          /* addCustodian */Json_decode.field("addCustodian", decode$1, raw),
+          /* removePartner */Json_decode.field("removePartner", decode$1, raw),
+          /* removeCustodian */Json_decode.field("removeCustodian", decode$1, raw),
+          /* payout */Json_decode.field("payout", decode$1, raw)
         ];
 }
 
@@ -228,18 +292,20 @@ var defaultRemoveCustodian = /* UnanimousMinusOne */1;
 var defaultPayout = /* Unanimous */0;
 
 exports.Unanimous = Unanimous;
+exports.UnanimousMinusN = UnanimousMinusN;
 exports.UnanimousMinusOne = UnanimousMinusOne;
 exports.Majority = Majority;
 exports.unanimous = unanimous;
 exports.unanimousMinusOne = unanimousMinusOne;
 exports.majority = majority;
-exports.fulfilled = fulfilled$3;
-exports.canBeFulfilled = canBeFulfilled$3;
+exports.unanimousMinusN = unanimousMinusN;
+exports.fulfilled = fulfilled$4;
+exports.canBeFulfilled = canBeFulfilled$4;
 exports.eq = eq;
 exports.neq = neq;
-exports.encode = encode$3;
+exports.encode = encode$4;
 exports.UnknownPolicy = UnknownPolicy;
-exports.decode = decode;
+exports.decode = decode$1;
 exports.defaultMetaPolicy = defaultMetaPolicy;
 exports.defaultAddPartner = defaultAddPartner;
 exports.defaultAddCustodian = defaultAddCustodian;
