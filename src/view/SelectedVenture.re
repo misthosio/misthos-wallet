@@ -44,6 +44,7 @@ module Styles = {
       marginBottom(px(Theme.space(1) * (-1))),
       color(Colors.error),
     ]);
+  let ledgerBacked = style([fontSize(px(12)), color(Colors.black)]);
 };
 
 let updateLoggedInStatus = (partners, send) =>
@@ -80,14 +81,23 @@ let make = (~viewData: ViewData.t, _children) => {
       | _ => None
       };
     let getPartnerStatusChip =
-        (~endorsed: bool, ~joinedWallet: bool, ~hasLoggedIn: option(bool)) =>
-      switch (endorsed, joinedWallet, hasLoggedIn) {
-      | (false, _, _) => <StatusChip status=Pending label="PENDING" />
-      | (true, false, Some(false)) =>
+        (
+          ~ledgerBacked=false,
+          ~endorsed: bool,
+          ~joinedWallet: bool,
+          ~hasLoggedIn: option(bool),
+        ) =>
+      switch (endorsed, joinedWallet, hasLoggedIn, ledgerBacked) {
+      | (false, _, _, _) => <StatusChip status=Pending label="PENDING" />
+      | (true, false, Some(false), _) =>
         <StatusChip status=Pending label="SIGN IN REQUIRED" />
-      | (true, false, _) =>
+      | (true, false, _, _) =>
         <StatusChip status=Pending label="SYNC REQUIRED" />
-      | (true, true, _) => ReasonReact.null
+      | (_, _, _, true) =>
+        <MTypography variant=`Body2 className=Styles.ledgerBacked>
+          ("LEDGER BACKED" |> text)
+        </MTypography>
+      | _ => ReasonReact.null
       };
     let alerts =
       List.concat(viewData.proposedAdditions, viewData.proposedRemovals)
@@ -186,6 +196,8 @@ let make = (~viewData: ViewData.t, _children) => {
              )
              status=(
                getPartnerStatusChip(
+                 ~ledgerBacked=
+                   viewData.ledgerBacked |. Set.has(partner.userId),
                  ~endorsed=true,
                  ~joinedWallet=partner.joinedWallet,
                  ~hasLoggedIn=loggedInStatus |. Map.get(partner.userId),

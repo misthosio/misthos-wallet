@@ -15,6 +15,7 @@ var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var MFabButton = require("./components/MFabButton.bs.js");
@@ -85,11 +86,20 @@ var atRiskSettingsButtonIcon = Css.style(/* :: */[
       ]
     ]);
 
+var ledgerBacked = Css.style(/* :: */[
+      Css.fontSize(Css.px(12)),
+      /* :: */[
+        Css.color(Colors.black),
+        /* [] */0
+      ]
+    ]);
+
 var Styles = /* module */[
   /* addressesButtonIcon */addressesButtonIcon,
   /* atRiskAddressButtonIcon */atRiskAddressButtonIcon,
   /* settingsButtonIcon */settingsButtonIcon,
-  /* atRiskSettingsButtonIcon */atRiskSettingsButtonIcon
+  /* atRiskSettingsButtonIcon */atRiskSettingsButtonIcon,
+  /* ledgerBacked */ledgerBacked
 ];
 
 function updateLoggedInStatus(partners, send) {
@@ -131,10 +141,15 @@ function make(viewData, _) {
               var viewData = match[/* viewData */0];
               var match$1 = Environment.get(/* () */0)[/* network */5];
               var warning = match$1 !== 1 ? undefined : Js_primitive.some(WarningsText.testnet);
-              var getPartnerStatusChip = function (endorsed, joinedWallet, hasLoggedIn) {
+              var getPartnerStatusChip = function ($staropt$star, endorsed, joinedWallet, hasLoggedIn) {
+                var ledgerBacked$1 = $staropt$star !== undefined ? $staropt$star : false;
                 if (endorsed) {
                   if (joinedWallet) {
-                    return null;
+                    if (ledgerBacked$1) {
+                      return ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, ledgerBacked, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("LEDGER BACKED")]));
+                    } else {
+                      return null;
+                    }
                   } else {
                     var exit = 0;
                     if (hasLoggedIn !== undefined && !hasLoggedIn) {
@@ -151,7 +166,7 @@ function make(viewData, _) {
                   return ReasonReact.element(undefined, undefined, StatusChip.make(/* Pending */1, "PENDING", /* array */[]));
                 }
               };
-              var alerts = Belt_List.keepMap(Belt_List.concat(viewData[/* proposedAdditions */6], viewData[/* proposedRemovals */7]), (function (prospect) {
+              var alerts = Belt_List.keepMap(Belt_List.concat(viewData[/* proposedAdditions */7], viewData[/* proposedRemovals */8]), (function (prospect) {
                       var match = prospect[/* canVote */3];
                       if (match) {
                         var match$1 = prospect[/* data */5][/* processType */1];
@@ -170,25 +185,29 @@ function make(viewData, _) {
                       }
                       
                     }));
-              var additions = Belt_List.map(viewData[/* proposedAdditions */6], (function (partner) {
+              var additions = Belt_List.map(viewData[/* proposedAdditions */7], (function (partner) {
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [partner[/* processId */0]]);
                       var partial_arg = /* Venture */Block.__(0, [
                           partial_arg_000,
                           partial_arg_001
                         ]);
-                      return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0]) + "-prospect", undefined, Partner.make(partner[/* data */5][/* userId */0], undefined, undefined, Js_primitive.some(getPartnerStatusChip(false, false, false)), (function (param) {
+                      return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0]) + "-prospect", undefined, Partner.make(partner[/* data */5][/* userId */0], undefined, undefined, (function (param) {
+                                        return getPartnerStatusChip(param, false, false, false);
+                                      }), (function (param) {
                                         return Router.clickToRoute(partial_arg, param);
                                       }), undefined, /* array */[]));
                     }));
-              var removals = Belt_List.map(viewData[/* proposedRemovals */7], (function (partner) {
+              var removals = Belt_List.map(viewData[/* proposedRemovals */8], (function (partner) {
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [partner[/* processId */0]]);
                       var partial_arg = /* Venture */Block.__(0, [
                           partial_arg_000,
                           partial_arg_001
                         ]);
-                      return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0]) + "-prospect", undefined, Partner.make(partner[/* data */5][/* userId */0], undefined, undefined, Js_primitive.some(getPartnerStatusChip(false, false, false)), (function (param) {
+                      return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0]) + "-prospect", undefined, Partner.make(partner[/* data */5][/* userId */0], undefined, undefined, (function (param) {
+                                        return getPartnerStatusChip(param, false, false, false);
+                                      }), (function (param) {
                                         return Router.clickToRoute(partial_arg, param);
                                       }), undefined, /* array */[]));
                     }));
@@ -199,7 +218,7 @@ function make(viewData, _) {
                           partial_arg_000,
                           partial_arg_001
                         ]);
-                      return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0]), undefined, Partner.make(partner[/* userId */0], partner[/* name */2], undefined, Js_primitive.some(getPartnerStatusChip(true, partner[/* joinedWallet */5], Belt_Map.get(loggedInStatus, partner[/* userId */0]))), (function (param) {
+                      return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0]), undefined, Partner.make(partner[/* userId */0], partner[/* name */2], undefined, Js_primitive.some(getPartnerStatusChip(Belt_Set.has(viewData[/* ledgerBacked */6], partner[/* userId */0]), true, partner[/* joinedWallet */5], Belt_Map.get(loggedInStatus, partner[/* userId */0]))), (function (param) {
                                         return Router.clickToRoute(partial_arg, param);
                                       }), undefined, /* array */[]));
                     }));
@@ -222,7 +241,7 @@ function make(viewData, _) {
                         match$2 ? stickyHeader(undefined, "Current") : /* [] */0,
                         currentPartners
                       ]));
-              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingBroadcast */10], (function (param) {
+              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingBroadcast */11], (function (param) {
                           var processId = param[/* processId */0];
                           var partial_arg_000 = viewData[/* ventureId */0];
                           var partial_arg_001 = /* Payout */Block.__(1, [processId]);
@@ -234,8 +253,8 @@ function make(viewData, _) {
                                             return Router.clickToRoute(partial_arg, param);
                                           }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */2][/* spentWithFees */2]) + " BTC")), Js_primitive.some(ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))), /* array */[]));
                         })));
-              var unconfirmed = viewData[/* unconfirmedTxs */8];
-              var confirmed = viewData[/* confirmedTxs */9];
+              var unconfirmed = viewData[/* unconfirmedTxs */9];
+              var confirmed = viewData[/* confirmedTxs */10];
               var transactions = Belt_List.toArray(Belt_List.concatMany(/* array */[
                         Belt_List.mapWithIndex(unconfirmed, (function (iter, tx) {
                                 var match = tx[/* txType */0];
@@ -292,7 +311,7 @@ function make(viewData, _) {
                                               ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(match$4 ? atRiskSettingsButtonIcon : settingsButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
                                                           return Router.clickToRoute(partial_arg$1, param);
                                                         }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.settings]))
-                                            ])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */11][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */11][/* reserved */1]), /* array */[])))), Js_primitive.some(React.createElement("div", {
+                                            ])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */12][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */12][/* reserved */1]), /* array */[])))), Js_primitive.some(React.createElement("div", {
                                       className: Css.style(/* :: */[
                                             Css.display(/* flex */-1010954439),
                                             /* [] */0

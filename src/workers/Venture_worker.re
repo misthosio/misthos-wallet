@@ -42,11 +42,16 @@ module Notify = {
       ~correlationId,
       CmdCompleted(ventureId, correlationId, Ok(response)),
     );
-  let cmdError = (ventureId, correlationId, response) =>
+  let cmdError = (ventureId, correlationId, response) => {
+    logMessage(
+      "Command error: " ++ (Message.encodeError(response) |> Json.stringify),
+    );
     postMessage(
       ~correlationId,
       CmdCompleted(ventureId, correlationId, Error(response)),
     );
+  };
+
   let sessionPending = correlationId =>
     postMessage(~correlationId, SessionPending);
   let sessionStarted = (correlationId, blockstackItems, storagePrefix) =>

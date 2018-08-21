@@ -572,6 +572,12 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
+"@babel/runtime@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0-rc.1.tgz#42f36fc5817911c89ea75da2b874054922967616"
+  dependencies:
+    regenerator-runtime "^0.12.0"
+
 "@babel/template@7.0.0-beta.42":
   version "7.0.0-beta.42"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.0.0-beta.42.tgz#7186d4e70d44cdec975049ba0a73bdaf5cdee052"
@@ -640,11 +646,11 @@
   dependencies:
     events "^2.0.0"
 
-"@material-ui/core@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-1.5.0.tgz#00884bb4139d98786d05a97803d19426d4afa55d"
+"@material-ui/core@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-1.5.1.tgz#cb00cb934447ae688e08129f1dab55f54d29d87a"
   dependencies:
-    "@babel/runtime" "7.0.0-beta.42"
+    "@babel/runtime" "7.0.0-rc.1"
     "@types/jss" "^9.5.3"
     "@types/react-transition-group" "^2.0.8"
     brcast "^3.0.1"
@@ -7950,9 +7956,9 @@ webpack@3.10.0:
     webpack-sources "^1.0.1"
     yargs "^8.0.2"
 
-webpack@4.16.5:
-  version "4.16.5"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.16.5.tgz#29fb39462823d7eb8aefcab8b45f7f241db0d092"
+webpack@4.17.0:
+  version "4.17.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.17.0.tgz#7e8df9529dd5fca65c700b3341a001aeae27c749"
   dependencies:
     "@webassemblyjs/ast" "1.5.13"
     "@webassemblyjs/helper-module-context" "1.5.13"

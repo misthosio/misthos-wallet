@@ -31,7 +31,7 @@ function make() {
                                         }), /* array */[])),
                               ReasonReact.element(undefined, undefined, MisthosIs.make("Collaborative", "Join a Venture or start your own. Propose and endorse decisions based on team consensus.", React.createElement("img", {
                                             height: "480px",
-                                            src: "/static/img/misthos-gif-01-v02.gif",
+                                            src: "/static/img/misthos-gif-01-v03.gif",
                                             width: "350px"
                                           }), undefined, /* array */[])),
                               ReasonReact.element(undefined, undefined, MisthosIs.make("Intuitive", "Focus on simplicity. Complete tasks quickly with an easy-to-use interface.", React.createElement("img", {

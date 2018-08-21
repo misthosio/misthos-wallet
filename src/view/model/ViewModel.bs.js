@@ -358,6 +358,7 @@ function fromViewModelState$6(param) {
           /* ventureName */param[/* ventureName */3],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
           /* partners */partnersCollector[/* partners */1],
+          /* ledgerBacked */LedgerInfoCollector.ledgerConnected(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
           /* proposedAdditions */match[0],
           /* proposedRemovals */match[1],
           /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */2],
