@@ -539,6 +539,7 @@ module SelectedVentureView = {
     ventureName: string,
     readOnly: bool,
     partners: list(partner),
+    ledgerBacked: UserId.set,
     proposedAdditions: list(partnerProcess),
     proposedRemovals: list(partnerProcess),
     unconfirmedTxs: list(txData),
@@ -582,6 +583,9 @@ module SelectedVentureView = {
              ledgerInfoCollector
              |> LedgerInfoCollector.ledgerUpToDate(AccountIndex.default)
            ),
+      ledgerBacked:
+        ledgerInfoCollector
+        |> LedgerInfoCollector.ledgerConnected(AccountIndex.default),
       readOnly:
         partnersCollector |> PartnersCollector.isPartner(localUser) == false,
       atRiskWarning:
