@@ -69,6 +69,20 @@ function apply($$event, state) {
                                                 }), users)));
                           })) : state[/* ledgerConnected */4]
                 ];
+        } else if (PrimitiveTypes.UserId[/* neq */6](custodianId, state[/* localUser */0])) {
+          var accountIdx$1 = CustodianKeyChain.accountIdx(keyChain);
+          var match$3 = CustodianKeyChain.hardwareId(keyChain);
+          return /* record */[
+                  /* localUser */state[/* localUser */0],
+                  /* ledgerIds */state[/* ledgerIds */1],
+                  /* ledgerUpToDate */state[/* ledgerUpToDate */2],
+                  /* nextKeyChainIdx */state[/* nextKeyChainIdx */3],
+                  /* ledgerConnected */match$3 !== undefined ? Belt_Map.updateU(state[/* ledgerConnected */4], accountIdx$1, (function (users) {
+                            return Js_primitive.some(Js_option.getWithDefault(Belt_Set.add(PrimitiveTypes.UserId[/* emptySet */9], custodianId), Utils.mapOption((function (users) {
+                                                  return Belt_Set.add(users, custodianId);
+                                                }), users)));
+                          })) : state[/* ledgerConnected */4]
+                ];
         } else {
           return state;
         }

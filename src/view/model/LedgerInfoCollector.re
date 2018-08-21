@@ -68,6 +68,26 @@ let apply = (event, state) =>
         | _ => state.ledgerConnected
         },
     };
+  | CustodianKeyChainUpdated({custodianId, keyChain})
+      when UserId.neq(custodianId, state.localUser) =>
+    let accountIdx = keyChain |> CustodianKeyChain.accountIdx;
+    {
+      ...state,
+      ledgerConnected:
+        switch (keyChain |> CustodianKeyChain.hardwareId) {
+        | Some(_) =>
+          state.ledgerConnected
+          |. Map.updateU(accountIdx, (. users) =>
+               users
+               |> Utils.mapOption(users => users |. Set.add(custodianId))
+               |> Js.Option.getWithDefault(
+                    UserId.emptySet |. Set.add(custodianId),
+                  )
+               |. Some
+             )
+        | _ => state.ledgerConnected
+        },
+    };
   | PartnerRemovalAccepted({data: {id}})
       when UserId.neq(id, state.localUser) => {
       ...state,
