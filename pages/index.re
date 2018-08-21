@@ -14,7 +14,7 @@ let make = _children => {
           <img
             height="480px"
             width="350px"
-            src="/static/img/misthos-gif-01-v02.gif"
+            src="/static/img/misthos-gif-01-v03.gif"
           />
         }
       />
