@@ -21,6 +21,7 @@ var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
+var AccountSettings = require("../../application/wallet/AccountSettings.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
 var LedgerInfoCollector = require("./LedgerInfoCollector.bs.js");
 var WalletInfoCollector = require("../../application/wallet/WalletInfoCollector.bs.js");
@@ -30,7 +31,7 @@ var ViewModel__OldTxInputCollector = require("./ViewModel__OldTxInputCollector.b
 var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
 function readOnly(param) {
-  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */5]) === false;
+  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */6]) === false;
 }
 
 function captureResponse(correlationId, response, state) {
@@ -42,13 +43,14 @@ function captureResponse(correlationId, response, state) {
             response
           ],
           /* ventureName */state[/* ventureName */3],
-          /* processedItems */state[/* processedItems */4],
-          /* partnersCollector */state[/* partnersCollector */5],
-          /* transactionCollector */state[/* transactionCollector */6],
-          /* txDetailsCollector */state[/* txDetailsCollector */7],
-          /* oldInputCollector */state[/* oldInputCollector */8],
-          /* walletInfoCollector */state[/* walletInfoCollector */9],
-          /* ledgerInfoCollector */state[/* ledgerInfoCollector */10]
+          /* defaultAccountSettings */state[/* defaultAccountSettings */4],
+          /* processedItems */state[/* processedItems */5],
+          /* partnersCollector */state[/* partnersCollector */6],
+          /* transactionCollector */state[/* transactionCollector */7],
+          /* txDetailsCollector */state[/* txDetailsCollector */8],
+          /* oldInputCollector */state[/* oldInputCollector */9],
+          /* walletInfoCollector */state[/* walletInfoCollector */10],
+          /* ledgerInfoCollector */state[/* ledgerInfoCollector */11]
         ];
 }
 
@@ -57,25 +59,26 @@ function lastResponse(param) {
 }
 
 function fromViewModel(param) {
-  var ledgerInfoCollector = param[/* ledgerInfoCollector */10];
-  var walletInfoCollector = param[/* walletInfoCollector */9];
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
   var ventureId = param[/* ventureId */1];
   return /* record */[
           /* ledgerId */LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
           /* ledgerUpToDate */LedgerInfoCollector.ledgerUpToDate(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector),
           /* getCustodianKeyChain */(function () {
               return Ledger.getCustodianKeyChain(WalletInfoCollector.network(walletInfoCollector), ventureId, LedgerInfoCollector.ledgerId(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector), WalletTypes.AccountIndex[/* default */11], LedgerInfoCollector.nextKeyChainIdx(WalletTypes.AccountIndex[/* default */11], ledgerInfoCollector));
-            })
+            }),
+          /* accountSettings */param[/* defaultAccountSettings */4]
         ];
 }
 
 var VentureSettingsView = /* module */[/* fromViewModel */fromViewModel];
 
 function fromViewModelState(param) {
-  var walletInfoCollector = param[/* walletInfoCollector */9];
-  var oldInputCollector = param[/* oldInputCollector */8];
-  var txDetailsCollector = param[/* txDetailsCollector */7];
-  var partnersCollector = param[/* partnersCollector */5];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
+  var oldInputCollector = param[/* oldInputCollector */9];
+  var txDetailsCollector = param[/* txDetailsCollector */8];
+  var partnersCollector = param[/* partnersCollector */6];
   var ventureId = param[/* ventureId */1];
   var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   return /* record */[
@@ -149,10 +152,10 @@ function fromViewModelState(param) {
 var AddressesView = /* module */[/* fromViewModelState */fromViewModelState];
 
 function fromViewModelState$1(param) {
-  var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */9]);
+  var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */10]);
   return /* record */[
           /* ventureName */param[/* ventureName */3],
-          /* partners */param[/* partnersCollector */5][/* partners */1],
+          /* partners */param[/* partnersCollector */6][/* partners */1],
           /* alertPartners */Belt_List.reduceU(infos, PrimitiveTypes.UserId[/* emptySet */9], (function (res, param) {
                   var addressStatus = param[/* addressStatus */5];
                   var exit = 0;
@@ -178,8 +181,8 @@ var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState
 var environment = Environment.get(/* () */0);
 
 function fromViewModelState$2(processId, param) {
-  var walletInfoCollector = param[/* walletInfoCollector */9];
-  var partnersCollector = param[/* partnersCollector */5];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
+  var partnersCollector = param[/* partnersCollector */6];
   var ventureName = param[/* ventureName */3];
   var ventureId = param[/* ventureId */1];
   var localUser = param[/* localUser */0];
@@ -222,8 +225,8 @@ var ViewPartnerView = /* module */[
 ];
 
 function fromViewModelState$3(param) {
-  var ledgerInfoCollector = param[/* ledgerInfoCollector */10];
-  var walletInfoCollector = param[/* walletInfoCollector */9];
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
   var ventureId = param[/* ventureId */1];
   var localUser = param[/* localUser */0];
   var reserved = WalletInfoCollector.totalReservedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
@@ -294,9 +297,9 @@ function fromViewModelState$3(param) {
 var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
 
 function fromViewModelState$4(processId, param) {
-  var ledgerInfoCollector = param[/* ledgerInfoCollector */10];
-  var walletInfoCollector = param[/* walletInfoCollector */9];
-  var partnersCollector = param[/* partnersCollector */5];
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
+  var partnersCollector = param[/* partnersCollector */6];
   var ventureId = param[/* ventureId */1];
   var localUser = param[/* localUser */0];
   return Utils.mapOption((function (payout) {
@@ -317,22 +320,22 @@ function fromViewModelState$4(processId, param) {
                                         }));
                           })
                       ];
-              }), ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */7]));
+              }), ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]));
 }
 
 var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$4];
 
 function fromViewModelState$5(txId, param) {
-  return ViewModel__TxDetailsCollector.getIncome(txId, param[/* txDetailsCollector */7]);
+  return ViewModel__TxDetailsCollector.getIncome(txId, param[/* txDetailsCollector */8]);
 }
 
 var ViewIncomeView = /* module */[/* fromViewModelState */fromViewModelState$5];
 
 function fromViewModelState$6(param) {
-  var ledgerInfoCollector = param[/* ledgerInfoCollector */10];
-  var walletInfoCollector = param[/* walletInfoCollector */9];
-  var transactionCollector = param[/* transactionCollector */6];
-  var partnersCollector = param[/* partnersCollector */5];
+  var ledgerInfoCollector = param[/* ledgerInfoCollector */11];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
+  var transactionCollector = param[/* transactionCollector */7];
+  var partnersCollector = param[/* partnersCollector */6];
   var reserved = WalletInfoCollector.totalReservedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
@@ -359,7 +362,7 @@ function fromViewModelState$6(param) {
           /* proposedRemovals */match[1],
           /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */2],
           /* confirmedTxs */transactionCollector[/* confirmedTxs */3],
-          /* payoutsPendingBroadcast */ViewModel__TxDetailsCollector.payoutsPendingBroadcast(param[/* txDetailsCollector */7]),
+          /* payoutsPendingBroadcast */ViewModel__TxDetailsCollector.payoutsPendingBroadcast(param[/* txDetailsCollector */8]),
           /* balance */balance
         ];
 }
@@ -372,6 +375,7 @@ function make(localUser) {
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* lastResponse */undefined,
           /* ventureName */"",
+          /* defaultAccountSettings */AccountSettings.$$default,
           /* processedItems */Belt_SetString.empty,
           /* partnersCollector */ViewModel__PartnersCollector.make(localUser),
           /* transactionCollector */ViewModel__TransactionCollector.make(/* () */0),
@@ -383,7 +387,7 @@ function make(localUser) {
 }
 
 function apply(param, state) {
-  var processedItems = state[/* processedItems */4];
+  var processedItems = state[/* processedItems */5];
   var hash = param[/* hash */1];
   var $$event = param[/* event */0];
   if (Belt_SetString.has(processedItems, hash)) {
@@ -393,13 +397,14 @@ function apply(param, state) {
     var state_001 = /* ventureId */state[/* ventureId */1];
     var state_002 = /* lastResponse */state[/* lastResponse */2];
     var state_003 = /* ventureName */state[/* ventureName */3];
-    var state_004 = /* processedItems */Belt_SetString.add(processedItems, hash);
-    var state_005 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */5]);
-    var state_006 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */6]);
-    var state_007 = /* txDetailsCollector */ViewModel__TxDetailsCollector.apply($$event, state[/* txDetailsCollector */7]);
-    var state_008 = /* oldInputCollector */ViewModel__OldTxInputCollector.apply($$event, state[/* oldInputCollector */8]);
-    var state_009 = /* walletInfoCollector */WalletInfoCollector.apply($$event, state[/* walletInfoCollector */9]);
-    var state_010 = /* ledgerInfoCollector */LedgerInfoCollector.apply($$event, state[/* ledgerInfoCollector */10]);
+    var state_004 = /* defaultAccountSettings */state[/* defaultAccountSettings */4];
+    var state_005 = /* processedItems */Belt_SetString.add(processedItems, hash);
+    var state_006 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */6]);
+    var state_007 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */7]);
+    var state_008 = /* txDetailsCollector */ViewModel__TxDetailsCollector.apply($$event, state[/* txDetailsCollector */8]);
+    var state_009 = /* oldInputCollector */ViewModel__OldTxInputCollector.apply($$event, state[/* oldInputCollector */9]);
+    var state_010 = /* walletInfoCollector */WalletInfoCollector.apply($$event, state[/* walletInfoCollector */10]);
+    var state_011 = /* ledgerInfoCollector */LedgerInfoCollector.apply($$event, state[/* ledgerInfoCollector */11]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -411,7 +416,8 @@ function apply(param, state) {
       state_007,
       state_008,
       state_009,
-      state_010
+      state_010,
+      state_011
     ];
     if ($$event.tag) {
       return state$1;
@@ -422,13 +428,14 @@ function apply(param, state) {
               /* ventureId */match[/* ventureId */0],
               state_002,
               /* ventureName */match[/* ventureName */1],
-              state_004,
+              /* defaultAccountSettings */Js_option.getWithDefault(AccountSettings.$$default, match[/* defaultAccountSettings */4]),
               state_005,
               state_006,
               state_007,
               state_008,
               state_009,
-              state_010
+              state_010,
+              state_011
             ];
     }
   }

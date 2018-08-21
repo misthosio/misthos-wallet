@@ -58,7 +58,7 @@ let make =
           )
         };
       let nSigs =
-        AccountSettings.defaultCoSignerList
+        viewData.accountSettings.coSignerList
         |. Array.mapWithIndexU((. idx, nCoSigners) =>
              MaterialUi.(
                <TableRow>
@@ -92,19 +92,30 @@ let make =
               <MTypography variant=`Title gutterBottom=true>
                 ("Wallet Settings" |> text)
               </MTypography>
-              <MTypography variant=`Body2>
-                ("Degrading multisig is enabled." |> text)
-              </MTypography>
-              <MTypography variant=`Body2 gutterBottom=true>
-                (
-                  "The unlock time is "
-                  ++ string_of_int(AccountSettings.defaultSequence)
-                  ++ " blocks (approximately "
-                  ++ string_of_int(AccountSettings.defaultSequence / 144)
-                  ++ " days)."
-                  |> text
-                )
-              </MTypography>
+              (
+                switch (viewData.accountSettings.sequence) {
+                | Some(nBlocks) =>
+                  ReasonReact.array([|
+                    <MTypography variant=`Body2>
+                      ("Degrading multisig is enabled." |> text)
+                    </MTypography>,
+                    <MTypography variant=`Body2 gutterBottom=true>
+                      (
+                        "The unlock time is "
+                        ++ string_of_int(nBlocks)
+                        ++ " blocks (approximately "
+                        ++ string_of_int(nBlocks / 144)
+                        ++ " days)."
+                        |> text
+                      )
+                    </MTypography>,
+                  |])
+                | None =>
+                  <MTypography variant=`Body2>
+                    ("Degrading multisig is disabled." |> text)
+                  </MTypography>
+                }
+              )
               <MTypography variant=`Body2 gutterBottom=true>
                 (
                   "Here is an overview of the required signatures depending on the number of Custodians backing an address:"

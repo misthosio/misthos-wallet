@@ -18,6 +18,7 @@ type t = {
   lastResponse:
     option((WebWorker.correlationId, VentureWorkerMessage.cmdResponse)),
   ventureName: string,
+  defaultAccountSettings: AccountSettings.t,
   processedItems: ItemsSet.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
@@ -42,8 +43,17 @@ module VentureSettingsView = {
     ledgerId: option(string),
     ledgerUpToDate: bool,
     getCustodianKeyChain: unit => Js.Promise.t(Ledger.result),
+    accountSettings: AccountSettings.t,
   };
-  let fromViewModel = ({ventureId, walletInfoCollector, ledgerInfoCollector}) => {
+  let fromViewModel =
+      (
+        {
+          ventureId,
+          defaultAccountSettings,
+          walletInfoCollector,
+          ledgerInfoCollector,
+        },
+      ) => {
     ledgerId:
       ledgerInfoCollector
       |> LedgerInfoCollector.ledgerId(AccountIndex.default),
@@ -62,6 +72,7 @@ module VentureSettingsView = {
           ledgerInfoCollector
           |> LedgerInfoCollector.nextKeyChainIdx(AccountIndex.default),
       ),
+    accountSettings: defaultAccountSettings,
   };
 };
 let ventureSettingsView = VentureSettingsView.fromViewModel;
@@ -615,6 +626,7 @@ let make = localUser => {
   localUser,
   lastResponse: None,
   ventureName: "",
+  defaultAccountSettings: AccountSettings.default,
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   partnersCollector: PartnersCollector.make(localUser),
@@ -646,10 +658,13 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
-    | VentureCreated({ventureName, ventureId}) => {
+    | VentureCreated({ventureName, ventureId, defaultAccountSettings}) => {
         ...state,
         ventureId,
         ventureName,
+        defaultAccountSettings:
+          defaultAccountSettings
+          |> Js.Option.getWithDefault(AccountSettings.default),
       }
     | _ => state
     };

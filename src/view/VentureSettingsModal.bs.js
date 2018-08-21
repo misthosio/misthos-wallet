@@ -13,7 +13,6 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
-var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var SingleActionButton = require("./components/SingleActionButton.bs.js");
 var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
@@ -74,20 +73,30 @@ function make(viewData, commands, cmdStatus, _) {
                   "You currently have no Ledger device integrated into this venture.",
                   "Not submitted"
                 ];
-              var nSigs = Belt_Array.slice(Belt_Array.mapWithIndexU(AccountSettings.defaultCoSignerList, (function (idx, nCoSigners) {
+              var nSigs = Belt_Array.slice(Belt_Array.mapWithIndexU(viewData[/* accountSettings */3][/* coSignerList */0], (function (idx, nCoSigners) {
                           return ReasonReact.element(undefined, undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                           ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(String(idx))]))])),
                                           ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(String(nCoSigners) + ("-of-" + String(idx)))]))]))
                                         ]));
                         })), 1, 10);
               var needsKeyRotation = !viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
-              var match$3 = viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
+              var match$3 = viewData[/* accountSettings */3][/* sequence */1];
+              var tmp;
+              if (match$3 !== undefined) {
+                var nBlocks = match$3;
+                tmp = /* array */[
+                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Degrading multisig is enabled.")])),
+                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The unlock time is " + (String(nBlocks) + (" blocks (approximately " + (String(nBlocks / 144 | 0) + " days)."))))]))
+                ];
+              } else {
+                tmp = ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Degrading multisig is disabled.")]));
+              }
+              var match$4 = viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Venture Settings")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
                                     }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
                                               ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Wallet Settings")])),
-                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Degrading multisig is enabled.")])),
-                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The unlock time is " + (String(AccountSettings.defaultSequence) + (" blocks (approximately " + (String(AccountSettings.defaultSequence / 144 | 0) + " days)."))))])),
+                                              tmp,
                                               ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Here is an overview of the required signatures depending on the number of Custodians backing an address:")])),
                                               ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[
                                                         ReasonReact.element(undefined, undefined, MaterialUi_TableHead.make(undefined, undefined, /* array */[ReasonReact.element("header", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
@@ -101,7 +110,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               React.createElement("span", {
                                                     className: needsKeyRotation ? atRiskKeyStatus : ""
                                                   }, ViewCommon.text(match$2[1]))
-                                            ])), match$3 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, /* SubmitKeys */3, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Policy Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition: Unanmious")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal: Unanmious minus 1")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout: Unanmious")])))), undefined, undefined, /* array */[]));
+                                            ])), match$4 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, /* SubmitKeys */3, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Policy Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition: Unanmious")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal: Unanmious minus 1")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout: Unanmious")])))), undefined, undefined, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
