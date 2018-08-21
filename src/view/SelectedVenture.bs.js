@@ -143,11 +143,9 @@ function make(viewData, _) {
               var warning = match$1 !== 1 ? undefined : Js_primitive.some(WarningsText.testnet);
               var getPartnerStatusChip = function ($staropt$star, endorsed, joinedWallet, hasLoggedIn) {
                 var ledgerBacked$1 = $staropt$star !== undefined ? $staropt$star : false;
-                console.log("get status");
                 if (endorsed) {
                   if (joinedWallet) {
                     if (ledgerBacked$1) {
-                      console.log("ledger backed");
                       return ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, ledgerBacked, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("LEDGER BACKED")]));
                     } else {
                       return null;

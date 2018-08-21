@@ -86,8 +86,7 @@ let make = (~viewData: ViewData.t, _children) => {
           ~endorsed: bool,
           ~joinedWallet: bool,
           ~hasLoggedIn: option(bool),
-        ) => {
-      Js.log("get status");
+        ) =>
       switch (endorsed, joinedWallet, hasLoggedIn, ledgerBacked) {
       | (false, _, _, _) => <StatusChip status=Pending label="PENDING" />
       | (true, false, Some(false), _) =>
@@ -95,13 +94,11 @@ let make = (~viewData: ViewData.t, _children) => {
       | (true, false, _, _) =>
         <StatusChip status=Pending label="SYNC REQUIRED" />
       | (_, _, _, true) =>
-        Js.log("ledger backed");
         <MTypography variant=`Body2 className=Styles.ledgerBacked>
           ("LEDGER BACKED" |> text)
-        </MTypography>;
+        </MTypography>
       | _ => ReasonReact.null
       };
-    };
     let alerts =
       List.concat(viewData.proposedAdditions, viewData.proposedRemovals)
       |. List.keepMap((prospect: ViewData.partnerProcess) =>
