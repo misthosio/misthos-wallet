@@ -15,7 +15,8 @@ type action =
   | ChangeNewVenture(string)
   | CreateVenture
   | ChangeNumberOfCoSinger((int, int))
-  | ChangeSequence(int);
+  | ChangeSequence(option(int))
+  | ToggleSequence;
 
 let component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -43,6 +44,25 @@ let make =
             |. Array.mapWithIndex((i, x) => idx == i ? nCoSigners : x),
         },
       })
+    | (ChangeSequence(sequence), _) =>
+      ReasonReact.Update({
+        ...state,
+        accountSettings: {
+          ...state.accountSettings,
+          sequence,
+        },
+      })
+    | (ToggleSequence, _) =>
+      ReasonReact.Update({
+        ...state,
+        accountSettings: {
+          ...state.accountSettings,
+          sequence:
+            state.accountSettings.sequence == None ?
+              Some(AccountSettings.defaultSequence) : None,
+        },
+      })
+
     | (CreateVenture, _) =>
       switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
@@ -98,6 +118,7 @@ let make =
          )
       |. Array.slice(~offset=1, ~len=10)
       |> ReasonReact.array;
+    let degradingMultiSig = state.accountSettings.sequence != None;
     <Grid
       title1=("Create a Venture" |> text)
       area3=MaterialUi.(
@@ -123,6 +144,33 @@ let make =
                   fullWidth=true
                 />
                 <ScrollList>
+                  <MTypography gutterTop=true gutterBottom=true variant=`Title>
+                    ("Wallet Settings" |> text)
+                  </MTypography>
+                  <MTypography gutterBottom=true variant=`Body1>
+                    (
+                      {js|You may adjust the wallet settings for your Venture
+                       here. Once the Venture is created, these settings may not
+                       be changed, so please choose wisely.|js}
+                      |> text
+                    )
+                  </MTypography>
+                  <MTypography
+                    gutterTop=true gutterBottom=true variant=`Subheading>
+                    ("Degrading Multisig" |> text)
+                  </MTypography>
+                  <FormGroup row=true>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          color=`Primary
+                          checked=(`Bool(degradingMultiSig))
+                          onChange=((_, _) => send(ToggleSequence))
+                        />
+                      }
+                      label=("Degrading Multisig" |> text)
+                    />
+                  </FormGroup>
                   <MTypography
                     gutterTop=true gutterBottom=true variant=`Subheading>
                     ("Required Signatures" |> text)

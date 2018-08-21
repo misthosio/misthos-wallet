@@ -19,13 +19,15 @@ var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var ContactUsShoutOut = require("./components/ContactUsShoutOut.bs.js");
 var MaterialUi_Select = require("@jsiebern/bs-material-ui/src/MaterialUi_Select.bs.js");
+var MaterialUi_Switch = require("@jsiebern/bs-material-ui/src/MaterialUi_Switch.bs.js");
 var SingleActionButton = require("./components/SingleActionButton.bs.js");
 var MaterialUi_MenuItem = require("@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js");
 var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
+var MaterialUi_FormGroup = require("@jsiebern/bs-material-ui/src/MaterialUi_FormGroup.bs.js");
 var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
 var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
 var MaterialUi_TableHead = require("@jsiebern/bs-material-ui/src/MaterialUi_TableHead.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
+var MaterialUi_FormControlLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_FormControlLabel.bs.js");
 
 var component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -83,6 +85,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                                             ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[getMenuItems(idx)]))]))
                                         ]));
                         })), 1, 10);
+              var degradingMultiSig = state[/* accountSettings */2][/* sequence */1] !== undefined;
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Create a Venture")), undefined, undefined, undefined, Js_primitive.some(React.createElement("form", {
                                       className: ScrollList.containerStyles,
                                       onSubmit: onSubmit
@@ -92,6 +95,15 @@ function make(onCreateVenture, cmdStatus, _) {
                                             ], (function (e) {
                                                 return Curry._1(send, /* ChangeNewVenture */Block.__(0, [ViewCommon.extractString(e)]));
                                               }), true, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Wallet Settings")])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("You may adjust the wallet settings for your Venture\n                       here. Once the Venture is created, these settings may not\n                       be changed, so please choose wisely.")])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Degrading Multisig")])),
+                                              ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
+                                                                              737456202,
+                                                                              degradingMultiSig
+                                                                            ], undefined, undefined, /* Primary */-791844958, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, _$1) {
+                                                                                return Curry._1(send, /* ToggleSequence */1);
+                                                                              }), undefined, undefined, undefined, undefined, /* array */[]))), undefined, undefined, Js_primitive.some(ViewCommon.text("Degrading Multisig")), undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
                                               ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Required Signatures")])),
                                               ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Select the number of signatures your Venture will\n                       require for transactions, depending on the number of\n                       Partners:")])),
                                               ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[
@@ -121,12 +133,25 @@ function make(onCreateVenture, cmdStatus, _) {
               }
               if (exit === 1) {
                 if (typeof action === "number") {
-                  var name = $$String.trim(state[/* newVenture */0]);
-                  if (name === "") {
-                    return /* NoUpdate */0;
+                  if (action === 0) {
+                    var name = $$String.trim(state[/* newVenture */0]);
+                    if (name === "") {
+                      return /* NoUpdate */0;
+                    } else {
+                      Curry._3(onCreateVenture, name, state[/* accountSettings */2], Policy.defaultInitialPolicies);
+                      return /* NoUpdate */0;
+                    }
                   } else {
-                    Curry._3(onCreateVenture, name, state[/* accountSettings */2], Policy.defaultInitialPolicies);
-                    return /* NoUpdate */0;
+                    var init = state[/* accountSettings */2];
+                    var match$1 = state[/* accountSettings */2][/* sequence */1] === undefined;
+                    return /* Update */Block.__(0, [/* record */[
+                                /* newVenture */state[/* newVenture */0],
+                                /* cmdStatus */state[/* cmdStatus */1],
+                                /* accountSettings : record */[
+                                  /* coSignerList */init[/* coSignerList */0],
+                                  /* sequence */match$1 ? AccountSettings.defaultSequence : undefined
+                                ]
+                              ]]);
                   }
                 } else {
                   switch (action.tag | 0) {
@@ -137,10 +162,10 @@ function make(onCreateVenture, cmdStatus, _) {
                                     /* accountSettings */state[/* accountSettings */2]
                                   ]]);
                     case 1 : 
-                        var match$1 = action[0];
-                        var nCoSigners = match$1[1];
-                        var idx = match$1[0];
-                        var init = state[/* accountSettings */2];
+                        var match$2 = action[0];
+                        var nCoSigners = match$2[1];
+                        var idx = match$2[0];
+                        var init$1 = state[/* accountSettings */2];
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
                                     /* cmdStatus */state[/* cmdStatus */1],
@@ -153,18 +178,19 @@ function make(onCreateVenture, cmdStatus, _) {
                                                 return x;
                                               }
                                             })),
-                                      /* sequence */init[/* sequence */1]
+                                      /* sequence */init$1[/* sequence */1]
                                     ]
                                   ]]);
                     case 2 : 
-                        throw [
-                              Caml_builtin_exceptions.match_failure,
-                              /* tuple */[
-                                "VentureCreate.re",
-                                32,
-                                4
-                              ]
-                            ];
+                        var init$2 = state[/* accountSettings */2];
+                        return /* Update */Block.__(0, [/* record */[
+                                    /* newVenture */state[/* newVenture */0],
+                                    /* cmdStatus */state[/* cmdStatus */1],
+                                    /* accountSettings : record */[
+                                      /* coSignerList */init$2[/* coSignerList */0],
+                                      /* sequence */action[0]
+                                    ]
+                                  ]]);
                     
                   }
                 }
