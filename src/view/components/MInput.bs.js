@@ -17,7 +17,10 @@ function margin(tf, bf) {
               Css.marginTop(Css.px(Theme.space(tf))),
               /* :: */[
                 Css.marginBottom(Css.px(Theme.space(bf))),
-                /* [] */0
+                /* :: */[
+                  Css.minHeight(Css.px(29)),
+                  /* [] */0
+                ]
               ]
             ]);
 }
