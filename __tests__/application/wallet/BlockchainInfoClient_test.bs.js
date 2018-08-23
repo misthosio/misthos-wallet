@@ -26,7 +26,7 @@ describe("BlockchainInfoClient", (function () {
                               return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](530440, Jest.Expect[/* expect */0](res)));
                             }));
               }));
-        return Jest.testPromise("blockheight", 50000, (function () {
+        return Jest.testPromise("getTransactionHex", 50000, (function () {
                       return BlockchainInfoClient.getTransactionHex(/* record */[
                                     /* subdomain */"",
                                     /* network */BitcoinjsLib.networks.bitcoin

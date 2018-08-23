@@ -26,7 +26,7 @@ let () =
         |> then_(res => expect(res) |> toBeGreaterThan(530440) |> resolve)
       )
     );
-    testPromise(~timeout=50000, "blockheight", () =>
+    testPromise(~timeout=50000, "getTransactionHex", () =>
       Js.Promise.(
         BlockchainInfoClient.getTransactionHex(
           {subdomain: "", network: Bitcoin.Networks.bitcoin},
