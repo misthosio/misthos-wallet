@@ -20,6 +20,20 @@ type action =
 
 let component = ReasonReact.reducerComponent("VentureCreate");
 
+module Styles = {
+  open Css;
+  let expansionPanelSummary =
+    style([
+      paddingLeft(px(0)),
+      position(sticky),
+      top(px(0)),
+      backgroundColor(Colors.white),
+      zIndex(100),
+    ]);
+  let expansionPanelDetails =
+    style([flexDirection(column), paddingLeft(px(0))]);
+};
+
 let make =
     (~onCreateVenture, ~cmdStatus: CommandExecutor.cmdStatus, _children) => {
   ...component,
@@ -144,130 +158,122 @@ let make =
                   autoFocus=true
                   fullWidth=true
                 />
+                <br />
                 <ScrollList>
-                  <MTypography gutterTop=true gutterBottom=true variant=`Title>
-                    ("Wallet Settings" |> text)
-                  </MTypography>
-                  <MTypography gutterBottom=true variant=`Body1>
-                    (
-                      {js|You may adjust the wallet settings for your Venture
+                  <ExpansionPanel>
+                    <ExpansionPanelSummary
+                      className=Styles.expansionPanelSummary
+                      expandIcon=Icons.chevronDown>
+                      <MTypography variant=`Body2>
+                        ("Additional Settings" |> text)
+                      </MTypography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails
+                      className=Styles.expansionPanelDetails>
+                      <MTypography gutterBottom=true variant=`Title>
+                        ("Wallet Settings" |> text)
+                      </MTypography>
+                      <MTypography gutterBottom=true variant=`Body1>
+                        (
+                          {js|You may adjust the wallet settings for your Venture
                        here. Once the Venture is created, these settings may not
                        be changed, so please choose wisely.|js}
-                      |> text
-                    )
-                  </MTypography>
-                  <MTypography
-                    gutterTop=true gutterBottom=true variant=`Subheading>
-                    ("Degrading Multisig" |> text)
-                  </MTypography>
-                  <Grid container=true direction=`Row alignItems=`Baseline>
-                    <Grid item=true xs=V9>
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            color=`Primary
-                            checked=(`Bool(degradingMultiSig))
-                            onChange=((_, _) => send(ToggleSequence))
-                          />
-                        }
-                        label=("Degrading Multisig" |> text)
-                      />
-                    </Grid>
-                    <Grid item=true xs=V3>
-                      {
-                        let value =
-                          switch (sequence) {
-                          | Some(s) => `Int(s)
-                          | None => `String("")
-                          };
-                        <FormControl
-                          disabled=(! degradingMultiSig) fullWidth=true>
-                          <InputLabel> "Unlock after" </InputLabel>
-                          <Input
-                            value
-                            onChange=(
-                              e =>
-                                send(
-                                  ChangeSequence(
-                                    extractString(e) |> int_of_string,
-                                  ),
-                                )
-                            )
-                            endAdornment={
-                              <InputAdornment position=`End>
-                                ("blocks" |> text)
-                              </InputAdornment>
+                          |> text
+                        )
+                      </MTypography>
+                      <MTypography
+                        gutterTop=true gutterBottom=true variant=`Subheading>
+                        ("Degrading Multisig" |> text)
+                      </MTypography>
+                      <Grid container=true direction=`Row alignItems=`Baseline>
+                        <Grid item=true xs=V8>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                color=`Primary
+                                checked=(`Bool(degradingMultiSig))
+                                onChange=((_, _) => send(ToggleSequence))
+                              />
                             }
+                            label=("Degrading Multisig" |> text)
                           />
-                          <FormHelperText>
-                            (
-                              (
-                                switch (sequence) {
-                                | Some(s) =>
-                                  "Approx. "
-                                  ++ (s / (6 * 24) |> string_of_int)
-                                  ++ " Days"
-                                | None => "Disabled"
+                        </Grid>
+                        <Grid item=true xs=V4>
+                          {
+                            let value =
+                              switch (sequence) {
+                              | Some(s) => `Int(s)
+                              | None => `String("")
+                              };
+                            <FormControl
+                              disabled=(! degradingMultiSig) fullWidth=true>
+                              <InputLabel> "Unlock after" </InputLabel>
+                              <Input
+                                value
+                                onChange=(
+                                  e =>
+                                    send(
+                                      ChangeSequence(
+                                        extractString(e) |> int_of_string,
+                                      ),
+                                    )
+                                )
+                                endAdornment={
+                                  <InputAdornment position=`End>
+                                    ("blocks" |> text)
+                                  </InputAdornment>
                                 }
-                              )
-                              |> text
-                            )
-                          </FormHelperText>
-                        </FormControl>;
-                      }
-                    </Grid>
-                  </Grid>
-                  /* <FormControl> */
-                  /*   <InputLabel> ("Unlock Time" |> text) </InputLabel> */
-                  /*   <Input /> */
-                  /*   <FormHelperText> */
-                  /*     ("Some important helper text" |> text) */
-                  /*   </FormHelperText> */
-                  /* </FormControl> */
-                  /* <FormGroup row=true> */
-                  /*   <FormControlLabel */
-                  /*     control={ */
-                  /*       <Input */
-                  /*         value=(`String(state.newVenture)) */
-                  /*         onChange=( */
-                  /*           e => send(ChangeNewVenture(extractString(e))) */
-                  /*         ) */
-                  /*         autoFocus=true */
-                  /*         fullWidth=true */
-                  /*       /> */
-                  /*     } */
-                  /*     label=("Unlock Time" |> text) */
-                  /*   /> */
-                  /* </FormGroup> */
-                  <MTypography
-                    gutterTop=true gutterBottom=true variant=`Subheading>
-                    ("Required Signatures" |> text)
-                  </MTypography>
-                  <MTypography gutterTop=true gutterBottom=true variant=`Body1>
-                    (
-                      {js|Select the number of signatures your Venture will
+                              />
+                              <FormHelperText>
+                                (
+                                  (
+                                    switch (sequence) {
+                                    | Some(s) =>
+                                      "Approx. "
+                                      ++ (s / (6 * 24) |> string_of_int)
+                                      ++ " Days"
+                                    | None => "Disabled"
+                                    }
+                                  )
+                                  |> text
+                                )
+                              </FormHelperText>
+                            </FormControl>;
+                          }
+                        </Grid>
+                      </Grid>
+                      <MTypography
+                        gutterTop=true gutterBottom=true variant=`Subheading>
+                        ("Required Signatures" |> text)
+                      </MTypography>
+                      <MTypography
+                        gutterTop=true gutterBottom=true variant=`Body1>
+                        (
+                          {js|Select the number of signatures your Venture will
                        require for transactions, depending on the number of
                        Partners:|js}
-                      |> text
-                    )
-                  </MTypography>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
-                          <MTypography variant=`Body2>
-                            ("NUMBER OF PARTNERS" |> text)
-                          </MTypography>
-                        </TableCell>
-                        <TableCell numeric=true>
-                          <MTypography variant=`Body2>
-                            ("REQUIRED SIGNATURES" |> text)
-                          </MTypography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody> nSigs </TableBody>
-                  </Table>
+                          |> text
+                        )
+                      </MTypography>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>
+                              <MTypography variant=`Body2>
+                                ("NUMBER OF PARTNERS" |> text)
+                              </MTypography>
+                            </TableCell>
+                            <TableCell numeric=true>
+                              <MTypography variant=`Body2>
+                                ("REQUIRED SIGNATURES" |> text)
+                              </MTypography>
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody> nSigs </TableBody>
+                      </Table>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
                 </ScrollList>
                 <SingleActionButton
                   onSubmit=onClick
