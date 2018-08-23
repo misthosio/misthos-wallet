@@ -20,6 +20,7 @@ var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
+var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var TransactionFee = require("./TransactionFee.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -430,6 +431,52 @@ function finalize(signedTransactions) {
   }
 }
 
+function missingSignatures(currentCustodians, custodiansThatSigned, keyChains, param) {
+  var txWrapper = TxWrapper.make(param[/* txHex */0]);
+  var missingSigs = Belt_Array.mapWithIndexU(param[/* usedInputs */1], (function (idx, input) {
+          var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), keyChains);
+          var allCustodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(keyChain[/* custodianKeyChains */4], (function (prim) {
+                          return prim[0];
+                        }))));
+          var notSigned = Belt_Set.diff(allCustodians, custodiansThatSigned);
+          var match = Belt_Array.getExn(txWrapper[/* inputs */1], idx)[/* sequence */1] !== BitcoinjsLib.Transaction.DEFAULT_SEQUENCE;
+          return /* record */[
+                  /* custodians */Belt_Set.intersect(notSigned, currentCustodians),
+                  /* sigs */(
+                    match ? 1 : keyChain[/* nCoSigners */2]
+                  ) - (Belt_Set.size(allCustodians) - Belt_Set.size(notSigned) | 0) | 0
+                ];
+        }));
+  var mandatory = Belt_Array.reduceU(missingSigs, PrimitiveTypes.UserId[/* emptySet */9], (function (required, param) {
+          var sigs = param[/* sigs */1];
+          var custodians = param[/* custodians */0];
+          var match = sigs > 0 && Belt_Set.size(custodians) === sigs;
+          if (match) {
+            return Belt_Set.union(required, custodians);
+          } else {
+            return required;
+          }
+        }));
+  return /* record */[
+          /* mandatory */mandatory,
+          /* additional */Belt_Array.reduceU(missingSigs, PrimitiveTypes.UserId[/* emptySet */9], (function (additional, param) {
+                  var sigs = param[/* sigs */1];
+                  if (sigs > 0) {
+                    var custodians = param[/* custodians */0];
+                    var definetlySigned = Belt_Set.intersect(custodians, mandatory);
+                    var match = Belt_Set.size(definetlySigned) >= sigs;
+                    if (match) {
+                      return additional;
+                    } else {
+                      return Belt_Set.union(Belt_Set.diff(custodians, definetlySigned), additional);
+                    }
+                  } else {
+                    return additional;
+                  }
+                }))
+        ];
+}
+
 var misthosFeePercent = 1.5;
 
 exports.NotEnoughFunds = NotEnoughFunds;
@@ -442,6 +489,7 @@ exports.build = build;
 exports.max = max;
 exports.getSignedExn = getSignedExn;
 exports.signPayout = signPayout;
+exports.missingSignatures = missingSignatures;
 exports.finalize = finalize;
 exports.encode = encode;
 exports.decode = decode;

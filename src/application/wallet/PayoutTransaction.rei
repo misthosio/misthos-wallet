@@ -68,6 +68,19 @@ let signPayout:
   ) =>
   signResult;
 
+type missingSignatures = {
+  mandatory: UserId.set,
+  additional: UserId.set,
+};
+let missingSignatures:
+  (
+    ~currentCustodians: UserId.set,
+    ~custodiansThatSigned: UserId.set,
+    AccountKeyChain.Collection.t,
+    t
+  ) =>
+  missingSignatures;
+
 let finalize: list(t) => Bitcoin.Transaction.t;
 
 let encode: t => Js.Json.t;

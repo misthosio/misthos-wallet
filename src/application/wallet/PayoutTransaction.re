@@ -1,4 +1,5 @@
 module B = Bitcoin;
+open PrimitiveTypes;
 
 exception NotEnoughFunds;
 
@@ -550,5 +551,73 @@ let finalize = signedTransactions => {
   switch (res) {
   | Ok(tx) => tx
   | NotEnoughSignatures => raise(NotEnoughSignatures)
+  };
+};
+
+type inputMissingSigs = {
+  custodians: UserId.set,
+  sigs: int,
+};
+type missingSignatures = {
+  mandatory: UserId.set,
+  additional: UserId.set,
+};
+let missingSignatures =
+    (
+      ~currentCustodians,
+      ~custodiansThatSigned,
+      keyChains,
+      {txHex, usedInputs},
+    ) => {
+  open Belt;
+  let txWrapper = TxWrapper.make(txHex);
+  let missingSigs =
+    usedInputs
+    |. Array.mapWithIndexU((. idx, input: Network.txInput) => {
+         let keyChain =
+           keyChains
+           |> AccountKeyChain.Collection.lookup(
+                input.coordinates |> Address.Coordinates.accountIdx,
+                input.coordinates |> Address.Coordinates.keyChainIdent,
+              );
+         let allCustodians =
+           keyChain.custodianKeyChains
+           |. List.map(fst)
+           |> List.toArray
+           |> Set.mergeMany(UserId.emptySet);
+         let notSigned = allCustodians |. Set.diff(custodiansThatSigned);
+         {
+           custodians: notSigned |. Set.intersect(currentCustodians),
+           sigs:
+             (
+               (txWrapper.inputs |. Array.getExn(idx)).sequence
+               != Bitcoin.Transaction.defaultSequence ?
+                 1 : keyChain.nCoSigners
+             )
+             - (Set.size(allCustodians) - Set.size(notSigned)),
+         };
+       });
+  let mandatory =
+    missingSigs
+    |. Array.reduceU(UserId.emptySet, (. required, {custodians, sigs}) =>
+         sigs > 0 && Set.size(custodians) == sigs ?
+           required |. Set.union(custodians) : required
+       );
+  {
+    mandatory,
+    additional:
+      missingSigs
+      |. Array.reduceU(UserId.emptySet, (. additional, {custodians, sigs}) =>
+           if (sigs > 0) {
+             let definetlySigned = custodians |. Set.intersect(mandatory);
+             Set.size(definetlySigned) >= sigs ?
+               additional :
+               custodians
+               |. Set.diff(definetlySigned)
+               |. Set.union(additional);
+           } else {
+             additional;
+           }
+         ),
   };
 };
