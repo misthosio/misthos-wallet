@@ -185,6 +185,15 @@ let make =
                         gutterTop=true gutterBottom=true variant=`Subheading>
                         ("Degrading Multisig" |> text)
                       </MTypography>
+                      <MTypography
+                        gutterTop=true gutterBottom=true variant=`Body1>
+                        (
+                          {js|The degrading multisig feature adds a time-release
+                           to funds that have been locked due to custodian
+                           changes.|js}
+                          |> text
+                        )
+                      </MTypography>
                       <Grid container=true direction=`Row alignItems=`Baseline>
                         <Grid item=true xs=V8>
                           <FormControlLabel
