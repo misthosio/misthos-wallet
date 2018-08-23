@@ -15,7 +15,7 @@ type action =
   | ChangeNewVenture(string)
   | CreateVenture
   | ChangeNumberOfCoSinger((int, int))
-  | ChangeSequence(option(int))
+  | ChangeSequence(int)
   | ToggleSequence;
 
 let component = ReasonReact.reducerComponent("VentureCreate");
@@ -49,7 +49,7 @@ let make =
         ...state,
         accountSettings: {
           ...state.accountSettings,
-          sequence,
+          sequence: Some(sequence),
         },
       })
     | (ToggleSequence, _) =>
@@ -119,6 +119,7 @@ let make =
       |. Array.slice(~offset=1, ~len=10)
       |> ReasonReact.array;
     let degradingMultiSig = state.accountSettings.sequence != None;
+    let sequence = state.accountSettings.sequence;
     <Grid
       title1=("Create a Venture" |> text)
       area3=MaterialUi.(
@@ -159,18 +160,85 @@ let make =
                     gutterTop=true gutterBottom=true variant=`Subheading>
                     ("Degrading Multisig" |> text)
                   </MTypography>
-                  <FormGroup row=true>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          color=`Primary
-                          checked=(`Bool(degradingMultiSig))
-                          onChange=((_, _) => send(ToggleSequence))
-                        />
+                  <Grid container=true direction=`Row alignItems=`Baseline>
+                    <Grid item=true xs=V9>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            color=`Primary
+                            checked=(`Bool(degradingMultiSig))
+                            onChange=((_, _) => send(ToggleSequence))
+                          />
+                        }
+                        label=("Degrading Multisig" |> text)
+                      />
+                    </Grid>
+                    <Grid item=true xs=V3>
+                      {
+                        let value =
+                          switch (sequence) {
+                          | Some(s) => `Int(s)
+                          | None => `String("")
+                          };
+                        <FormControl
+                          disabled=(! degradingMultiSig) fullWidth=true>
+                          <InputLabel> "Unlock after" </InputLabel>
+                          <Input
+                            value
+                            onChange=(
+                              e =>
+                                send(
+                                  ChangeSequence(
+                                    extractString(e) |> int_of_string,
+                                  ),
+                                )
+                            )
+                            endAdornment={
+                              <InputAdornment position=`End>
+                                ("blocks" |> text)
+                              </InputAdornment>
+                            }
+                          />
+                          <FormHelperText>
+                            (
+                              (
+                                switch (sequence) {
+                                | Some(s) =>
+                                  "Approx. "
+                                  ++ (s / (6 * 24) |> string_of_int)
+                                  ++ " Days"
+                                | None => "Disabled"
+                                }
+                              )
+                              |> text
+                            )
+                          </FormHelperText>
+                        </FormControl>;
                       }
-                      label=("Degrading Multisig" |> text)
-                    />
-                  </FormGroup>
+                    </Grid>
+                  </Grid>
+                  /* <FormControl> */
+                  /*   <InputLabel> ("Unlock Time" |> text) </InputLabel> */
+                  /*   <Input /> */
+                  /*   <FormHelperText> */
+                  /*     ("Some important helper text" |> text) */
+                  /*   </FormHelperText> */
+                  /* </FormControl> */
+                  /* <FormGroup row=true> */
+                  /*   <FormControlLabel */
+                  /*     control={ */
+                  /*       <Input */
+                  /*         value=(`String(state.newVenture)) */
+                  /*         onChange=( */
+                  /*           e => send(ChangeNewVenture(extractString(e))) */
+                  /*         ) */
+                  /*         autoFocus=true */
+                  /*         fullWidth=true */
+                  /*       /> */
+                  /*     } */
+                  /*     label=("Unlock Time" |> text) */
+                  /*   /> */
+                  /* </FormGroup> */
                   <MTypography
                     gutterTop=true gutterBottom=true variant=`Subheading>
                     ("Required Signatures" |> text)
