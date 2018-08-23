@@ -17,12 +17,33 @@ function WithFalleback(ClientA) {
       var network = ClientA[/* network */0];
       var getUTXOs = function (addresses) {
         return Curry._1(ClientA[/* getUTXOs */1], addresses).then((function (utxos) {
-                        var match = Belt_List.size(utxos) === 0;
-                        if (match) {
-                          return Curry._1(ClientB[/* getUTXOs */1], addresses);
-                        } else {
-                          return Promise.resolve(utxos);
-                        }
+                        return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
+                                        return Promise.resolve(Belt_List.reduceU(Belt_List.concat(utxos, moreUtxos), /* tuple */[
+                                                          Belt_SetString.empty,
+                                                          /* [] */0
+                                                        ], (function (param, utxo) {
+                                                            var txId = utxo[/* txId */0];
+                                                            var res = param[1];
+                                                            var known = param[0];
+                                                            var match = Belt_SetString.has(known, txId);
+                                                            if (match) {
+                                                              return /* tuple */[
+                                                                      known,
+                                                                      res
+                                                                    ];
+                                                            } else {
+                                                              return /* tuple */[
+                                                                      Belt_SetString.add(known, txId),
+                                                                      /* :: */[
+                                                                        utxo,
+                                                                        res
+                                                                      ]
+                                                                    ];
+                                                            }
+                                                          }))[1]);
+                                      })).catch((function () {
+                                      return Promise.resolve(utxos);
+                                    }));
                       })).catch((function () {
                       return Curry._1(ClientB[/* getUTXOs */1], addresses);
                     }));
@@ -164,12 +185,33 @@ var Client$1 = (function (ClientB) {
       var network = ClientA[/* network */0];
       var getUTXOs = function (addresses) {
         return Curry._1(ClientA[/* getUTXOs */1], addresses).then((function (utxos) {
-                        var match = Belt_List.size(utxos) === 0;
-                        if (match) {
-                          return Curry._1(ClientB[/* getUTXOs */1], addresses);
-                        } else {
-                          return Promise.resolve(utxos);
-                        }
+                        return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
+                                        return Promise.resolve(Belt_List.reduceU(Belt_List.concat(utxos, moreUtxos), /* tuple */[
+                                                          Belt_SetString.empty,
+                                                          /* [] */0
+                                                        ], (function (param, utxo) {
+                                                            var txId = utxo[/* txId */0];
+                                                            var res = param[1];
+                                                            var known = param[0];
+                                                            var match = Belt_SetString.has(known, txId);
+                                                            if (match) {
+                                                              return /* tuple */[
+                                                                      known,
+                                                                      res
+                                                                    ];
+                                                            } else {
+                                                              return /* tuple */[
+                                                                      Belt_SetString.add(known, txId),
+                                                                      /* :: */[
+                                                                        utxo,
+                                                                        res
+                                                                      ]
+                                                                    ];
+                                                            }
+                                                          }))[1]);
+                                      })).catch((function () {
+                                      return Promise.resolve(utxos);
+                                    }));
                       })).catch((function () {
                       return Curry._1(ClientB[/* getUTXOs */1], addresses);
                     }));
@@ -269,12 +311,33 @@ var Client$2 = (function (ClientB) {
       var network = ClientA$1[/* network */0];
       var getUTXOs = function (addresses) {
         return Curry._1(ClientA$1[/* getUTXOs */1], addresses).then((function (utxos) {
-                        var match = Belt_List.size(utxos) === 0;
-                        if (match) {
-                          return Curry._1(ClientB[/* getUTXOs */1], addresses);
-                        } else {
-                          return Promise.resolve(utxos);
-                        }
+                        return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
+                                        return Promise.resolve(Belt_List.reduceU(Belt_List.concat(utxos, moreUtxos), /* tuple */[
+                                                          Belt_SetString.empty,
+                                                          /* [] */0
+                                                        ], (function (param, utxo) {
+                                                            var txId = utxo[/* txId */0];
+                                                            var res = param[1];
+                                                            var known = param[0];
+                                                            var match = Belt_SetString.has(known, txId);
+                                                            if (match) {
+                                                              return /* tuple */[
+                                                                      known,
+                                                                      res
+                                                                    ];
+                                                            } else {
+                                                              return /* tuple */[
+                                                                      Belt_SetString.add(known, txId),
+                                                                      /* :: */[
+                                                                        utxo,
+                                                                        res
+                                                                      ]
+                                                                    ];
+                                                            }
+                                                          }))[1]);
+                                      })).catch((function () {
+                                      return Promise.resolve(utxos);
+                                    }));
                       })).catch((function () {
                       return Curry._1(ClientB[/* getUTXOs */1], addresses);
                     }));

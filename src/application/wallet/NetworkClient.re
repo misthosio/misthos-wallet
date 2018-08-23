@@ -4,13 +4,27 @@ module WithFalleback =
        (ClientA: NetworkClientInterface, ClientB: NetworkClientInterface) => {
   let network = ClientA.network;
   let getUTXOs = addresses =>
-    Js.Promise.(
-      ClientA.getUTXOs(addresses)
-      |> then_(utxos =>
-           utxos |> Belt.List.size == 0 ?
-             ClientB.getUTXOs(addresses) : utxos |> resolve
-         )
-      |> catch(_ => ClientB.getUTXOs(addresses))
+    Belt.(
+      Js.Promise.(
+        ClientA.getUTXOs(addresses)
+        |> then_(utxos =>
+             ClientB.getUTXOs(addresses)
+             |> then_(moreUtxos =>
+                  List.concat(utxos, moreUtxos)
+                  |. List.reduceU(
+                       (Set.String.empty, []),
+                       (. (known, res), {txId} as utxo: WalletTypes.utxo) =>
+                       known |. Set.String.has(txId) ?
+                         (known, res) :
+                         (known |. Set.String.add(txId), [utxo, ...res])
+                     )
+                  |> snd
+                  |> resolve
+                )
+             |> catch(_ => utxos |> resolve)
+           )
+        |> catch(_ => ClientB.getUTXOs(addresses))
+      )
     );
   let getTransactionInfo = txIds =>
     Js.Promise.(
