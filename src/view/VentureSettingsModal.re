@@ -88,40 +88,40 @@ let make =
         title1=("Venture Settings" |> text)
         area3={
           <div className=ScrollList.containerStyles>
-            <ScrollList>
-              <MTypography variant=`Title gutterBottom=true>
-                ("Wallet Settings" |> text)
-              </MTypography>
-              (
-                switch (viewData.accountSettings.sequence) {
-                | Some(nBlocks) =>
-                  ReasonReact.array([|
-                    <MTypography variant=`Body2>
-                      ("Degrading multisig is enabled." |> text)
-                    </MTypography>,
-                    <MTypography variant=`Body2 gutterBottom=true>
-                      (
-                        "The unlock time is "
-                        ++ string_of_int(nBlocks)
-                        ++ " blocks (approximately "
-                        ++ string_of_int(nBlocks / 144)
-                        ++ " days)."
-                        |> text
-                      )
-                    </MTypography>,
-                  |])
-                | None =>
+            <MTypography variant=`Title gutterBottom=true>
+              ("Wallet Settings" |> text)
+            </MTypography>
+            (
+              switch (viewData.accountSettings.sequence) {
+              | Some(nBlocks) =>
+                ReasonReact.array([|
                   <MTypography variant=`Body2>
-                    ("Degrading multisig is disabled." |> text)
-                  </MTypography>
-                }
+                    ("Degrading multisig is enabled." |> text)
+                  </MTypography>,
+                  <MTypography variant=`Body2 gutterBottom=true>
+                    (
+                      "The unlock time is "
+                      ++ string_of_int(nBlocks)
+                      ++ " blocks (approximately "
+                      ++ string_of_int(nBlocks / 144)
+                      ++ " days)."
+                      |> text
+                    )
+                  </MTypography>,
+                |])
+              | None =>
+                <MTypography variant=`Body2>
+                  ("Degrading multisig is disabled." |> text)
+                </MTypography>
+              }
+            )
+            <MTypography variant=`Body2 gutterBottom=true>
+              (
+                "Here is an overview of the required signatures depending on the number of Custodians backing an address:"
+                |> text
               )
-              <MTypography variant=`Body2 gutterBottom=true>
-                (
-                  "Here is an overview of the required signatures depending on the number of Custodians backing an address:"
-                  |> text
-                )
-              </MTypography>
+            </MTypography>
+            <ScrollList>
               MaterialUi.(
                 <Table>
                   <TableHead>
