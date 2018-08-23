@@ -7,6 +7,7 @@ var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var BitcoindClient = require("./BitcoindClient.bs.js");
 var SmartbitClient = require("./SmartbitClient.bs.js");
 var BlockchainInfoClient = require("./BlockchainInfoClient.bs.js");
@@ -28,7 +29,7 @@ function WithFalleback(ClientA) {
       };
       var getTransactionInfo = function (txIds) {
         return Curry._1(ClientA[/* getTransactionInfo */2], txIds).then((function (txInfos) {
-                        var match = Belt_List.size(txInfos) === 0;
+                        var match = Belt_List.size(txInfos) !== Belt_SetString.size(txIds);
                         if (match) {
                           return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
                         } else {
@@ -40,7 +41,7 @@ function WithFalleback(ClientA) {
       };
       var getTransactionHex = function (txIds) {
         return Curry._1(ClientA[/* getTransactionHex */3], txIds).then((function (txHex) {
-                        var match = txHex.length === 0;
+                        var match = txHex.length !== txIds.length;
                         if (match) {
                           return Curry._1(ClientB[/* getTransactionHex */3], txIds);
                         } else {
@@ -175,7 +176,7 @@ var Client$1 = (function (ClientB) {
       };
       var getTransactionInfo = function (txIds) {
         return Curry._1(ClientA[/* getTransactionInfo */2], txIds).then((function (txInfos) {
-                        var match = Belt_List.size(txInfos) === 0;
+                        var match = Belt_List.size(txInfos) !== Belt_SetString.size(txIds);
                         if (match) {
                           return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
                         } else {
@@ -187,7 +188,7 @@ var Client$1 = (function (ClientB) {
       };
       var getTransactionHex = function (txIds) {
         return Curry._1(ClientA[/* getTransactionHex */3], txIds).then((function (txHex) {
-                        var match = txHex.length === 0;
+                        var match = txHex.length !== txIds.length;
                         if (match) {
                           return Curry._1(ClientB[/* getTransactionHex */3], txIds);
                         } else {
@@ -280,7 +281,7 @@ var Client$2 = (function (ClientB) {
       };
       var getTransactionInfo = function (txIds) {
         return Curry._1(ClientA$1[/* getTransactionInfo */2], txIds).then((function (txInfos) {
-                        var match = Belt_List.size(txInfos) === 0;
+                        var match = Belt_List.size(txInfos) !== Belt_SetString.size(txIds);
                         if (match) {
                           return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
                         } else {
@@ -292,7 +293,7 @@ var Client$2 = (function (ClientB) {
       };
       var getTransactionHex = function (txIds) {
         return Curry._1(ClientA$1[/* getTransactionHex */3], txIds).then((function (txHex) {
-                        var match = txHex.length === 0;
+                        var match = txHex.length !== txIds.length;
                         if (match) {
                           return Curry._1(ClientB[/* getTransactionHex */3], txIds);
                         } else {

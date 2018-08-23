@@ -16,7 +16,7 @@ module WithFalleback =
     Js.Promise.(
       ClientA.getTransactionInfo(txIds)
       |> then_(txInfos =>
-           txInfos |> Belt.List.size == 0 ?
+           txInfos |> Belt.List.size != (txIds |> Belt.Set.String.size) ?
              ClientB.getTransactionInfo(txIds) : txInfos |> resolve
          )
       |> catch(_ => ClientB.getTransactionInfo(txIds))
@@ -25,7 +25,7 @@ module WithFalleback =
     Js.Promise.(
       ClientA.getTransactionHex(txIds)
       |> then_(txHex =>
-           txHex |> Belt.Array.size == 0 ?
+           txHex |> Belt.Array.size != (txIds |> Belt.Array.size) ?
              ClientB.getTransactionHex(txIds) : txHex |> resolve
          )
       |> catch(_ => ClientB.getTransactionHex(txIds))
