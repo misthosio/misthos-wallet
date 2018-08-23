@@ -126,7 +126,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                                               nCoSigners
                                                             ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[getMenuItems(idx)]))]))
                                         ]));
-                        })), 1, 10);
+                        })), 2, 9);
               var degradingMultiSig = state[/* accountSettings */2][/* sequence */1] !== undefined;
               var sequence = state[/* accountSettings */2][/* sequence */1];
               var value = sequence !== undefined ? /* `Int */[

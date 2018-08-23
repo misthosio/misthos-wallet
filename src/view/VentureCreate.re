@@ -130,7 +130,7 @@ let make =
              </TableRow>
            )
          )
-      |. Array.slice(~offset=1, ~len=10)
+      |. Array.slice(~offset=2, ~len=9)
       |> ReasonReact.array;
     let degradingMultiSig = state.accountSettings.sequence != None;
     let sequence = state.accountSettings.sequence;
