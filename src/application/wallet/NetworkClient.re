@@ -1,5 +1,52 @@
 open WalletTypes;
 
+module WithFalleback =
+       (ClientA: NetworkClientInterface, ClientB: NetworkClientInterface) => {
+  let network = ClientA.network;
+  let getUTXOs = addresses =>
+    Js.Promise.(
+      ClientA.getUTXOs(addresses)
+      |> then_(utxos =>
+           utxos |> Belt.List.size == 0 ?
+             ClientB.getUTXOs(addresses) : utxos |> resolve
+         )
+      |> catch(_ => ClientB.getUTXOs(addresses))
+    );
+  let getTransactionInfo = txIds =>
+    Js.Promise.(
+      ClientA.getTransactionInfo(txIds)
+      |> then_(txInfos =>
+           txInfos |> Belt.List.size == 0 ?
+             ClientB.getTransactionInfo(txIds) : txInfos |> resolve
+         )
+      |> catch(_ => ClientB.getTransactionInfo(txIds))
+    );
+  let getTransactionHex = txIds =>
+    Js.Promise.(
+      ClientA.getTransactionHex(txIds)
+      |> then_(txHex =>
+           txHex |> Belt.Array.size == 0 ?
+             ClientB.getTransactionHex(txIds) : txHex |> resolve
+         )
+      |> catch(_ => ClientB.getTransactionHex(txIds))
+    );
+  let getCurrentBlockHeight = () =>
+    Js.Promise.(
+      ClientA.getCurrentBlockHeight()
+      |> catch(_ => ClientB.getCurrentBlockHeight())
+    );
+  let broadcastTransaction = tx =>
+    Js.Promise.(
+      ClientA.broadcastTransaction(tx)
+      |> then_(
+           fun
+           | Ok(id) => Ok(id) |> resolve
+           | _ => ClientB.broadcastTransaction(tx),
+         )
+      |> catch(_ => ClientB.broadcastTransaction(tx))
+    );
+};
+
 module Make = (Client: NetworkClientInterface) => {
   let network = Client.network;
   let transactionInfo = Client.getTransactionInfo;
@@ -59,20 +106,40 @@ module Regtest =
 module Testnet =
   Make(
     (
-      val BlockchainInfoClient.make(
-            BlockchainInfoClient.testnetConfig,
-            Bitcoin.Networks.testnet,
-          )
+      WithFalleback(
+        (
+          val BlockchainInfoClient.make(
+                BlockchainInfoClient.testnetConfig,
+                Bitcoin.Networks.testnet,
+              )
+        ),
+        (
+          val SmartbitClient.make(
+                SmartbitClient.testnetConfig,
+                Bitcoin.Networks.testnet,
+              )
+        ),
+      )
     ),
   );
 
 module Mainnet =
   Make(
     (
-      val BlockchainInfoClient.make(
-            BlockchainInfoClient.mainnetConfig,
-            Bitcoin.Networks.bitcoin,
-          )
+      WithFalleback(
+        (
+          val BlockchainInfoClient.make(
+                BlockchainInfoClient.mainnetConfig,
+                Bitcoin.Networks.bitcoin,
+              )
+        ),
+        (
+          val SmartbitClient.make(
+                SmartbitClient.mainnetConfig,
+                Bitcoin.Networks.bitcoin,
+              )
+        ),
+      )
     ),
   );
 

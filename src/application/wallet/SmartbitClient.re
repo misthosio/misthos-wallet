@@ -38,6 +38,22 @@ let decodeTransactions = raw =>
          field("transactions", withDefault([], list(decodeTransaction))),
        )
   );
+let decodeTransactionHexs = raw =>
+  Json.Decode.(
+    raw
+    |> withDefault(
+         [],
+         field(
+           "hex",
+           withDefault(
+             [],
+             list(raw =>
+               (raw |> field("txid", string), raw |> field("hex", string))
+             ),
+           ),
+         ),
+       )
+  );
 
 let decodeNextLink = raw =>
   Json.Decode.(
@@ -94,6 +110,27 @@ let getTransactionInfo = (config, transactions) =>
       decodeTransactions,
       [],
     );
+  };
+let getTransactionHex = (config, transactions) =>
+  if (transactions |> Belt.Array.size == 0) {
+    Js.Promise.resolve([||]);
+  } else {
+    fetchAll(
+      Some(
+        "https://"
+        ++ config.subdomain
+        ++ ".smartbit.com.au/v1/blockchain/tx/"
+        ++ Belt.Array.reduceU(transactions, "", (. res, a) =>
+             a ++ "," ++ res
+           )
+        ++ "/hex",
+      ),
+      decodeTransactionHexs,
+      [],
+    )
+    |> Js.Promise.then_(list_ =>
+         list_ |> Belt.List.toArray |> Js.Promise.resolve
+       );
   };
 
 let broadcastTransaction = (config, transaction) => {
@@ -159,6 +196,7 @@ let make = (config, network) : (module WalletTypes.NetworkClientInterface) =>
      let network = network;
      let getUTXOs = getUTXOs(config);
      let getTransactionInfo = getTransactionInfo(config);
+     let getTransactionHex = getTransactionHex(config);
      let getCurrentBlockHeight = getCurrentBlockHeight(config);
      let broadcastTransaction = broadcastTransaction(config);
    });
