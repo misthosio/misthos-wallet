@@ -192,7 +192,7 @@ function make(viewData, _) {
                           partial_arg_000,
                           partial_arg_001
                         ]);
-                      return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0]) + "-prospect", undefined, Partner.make(partner[/* data */5][/* userId */0], undefined, undefined, (function (param) {
+                      return ReasonReact.element(PrimitiveTypes.ProcessId[/* toString */0](partner[/* processId */0]) + "-prospect", undefined, Partner.make(partner[/* data */5][/* userId */0], undefined, undefined, (function (param) {
                                         return getPartnerStatusChip(param, false, false, false);
                                       }), (function (param) {
                                         return Router.clickToRoute(partial_arg, param);
