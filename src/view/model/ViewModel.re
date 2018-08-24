@@ -457,18 +457,20 @@ module ViewPayoutView = {
   type voter = ProcessCollector.voter;
   type payout = TxDetailsCollector.payoutProcess;
   type t = {
+    localUser: userId,
     requiresLedgerSig: bool,
     currentPartners: UserId.set,
     payout,
     collidesWith: ProcessId.set,
     signPayout: unit => Js.Promise.t(Ledger.signResult),
+    missingSignatures: UserId.set,
   };
   let fromViewModelState =
       (
         processId,
         {
-          ventureId,
           localUser,
+          ventureId,
           txDetailsCollector,
           ledgerInfoCollector,
           walletInfoCollector,
@@ -478,8 +480,23 @@ module ViewPayoutView = {
     txDetailsCollector
     |> TxDetailsCollector.getPayout(processId)
     |> Utils.mapOption(
-         ({data: {payoutTx: {usedInputs} as payoutTx}} as payout: payout) => {
+         (
+           {data: {payoutTx: {usedInputs} as payoutTx, signatures}} as payout: payout,
+         ) => {
          open Belt;
+         let missingSignatures =
+           PayoutTransaction.missingSignatures(
+             ~currentCustodians=
+               partnersCollector |> PartnersCollector.currentPartners,
+             ~custodiansThatSigned=signatures,
+             walletInfoCollector |> WalletInfoCollector.accountKeyChains,
+             payoutTx,
+           );
+         let missingSignatures =
+           Set.union(
+             missingSignatures.mandatory,
+             missingSignatures.additional,
+           );
          let txHexPromise =
            usedInputs
            |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
@@ -487,6 +504,8 @@ module ViewPayoutView = {
                 walletInfoCollector |> WalletInfoCollector.network,
               );
          {
+           localUser,
+           missingSignatures,
            signPayout: () =>
              Js.Promise.(
                txHexPromise

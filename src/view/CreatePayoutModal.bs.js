@@ -281,7 +281,7 @@ function make(viewData, commands, cmdStatus, _) {
               if (typeof cmdStatus === "number" || cmdStatus.tag) {
                 exit = 1;
               } else {
-                return ReasonReact.element(undefined, undefined, LedgerConfirmation.make(/* Proposal */4, (function () {
+                return ReasonReact.element(undefined, undefined, LedgerConfirmation.make(/* Proposal */5, (function () {
                                   return Curry._1(send, /* Reset */4);
                                 }), summary, Utils.mapOption((function (tx) {
                                       return tx[/* misthosFeeAddress */2];

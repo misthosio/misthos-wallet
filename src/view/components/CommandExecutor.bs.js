@@ -178,12 +178,15 @@ function make$1(cmdStatus, action, _) {
                             tmp = "Your public keys are being submitted";
                             break;
                         case 4 : 
-                            tmp = "Your proposal is being submitted";
+                            tmp = "The transaction is being signed";
                             break;
                         case 5 : 
-                            tmp = "Your endorsement is being submitted";
+                            tmp = "Your proposal is being submitted";
                             break;
                         case 6 : 
+                            tmp = "Your endorsement is being submitted";
+                            break;
+                        case 7 : 
                             tmp = "Your rejection is being submitted";
                             break;
                         
@@ -218,7 +221,11 @@ function make$1(cmdStatus, action, _) {
                   case 4 : 
                       var tmp$1 = cmdStatus[0];
                       if (typeof tmp$1 === "number") {
-                        return message(/* Success */0, "Your public Keys have been submitted");
+                        if (tmp$1 === 0) {
+                          return message(/* Success */0, "Your public Keys have been submitted");
+                        } else {
+                          return message(/* Success */0, "You have signed the transaction");
+                        }
                       } else {
                         switch (tmp$1.tag | 0) {
                           case 0 : 

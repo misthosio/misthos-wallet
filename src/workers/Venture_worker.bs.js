@@ -585,7 +585,7 @@ function signPayout(ventureId, signatures, processId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
-                                    cmdSuccess(ventureId, correlationId, /* ProcessEndorsed */Block.__(1, [processId]));
+                                    cmdSuccess(ventureId, correlationId, /* TransactionSigned */1);
                                     return Promise.resolve(param[0]);
                                   }
                                 }));

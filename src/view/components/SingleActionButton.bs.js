@@ -37,7 +37,7 @@ var Styles = /* module */[
 
 function make(buttonText, alertText, onSubmit, onPropose, onCancel, canSubmitAction, $staropt$star, $staropt$star$1, cmdStatus, _) {
   var withConfirmation = $staropt$star !== undefined ? $staropt$star : true;
-  var action = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Proposal */4;
+  var action = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Proposal */5;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],

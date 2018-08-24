@@ -41,6 +41,7 @@ type encodedIncoming = Js.Json.t;
 
 type cmdSuccess =
   | KeyChainSubmitted
+  | TransactionSigned
   | ProcessStarted(processId)
   | ProcessEndorsed(processId)
   | ProcessRejected(processId);
@@ -77,6 +78,8 @@ let encodeSuccess =
   fun
   | KeyChainSubmitted =>
     Json.Encode.(object_([("type", string("KeyChainSubmitted"))]))
+  | TransactionSigned =>
+    Json.Encode.(object_([("type", string("TransactionSigned"))]))
   | ProcessStarted(processId) =>
     Json.Encode.(
       object_([
@@ -103,6 +106,7 @@ let decodeSuccess = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
   | "KeyChainSubmitted" => KeyChainSubmitted
+  | "TransactionSigned" => TransactionSigned
   | "ProcessStarted" =>
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     ProcessStarted(processId);

@@ -702,7 +702,7 @@ module Handle = {
                    Notify.cmdSuccess(
                      ventureId,
                      correlationId,
-                     ProcessEndorsed(processId),
+                     TransactionSigned,
                    );
                    venture |> resolve;
                  }

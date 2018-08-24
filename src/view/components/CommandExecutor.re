@@ -128,6 +128,7 @@ module Status = {
     | JoinVenture
     | LoadVenture
     | SubmitKeys
+    | SignTransaction
     | Proposal
     | Endorsement
     | Rejection;
@@ -173,6 +174,7 @@ module Status = {
                 | JoinVenture => "Joining venture"
                 | LoadVenture => "Loading venture"
                 | SubmitKeys => "Your public keys are being submitted"
+                | SignTransaction => "The transaction is being signed"
                 | Proposal => "Your proposal is being submitted"
                 | Endorsement => "Your endorsement is being submitted"
                 | Rejection => "Your rejection is being submitted"
@@ -213,6 +215,8 @@ module Status = {
         switch (success) {
         | KeyChainSubmitted =>
           "Your public Keys have been submitted" |> message(Success)
+        | TransactionSigned =>
+          "You have signed the transaction" |> message(Success)
         | ProcessStarted(_) =>
           "Your proposal has been submitted" |> message(Success)
         | ProcessEndorsed(_) =>

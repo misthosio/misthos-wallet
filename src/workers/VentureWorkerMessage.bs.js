@@ -21,13 +21,23 @@ var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage
 
 function encodeSuccess(param) {
   if (typeof param === "number") {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "KeyChainSubmitted"
-                ],
-                /* [] */0
-              ]);
+    if (param === 0) {
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "KeyChainSubmitted"
+                  ],
+                  /* [] */0
+                ]);
+    } else {
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "TransactionSigned"
+                  ],
+                  /* [] */0
+                ]);
+    }
   } else {
     switch (param.tag | 0) {
       case 0 : 
@@ -91,6 +101,8 @@ function decodeSuccess(raw) {
     case "ProcessStarted" : 
         var processId$2 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
         return /* ProcessStarted */Block.__(0, [processId$2]);
+    case "TransactionSigned" : 
+        return /* TransactionSigned */1;
     default:
       throw [
             UnknownMessage,
