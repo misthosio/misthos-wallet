@@ -65,19 +65,36 @@ let mapConfirmation =
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({network, ventureId}) => {...state, network, ventureId}
-  | IncomeDetected({txId, amount}) => {
-      ...state,
-      unconfirmedTxs: [
-        {
-          txId,
-          txType: Income,
-          status: Unconfirmed,
-          amount,
-          date: None,
-          detailsLink: Venture(state.ventureId, Income(txId)),
-        },
-        ...state.unconfirmedTxs,
-      ],
+  | IncomeDetected({txId, amount}) =>
+    switch (state.txDates |. Map.String.get(txId)) {
+    | None => {
+        ...state,
+        unconfirmedTxs: [
+          {
+            txId,
+            txType: Income,
+            status: Unconfirmed,
+            amount,
+            date: None,
+            detailsLink: Venture(state.ventureId, Income(txId)),
+          },
+          ...state.unconfirmedTxs,
+        ],
+      }
+    | Some(date) => {
+        ...state,
+        confirmedTxs: [
+          {
+            txId,
+            txType: Income,
+            status: Confirmed,
+            amount,
+            date: Some(date),
+            detailsLink: Venture(state.ventureId, Income(txId)),
+          },
+          ...state.confirmedTxs,
+        ],
+      }
     }
   | PayoutProposed({data: {payoutTx}, processId}) => {
       ...state,
