@@ -245,13 +245,15 @@ function make(onCreateVenture, cmdStatus, _) {
                                     ]
                                   ]]);
                     case 2 : 
+                        var sequence = action[0];
                         var init$2 = state[/* accountSettings */2];
+                        var match$3 = sequence > 65500;
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
                                     /* cmdStatus */state[/* cmdStatus */1],
                                     /* accountSettings : record */[
                                       /* coSignerList */init$2[/* coSignerList */0],
-                                      /* sequence */action[0]
+                                      /* sequence */match$3 ? 65500 : sequence
                                     ]
                                   ]]);
                     

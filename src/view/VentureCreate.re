@@ -63,7 +63,7 @@ let make =
         ...state,
         accountSettings: {
           ...state.accountSettings,
-          sequence: Some(sequence),
+          sequence: Some(sequence > 65500 ? 65500 : sequence),
         },
       })
     | (ToggleSequence, _) =>
