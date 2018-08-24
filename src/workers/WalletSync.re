@@ -158,7 +158,7 @@ let collectData = log =>
 let filterUTXOs = (knownTxs, utxos) =>
   utxos
   |. Set.keepU((. {txId}: Network.txInput) =>
-       knownTxs |. Set.String.has(txId)
+       ! (knownTxs |. Set.String.has(txId))
      );
 
 let detectIncomeFromVenture = (ventureId, eventLog) => {

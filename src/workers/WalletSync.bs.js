@@ -180,7 +180,7 @@ function collectData(log) {
 
 function filterUTXOs(knownTxs, utxos) {
   return Belt_Set.keepU(utxos, (function (param) {
-                return Belt_SetString.has(knownTxs, param[/* txId */0]);
+                return !Belt_SetString.has(knownTxs, param[/* txId */0]);
               }));
 }
 
