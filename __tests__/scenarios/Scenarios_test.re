@@ -20,8 +20,8 @@ let () = {
     });
   });
   Scenarios.run("four-person-payout", (_venture, newItems) => {
-    test("There are 2 new Items", () =>
-      expect(newItems |. Array.length) |> toEqual(2)
+    test("There are 3 new Items", () =>
+      expect(newItems |. Array.length) |> toEqual(3)
     );
     test("Payout is finalized", () => {
       let lastEvent = (newItems |. Array.getExn(1)).event;

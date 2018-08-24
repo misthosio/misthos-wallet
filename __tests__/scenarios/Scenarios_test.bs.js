@@ -20,8 +20,8 @@ Scenarios.run("three-person-payout", (function (_, newItems) {
       }));
 
 Scenarios.run("four-person-payout", (function (_, newItems) {
-        Jest.test("There are 2 new Items", (function () {
-                return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](newItems.length));
+        Jest.test("There are 3 new Items", (function () {
+                return Jest.Expect[/* toEqual */12](3, Jest.Expect[/* expect */0](newItems.length));
               }));
         return Jest.test("Payout is finalized", (function () {
                       var lastEvent = Belt_Array.getExn(newItems, 1)[/* event */0];
