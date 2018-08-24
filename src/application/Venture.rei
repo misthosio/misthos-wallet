@@ -190,4 +190,16 @@ module Cmd: {
       ) =>
       Js.Promise.t(result);
   };
+  module SignPayout: {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
+    let exec:
+      (
+        ~processId: processId,
+        ~signatures: array(option((string, string))),
+        t
+      ) =>
+      Js.Promise.t(result);
+  };
 };

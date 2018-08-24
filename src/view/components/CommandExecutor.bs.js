@@ -47,8 +47,11 @@ function make(commands, lastResponse, onProcessStarted, children) {
             /* endorsePayout */(function (signatures, processId) {
                 return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._2(commands[/* endorsePayout */8], signatures, processId)]));
               }),
+            /* signPayout */(function (signatures, processId) {
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._2(commands[/* signPayout */9], signatures, processId)]));
+              }),
             /* rejectPayout */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPayout */9], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPayout */10], processId)]));
               }),
             /* preSubmit */(function (message) {
                 return Curry._1(send, /* PreSubmit */Block.__(0, [message]));

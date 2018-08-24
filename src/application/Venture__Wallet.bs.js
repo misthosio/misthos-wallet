@@ -93,9 +93,24 @@ function endorsePayout(processId, signatures, param, param$1) {
   }
 }
 
+function signPayout(processId, signatures, param, param$1) {
+  var walletInfoCollector = param$1[/* walletInfoCollector */3];
+  var userId = param[/* userId */0];
+  var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(walletInfoCollector), WalletInfoCollector.getPayoutTx(processId, walletInfoCollector), signatures);
+  if (match) {
+    return /* :: */[
+            /* PayoutSigned */Block.__(32, [Curry._3(Event.Payout[/* Signed */9][/* make */0], processId, userId, match[0])]),
+            /* [] */0
+          ];
+  } else {
+    return /* [] */0;
+  }
+}
+
 exports.make = make;
 exports.apply = apply;
 exports.exposeNextIncomeAddress = exposeNextIncomeAddress;
 exports.preparePayoutTx = preparePayoutTx;
 exports.endorsePayout = endorsePayout;
+exports.signPayout = signPayout;
 /* Event Not a pure module */

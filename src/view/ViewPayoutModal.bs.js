@@ -95,16 +95,16 @@ function make(viewData, commands, cmdStatus, _) {
               var status = match$1[/* payoutStatus */0];
               var processId = match[/* processId */0];
               var executeEndorse = function () {
-                var signatures = viewData[/* requiresLedgerSig */0] ? (Curry._1(commands[/* preSubmit */11], "Please confirm this endorsement on your ledger device (BTC app)"), Curry._1(viewData[/* signPayout */4], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
+                var signatures = viewData[/* requiresLedgerSig */0] ? (Curry._1(commands[/* preSubmit */12], "Please confirm this endorsement on your ledger device (BTC app)"), Curry._1(viewData[/* signPayout */4], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
                 signatures.then((function (param) {
                         if (typeof param === "number") {
-                          return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
+                          return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "The device does not have the correct seed for signing"));
                         } else if (param.tag) {
                           var match = param[0];
                           if (match) {
-                            return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */13], match[0]));
                           } else {
-                            return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "An unknown error has occured"));
                           }
                         } else {
                           return Promise.resolve(Curry._2(commands[/* endorsePayout */9], param[0], processId));
@@ -212,7 +212,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               ])))), Js_primitive.some(React.createElement("div", {
                                         className: ScrollList.containerStyles
                                       }, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */1], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", undefined, "Reject Payout", match[/* canVote */3], executeEndorse, (function () {
-                                                  return Curry._1(commands[/* rejectPayout */10], processId);
+                                                  return Curry._1(commands[/* rejectPayout */11], processId);
                                                 }), (function () {
                                                   return Curry._1(commands[/* reset */0], /* () */0);
                                                 }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */3]) > 0 ? ReasonReact.element(undefined, undefined, MaterialUi_SnackbarContent.make(undefined, undefined, Js_primitive.some(ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")), undefined, undefined, undefined, undefined, undefined, /* array */[])) : null)), Js_primitive.some(tmp), undefined, /* array */[]));

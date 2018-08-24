@@ -688,6 +688,37 @@ module Handle = {
       )
     );
   };
+  let signPayout = (ventureId, signatures, processId) => {
+    logMessage("Handling 'SignPayout'");
+    withVenture(Load(ventureId), (correlationId, venture) =>
+      Js.Promise.(
+        Venture.Cmd.SignPayout.(
+          venture
+          |> exec(~processId, ~signatures)
+          |> then_(
+               fun
+               | Ok(venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessEndorsed(processId),
+                   );
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
   let exposeIncomeAddress = (ventureId, accountIdx) => {
     logMessage("Handling 'ExposeIncomeAddress'");
     withVenture(Load(ventureId), (correlationId, venture) =>
@@ -820,6 +851,8 @@ let handleMessage =
     Handle.rejectPayout(ventureId, processId)
   | Message.EndorsePayout(ventureId, signatures, processId) =>
     Handle.endorsePayout(ventureId, signatures, processId)
+  | Message.SignPayout(ventureId, signatures, processId) =>
+    Handle.signPayout(ventureId, signatures, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(ventureId, accountIdx)
   | SyncWallet(

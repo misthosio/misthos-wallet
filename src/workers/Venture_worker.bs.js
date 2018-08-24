@@ -574,6 +574,25 @@ function endorsePayout(ventureId, signatures, processId) {
     });
 }
 
+function signPayout(ventureId, signatures, processId) {
+  logMessage("Handling 'SignPayout'");
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
+  return (function (param, param$1) {
+      return withVenture(undefined, partial_arg, (function (correlationId, venture) {
+                    return Curry._3(Venture.Cmd[/* SignPayout */14][/* exec */0], processId, signatures, venture).then((function (param) {
+                                  if (param.tag) {
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */7);
+                                    return Promise.resolve(venture);
+                                  } else {
+                                    newItems(correlationId, ventureId, param[1]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessEndorsed */Block.__(1, [processId]));
+                                    return Promise.resolve(param[0]);
+                                  }
+                                }));
+                  }), param, param$1);
+    });
+}
+
 function exposeIncomeAddress(ventureId, accountIdx) {
   logMessage("Handling 'ExposeIncomeAddress'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
@@ -674,6 +693,7 @@ var Handle = /* module */[
   /* proposePayout */proposePayout,
   /* rejectPayout */rejectPayout,
   /* endorsePayout */endorsePayout,
+  /* signPayout */signPayout,
   /* exposeIncomeAddress */exposeIncomeAddress,
   /* syncWallet */syncWallet,
   /* newItemsDetected */newItemsDetected,
@@ -714,12 +734,14 @@ function handleMessage(param) {
     case 13 : 
         return endorsePayout(param[0], param[1], param[2]);
     case 14 : 
-        return exposeIncomeAddress(param[0], param[1]);
+        return signPayout(param[0], param[1], param[2]);
     case 15 : 
-        return newItemsDetected(param[0], param[1], param[2]);
+        return exposeIncomeAddress(param[0], param[1]);
     case 16 : 
-        return syncWallet(param[0], param[1], param[2], param[3], param[4], param[5]);
+        return newItemsDetected(param[0], param[1], param[2]);
     case 17 : 
+        return syncWallet(param[0], param[1], param[2], param[3], param[4], param[5]);
+    case 18 : 
         return syncTabs(param[0], param[1]);
     
   }

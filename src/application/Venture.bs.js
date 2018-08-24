@@ -807,6 +807,23 @@ function exec$13(processId, signatures, venture) {
 
 var EndorsePayout = /* module */[/* exec */exec$13];
 
+function exec$14(processId, signatures, venture) {
+  logMessage("Executing 'EndorsePayout' command");
+  return persist(undefined, applyMany(undefined, venture)(Venture__Wallet.signPayout(processId, signatures, venture[/* session */0], venture[/* wallet */5]))).then((function (param) {
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
+              }));
+}
+
+var SignPayout = /* module */[/* exec */exec$14];
+
 var Index = [
   Venture__Index.load,
   Venture__Index.encode,
@@ -831,7 +848,8 @@ var Cmd = [
   ExposeIncomeAddress,
   ProposePayout,
   RejectPayout,
-  EndorsePayout
+  EndorsePayout,
+  SignPayout
 ];
 
 exports.Index = Index;

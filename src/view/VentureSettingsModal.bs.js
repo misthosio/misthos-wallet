@@ -31,16 +31,16 @@ var component = ReasonReact.statelessComponent("VentureSettings");
 
 function make(viewData, commands, cmdStatus, _) {
   var executeSubmit = function () {
-    Curry._1(commands[/* preSubmit */11], "Please connect your Ledger device and open the BTC app");
+    Curry._1(commands[/* preSubmit */12], "Please connect your Ledger device and open the BTC app");
     Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
             if (typeof param === "number") {
-              return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "This device has the wrong seed"));
+              return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "This device has the wrong seed"));
             } else if (param.tag) {
               var match = param[0];
               if (match) {
-                return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                return Promise.resolve(Curry._1(commands[/* preSubmitError */13], match[0]));
               } else {
-                return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "An unknown error has occured"));
               }
             } else {
               return Promise.resolve(Curry._1(commands[/* submitCustodianKeyChain */7], param[0]));

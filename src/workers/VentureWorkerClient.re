@@ -90,6 +90,12 @@ let endorsePayout = (worker, ventureId, ~signatures, ~processId: processId) =>
        VentureWorkerMessage.EndorsePayout(ventureId, signatures, processId),
      );
 
+let signPayout = (worker, ventureId, ~signatures, ~processId: processId) =>
+  worker
+  |. postMessage(
+       VentureWorkerMessage.SignPayout(ventureId, signatures, processId),
+     );
+
 let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
   worker
   |. postMessageSync(
@@ -127,6 +133,12 @@ module Cmd = {
         ~processId: processId
       ) =>
       WebWorker.correlationId,
+    signPayout:
+      (
+        ~signatures: array(option((string, string))),
+        ~processId: processId
+      ) =>
+      WebWorker.correlationId,
     rejectPayout: (~processId: processId) => WebWorker.correlationId,
     exposeIncomeAddress: (~accountIdx: accountIdx) => Js.Promise.t(string),
   };
@@ -141,6 +153,7 @@ module Cmd = {
     proposePayout: proposePayout(worker, ventureId),
     rejectPayout: rejectPayout(worker, ventureId),
     endorsePayout: endorsePayout(worker, ventureId),
+    signPayout: signPayout(worker, ventureId),
     exposeIncomeAddress: exposeIncomeAddress(worker, ventureId),
   };
 };

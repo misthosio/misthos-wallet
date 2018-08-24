@@ -860,4 +860,28 @@ module Cmd = {
       );
     };
   };
+  module SignPayout = {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
+    let exec =
+        (
+          ~processId,
+          ~signatures: array(option((string, string))),
+          {session, wallet} as venture,
+        ) => {
+      logMessage("Executing 'EndorsePayout' command");
+      Js.Promise.(
+        wallet
+        |> Wallet.signPayout(processId, signatures, session)
+        |> applyMany(venture)
+        |> persist
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
+      );
+    };
+  };
 };

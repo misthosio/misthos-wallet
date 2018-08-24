@@ -29,6 +29,9 @@ type commands = {
   endorsePayout:
     (~signatures: array(option((string, string))), ~processId: processId) =>
     unit,
+  signPayout:
+    (~signatures: array(option((string, string))), ~processId: processId) =>
+    unit,
   rejectPayout: (~processId: processId) => unit,
   preSubmit: string => unit,
   preSubmitError: string => unit,
@@ -79,6 +82,8 @@ let make =
       send(
         CommandExecuted(commands.endorsePayout(~signatures, ~processId)),
       ),
+    signPayout: (~signatures, ~processId) =>
+      send(CommandExecuted(commands.signPayout(~signatures, ~processId))),
     rejectPayout: (~processId) =>
       send(CommandExecuted(commands.rejectPayout(~processId))),
     preSubmit: message => send(PreSubmit(message)),

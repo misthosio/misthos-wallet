@@ -201,7 +201,13 @@ function make(onCreateVenture, cmdStatus, _) {
                     if (name === "") {
                       return /* NoUpdate */0;
                     } else {
-                      Curry._3(onCreateVenture, name, state[/* accountSettings */2], Policy.defaultInitialPolicies);
+                      Curry._3(onCreateVenture, name, state[/* accountSettings */2], /* record */[
+                            /* addPartner */Policy.defaultInitialPolicies[/* addPartner */0],
+                            /* addCustodian */Policy.defaultInitialPolicies[/* addCustodian */1],
+                            /* removePartner */Policy.defaultInitialPolicies[/* removePartner */2],
+                            /* removeCustodian */Policy.defaultInitialPolicies[/* removeCustodian */3],
+                            /* payout : UnanimousMinusOne */1
+                          ]);
                       return /* NoUpdate */0;
                     }
                   } else {

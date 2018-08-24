@@ -127,3 +127,30 @@ let endorsePayout =
     ]
   | NotSigned => [Event.makePayoutEndorsed(~processId, ~supporterId=userId)]
   };
+
+let signPayout =
+    (
+      processId,
+      signatures,
+      {userId, masterKeyChain}: SessionData.t,
+      {ventureId, walletInfoCollector},
+    ) =>
+  switch (
+    PayoutTransaction.signPayout(
+      ~ventureId,
+      ~userId,
+      ~masterKeyChain,
+      ~accountKeyChains=
+        walletInfoCollector |> WalletInfoCollector.accountKeyChains,
+      ~payoutTx=
+        walletInfoCollector |> WalletInfoCollector.getPayoutTx(processId),
+      ~signatures,
+    )
+  ) {
+  | Signed(payoutTx) => [
+      PayoutSigned(
+        Event.Payout.Signed.make(~processId, ~custodianId=userId, ~payoutTx),
+      ),
+    ]
+  | NotSigned => []
+  };

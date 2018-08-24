@@ -84,7 +84,10 @@ let make =
         onCreateVenture(
           name,
           state.accountSettings,
-          Policy.defaultInitialPolicies,
+          {
+            ...Policy.defaultInitialPolicies,
+            payout: Policy.UnanimousMinusOne,
+          },
         );
         ReasonReact.NoUpdate;
       }
