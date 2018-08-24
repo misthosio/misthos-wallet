@@ -85,6 +85,21 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
+                case 5 : 
+                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
+                      var init$3 = self$1[state][0];
+                      tmp = /* record */[
+                        /* eligibilityCollector */init$3[/* eligibilityCollector */0],
+                        /* partnerProcessComplete */true,
+                        /* endorsements */init$3[/* endorsements */2],
+                        /* rejections */init$3[/* rejections */3],
+                        /* policy */init$3[/* policy */4],
+                        /* systemIssuer */init$3[/* systemIssuer */5]
+                      ];
+                    } else {
+                      tmp = self$1[state][0];
+                    }
+                    break;
                 case 10 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
                       self$1[completed][0] = true;
@@ -96,14 +111,14 @@ function make(proposal, log) {
                 case 17 : 
                     var $$event$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$1[/* processId */0], env$1[0][/* processId */0])) {
-                      var init$3 = self$1[state][0];
+                      var init$4 = self$1[state][0];
                       tmp = /* record */[
-                        /* eligibilityCollector */init$3[/* eligibilityCollector */0],
-                        /* partnerProcessComplete */init$3[/* partnerProcessComplete */1],
-                        /* endorsements */init$3[/* endorsements */2],
+                        /* eligibilityCollector */init$4[/* eligibilityCollector */0],
+                        /* partnerProcessComplete */init$4[/* partnerProcessComplete */1],
+                        /* endorsements */init$4[/* endorsements */2],
                         /* rejections */Belt_Set.add(self$1[state][0][/* rejections */3], $$event$1[/* rejectorId */1]),
-                        /* policy */init$3[/* policy */4],
-                        /* systemIssuer */init$3[/* systemIssuer */5]
+                        /* policy */init$4[/* policy */4],
+                        /* systemIssuer */init$4[/* systemIssuer */5]
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -112,14 +127,14 @@ function make(proposal, log) {
                 case 18 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
-                      var init$4 = self$1[state][0];
+                      var init$5 = self$1[state][0];
                       tmp = /* record */[
-                        /* eligibilityCollector */init$4[/* eligibilityCollector */0],
-                        /* partnerProcessComplete */init$4[/* partnerProcessComplete */1],
+                        /* eligibilityCollector */init$5[/* eligibilityCollector */0],
+                        /* partnerProcessComplete */init$5[/* partnerProcessComplete */1],
                         /* endorsements */Belt_Set.add(self$1[state][0][/* endorsements */2], $$event$2[/* supporterId */1]),
-                        /* rejections */init$4[/* rejections */3],
-                        /* policy */init$4[/* policy */4],
-                        /* systemIssuer */init$4[/* systemIssuer */5]
+                        /* rejections */init$5[/* rejections */3],
+                        /* policy */init$5[/* policy */4],
+                        /* systemIssuer */init$5[/* systemIssuer */5]
                       ];
                     } else {
                       tmp = self$1[state][0];

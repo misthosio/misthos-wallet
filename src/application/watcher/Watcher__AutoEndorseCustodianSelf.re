@@ -29,7 +29,7 @@ let make =
               ),
             )) :
             None,
-        completed: false,
+        completed: UserId.neq(partnerId, userId),
       });
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
@@ -55,8 +55,23 @@ let make =
               pendingEvent: None,
               completed: true,
             }
+          | (PartnerDenied({processId}), true)
+              when ProcessId.eq(processId, partnerApprovalProcess) => {
+              pendingEvent: None,
+              completed: true,
+            }
           | (PartnerRemovalAccepted({data: {lastPartnerProcess}}), true)
               when ProcessId.eq(lastPartnerProcess, partnerApprovalProcess) => {
+              pendingEvent: None,
+              completed: true,
+            }
+          | (CustodianDenied({processId}), true)
+              when ProcessId.eq(processId, custodianProcessId) => {
+              pendingEvent: None,
+              completed: true,
+            }
+          | (CustodianRemovalAccepted({processId}), true)
+              when ProcessId.eq(processId, custodianProcessId) => {
               pendingEvent: None,
               completed: true,
             }
@@ -67,6 +82,8 @@ let make =
     pub processCompleted = () => state^.completed;
     pub pendingEvent = () => state^.pendingEvent
   };
-  log |> EventLog.reduce((_, item) => process#receive(item), ());
+  if (UserId.eq(partnerId, userId)) {
+    log |> EventLog.reduce((_, item) => process#receive(item), ());
+  };
   process;
 };

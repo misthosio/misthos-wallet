@@ -56,6 +56,12 @@ let make = (proposal: Custodian.Proposed.t, log) => {
               ...state^,
               partnerProcessComplete: true,
             }
+          | PartnerDenied({processId})
+              when
+                ProcessId.eq(processId, proposal.data.partnerApprovalProcess) => {
+              ...state^,
+              partnerProcessComplete: true,
+            }
           | CustodianEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
