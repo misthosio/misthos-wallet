@@ -15,7 +15,8 @@ var class_tables = [
 ];
 
 function make(param, param$1, log) {
-  var partnerId = param$1[/* data */6][/* partnerId */0];
+  var match = param$1[/* data */6];
+  var partnerId = match[/* partnerId */0];
   var custodianProcessId = param$1[/* processId */0];
   var userId = param[/* userId */0];
   if (!class_tables[0]) {
@@ -43,6 +44,12 @@ function make(param, param$1, log) {
               var tmp;
               if (match) {
                 switch ($$event.tag | 0) {
+                  case 10 : 
+                      tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[3]) ? /* record */[
+                          /* pendingEvent */undefined,
+                          /* completed */true
+                        ] : self$1[state][0];
+                      break;
                   case 16 : 
                       if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* proposerId */4], env$1[0])) {
                         var init = self$1[state][0];
@@ -107,7 +114,8 @@ function make(param, param$1, log) {
   var envs_000 = [
     userId,
     custodianProcessId,
-    partnerId
+    partnerId,
+    match[/* partnerApprovalProcess */1]
   ];
   var envs_002 = param[/* issuerKeyPair */2];
   var envs = [

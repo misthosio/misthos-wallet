@@ -10,7 +10,10 @@ type state = {
 let make =
     (
       {userId, issuerKeyPair}: SessionData.t,
-      {processId: custodianProcessId, data: {partnerId}}: Custodian.Proposed.t,
+      {
+        processId: custodianProcessId,
+        data: {partnerId, partnerApprovalProcess},
+      }: Custodian.Proposed.t,
       log,
     ) => {
   let process = {
@@ -49,6 +52,11 @@ let make =
             }
           | (CustodianAccepted({processId}), true)
               when ProcessId.eq(processId, custodianProcessId) => {
+              pendingEvent: None,
+              completed: true,
+            }
+          | (PartnerRemovalAccepted({data: {lastPartnerProcess}}), true)
+              when ProcessId.eq(lastPartnerProcess, partnerApprovalProcess) => {
               pendingEvent: None,
               completed: true,
             }
