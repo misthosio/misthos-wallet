@@ -84,6 +84,7 @@ let () =
             (address4.address.displayAddress, address4Satoshis),
           ])
           |> then_(utxos => {
+               let utxos = utxos |. Belt.Set.toList;
                let walletOneAddresses = [
                  (address1.address.displayAddress, address1),
                  (address2.address.displayAddress, address2),
@@ -230,6 +231,7 @@ let () =
           |> Helpers.getUTXOs
           |> then_(utxos =>
                utxos
+               |. Belt.Set.toList
                |> List.fold_left(
                     (total, utxo: WalletTypes.utxo) =>
                       total |> BTC.plus(utxo.amount),
@@ -329,6 +331,7 @@ let () =
                  |> Helpers.getUTXOs
                  |> then_(utxos =>
                       utxos
+                      |. Belt.Set.toList
                       |> List.fold_left(
                            (total, utxo: WalletTypes.utxo) =>
                              total |> BTC.plus(utxo.amount),

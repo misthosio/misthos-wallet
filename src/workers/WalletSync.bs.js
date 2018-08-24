@@ -9,6 +9,7 @@ var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var NetworkClient = require("../application/wallet/NetworkClient.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -153,9 +154,9 @@ function scanTransactions(collector) {
               ]).then((function (param) {
                 var blockHeight = param[1];
                 var utxos = param[0];
-                return Curry._1(NetworkClient.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */2], Belt_List.toArray(Belt_List.mapU(utxos, (function (param) {
-                                                return param[/* txId */0];
-                                              })))), Belt_SetString.mergeMany(Belt_SetString.empty, Belt_MapString.keysToArray(transactions[/* confirmedTransactions */4])))).then((function (txInfos) {
+                return Curry._1(NetworkClient.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */2], Belt_Array.mapU(Belt_Set.toArray(utxos), (function (param) {
+                                            return param[/* txId */0];
+                                          }))), Belt_SetString.mergeMany(Belt_SetString.empty, Belt_MapString.keysToArray(transactions[/* confirmedTransactions */4])))).then((function (txInfos) {
                               return Promise.resolve(/* tuple */[
                                           utxos,
                                           txInfos,
@@ -178,13 +179,8 @@ function collectData(log) {
 }
 
 function filterUTXOs(knownTxs, utxos) {
-  return Belt_List.keepMapU(utxos, (function (utxo) {
-                var match = Belt_SetString.has(knownTxs, utxo[/* txId */0]);
-                if (match) {
-                  return undefined;
-                } else {
-                  return utxo;
-                }
+  return Belt_Set.keepU(utxos, (function (param) {
+                return Belt_SetString.has(knownTxs, param[/* txId */0]);
               }));
 }
 
@@ -196,7 +192,7 @@ function detectIncomeFromVenture(ventureId, eventLog) {
                 notifyOfUnlockedInputs(ventureId, param[2], transactions, match[/* walletInfo */2]);
                 broadcastPayouts(transactions);
                 var utxos = filterUTXOs(transactions[/* knownIncomeTxs */3], param[0]);
-                var events = Belt_List.mapU(utxos, (function (utxo) {
+                var events = Belt_List.mapU(Belt_Set.toList(utxos), (function (utxo) {
                         return Curry._5(Event.Income[/* Detected */1][/* make */0], utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
                       }));
                 var match$1 = Belt_List.keepMapU(param[1], (function (param) {

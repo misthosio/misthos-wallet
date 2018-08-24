@@ -13,7 +13,7 @@ let () =
           ["3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r"],
         )
         |> then_(res =>
-             expect(res |> List.length) |> toBeGreaterThan(200) |> resolve
+             expect(res |> Belt.Set.size) |> toBeGreaterThan(200) |> resolve
            )
       )
     );

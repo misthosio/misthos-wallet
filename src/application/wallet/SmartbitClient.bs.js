@@ -6,10 +6,12 @@ var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var WalletTypes = require("./WalletTypes.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 
@@ -95,10 +97,12 @@ function fetchAll(link, decoder, collector) {
 function getUTXOs(config, addresses) {
   if (addresses) {
     return fetchAll("https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/address/" + (List.fold_left((function (res, a) {
-                            return a + ("," + res);
-                          }), "", addresses) + "/unspent?limit=1000"))), decodeUTXOs, /* [] */0);
+                              return a + ("," + res);
+                            }), "", addresses) + "/unspent?limit=1000"))), decodeUTXOs, /* [] */0).then((function (utxos) {
+                  return Promise.resolve(Belt_Set.mergeMany(WalletTypes.emptyUtxoSet, Belt_List.toArray(utxos)));
+                }));
   } else {
-    return Promise.resolve(/* [] */0);
+    return Promise.resolve(WalletTypes.emptyUtxoSet);
   }
 }
 

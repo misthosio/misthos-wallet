@@ -3,8 +3,25 @@
 
 var Belt_Id = require("bs-platform/lib/js/belt_Id.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
+
+function compareUtxos(param, param$1) {
+  var c = Caml_primitive.caml_string_compare(param[/* txId */0], param$1[/* txId */0]);
+  if (c !== 0) {
+    return c;
+  } else {
+    return Caml_primitive.caml_int_compare(param[/* txOutputN */1], param$1[/* txOutputN */1]);
+  }
+}
+
+var include = Belt_Id.MakeComparableU(/* module */[/* cmp */compareUtxos]);
+
+var cmp = include[0];
+
+var emptyUtxoSet = Belt_Set.make([cmp]);
 
 function next(idx) {
   return idx + 1 | 0;
@@ -24,13 +41,15 @@ function neq(a, b) {
   return Caml_obj.caml_compare(a, b) !== 0;
 }
 
-var cmp = Caml_obj.caml_compare;
+var cmp$1 = Caml_obj.caml_compare;
 
-var Comparator = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
+var Comparator = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp$1]);
 
 function makeMap() {
   return Belt_Map.make(Comparator);
 }
+
+var UtxoCmp = [cmp];
 
 function AccountIndex_000(prim) {
   return prim;
@@ -167,10 +186,12 @@ var AddressIndex = [
   makeMap
 ];
 
+exports.UtxoCmp = UtxoCmp;
+exports.emptyUtxoSet = emptyUtxoSet;
 exports.AccountIndex = AccountIndex;
 exports.CustodianKeyChainIndex = CustodianKeyChainIndex;
 exports.AccountKeyChainIndex = AccountKeyChainIndex;
 exports.CoSignerIndex = CoSignerIndex;
 exports.ChainIndex = ChainIndex;
 exports.AddressIndex = AddressIndex;
-/* Comparator Not a pure module */
+/* include Not a pure module */

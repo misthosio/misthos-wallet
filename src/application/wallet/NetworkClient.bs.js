@@ -3,6 +3,8 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Network = require("./Network.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -18,29 +20,7 @@ function WithFalleback(ClientA) {
       var getUTXOs = function (addresses) {
         return Curry._1(ClientA[/* getUTXOs */1], addresses).then((function (utxos) {
                         return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
-                                        return Promise.resolve(Belt_List.reduceU(Belt_List.concat(utxos, moreUtxos), /* tuple */[
-                                                          Belt_SetString.empty,
-                                                          /* [] */0
-                                                        ], (function (param, utxo) {
-                                                            var txId = utxo[/* txId */0];
-                                                            var res = param[1];
-                                                            var known = param[0];
-                                                            var match = Belt_SetString.has(known, txId);
-                                                            if (match) {
-                                                              return /* tuple */[
-                                                                      known,
-                                                                      res
-                                                                    ];
-                                                            } else {
-                                                              return /* tuple */[
-                                                                      Belt_SetString.add(known, txId),
-                                                                      /* :: */[
-                                                                        utxo,
-                                                                        res
-                                                                      ]
-                                                                    ];
-                                                            }
-                                                          }))[1]);
+                                        return Promise.resolve(Belt_Set.union(utxos, moreUtxos));
                                       })).catch((function () {
                                       return Promise.resolve(utxos);
                                     }));
@@ -106,20 +86,20 @@ function Make(Client) {
   var currentBlockHeight = Client[/* getCurrentBlockHeight */4];
   var transactionInputs = function (addresses) {
     return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
-                  return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                  return Promise.resolve(Belt_Set.reduceU(utxos, Network.inputSet(/* () */0), (function (res, param) {
                                     var address = param[/* address */2];
                                     var a = Js_option.getExn(Belt_MapString.get(addresses, address));
-                                    return /* record */[
-                                            /* txId */param[/* txId */0],
-                                            /* txOutputN */param[/* txOutputN */1],
-                                            /* address */address,
-                                            /* value */param[/* amount */3],
-                                            /* nCoSigners */a[/* nCoSigners */0],
-                                            /* nPubKeys */a[/* nPubKeys */1],
-                                            /* coordinates */a[/* coordinates */2],
-                                            /* sequence */a[/* sequence */6],
-                                            /* unlocked */false
-                                          ];
+                                    return Belt_Set.add(res, /* record */[
+                                                /* txId */param[/* txId */0],
+                                                /* txOutputN */param[/* txOutputN */1],
+                                                /* address */address,
+                                                /* value */param[/* amount */3],
+                                                /* nCoSigners */a[/* nCoSigners */0],
+                                                /* nPubKeys */a[/* nPubKeys */1],
+                                                /* coordinates */a[/* coordinates */2],
+                                                /* sequence */a[/* sequence */6],
+                                                /* unlocked */false
+                                              ]);
                                   })));
                 }));
   };
@@ -150,20 +130,20 @@ var currentBlockHeight = Client[/* getCurrentBlockHeight */4];
 
 function transactionInputs(addresses) {
   return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
-                return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                return Promise.resolve(Belt_Set.reduceU(utxos, Network.inputSet(/* () */0), (function (res, param) {
                                   var address = param[/* address */2];
                                   var a = Js_option.getExn(Belt_MapString.get(addresses, address));
-                                  return /* record */[
-                                          /* txId */param[/* txId */0],
-                                          /* txOutputN */param[/* txOutputN */1],
-                                          /* address */address,
-                                          /* value */param[/* amount */3],
-                                          /* nCoSigners */a[/* nCoSigners */0],
-                                          /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2],
-                                          /* sequence */a[/* sequence */6],
-                                          /* unlocked */false
-                                        ];
+                                  return Belt_Set.add(res, /* record */[
+                                              /* txId */param[/* txId */0],
+                                              /* txOutputN */param[/* txOutputN */1],
+                                              /* address */address,
+                                              /* value */param[/* amount */3],
+                                              /* nCoSigners */a[/* nCoSigners */0],
+                                              /* nPubKeys */a[/* nPubKeys */1],
+                                              /* coordinates */a[/* coordinates */2],
+                                              /* sequence */a[/* sequence */6],
+                                              /* unlocked */false
+                                            ]);
                                 })));
               }));
 }
@@ -186,29 +166,7 @@ var Client$1 = (function (ClientB) {
       var getUTXOs = function (addresses) {
         return Curry._1(ClientA[/* getUTXOs */1], addresses).then((function (utxos) {
                         return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
-                                        return Promise.resolve(Belt_List.reduceU(Belt_List.concat(utxos, moreUtxos), /* tuple */[
-                                                          Belt_SetString.empty,
-                                                          /* [] */0
-                                                        ], (function (param, utxo) {
-                                                            var txId = utxo[/* txId */0];
-                                                            var res = param[1];
-                                                            var known = param[0];
-                                                            var match = Belt_SetString.has(known, txId);
-                                                            if (match) {
-                                                              return /* tuple */[
-                                                                      known,
-                                                                      res
-                                                                    ];
-                                                            } else {
-                                                              return /* tuple */[
-                                                                      Belt_SetString.add(known, txId),
-                                                                      /* :: */[
-                                                                        utxo,
-                                                                        res
-                                                                      ]
-                                                                    ];
-                                                            }
-                                                          }))[1]);
+                                        return Promise.resolve(Belt_Set.union(utxos, moreUtxos));
                                       })).catch((function () {
                                       return Promise.resolve(utxos);
                                     }));
@@ -276,20 +234,20 @@ var currentBlockHeight$1 = Client$1[/* getCurrentBlockHeight */4];
 
 function transactionInputs$1(addresses) {
   return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
-                return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                return Promise.resolve(Belt_Set.reduceU(utxos, Network.inputSet(/* () */0), (function (res, param) {
                                   var address = param[/* address */2];
                                   var a = Js_option.getExn(Belt_MapString.get(addresses, address));
-                                  return /* record */[
-                                          /* txId */param[/* txId */0],
-                                          /* txOutputN */param[/* txOutputN */1],
-                                          /* address */address,
-                                          /* value */param[/* amount */3],
-                                          /* nCoSigners */a[/* nCoSigners */0],
-                                          /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2],
-                                          /* sequence */a[/* sequence */6],
-                                          /* unlocked */false
-                                        ];
+                                  return Belt_Set.add(res, /* record */[
+                                              /* txId */param[/* txId */0],
+                                              /* txOutputN */param[/* txOutputN */1],
+                                              /* address */address,
+                                              /* value */param[/* amount */3],
+                                              /* nCoSigners */a[/* nCoSigners */0],
+                                              /* nPubKeys */a[/* nPubKeys */1],
+                                              /* coordinates */a[/* coordinates */2],
+                                              /* sequence */a[/* sequence */6],
+                                              /* unlocked */false
+                                            ]);
                                 })));
               }));
 }
@@ -312,29 +270,7 @@ var Client$2 = (function (ClientB) {
       var getUTXOs = function (addresses) {
         return Curry._1(ClientA$1[/* getUTXOs */1], addresses).then((function (utxos) {
                         return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
-                                        return Promise.resolve(Belt_List.reduceU(Belt_List.concat(utxos, moreUtxos), /* tuple */[
-                                                          Belt_SetString.empty,
-                                                          /* [] */0
-                                                        ], (function (param, utxo) {
-                                                            var txId = utxo[/* txId */0];
-                                                            var res = param[1];
-                                                            var known = param[0];
-                                                            var match = Belt_SetString.has(known, txId);
-                                                            if (match) {
-                                                              return /* tuple */[
-                                                                      known,
-                                                                      res
-                                                                    ];
-                                                            } else {
-                                                              return /* tuple */[
-                                                                      Belt_SetString.add(known, txId),
-                                                                      /* :: */[
-                                                                        utxo,
-                                                                        res
-                                                                      ]
-                                                                    ];
-                                                            }
-                                                          }))[1]);
+                                        return Promise.resolve(Belt_Set.union(utxos, moreUtxos));
                                       })).catch((function () {
                                       return Promise.resolve(utxos);
                                     }));
@@ -402,20 +338,20 @@ var currentBlockHeight$2 = Client$2[/* getCurrentBlockHeight */4];
 
 function transactionInputs$2(addresses) {
   return Curry._1(Client$2[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
-                return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                return Promise.resolve(Belt_Set.reduceU(utxos, Network.inputSet(/* () */0), (function (res, param) {
                                   var address = param[/* address */2];
                                   var a = Js_option.getExn(Belt_MapString.get(addresses, address));
-                                  return /* record */[
-                                          /* txId */param[/* txId */0],
-                                          /* txOutputN */param[/* txOutputN */1],
-                                          /* address */address,
-                                          /* value */param[/* amount */3],
-                                          /* nCoSigners */a[/* nCoSigners */0],
-                                          /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2],
-                                          /* sequence */a[/* sequence */6],
-                                          /* unlocked */false
-                                        ];
+                                  return Belt_Set.add(res, /* record */[
+                                              /* txId */param[/* txId */0],
+                                              /* txOutputN */param[/* txOutputN */1],
+                                              /* address */address,
+                                              /* value */param[/* amount */3],
+                                              /* nCoSigners */a[/* nCoSigners */0],
+                                              /* nPubKeys */a[/* nPubKeys */1],
+                                              /* coordinates */a[/* coordinates */2],
+                                              /* sequence */a[/* sequence */6],
+                                              /* unlocked */false
+                                            ]);
                                 })));
               }));
 }

@@ -5,9 +5,11 @@ var BTC = require("./BTC.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
+var WalletTypes = require("./WalletTypes.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -45,16 +47,16 @@ function getUTXOs(config, addresses) {
                                 })) + "&cors=true")))).then((function (prim) {
                       return prim.json();
                     })).then((function (raw) {
-                    return Promise.resolve(Json_decode.field("unspent_outputs", (function (param) {
-                                      return Json_decode.list((function (param) {
-                                                    return decodeUTXO(config, param);
-                                                  }), param);
-                                    }), raw));
+                    return Promise.resolve(Belt_Set.mergeMany(WalletTypes.emptyUtxoSet, Json_decode.field("unspent_outputs", (function (param) {
+                                          return Json_decode.array((function (param) {
+                                                        return decodeUTXO(config, param);
+                                                      }), param);
+                                        }), raw)));
                   })).catch((function () {
-                  return Promise.resolve(/* [] */0);
+                  return Promise.resolve(WalletTypes.emptyUtxoSet);
                 }));
   } else {
-    return Promise.resolve(/* [] */0);
+    return Promise.resolve(WalletTypes.emptyUtxoSet);
   }
 }
 

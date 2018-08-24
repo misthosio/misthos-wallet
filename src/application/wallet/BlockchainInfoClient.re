@@ -29,7 +29,7 @@ let decodeUTXO = (config, raw) : WalletTypes.utxo =>
 
 let getUTXOs = (config, addresses) =>
   switch (addresses) {
-  | [] => Js.Promise.resolve([])
+  | [] => Js.Promise.resolve(WalletTypes.emptyUtxoSet)
   | addresses =>
     Js.Promise.(
       Fetch.fetch(
@@ -46,11 +46,12 @@ let getUTXOs = (config, addresses) =>
       |> then_(raw =>
            raw
            |> Json.Decode.(
-                field("unspent_outputs", list(decodeUTXO(config)))
+                field("unspent_outputs", array(decodeUTXO(config)))
               )
+           |> Set.mergeMany(WalletTypes.emptyUtxoSet)
            |> resolve
          )
-      |> catch(_err => [] |> resolve)
+      |> catch(_err => WalletTypes.emptyUtxoSet |> resolve)
     )
   };
 let getTransactionInfo = (config, transactions) =>

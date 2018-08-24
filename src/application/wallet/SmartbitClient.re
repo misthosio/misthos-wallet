@@ -79,7 +79,7 @@ let rec fetchAll = (link, decoder, collector) =>
 
 let getUTXOs = (config, addresses) =>
   switch (addresses) {
-  | [] => Js.Promise.resolve([])
+  | [] => Js.Promise.resolve(WalletTypes.emptyUtxoSet)
   | addresses =>
     fetchAll(
       Some(
@@ -92,6 +92,12 @@ let getUTXOs = (config, addresses) =>
       decodeUTXOs,
       [],
     )
+    |> Js.Promise.then_(utxos =>
+         utxos
+         |. Belt.List.toArray
+         |> Belt.Set.mergeMany(WalletTypes.emptyUtxoSet)
+         |> Js.Promise.resolve
+       )
   };
 
 let getTransactionInfo = (config, transactions) =>

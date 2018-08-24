@@ -2,8 +2,8 @@
 'use strict';
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
-var List = require("bs-platform/lib/js/list.js");
 var Helpers = require("../../helpers/Helpers.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var BlockchainInfoClient = require("../../../src/application/wallet/BlockchainInfoClient.bs.js");
 
@@ -15,7 +15,7 @@ describe("BlockchainInfoClient", (function () {
                               "3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r",
                               /* [] */0
                             ]).then((function (res) {
-                              return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](200, Jest.Expect[/* expect */0](List.length(res))));
+                              return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](200, Jest.Expect[/* expect */0](Belt_Set.size(res))));
                             }));
               }));
         Jest.testPromise("blockheight", 50000, (function () {

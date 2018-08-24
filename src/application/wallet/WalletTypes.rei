@@ -6,6 +6,14 @@ type utxo = {
   confirmations: int,
 };
 
+module UtxoCmp: {
+  type identity;
+  type t = utxo;
+  let cmp: Belt.Id.cmp(t, identity);
+};
+type utxoSet = Belt.Set.t(UtxoCmp.t, UtxoCmp.identity);
+let emptyUtxoSet: utxoSet;
+
 type txInfo = {
   txId: string,
   blockHeight: option(float),
@@ -20,7 +28,7 @@ type broadcastResult =
 
 module type NetworkClientInterface = {
   let network: Bitcoin.Networks.t;
-  let getUTXOs: list(string) => Js.Promise.t(list(utxo));
+  let getUTXOs: list(string) => Js.Promise.t(utxoSet);
   let getTransactionInfo: Belt.Set.String.t => Js.Promise.t(list(txInfo));
   let getTransactionHex:
     array(string) => Js.Promise.t(array((string, string)));

@@ -9,18 +9,7 @@ module WithFalleback =
         ClientA.getUTXOs(addresses)
         |> then_(utxos =>
              ClientB.getUTXOs(addresses)
-             |> then_(moreUtxos =>
-                  List.concat(utxos, moreUtxos)
-                  |. List.reduceU(
-                       (Set.String.empty, []),
-                       (. (known, res), {txId} as utxo: WalletTypes.utxo) =>
-                       known |. Set.String.has(txId) ?
-                         (known, res) :
-                         (known |. Set.String.add(txId), [utxo, ...res])
-                     )
-                  |> snd
-                  |> resolve
-                )
+             |> then_(moreUtxos => Set.union(utxos, moreUtxos) |> resolve)
              |> catch(_ => utxos |> resolve)
            )
         |> catch(_ => ClientB.getUTXOs(addresses))
@@ -75,26 +64,26 @@ module Make = (Client: NetworkClientInterface) => {
         |> Client.getUTXOs
         |> then_(utxos =>
              utxos
-             |. List.map(({txId, txOutputN, address, amount}: utxo) =>
-                  (
-                    {
-                      let a: Address.t =
-                        addresses
-                        |. Map.String.get(address)
-                        |> Js.Option.getExn;
-                      {
-                        txId,
-                        txOutputN,
-                        address,
-                        nCoSigners: a.nCoSigners,
-                        nPubKeys: a.nPubKeys,
-                        value: amount,
-                        coordinates: a.coordinates,
-                        sequence: a.sequence,
-                        unlocked: false,
-                      };
-                    }: Network.txInput
-                  )
+             |. Set.reduceU(
+                  Network.inputSet(),
+                  (. res, {txId, txOutputN, address, amount}: utxo) => {
+                    let a: Address.t =
+                      addresses |. Map.String.get(address) |> Js.Option.getExn;
+                    res
+                    |. Set.add(
+                         {
+                           txId,
+                           txOutputN,
+                           address,
+                           nCoSigners: a.nCoSigners,
+                           nPubKeys: a.nPubKeys,
+                           value: amount,
+                           coordinates: a.coordinates,
+                           sequence: a.sequence,
+                           unlocked: false,
+                         }: Network.txInput,
+                       );
+                  },
                 )
              |> resolve
            )

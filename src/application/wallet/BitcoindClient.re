@@ -66,7 +66,7 @@ let importAllAs = (config, addresses, label) =>
     );
   };
 
-let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
+let getUTXOs = (config, addresses) : Js.Promise.t(WalletTypes.utxoSet) =>
   Js.Promise.(
     importAllAs(config, addresses, "")
     |> then_(_ => {
@@ -106,6 +106,8 @@ let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
                 ),
               )
          )
+         |> Belt.List.toArray
+         |> Belt.Set.mergeMany(WalletTypes.emptyUtxoSet)
          |> resolve
        )
   );
