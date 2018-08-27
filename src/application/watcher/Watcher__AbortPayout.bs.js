@@ -112,8 +112,16 @@ function make(proposal, log) {
                     var match = $$event[0];
                     var acceptedProcess = match[/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](env$1[2], acceptedProcess)) {
-                      self$1[payoutProcesses][0] = Belt_Map.set(self$1[payoutProcesses][0], acceptedProcess, Belt_Set.mergeMany(Network.inputSet(/* () */0), match[/* data */2][/* payoutTx */1][/* usedInputs */1]));
-                      return /* () */0;
+                      var acceptedInputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), match[/* data */2][/* payoutTx */1][/* usedInputs */1]);
+                      self$1[payoutProcesses][0] = Belt_Map.set(self$1[payoutProcesses][0], acceptedProcess, acceptedInputs);
+                      var match$1 = Curry._3(env$1[4], self$1[systemIssuer][0], acceptedInputs, env$1[3]);
+                      if (match$1 !== undefined) {
+                        self$1[result][0] = match$1;
+                        self$1[collidingProcesses][0] = Belt_Set.add(self$1[collidingProcesses][0], acceptedProcess);
+                        return /* () */0;
+                      } else {
+                        return /* () */0;
+                      }
                     } else {
                       return /* () */0;
                     }
@@ -168,23 +176,9 @@ function make(proposal, log) {
                       }
                     }
                 case 32 : 
-                    var match$1 = $$event[0];
-                    if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], env$1[2])) {
-                      self$1[alreadySigned][0] = Belt_Set.add(self$1[alreadySigned][0], match$1[/* custodianId */1]);
-                      return /* () */0;
-                    } else {
-                      return /* () */0;
-                    }
-                case 33 : 
-                    var broadcastProcess = $$event[0][/* processId */0];
-                    if (PrimitiveTypes.ProcessId[/* neq */6](broadcastProcess, env$1[2])) {
-                      var broadcastInputs = Belt_Map.getWithDefault(self$1[payoutProcesses][0], broadcastProcess, Network.inputSet(/* () */0));
-                      var match$2 = Curry._3(env$1[4], self$1[systemIssuer][0], broadcastInputs, env$1[3]);
-                      if (match$2 !== undefined) {
-                        self$1[result][0] = match$2;
-                        self$1[collidingProcesses][0] = Belt_Set.add(self$1[collidingProcesses][0], broadcastProcess);
-                      }
-                      self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
+                    var match$2 = $$event[0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](match$2[/* processId */0], env$1[2])) {
+                      self$1[alreadySigned][0] = Belt_Set.add(self$1[alreadySigned][0], match$2[/* custodianId */1]);
                       return /* () */0;
                     } else {
                       return /* () */0;
@@ -198,15 +192,15 @@ function make(proposal, log) {
                       return /* () */0;
                     }
                 case 36 : 
-                    var broadcastProcess$1 = $$event[0][/* processId */0];
-                    if (PrimitiveTypes.ProcessId[/* eq */5](broadcastProcess$1, env$1[2])) {
+                    var broadcastProcess = $$event[0][/* processId */0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](broadcastProcess, env$1[2])) {
                       self$1[result][0] = undefined;
                       self$1[completed][0] = true;
                       return /* () */0;
                     } else {
-                      self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess$1);
-                      if (Belt_Set.has(self$1[collidingProcesses][0], broadcastProcess$1)) {
-                        self$1[collidingProcesses][0] = Belt_Set.remove(self$1[collidingProcesses][0], broadcastProcess$1);
+                      self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
+                      if (Belt_Set.has(self$1[collidingProcesses][0], broadcastProcess)) {
+                        self$1[collidingProcesses][0] = Belt_Set.remove(self$1[collidingProcesses][0], broadcastProcess);
                         self$1[result][0] = undefined;
                         return Belt_Set.forEachU(self$1[collidingProcesses][0], (function (collidingProcessId) {
                                       var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], collidingProcessId);
