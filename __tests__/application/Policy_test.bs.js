@@ -153,7 +153,8 @@ describe("UnanimousMinusOne", (function () {
         return /* () */0;
       }));
 
-describe("Majority", (function () {
+describe("Percentage", (function () {
+        var p = Policy.percentage(50);
         Jest.test("fulfilled", (function () {
                 var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
                       PrimitiveTypes.UserId[/* fromString */1]("a"),
@@ -166,7 +167,7 @@ describe("Majority", (function () {
                     ]);
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                     return Curry._2(Policy.fulfilled(param), arg, arg$1);
-                                  })(Policy.majority)));
+                                  })(p)));
               }));
         Jest.test("not fulfilled", (function () {
                 var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
@@ -181,14 +182,14 @@ describe("Majority", (function () {
                     ]);
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                     return Curry._2(Policy.fulfilled(param), arg, arg$1);
-                                  })(Policy.majority)));
+                                  })(p)));
               }));
         Jest.test("at least one eligible", (function () {
                 var arg = PrimitiveTypes.UserId[/* emptySet */9];
                 var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                     return Curry._2(Policy.fulfilled(param), arg, arg$1);
-                                  })(Policy.majority)));
+                                  })(p)));
               }));
         describe("canBeFullfilled", (function () {
                 Jest.test("with one rejection and 2 eligible", (function () {
@@ -199,7 +200,7 @@ describe("Majority", (function () {
                         var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
                         return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                             return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
-                                          })(Policy.majority)));
+                                          })(p)));
                       }));
                 return Jest.test("with one rejection and 3 eligible", (function () {
                               var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
@@ -210,7 +211,7 @@ describe("Majority", (function () {
                               var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
                               return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                                   return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
-                                                })(Policy.majority)));
+                                                })(p)));
                             }));
               }));
         return /* () */0;

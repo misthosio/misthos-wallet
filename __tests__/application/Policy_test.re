@@ -190,8 +190,8 @@ let () = {
       });
     });
   });
-  describe("Majority", () => {
-    let p = Policy.majority;
+  describe("Percentage", () => {
+    let p = Policy.percentage(50);
     test("fulfilled", () =>
       expect(
         p
