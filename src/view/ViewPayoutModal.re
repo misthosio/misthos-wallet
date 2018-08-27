@@ -293,6 +293,22 @@ let make =
                 | _ => ReasonReact.null
                 }
               )
+              (
+                if (viewData.collidesWith |> Belt.Set.size > 0) {
+                  <MaterialUi.SnackbarContent
+                    message=(
+                      {|
+                   This Proposal is reusing inputs reserved by another payout.
+                   We recommend that you coordinate with your Partners
+                   to only sign one Proposal.
+                   |}
+                      |> text
+                    )
+                  />;
+                } else {
+                  ReasonReact.null;
+                }
+              )
             </div>
           }
         )

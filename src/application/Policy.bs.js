@@ -126,7 +126,7 @@ function canBeFulfilled$3(param, eligible, rejected) {
 function encode$3(param) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "AtLeast",
+                "type",
                 "AtLeast"
               ],
               /* :: */[

@@ -94,14 +94,22 @@ let make =
           data: {payoutTx: {usedInputs}},
         })
           when ProcessId.neq(processId, acceptedProcess) =>
-        let acceptedInputs = usedInputs |> Set.mergeMany(Network.inputSet());
         payoutProcesses :=
-          payoutProcesses^ |. Map.set(acceptedProcess, acceptedInputs);
-        switch (getResult(systemIssuer^, acceptedInputs, inputs)) {
+          payoutProcesses^
+          |. Map.set(
+               acceptedProcess,
+               usedInputs |> Set.mergeMany(Network.inputSet()),
+             )
+      | PayoutFinalized({processId: broadcastProcess})
+          when ProcessId.neq(broadcastProcess, processId) =>
+        let broadcastInputs =
+          payoutProcesses^
+          |. Map.getWithDefault(broadcastProcess, Network.inputSet());
+        switch (getResult(systemIssuer^, broadcastInputs, inputs)) {
         | Some(actualResult) =>
           result := Some(actualResult);
           collidingProcesses :=
-            collidingProcesses^ |. Set.add(acceptedProcess);
+            collidingProcesses^ |. Set.add(broadcastProcess);
         | _ => ()
         };
       | PayoutBroadcast({processId: broadcastProcess})

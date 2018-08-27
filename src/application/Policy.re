@@ -59,9 +59,7 @@ module AtLeast = {
     Set.size(eligible) - Set.size(releventRejections) >= n;
   };
   let encode = ({n}) =>
-    Json.Encode.(
-      object_([("AtLeast", string("AtLeast")), ("n", int(n))])
-    );
+    Json.Encode.(object_([("type", string("AtLeast")), ("n", int(n))]));
   let decode = raw => Json.Decode.{n: raw |> field("n", int)};
 };
 
