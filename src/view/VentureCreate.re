@@ -9,6 +9,7 @@ type state = {
   newVenture: string,
   cmdStatus: CommandExecutor.cmdStatus,
   accountSettings: AccountSettings.t,
+  policies: Policy.initialPolicies,
 };
 
 type action =
@@ -40,6 +41,10 @@ let make =
   initialState: () => {
     newVenture: "",
     accountSettings: AccountSettings.default,
+    policies: {
+      ...Policy.defaultInitialPolicies,
+      payout: Policy.UnanimousMinusOne,
+    },
     cmdStatus,
   },
   willReceiveProps: ({state}) => {...state, cmdStatus},
@@ -81,14 +86,7 @@ let make =
       switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
       | name =>
-        onCreateVenture(
-          name,
-          state.accountSettings,
-          {
-            ...Policy.defaultInitialPolicies,
-            payout: Policy.UnanimousMinusOne,
-          },
-        );
+        onCreateVenture(name, state.accountSettings, state.policies);
         ReasonReact.NoUpdate;
       }
     },

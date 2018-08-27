@@ -83,7 +83,8 @@ function make(onCreateVenture, cmdStatus, _) {
               return /* record */[
                       /* newVenture */state[/* newVenture */0],
                       /* cmdStatus */cmdStatus,
-                      /* accountSettings */state[/* accountSettings */2]
+                      /* accountSettings */state[/* accountSettings */2],
+                      /* policies */state[/* policies */3]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -182,7 +183,14 @@ function make(onCreateVenture, cmdStatus, _) {
               return /* record */[
                       /* newVenture */"",
                       /* cmdStatus */cmdStatus,
-                      /* accountSettings */AccountSettings.$$default
+                      /* accountSettings */AccountSettings.$$default,
+                      /* policies : record */[
+                        /* addPartner */Policy.defaultInitialPolicies[/* addPartner */0],
+                        /* addCustodian */Policy.defaultInitialPolicies[/* addCustodian */1],
+                        /* removePartner */Policy.defaultInitialPolicies[/* removePartner */2],
+                        /* removeCustodian */Policy.defaultInitialPolicies[/* removeCustodian */3],
+                        /* payout : UnanimousMinusOne */1
+                      ]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -201,13 +209,7 @@ function make(onCreateVenture, cmdStatus, _) {
                     if (name === "") {
                       return /* NoUpdate */0;
                     } else {
-                      Curry._3(onCreateVenture, name, state[/* accountSettings */2], /* record */[
-                            /* addPartner */Policy.defaultInitialPolicies[/* addPartner */0],
-                            /* addCustodian */Policy.defaultInitialPolicies[/* addCustodian */1],
-                            /* removePartner */Policy.defaultInitialPolicies[/* removePartner */2],
-                            /* removeCustodian */Policy.defaultInitialPolicies[/* removeCustodian */3],
-                            /* payout : UnanimousMinusOne */1
-                          ]);
+                      Curry._3(onCreateVenture, name, state[/* accountSettings */2], state[/* policies */3]);
                       return /* NoUpdate */0;
                     }
                   } else {
@@ -219,7 +221,8 @@ function make(onCreateVenture, cmdStatus, _) {
                                 /* accountSettings : record */[
                                   /* coSignerList */init[/* coSignerList */0],
                                   /* sequence */match$1 ? AccountSettings.defaultSequence : undefined
-                                ]
+                                ],
+                                /* policies */state[/* policies */3]
                               ]]);
                   }
                 } else {
@@ -228,7 +231,8 @@ function make(onCreateVenture, cmdStatus, _) {
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */action[0],
                                     /* cmdStatus */state[/* cmdStatus */1],
-                                    /* accountSettings */state[/* accountSettings */2]
+                                    /* accountSettings */state[/* accountSettings */2],
+                                    /* policies */state[/* policies */3]
                                   ]]);
                     case 1 : 
                         var match$2 = action[0];
@@ -248,7 +252,8 @@ function make(onCreateVenture, cmdStatus, _) {
                                               }
                                             })),
                                       /* sequence */init$1[/* sequence */1]
-                                    ]
+                                    ],
+                                    /* policies */state[/* policies */3]
                                   ]]);
                     case 2 : 
                         var sequence = action[0];
@@ -260,7 +265,8 @@ function make(onCreateVenture, cmdStatus, _) {
                                     /* accountSettings : record */[
                                       /* coSignerList */init$2[/* coSignerList */0],
                                       /* sequence */match$3 ? 65500 : sequence
-                                    ]
+                                    ],
+                                    /* policies */state[/* policies */3]
                                   ]]);
                     
                   }
