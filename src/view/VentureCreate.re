@@ -12,12 +12,39 @@ type state = {
   policies: Policy.initialPolicies,
 };
 
+let policyTypeToString =
+  fun
+  | Policy.AtLeast(_) => "At least"
+  | Policy.Unanimous => "Unanimous"
+  | Policy.UnanimousMinusOne => "Unanimous minus 1"
+  | Policy.Percentage(_) => "Percentage";
+let stringToPolicy =
+  fun
+  | "At least" => Policy.atLeast(1)
+  | "Unanimous" => Policy.unanimous
+  | "Unanimous minus 1" => Policy.unanimousMinusOne
+  | "Percentage" => Policy.percentage(50)
+  | _ => Policy.unanimous;
+
+let policyOptions =
+  Policy.([|atLeast(1), percentage(50), unanimousMinusOne, unanimous|]);
+
+let updatePolicyWithN = n =>
+  fun
+  | Policy.Percentage(_) => Policy.percentage(n < 0 ? 0 : n > 100 ? 100 : n)
+  | Policy.AtLeast(_) => Policy.atLeast(n < 0 ? 1 : n)
+  | policy => policy;
+
 type action =
   | ChangeNewVenture(string)
   | CreateVenture
   | ChangeNumberOfCoSinger((int, int))
   | ChangeSequence(int)
-  | ToggleSequence;
+  | ToggleSequence
+  | ChangeAddPartnerPolicy(Policy.t)
+  | ChangeAddPartnerN(string)
+  | ChangeRemovePartnerPolicy(Policy.t)
+  | ChangePayoutPolicy(Policy.t);
 
 let component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -41,10 +68,7 @@ let make =
   initialState: () => {
     newVenture: "",
     accountSettings: AccountSettings.default,
-    policies: {
-      ...Policy.defaultInitialPolicies,
-      payout: Policy.UnanimousMinusOne,
-    },
+    policies: Policy.defaultInitialPolicies,
     cmdStatus,
   },
   willReceiveProps: ({state}) => {...state, cmdStatus},
@@ -81,6 +105,47 @@ let make =
               Some(AccountSettings.defaultSequence) : None,
         },
       })
+    | (ChangeAddPartnerPolicy(policy), _) =>
+      ReasonReact.Update({
+        ...state,
+        policies: {
+          ...state.policies,
+          addPartner: policy,
+          addCustodian: policy,
+        },
+      })
+    | (ChangeAddPartnerN(n), _) =>
+      let policy =
+        try (
+          state.policies.addPartner |> updatePolicyWithN(int_of_string(n))
+        ) {
+        | _ => state.policies.addPartner
+        };
+      ReasonReact.Update({
+        ...state,
+        policies: {
+          ...state.policies,
+          addPartner: policy,
+          addCustodian: policy,
+        },
+      });
+    | (ChangeRemovePartnerPolicy(policy), _) =>
+      ReasonReact.Update({
+        ...state,
+        policies: {
+          ...state.policies,
+          removePartner: policy,
+          removeCustodian: policy,
+        },
+      })
+    | (ChangePayoutPolicy(policy), _) =>
+      ReasonReact.Update({
+        ...state,
+        policies: {
+          ...state.policies,
+          payout: policy,
+        },
+      })
 
     | (CreateVenture, _) =>
       switch (String.trim(state.newVenture)) {
@@ -98,6 +163,16 @@ let make =
       ++ "-of-"
       ++ string_of_int(nCoSigners)
       |> text;
+
+    let policyMenuItems =
+      MaterialUi.(
+        policyOptions
+        |. Array.mapU((. p) =>
+             <MenuItem value=(`String(p |> policyTypeToString))>
+               (p |> policyTypeToString |> text)
+             </MenuItem>
+           )
+      );
 
     let getMenuItems = nCoSigners =>
       Array.range(1, nCoSigners)
@@ -171,6 +246,105 @@ let make =
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails
                       className=Styles.expansionPanelDetails>
+                      <MTypography gutterBottom=true variant=`Title>
+                        ("Endorsement Policies" |> text)
+                      </MTypography>
+                      <MTypography gutterBottom=true variant=`Body1>
+                        (
+                          {js|Decide how many Partners need to endorse a Proposal for it to become Accepted:|js}
+                          |> text
+                        )
+                      </MTypography>
+                      <MTypography variant=`Body2>
+                        ("Partner addition:" |> text)
+                      </MTypography>
+                      <Select
+                        value=(
+                                `String(
+                                  state.policies.addPartner
+                                  |> policyTypeToString,
+                                )
+                              )
+                        onChange=(
+                          (e, _) =>
+                            send(
+                              ChangeAddPartnerPolicy(
+                                extractString(e) |> stringToPolicy,
+                              ),
+                            )
+                        )>
+                        (policyMenuItems |> ReasonReact.array)
+                      </Select>
+                      (
+                        switch (state.policies.addPartner) {
+                        | Percentage({percentage}) =>
+                          <FormControl>
+                            <InputLabel> "N =" </InputLabel>
+                            <Input
+                              value=(`Int(percentage))
+                              onChange=(
+                                e =>
+                                  send(ChangeAddPartnerN(extractString(e)))
+                              )
+                            />
+                          </FormControl>
+                        | AtLeast({n}) =>
+                          <FormControl>
+                            <InputLabel> "N =" </InputLabel>
+                            <Input
+                              value=(`Int(n))
+                              /* onChange=( */
+                              /*   e => */
+                              /*     send( */
+                              /*       ChangeSequence( */
+                              /*         extractString(e) |> int_of_string, */
+                              /*       ), */
+                              /*     ) */
+                              /* ) */
+                            />
+                          </FormControl>
+                        | _ => ReasonReact.null
+                        }
+                      )
+                      <MTypography variant=`Body2>
+                        ("Partner removal:" |> text)
+                      </MTypography>
+                      <Select
+                        value=(
+                                `String(
+                                  state.policies.removePartner
+                                  |> policyTypeToString,
+                                )
+                              )
+                        onChange=(
+                          (e, _) =>
+                            send(
+                              ChangeRemovePartnerPolicy(
+                                extractString(e) |> stringToPolicy,
+                              ),
+                            )
+                        )>
+                        (policyMenuItems |> ReasonReact.array)
+                      </Select>
+                      <MTypography variant=`Body2>
+                        ("Payout:" |> text)
+                      </MTypography>
+                      <Select
+                        value=(
+                                `String(
+                                  state.policies.payout |> policyTypeToString,
+                                )
+                              )
+                        onChange=(
+                          (e, _) =>
+                            send(
+                              ChangePayoutPolicy(
+                                extractString(e) |> stringToPolicy,
+                              ),
+                            )
+                        )>
+                        (policyMenuItems |> ReasonReact.array)
+                      </Select>
                       <MTypography gutterBottom=true variant=`Title>
                         ("Wallet Settings" |> text)
                       </MTypography>

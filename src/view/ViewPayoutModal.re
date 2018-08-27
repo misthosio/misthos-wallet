@@ -309,7 +309,7 @@ let make =
                 </a>
               </MTypography>
             </div>
-          | _ => <MTypography variant=`Body1> PolicyText.payout </MTypography>
+          | _ => ReasonReact.null
           }
         )
       />

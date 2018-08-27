@@ -196,12 +196,8 @@ function percentage(percentage$1) {
   return /* Percentage */Block.__(0, [/* record */[/* percentage */percentage$1]]);
 }
 
-function unanimousMinusN(n) {
-  return /* UnanimousMinusN */Block.__(1, [/* record */[/* n */n]]);
-}
-
 function atLeast(n) {
-  return /* AtLeast */Block.__(2, [/* record */[/* n */n]]);
+  return /* AtLeast */Block.__(1, [/* record */[/* n */n]]);
 }
 
 function fulfilled$5(param) {
@@ -211,25 +207,16 @@ function fulfilled$5(param) {
     } else {
       return fulfilled$2;
     }
+  } else if (param.tag) {
+    var partial_arg = param[0];
+    return (function (param, param$1) {
+        return fulfilled$3(partial_arg, param, param$1);
+      });
   } else {
-    switch (param.tag | 0) {
-      case 0 : 
-          var partial_arg = param[0];
-          return (function (param, param$1) {
-              return fulfilled$4(partial_arg, param, param$1);
-            });
-      case 1 : 
-          var partial_arg$1 = param[0];
-          return (function (param, param$1) {
-              return fulfilled$1(partial_arg$1, param, param$1);
-            });
-      case 2 : 
-          var partial_arg$2 = param[0];
-          return (function (param, param$1) {
-              return fulfilled$3(partial_arg$2, param, param$1);
-            });
-      
-    }
+    var partial_arg$1 = param[0];
+    return (function (param, param$1) {
+        return fulfilled$4(partial_arg$1, param, param$1);
+      });
   }
 }
 
@@ -240,25 +227,16 @@ function canBeFulfilled$5(param) {
     } else {
       return canBeFulfilled$2;
     }
+  } else if (param.tag) {
+    var partial_arg = param[0];
+    return (function (param, param$1) {
+        return canBeFulfilled$3(partial_arg, param, param$1);
+      });
   } else {
-    switch (param.tag | 0) {
-      case 0 : 
-          var partial_arg = param[0];
-          return (function (param, param$1) {
-              return canBeFulfilled$4(partial_arg, param, param$1);
-            });
-      case 1 : 
-          var partial_arg$1 = param[0];
-          return (function (param, param$1) {
-              return canBeFulfilled$1(partial_arg$1, param, param$1);
-            });
-      case 2 : 
-          var partial_arg$2 = param[0];
-          return (function (param, param$1) {
-              return canBeFulfilled$3(partial_arg$2, param, param$1);
-            });
-      
-    }
+    var partial_arg$1 = param[0];
+    return (function (param, param$1) {
+        return canBeFulfilled$4(partial_arg$1, param, param$1);
+      });
   }
 }
 
@@ -273,16 +251,10 @@ function encode$5(policy) {
     } else {
       return encode$2(policy);
     }
+  } else if (policy.tag) {
+    return encode$3(policy[0]);
   } else {
-    switch (policy.tag | 0) {
-      case 0 : 
-          return encode$4(policy[0]);
-      case 1 : 
-          return encode$1(policy[0]);
-      case 2 : 
-          return encode$3(policy[0]);
-      
-    }
+    return encode$4(policy[0]);
   }
 }
 
@@ -292,13 +264,11 @@ function decode$3(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "AtLeast" : 
-        return /* AtLeast */Block.__(2, [decode$1(raw)]);
+        return /* AtLeast */Block.__(1, [decode$1(raw)]);
     case "Percentage" : 
         return /* Percentage */Block.__(0, [decode$2(raw)]);
     case "Unanimous" : 
         return /* Unanimous */0;
-    case "UnanimousMinusN" : 
-        return /* UnanimousMinusN */Block.__(1, [decode(raw)]);
     case "UnanimousMinusOne" : 
         return /* UnanimousMinusOne */1;
     default:
@@ -385,7 +355,6 @@ exports.Percentage = Percentage;
 exports.unanimous = unanimous;
 exports.unanimousMinusOne = unanimousMinusOne;
 exports.percentage = percentage;
-exports.unanimousMinusN = unanimousMinusN;
 exports.atLeast = atLeast;
 exports.fulfilled = fulfilled$5;
 exports.canBeFulfilled = canBeFulfilled$5;

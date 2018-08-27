@@ -14,7 +14,6 @@ var MInput = require("./components/MInput.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
-var PolicyText = require("./text/PolicyText.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var Environment = require("../web/Environment.bs.js");
@@ -334,7 +333,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                     return Curry._1(send, /* Freeze */3);
                                                   }), (function () {
                                                     return Curry._1(send, /* Reset */4);
-                                                  }), match[/* canSubmitProposal */5], undefined, undefined, cmdStatus, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]))), warning, /* array */[]));
+                                                  }), match[/* canSubmitProposal */5], undefined, undefined, cmdStatus, /* array */[])))), undefined, warning, /* array */[]));
               }
               
             }),

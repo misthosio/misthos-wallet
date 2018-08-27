@@ -101,13 +101,11 @@ type t =
   | Unanimous
   | UnanimousMinusOne
   | Percentage(Percentage.t)
-  | UnanimousMinusN(UnanimousMinusN.t)
   | AtLeast(AtLeast.t);
 
 let unanimous = Unanimous;
 let unanimousMinusOne = UnanimousMinusOne;
 let percentage = percentage => Percentage({percentage: percentage});
-let unanimousMinusN = n => UnanimousMinusN({n: n});
 let atLeast = n => AtLeast({n: n});
 
 let fulfilled =
@@ -115,7 +113,6 @@ let fulfilled =
   | Unanimous => Unanimous.fulfilled
   | UnanimousMinusOne => UnanimousMinusOne.fulfilled
   | Percentage(t) => Percentage.fulfilled(t)
-  | UnanimousMinusN(t) => UnanimousMinusN.fulfilled(t)
   | AtLeast(t) => AtLeast.fulfilled(t);
 
 let canBeFulfilled =
@@ -123,7 +120,6 @@ let canBeFulfilled =
   | Unanimous => Unanimous.canBeFulfilled
   | UnanimousMinusOne => UnanimousMinusOne.canBeFulfilled
   | Percentage(t) => Percentage.canBeFulfilled(t)
-  | UnanimousMinusN(t) => UnanimousMinusN.canBeFulfilled(t)
   | AtLeast(t) => AtLeast.canBeFulfilled(t);
 
 let eq = (p1, p2) => p1 == p2;
@@ -135,7 +131,6 @@ let encode = policy =>
   | Unanimous => Unanimous.encode(policy)
   | UnanimousMinusOne => UnanimousMinusOne.encode(policy)
   | Percentage(p) => Percentage.encode(p)
-  | UnanimousMinusN(p) => UnanimousMinusN.encode(p)
   | AtLeast(p) => AtLeast.encode(p)
   };
 
@@ -147,7 +142,6 @@ let decode = raw => {
   | "Unanimous" => Unanimous
   | "UnanimousMinusOne" => UnanimousMinusOne
   | "Percentage" => Percentage(Percentage.decode(raw))
-  | "UnanimousMinusN" => UnanimousMinusN(UnanimousMinusN.decode(raw))
   | "AtLeast" => AtLeast(AtLeast.decode(raw))
   | _ => raise(UnknownPolicy(raw))
   };

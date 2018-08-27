@@ -585,7 +585,6 @@ let make =
                   </div>;
                 }
               )
-        area5={<MTypography variant=`Body1> PolicyText.payout </MTypography>}
       />
     };
   },

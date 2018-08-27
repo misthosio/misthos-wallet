@@ -13,7 +13,6 @@ var Partner = require("./components/Partner.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
-var PolicyText = require("./text/PolicyText.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -209,20 +208,6 @@ function make(viewData, commands, cmdStatus, _) {
                                   return Curry._1(commands[/* reset */0], /* () */0);
                                 }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */4]) > 0 ? ReasonReact.element(undefined, undefined, MaterialUi_SnackbarContent.make(undefined, undefined, Js_primitive.some(ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")), undefined, undefined, undefined, undefined, undefined, /* array */[])) : null);
                 }
-                var tmp$2;
-                var exit$1 = 0;
-                if (txId !== undefined && explorerLink !== undefined) {
-                  tmp$2 = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
-                                      className: link,
-                                      href: explorerLink,
-                                      target: "_blank"
-                                    }, ViewCommon.text(txId))])));
-                } else {
-                  exit$1 = 2;
-                }
-                if (exit$1 === 2) {
-                  tmp$2 = ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]));
-                }
                 return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Payout Details")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
                                         className: ScrollList.containerStyles
                                       }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[date !== undefined ? ViewCommon.text("Payout completed on " + Js_primitive.valFromOption(date).toDateString()) : ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match[/* proposedBy */2]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
@@ -246,7 +231,11 @@ function make(viewData, commands, cmdStatus, _) {
                                                 React.createElement("div", {
                                                       className: total
                                                     }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, total, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                              ])))), Js_primitive.some(tmp), Js_primitive.some(tmp$2), undefined, /* array */[]));
+                                              ])))), Js_primitive.some(tmp), Js_primitive.some(txId !== undefined && explorerLink !== undefined ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
+                                                        className: link,
+                                                        href: explorerLink,
+                                                        target: "_blank"
+                                                      }, ViewCommon.text(txId))]))) : null), undefined, /* array */[]));
               }
               
             }),
