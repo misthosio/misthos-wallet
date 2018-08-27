@@ -5,6 +5,26 @@ type utxo = {
   amount: BTC.t,
   confirmations: int,
 };
+module UtxoCmp = {
+  let compareUtxos =
+    (.
+      {txId: id1, txOutputN: out1}: utxo,
+      {txId: id2, txOutputN: out2}: utxo,
+    ) => {
+      let c = compare(id1, id2);
+      if (c != 0) {
+        c;
+      } else {
+        compare(out1, out2);
+      };
+    };
+  include Belt.Id.MakeComparableU({
+    type t = utxo;
+    let cmp = compareUtxos;
+  });
+};
+type utxoSet = Belt.Set.t(UtxoCmp.t, UtxoCmp.identity);
+let emptyUtxoSet = Belt.Set.make(~id=(module UtxoCmp));
 
 type txInfo = {
   txId: string,
@@ -20,7 +40,7 @@ type broadcastResult =
 
 module type NetworkClientInterface = {
   let network: Bitcoin.Networks.t;
-  let getUTXOs: list(string) => Js.Promise.t(list(utxo));
+  let getUTXOs: list(string) => Js.Promise.t(utxoSet);
   let getTransactionInfo: Belt.Set.String.t => Js.Promise.t(list(txInfo));
   let getTransactionHex:
     array(string) => Js.Promise.t(array((string, string)));

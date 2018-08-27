@@ -146,7 +146,7 @@ let make = (~viewData: ViewData.t, _children) => {
       viewData.proposedAdditions
       |. List.map((partner: ViewData.partnerProcess) =>
            <Partner
-             key=(UserId.toString(partner.data.userId) ++ "-prospect")
+             key=(ProcessId.toString(partner.processId) ++ "-prospect")
              partnerId=partner.data.userId
              onClick=(
                Router.clickToRoute(

@@ -10,7 +10,10 @@ type state = {
 let make =
     (
       {userId, issuerKeyPair}: SessionData.t,
-      {processId: custodianProcessId, data: {partnerId}}: Custodian.Proposed.t,
+      {
+        processId: custodianProcessId,
+        data: {partnerId, partnerApprovalProcess},
+      }: Custodian.Proposed.t,
       log,
     ) => {
   let process = {
@@ -26,7 +29,7 @@ let make =
               ),
             )) :
             None,
-        completed: false,
+        completed: UserId.neq(partnerId, userId),
       });
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
@@ -52,6 +55,26 @@ let make =
               pendingEvent: None,
               completed: true,
             }
+          | (PartnerDenied({processId}), true)
+              when ProcessId.eq(processId, partnerApprovalProcess) => {
+              pendingEvent: None,
+              completed: true,
+            }
+          | (PartnerRemovalAccepted({data: {lastPartnerProcess}}), true)
+              when ProcessId.eq(lastPartnerProcess, partnerApprovalProcess) => {
+              pendingEvent: None,
+              completed: true,
+            }
+          | (CustodianDenied({processId}), true)
+              when ProcessId.eq(processId, custodianProcessId) => {
+              pendingEvent: None,
+              completed: true,
+            }
+          | (CustodianRemovalAccepted({processId}), true)
+              when ProcessId.eq(processId, custodianProcessId) => {
+              pendingEvent: None,
+              completed: true,
+            }
           | _ => state^
           }
         );
@@ -59,6 +82,8 @@ let make =
     pub processCompleted = () => state^.completed;
     pub pendingEvent = () => state^.pendingEvent
   };
-  log |> EventLog.reduce((_, item) => process#receive(item), ());
+  if (UserId.eq(partnerId, userId)) {
+    log |> EventLog.reduce((_, item) => process#receive(item), ());
+  };
   process;
 };

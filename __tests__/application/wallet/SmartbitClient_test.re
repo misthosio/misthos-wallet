@@ -5,31 +5,28 @@ open Jest;
 open Expect;
 
 let () =
-  describe("BlockchainInfoClient", () => {
+  describe("SmartbitClient", () => {
     testPromise(~timeout=50000, "getUTXOs", () =>
       Js.Promise.(
-        BlockchainInfoClient.getUTXOs(
-          BlockchainInfoClient.mainnetConfig,
-          ["3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r"],
+        SmartbitClient.getUTXOs(
+          {subdomain: "api"},
+          ["1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"],
         )
         |> then_(res =>
-             expect(res |> Belt.Set.size) |> toBeGreaterThan(200) |> resolve
+             expect(res |> Belt.Set.size) |> toBeGreaterThan(500) |> resolve
            )
       )
     );
     testPromise(~timeout=50000, "blockheight", () =>
       Js.Promise.(
-        BlockchainInfoClient.getCurrentBlockHeight(
-          {subdomain: "", network: Bitcoin.Networks.bitcoin},
-          (),
-        )
+        SmartbitClient.getCurrentBlockHeight({subdomain: "api"}, ())
         |> then_(res => expect(res) |> toBeGreaterThan(530440) |> resolve)
       )
     );
     testPromise(~timeout=50000, "getTransactionHex", () =>
       Js.Promise.(
-        BlockchainInfoClient.getTransactionHex(
-          {subdomain: "", network: Bitcoin.Networks.bitcoin},
+        SmartbitClient.getTransactionHex(
+          {subdomain: "api"},
           [|
             "b6f6991d03df0e2e04dafffcd6bc418aac66049e2cd74b80f14ac86db1e3f0da",
           |],

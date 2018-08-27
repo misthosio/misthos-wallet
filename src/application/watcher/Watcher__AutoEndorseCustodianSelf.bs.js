@@ -15,7 +15,8 @@ var class_tables = [
 ];
 
 function make(param, param$1, log) {
-  var partnerId = param$1[/* data */6][/* partnerId */0];
+  var match = param$1[/* data */6];
+  var partnerId = match[/* partnerId */0];
   var custodianProcessId = param$1[/* processId */0];
   var userId = param[/* userId */0];
   if (!class_tables[0]) {
@@ -42,7 +43,20 @@ function make(param, param$1, log) {
               var match = PrimitiveTypes.UserId[/* eq */5](env$1[2], env$1[0]);
               var tmp;
               if (match) {
+                var exit = 0;
                 switch ($$event.tag | 0) {
+                  case 5 : 
+                      tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[3]) ? /* record */[
+                          /* pendingEvent */undefined,
+                          /* completed */true
+                        ] : self$1[state][0];
+                      break;
+                  case 10 : 
+                      tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[3]) ? /* record */[
+                          /* pendingEvent */undefined,
+                          /* completed */true
+                        ] : self$1[state][0];
+                      break;
                   case 16 : 
                       if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* proposerId */4], env$1[0])) {
                         var init = self$1[state][0];
@@ -62,14 +76,20 @@ function make(param, param$1, log) {
                         ] : self$1[state][0];
                       break;
                   case 19 : 
-                      tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[1]) ? /* record */[
-                          /* pendingEvent */undefined,
-                          /* completed */true
-                        ] : self$1[state][0];
+                  case 20 : 
+                  case 24 : 
+                      exit = 1;
                       break;
                   default:
                     tmp = self$1[state][0];
                 }
+                if (exit === 1) {
+                  tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[1]) ? /* record */[
+                      /* pendingEvent */undefined,
+                      /* completed */true
+                    ] : self$1[state][0];
+                }
+                
               } else {
                 tmp = /* record */[
                   /* pendingEvent */undefined,
@@ -96,7 +116,7 @@ function make(param, param$1, log) {
               env$1[2],
               Event.makeCustodianEndorsed(env$1[3], env$1[1])
             ] : undefined,
-          /* completed */false
+          /* completed */PrimitiveTypes.UserId[/* neq */6](env$1[4], env$1[1])
         ]];
       self[env] = env$1[0];
       return self;
@@ -107,7 +127,8 @@ function make(param, param$1, log) {
   var envs_000 = [
     userId,
     custodianProcessId,
-    partnerId
+    partnerId,
+    match[/* partnerApprovalProcess */1]
   ];
   var envs_002 = param[/* issuerKeyPair */2];
   var envs = [
@@ -118,9 +139,11 @@ function make(param, param$1, log) {
     partnerId
   ];
   var $$process = Curry._1(class_tables[0], envs);
-  Curry._3(EventLog.reduce, (function (_, item) {
-          return Caml_oo_curry.js2(710435299, 1, $$process, item);
-        }), /* () */0, log);
+  if (PrimitiveTypes.UserId[/* eq */5](partnerId, userId)) {
+    Curry._3(EventLog.reduce, (function (_, item) {
+            return Caml_oo_curry.js2(710435299, 1, $$process, item);
+          }), /* () */0, log);
+  }
   return $$process;
 }
 

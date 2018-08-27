@@ -6,6 +6,7 @@ var List = require("bs-platform/lib/js/list.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Bitcoin = require("../../src/ffi/Bitcoin.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -37,7 +38,7 @@ function selectUTXOs(utxos, totalAmount) {
           return u1[/* amount */3].comparedTo(u2[/* amount */3]);
         }), List.filter((function (param) {
                 return param[/* confirmations */4] > 0;
-              }))(utxos));
+              }))(Belt_Set.toList(utxos)));
   return List.fold_left((function (param, utxo) {
                 var total = param[1];
                 var result = param[0];

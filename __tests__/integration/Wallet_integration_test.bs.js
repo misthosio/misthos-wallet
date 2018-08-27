@@ -129,6 +129,7 @@ describe("Wallet_integration", (function () {
                                           ]
                                         ]
                                       ]).then((function (utxos) {
+                                        var utxos$1 = Belt_Set.toList(utxos);
                                         var walletOneAddresses_000 = /* tuple */[
                                           address1[/* address */1][/* displayAddress */5],
                                           address1
@@ -201,7 +202,7 @@ describe("Wallet_integration", (function () {
                                                     return 0;
                                                   }
                                                 }
-                                              }), utxos);
+                                              }), utxos$1);
                                         var walletInfoCollector = oneKeyChainWallet[0][/* walletInfoCollector */3];
                                         var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
                                         var unlockedInputs = WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
@@ -246,7 +247,7 @@ describe("Wallet_integration", (function () {
                         return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(oneKeyChainWallet[0])).then((function (utxos) {
                                       return Promise.resolve(Jest.Expect[/* toEqual */12](oneKeyChainWalletTotal.minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                                 return utxo[/* amount */3].plus(total);
-                                                              }), BTC.zero, utxos))));
+                                                              }), BTC.zero, Belt_Set.toList(utxos)))));
                                     }));
                       }));
                 return Jest.testPromise("2 of 3 wallet", 80000, (function () {
@@ -296,7 +297,7 @@ describe("Wallet_integration", (function () {
                                             return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                           return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                                                     return utxo[/* amount */3].plus(total);
-                                                                                  }), BTC.zero, utxos))));
+                                                                                  }), BTC.zero, Belt_Set.toList(utxos)))));
                                                         }));
                                           }));
                             }));

@@ -129,8 +129,8 @@ let scanTransactions = ({addresses, transactions} as collector) =>
     ))
     |> then_(((utxos, blockHeight)) =>
          utxos
-         |. List.mapU((. {txId}: Network.txInput) => txId)
-         |> List.toArray
+         |. Set.toArray
+         |. Array.mapU((. {txId}: Network.txInput) => txId)
          |> Set.String.mergeMany(transactions.transactionsOfInterest)
          |. Set.String.diff(
               transactions.confirmedTransactions
@@ -157,8 +157,8 @@ let collectData = log =>
 
 let filterUTXOs = (knownTxs, utxos) =>
   utxos
-  |. List.keepMapU((. {txId} as utxo: Network.txInput) =>
-       knownTxs |. Set.String.has(txId) ? None : Some(utxo)
+  |. Set.keepU((. {txId}: Network.txInput) =>
+       ! (knownTxs |. Set.String.has(txId))
      );
 
 let detectIncomeFromVenture = (ventureId, eventLog) => {
@@ -178,6 +178,7 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
          let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
            utxos
+           |> Set.toList
            |. List.mapU((. utxo: Network.txInput) =>
                 Event.Income.Detected.make(
                   ~address=utxo.address,

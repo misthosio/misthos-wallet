@@ -25,6 +25,7 @@ let defaultFee = BTC.fromSatoshis(1000L);
 let selectUTXOs = (utxos, totalAmount) => {
   let utxos =
     utxos
+    |> Belt.Set.toList
     |> List.filter(({confirmations}: utxo) => confirmations > 0)
     |> List.sort((u1: utxo, u2: utxo) =>
          u1.amount |. BTC.comparedTo(u2.amount)

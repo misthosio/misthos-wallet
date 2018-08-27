@@ -6,8 +6,11 @@ var Json = require("@glennsl/bs-json/src/Json.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
+var WalletTypes = require("./WalletTypes.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 
 function makeAuthHeaders(param) {
@@ -127,19 +130,19 @@ function getUTXOs(config, addresses) {
                           ]));
                   return rpcCall(config, jsonRPCUnspent);
                 })).then((function (obj) {
-                return Promise.resolve(Json_decode.field("result", (function (param) {
-                                  return Json_decode.withDefault(/* [] */0, (function (param) {
-                                                return Json_decode.list((function (utxo) {
-                                                              return /* record */[
-                                                                      /* txId */Json_decode.field("txid", Json_decode.string, utxo),
-                                                                      /* txOutputN */Json_decode.field("vout", Json_decode.$$int, utxo),
-                                                                      /* address */Json_decode.field("address", Json_decode.string, utxo),
-                                                                      /* amount */BTC.fromFloat(Json_decode.field("amount", Json_decode.$$float, utxo)),
-                                                                      /* confirmations */Json_decode.field("confirmations", Json_decode.$$int, utxo)
-                                                                    ];
-                                                            }), param);
-                                              }), param);
-                                }), obj));
+                return Promise.resolve(Belt_Set.mergeMany(WalletTypes.emptyUtxoSet, Belt_List.toArray(Json_decode.field("result", (function (param) {
+                                          return Json_decode.withDefault(/* [] */0, (function (param) {
+                                                        return Json_decode.list((function (utxo) {
+                                                                      return /* record */[
+                                                                              /* txId */Json_decode.field("txid", Json_decode.string, utxo),
+                                                                              /* txOutputN */Json_decode.field("vout", Json_decode.$$int, utxo),
+                                                                              /* address */Json_decode.field("address", Json_decode.string, utxo),
+                                                                              /* amount */BTC.fromFloat(Json_decode.field("amount", Json_decode.$$float, utxo)),
+                                                                              /* confirmations */Json_decode.field("confirmations", Json_decode.$$int, utxo)
+                                                                            ];
+                                                                    }), param);
+                                                      }), param);
+                                        }), obj))));
               }));
 }
 
