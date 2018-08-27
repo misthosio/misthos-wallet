@@ -392,4 +392,122 @@ let () = {
       );
     });
   });
+  describe("AtLeast", () => {
+    let p = Policy.atLeast(2);
+    test("fulfilled", () =>
+      expect(
+        p
+        |> Policy.fulfilled(
+             ~eligible=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
+           ),
+      )
+      |> toBe(true)
+    );
+    test("fullfilled with n votes", () =>
+      expect(
+        p
+        |> Policy.fulfilled(
+             ~eligible=
+               [|
+                 "a" |> UserId.fromString,
+                 "b" |> UserId.fromString,
+                 "c" |> UserId.fromString,
+               |]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
+           ),
+      )
+      |> toBe(true)
+    );
+    test("not fullfilled", () =>
+      expect(
+        p
+        |> Policy.fulfilled(
+             ~eligible=
+               [|
+                 "a" |> UserId.fromString,
+                 "b" |> UserId.fromString,
+                 "c" |> UserId.fromString,
+                 "d" |> UserId.fromString,
+               |]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString|] |> Set.mergeMany(UserId.emptySet),
+           ),
+      )
+      |> toBe(false)
+    );
+    test("at least one eligible", () =>
+      expect(
+        p
+        |> Policy.fulfilled(
+             ~eligible=UserId.emptySet,
+             ~endorsed=UserId.emptySet,
+           ),
+      )
+      |> toBe(false)
+    );
+    describe("canBeFullfilled", () => {
+      test("with all but n - 1 rejections", () =>
+        expect(
+          p
+          |> Policy.canBeFulfilled(
+               ~eligible=
+                 [|
+                   "a" |> UserId.fromString,
+                   "b" |> UserId.fromString,
+                   "c" |> UserId.fromString,
+                   "d" |> UserId.fromString,
+                 |]
+                 |> Set.mergeMany(UserId.emptySet),
+               ~rejected=
+                 [|
+                   "a" |> UserId.fromString,
+                   "b" |> UserId.fromString,
+                   "c" |> UserId.fromString,
+                 |]
+                 |> Set.mergeMany(UserId.emptySet),
+             ),
+        )
+        |> toBe(false)
+      );
+      test("with all n but rejections", () =>
+        expect(
+          p
+          |> Policy.canBeFulfilled(
+               ~eligible=
+                 [|
+                   "a" |> UserId.fromString,
+                   "b" |> UserId.fromString,
+                   "c" |> UserId.fromString,
+                 |]
+                 |> Set.mergeMany(UserId.emptySet),
+               ~rejected=
+                 [|"a" |> UserId.fromString|]
+                 |> Set.mergeMany(UserId.emptySet),
+             ),
+        )
+        |> toBe(true)
+      );
+      test("with zero rejections", () =>
+        expect(
+          p
+          |> Policy.canBeFulfilled(
+               ~eligible=
+                 [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+                 |> Set.mergeMany(UserId.emptySet),
+               ~rejected=UserId.emptySet,
+             ),
+        )
+        |> toBe(true)
+      );
+    });
+  });
 };

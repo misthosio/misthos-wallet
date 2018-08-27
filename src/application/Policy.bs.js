@@ -110,8 +110,8 @@ var UnanimousMinusOne = /* module */[
 
 function fulfilled$3(param, eligible, endorsed) {
   var endorsed$1 = Belt_Set.intersect(eligible, endorsed);
-  var eligibleSize = Belt_Set.size(eligible);
-  if (eligibleSize > 0 && Belt_Set.size(endorsed$1) > eligibleSize * (param[/* percentage */0] / 100)) {
+  var nEndorsed = Belt_Set.size(endorsed$1);
+  if (nEndorsed >= 1 && nEndorsed >= param[/* n */0] && Belt_Set.size(eligible) > 0) {
     return true;
   } else {
     return fulfilled(eligible, endorsed$1);
@@ -120,10 +120,52 @@ function fulfilled$3(param, eligible, endorsed) {
 
 function canBeFulfilled$3(param, eligible, rejected) {
   var releventRejections = Belt_Set.intersect(eligible, rejected);
-  return Belt_Set.size(releventRejections) < Belt_Set.size(eligible) * ((100 - param[/* percentage */0] | 0) / 100);
+  return (Belt_Set.size(eligible) - Belt_Set.size(releventRejections) | 0) >= param[/* n */0];
 }
 
 function encode$3(param) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "AtLeast",
+                "AtLeast"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "n",
+                  param[/* n */0]
+                ],
+                /* [] */0
+              ]
+            ]);
+}
+
+function decode$1(raw) {
+  return /* record */[/* n */Json_decode.field("n", Json_decode.$$int, raw)];
+}
+
+var AtLeast = /* module */[
+  /* fulfilled */fulfilled$3,
+  /* canBeFulfilled */canBeFulfilled$3,
+  /* encode */encode$3,
+  /* decode */decode$1
+];
+
+function fulfilled$4(param, eligible, endorsed) {
+  var endorsed$1 = Belt_Set.intersect(eligible, endorsed);
+  var eligibleSize = Belt_Set.size(eligible);
+  if (eligibleSize > 0 && Belt_Set.size(endorsed$1) > eligibleSize * (param[/* percentage */0] / 100)) {
+    return true;
+  } else {
+    return fulfilled(eligible, endorsed$1);
+  }
+}
+
+function canBeFulfilled$4(param, eligible, rejected) {
+  var releventRejections = Belt_Set.intersect(eligible, rejected);
+  return Belt_Set.size(releventRejections) < Belt_Set.size(eligible) * ((100 - param[/* percentage */0] | 0) / 100);
+}
+
+function encode$4(param) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -139,15 +181,15 @@ function encode$3(param) {
             ]);
 }
 
-function decode$1(raw) {
+function decode$2(raw) {
   return /* record */[/* percentage */Json_decode.field("percentage", Json_decode.$$int, raw)];
 }
 
 var Percentage = /* module */[
-  /* fulfilled */fulfilled$3,
-  /* canBeFulfilled */canBeFulfilled$3,
-  /* encode */encode$3,
-  /* decode */decode$1
+  /* fulfilled */fulfilled$4,
+  /* canBeFulfilled */canBeFulfilled$4,
+  /* encode */encode$4,
+  /* decode */decode$2
 ];
 
 function percentage(percentage$1) {
@@ -158,43 +200,65 @@ function unanimousMinusN(n) {
   return /* UnanimousMinusN */Block.__(1, [/* record */[/* n */n]]);
 }
 
-function fulfilled$4(param) {
+function atLeast(n) {
+  return /* AtLeast */Block.__(2, [/* record */[/* n */n]]);
+}
+
+function fulfilled$5(param) {
   if (typeof param === "number") {
     if (param === 0) {
       return fulfilled;
     } else {
       return fulfilled$2;
     }
-  } else if (param.tag) {
-    var partial_arg = param[0];
-    return (function (param, param$1) {
-        return fulfilled$1(partial_arg, param, param$1);
-      });
   } else {
-    var partial_arg$1 = param[0];
-    return (function (param, param$1) {
-        return fulfilled$3(partial_arg$1, param, param$1);
-      });
+    switch (param.tag | 0) {
+      case 0 : 
+          var partial_arg = param[0];
+          return (function (param, param$1) {
+              return fulfilled$4(partial_arg, param, param$1);
+            });
+      case 1 : 
+          var partial_arg$1 = param[0];
+          return (function (param, param$1) {
+              return fulfilled$1(partial_arg$1, param, param$1);
+            });
+      case 2 : 
+          var partial_arg$2 = param[0];
+          return (function (param, param$1) {
+              return fulfilled$3(partial_arg$2, param, param$1);
+            });
+      
+    }
   }
 }
 
-function canBeFulfilled$4(param) {
+function canBeFulfilled$5(param) {
   if (typeof param === "number") {
     if (param === 0) {
       return canBeFulfilled;
     } else {
       return canBeFulfilled$2;
     }
-  } else if (param.tag) {
-    var partial_arg = param[0];
-    return (function (param, param$1) {
-        return canBeFulfilled$1(partial_arg, param, param$1);
-      });
   } else {
-    var partial_arg$1 = param[0];
-    return (function (param, param$1) {
-        return canBeFulfilled$3(partial_arg$1, param, param$1);
-      });
+    switch (param.tag | 0) {
+      case 0 : 
+          var partial_arg = param[0];
+          return (function (param, param$1) {
+              return canBeFulfilled$4(partial_arg, param, param$1);
+            });
+      case 1 : 
+          var partial_arg$1 = param[0];
+          return (function (param, param$1) {
+              return canBeFulfilled$1(partial_arg$1, param, param$1);
+            });
+      case 2 : 
+          var partial_arg$2 = param[0];
+          return (function (param, param$1) {
+              return canBeFulfilled$3(partial_arg$2, param, param$1);
+            });
+      
+    }
   }
 }
 
@@ -202,27 +266,35 @@ var eq = Caml_obj.caml_equal;
 
 var neq = Caml_obj.caml_notequal;
 
-function encode$4(policy) {
+function encode$5(policy) {
   if (typeof policy === "number") {
     if (policy === 0) {
       return encode(policy);
     } else {
       return encode$2(policy);
     }
-  } else if (policy.tag) {
-    return encode$1(policy[0]);
   } else {
-    return encode$3(policy[0]);
+    switch (policy.tag | 0) {
+      case 0 : 
+          return encode$4(policy[0]);
+      case 1 : 
+          return encode$1(policy[0]);
+      case 2 : 
+          return encode$3(policy[0]);
+      
+    }
   }
 }
 
 var UnknownPolicy = Caml_exceptions.create("Policy.UnknownPolicy");
 
-function decode$2(raw) {
+function decode$3(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
+    case "AtLeast" : 
+        return /* AtLeast */Block.__(2, [decode$1(raw)]);
     case "Percentage" : 
-        return /* Percentage */Block.__(0, [decode$1(raw)]);
+        return /* Percentage */Block.__(0, [decode$2(raw)]);
     case "Unanimous" : 
         return /* Unanimous */0;
     case "UnanimousMinusN" : 
@@ -249,27 +321,27 @@ function encodeInitialPolicies(policies) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "addPartner",
-                encode$4(policies[/* addPartner */0])
+                encode$5(policies[/* addPartner */0])
               ],
               /* :: */[
                 /* tuple */[
                   "addCustodian",
-                  encode$4(policies[/* addCustodian */1])
+                  encode$5(policies[/* addCustodian */1])
                 ],
                 /* :: */[
                   /* tuple */[
                     "removePartner",
-                    encode$4(policies[/* removePartner */2])
+                    encode$5(policies[/* removePartner */2])
                   ],
                   /* :: */[
                     /* tuple */[
                       "removeCustodian",
-                      encode$4(policies[/* removeCustodian */3])
+                      encode$5(policies[/* removeCustodian */3])
                     ],
                     /* :: */[
                       /* tuple */[
                         "payout",
-                        encode$4(policies[/* payout */4])
+                        encode$5(policies[/* payout */4])
                       ],
                       /* [] */0
                     ]
@@ -281,11 +353,11 @@ function encodeInitialPolicies(policies) {
 
 function decodeInitialPolicies(raw) {
   return /* record */[
-          /* addPartner */Json_decode.field("addPartner", decode$2, raw),
-          /* addCustodian */Json_decode.field("addCustodian", decode$2, raw),
-          /* removePartner */Json_decode.field("removePartner", decode$2, raw),
-          /* removeCustodian */Json_decode.field("removeCustodian", decode$2, raw),
-          /* payout */Json_decode.field("payout", decode$2, raw)
+          /* addPartner */Json_decode.field("addPartner", decode$3, raw),
+          /* addCustodian */Json_decode.field("addCustodian", decode$3, raw),
+          /* removePartner */Json_decode.field("removePartner", decode$3, raw),
+          /* removeCustodian */Json_decode.field("removeCustodian", decode$3, raw),
+          /* payout */Json_decode.field("payout", decode$3, raw)
         ];
 }
 
@@ -308,18 +380,20 @@ var defaultPayout = /* Unanimous */0;
 exports.Unanimous = Unanimous;
 exports.UnanimousMinusN = UnanimousMinusN;
 exports.UnanimousMinusOne = UnanimousMinusOne;
+exports.AtLeast = AtLeast;
 exports.Percentage = Percentage;
 exports.unanimous = unanimous;
 exports.unanimousMinusOne = unanimousMinusOne;
 exports.percentage = percentage;
 exports.unanimousMinusN = unanimousMinusN;
-exports.fulfilled = fulfilled$4;
-exports.canBeFulfilled = canBeFulfilled$4;
+exports.atLeast = atLeast;
+exports.fulfilled = fulfilled$5;
+exports.canBeFulfilled = canBeFulfilled$5;
 exports.eq = eq;
 exports.neq = neq;
-exports.encode = encode$4;
+exports.encode = encode$5;
 exports.UnknownPolicy = UnknownPolicy;
-exports.decode = decode$2;
+exports.decode = decode$3;
 exports.defaultMetaPolicy = defaultMetaPolicy;
 exports.defaultAddPartner = defaultAddPartner;
 exports.defaultAddCustodian = defaultAddCustodian;

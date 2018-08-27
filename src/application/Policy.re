@@ -43,6 +43,28 @@ module UnanimousMinusOne = {
     Json.Encode.(object_([("type", string("UnanimousMinusOne"))]));
 };
 
+module AtLeast = {
+  type t = {n: int};
+  let fulfilled = ({n}, ~eligible: UserId.set, ~endorsed: UserId.set) => {
+    let endorsed = Set.intersect(eligible, endorsed);
+    let nEndorsed = endorsed |> Set.size;
+    nEndorsed >= 1
+    && nEndorsed >= n
+    && eligible
+    |> Set.size > 0
+    || Unanimous.fulfilled(~eligible, ~endorsed);
+  };
+  let canBeFulfilled = ({n}, ~eligible: UserId.set, ~rejected: UserId.set) => {
+    let releventRejections = Set.intersect(eligible, rejected);
+    Set.size(eligible) - Set.size(releventRejections) >= n;
+  };
+  let encode = ({n}) =>
+    Json.Encode.(
+      object_([("AtLeast", string("AtLeast")), ("n", int(n))])
+    );
+  let decode = raw => Json.Decode.{n: raw |> field("n", int)};
+};
+
 module Percentage = {
   type t = {percentage: int};
   let fulfilled =
@@ -79,26 +101,30 @@ type t =
   | Unanimous
   | UnanimousMinusOne
   | Percentage(Percentage.t)
-  | UnanimousMinusN(UnanimousMinusN.t);
+  | UnanimousMinusN(UnanimousMinusN.t)
+  | AtLeast(AtLeast.t);
 
 let unanimous = Unanimous;
 let unanimousMinusOne = UnanimousMinusOne;
 let percentage = percentage => Percentage({percentage: percentage});
 let unanimousMinusN = n => UnanimousMinusN({n: n});
+let atLeast = n => AtLeast({n: n});
 
 let fulfilled =
   fun
   | Unanimous => Unanimous.fulfilled
   | UnanimousMinusOne => UnanimousMinusOne.fulfilled
   | Percentage(t) => Percentage.fulfilled(t)
-  | UnanimousMinusN(t) => UnanimousMinusN.fulfilled(t);
+  | UnanimousMinusN(t) => UnanimousMinusN.fulfilled(t)
+  | AtLeast(t) => AtLeast.fulfilled(t);
 
 let canBeFulfilled =
   fun
   | Unanimous => Unanimous.canBeFulfilled
   | UnanimousMinusOne => UnanimousMinusOne.canBeFulfilled
   | Percentage(t) => Percentage.canBeFulfilled(t)
-  | UnanimousMinusN(t) => UnanimousMinusN.canBeFulfilled(t);
+  | UnanimousMinusN(t) => UnanimousMinusN.canBeFulfilled(t)
+  | AtLeast(t) => AtLeast.canBeFulfilled(t);
 
 let eq = (p1, p2) => p1 == p2;
 
@@ -110,6 +136,7 @@ let encode = policy =>
   | UnanimousMinusOne => UnanimousMinusOne.encode(policy)
   | Percentage(p) => Percentage.encode(p)
   | UnanimousMinusN(p) => UnanimousMinusN.encode(p)
+  | AtLeast(p) => AtLeast.encode(p)
   };
 
 exception UnknownPolicy(Js.Json.t);
@@ -121,6 +148,7 @@ let decode = raw => {
   | "UnanimousMinusOne" => UnanimousMinusOne
   | "Percentage" => Percentage(Percentage.decode(raw))
   | "UnanimousMinusN" => UnanimousMinusN(UnanimousMinusN.decode(raw))
+  | "AtLeast" => AtLeast(AtLeast.decode(raw))
   | _ => raise(UnknownPolicy(raw))
   };
 };
