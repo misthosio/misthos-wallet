@@ -178,7 +178,7 @@ function make(proposal, log) {
                 case 33 : 
                     var broadcastProcess = $$event[0][/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](broadcastProcess, env$1[2])) {
-                      var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], broadcastProcess);
+                      var broadcastInputs = Belt_Map.getWithDefault(self$1[payoutProcesses][0], broadcastProcess, Network.inputSet(/* () */0));
                       var match$2 = Curry._3(env$1[4], self$1[systemIssuer][0], broadcastInputs, env$1[3]);
                       if (match$2 !== undefined) {
                         self$1[result][0] = match$2;

@@ -103,7 +103,8 @@ let make =
       | PayoutFinalized({processId: broadcastProcess})
           when ProcessId.neq(broadcastProcess, processId) =>
         let broadcastInputs =
-          payoutProcesses^ |. Map.getExn(broadcastProcess);
+          payoutProcesses^
+          |. Map.getWithDefault(broadcastProcess, Network.inputSet());
         switch (getResult(systemIssuer^, broadcastInputs, inputs)) {
         | Some(actualResult) =>
           result := Some(actualResult);
