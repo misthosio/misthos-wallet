@@ -18,7 +18,7 @@ function margin(tf, bf) {
               /* :: */[
                 Css.marginBottom(Css.px(Theme.space(bf))),
                 /* :: */[
-                  Css.minHeight(Css.px(29)),
+                  Css.minHeight(Css.px(30)),
                   /* [] */0
                 ]
               ]
