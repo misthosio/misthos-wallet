@@ -18,10 +18,10 @@ let make = _children => {
         title1=("impressum" |> text)
         area3={
           <div>
+            ("Misthos UG" |> line)
             ("Justin Carter" |> line)
-            ("Misthos" |> line)
-            ("Dolziger Str. 15" |> line)
-            ("D10247 Berlin" |> line)
+            ("Friedrichstrasse 171" |> line)
+            ("D10117 Berlin" |> line)
             ("Deutschland" |> line)
             <MTypography variant=`Body1>
               ("Email: " |> text)

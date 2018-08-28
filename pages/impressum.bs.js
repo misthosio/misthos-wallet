@@ -34,7 +34,7 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, true, /* array */[
-                              ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("impressum")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
+                              ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("impressum")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, line("Misthos UG"), line("Justin Carter"), line("Friedrichstrasse 171"), line("D10117 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                         ViewCommon.text("Email: "),
                                                         React.createElement("a", {
                                                               href: "mailto:Contact@misthos.io"
