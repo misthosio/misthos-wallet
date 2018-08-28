@@ -153,7 +153,7 @@ var AtLeast = /* module */[
 function fulfilled$4(param, eligible, endorsed) {
   var endorsed$1 = Belt_Set.intersect(eligible, endorsed);
   var eligibleSize = Belt_Set.size(eligible);
-  if (eligibleSize > 0 && Belt_Set.size(endorsed$1) > eligibleSize * (param[/* percentage */0] / 100)) {
+  if (eligibleSize > 0 && Belt_Set.size(endorsed$1) >= eligibleSize * (param[/* percentage */0] / 100)) {
     return true;
   } else {
     return fulfilled(eligible, endorsed$1);
@@ -162,7 +162,7 @@ function fulfilled$4(param, eligible, endorsed) {
 
 function canBeFulfilled$4(param, eligible, rejected) {
   var releventRejections = Belt_Set.intersect(eligible, rejected);
-  return Belt_Set.size(releventRejections) < Belt_Set.size(eligible) * ((100 - param[/* percentage */0] | 0) / 100);
+  return Belt_Set.size(releventRejections) <= Belt_Set.size(eligible) * ((100 - param[/* percentage */0] | 0) / 100);
 }
 
 function encode$4(param) {

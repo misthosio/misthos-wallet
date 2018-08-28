@@ -72,7 +72,7 @@ module Percentage = {
     eligibleSize > 0
     && endorsed
     |> Set.size
-    |> float_of_int > float_of_int(eligibleSize)
+    |> float_of_int >= float_of_int(eligibleSize)
     *. (float_of_int(percentage) /. 100.)
     || Unanimous.fulfilled(~eligible, ~endorsed);
   };
@@ -81,7 +81,7 @@ module Percentage = {
     let releventRejections = Set.intersect(eligible, rejected);
     releventRejections
     |> Set.size
-    |> float_of_int < float_of_int(Set.size(eligible))
+    |> float_of_int <= float_of_int(Set.size(eligible))
     *. (float_of_int(100 - percentage) /. 100.);
   };
   let encode = ({percentage}) =>

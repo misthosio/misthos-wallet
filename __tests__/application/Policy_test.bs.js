@@ -154,7 +154,7 @@ describe("UnanimousMinusOne", (function () {
       }));
 
 describe("Percentage", (function () {
-        var p = Policy.percentage(50);
+        var p = Policy.percentage(51);
         Jest.test("fulfilled", (function () {
                 var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
                       PrimitiveTypes.UserId[/* fromString */1]("a"),

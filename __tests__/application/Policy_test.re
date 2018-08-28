@@ -191,7 +191,7 @@ let () = {
     });
   });
   describe("Percentage", () => {
-    let p = Policy.percentage(50);
+    let p = Policy.percentage(51);
     test("fulfilled", () =>
       expect(
         p
