@@ -210,6 +210,13 @@ let make =
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails
                       className=Styles.expansionPanelDetails>
+                      <MTypography gutterBottom=true variant=`Body1>
+                        (
+                          {js|These settings determin the governance and security
+                          mechanism of your Venture. They cannot be changed later.|js}
+                          |> text
+                        )
+                      </MTypography>
                       <MTypography gutterBottom=true variant=`Title>
                         ("Endorsement Policies" |> text)
                       </MTypography>
@@ -238,14 +245,6 @@ let make =
                       <MTypography gutterBottom=true variant=`Title>
                         ("Wallet Settings" |> text)
                       </MTypography>
-                      <MTypography gutterBottom=true variant=`Body1>
-                        (
-                          {js|You may adjust the wallet settings for your Venture
-                       here. Once the Venture is created, these settings may not
-                       be changed, so please choose wisely.|js}
-                          |> text
-                        )
-                      </MTypography>
                       <MTypography
                         gutterTop=true gutterBottom=true variant=`Subheading>
                         ("Degrading Multisig" |> text)
@@ -254,8 +253,7 @@ let make =
                         gutterTop=true gutterBottom=true variant=`Body1>
                         (
                           {js|The degrading multisig feature adds a time-release
-                           to funds that have been locked due to custodian
-                           changes.|js}
+                           to funds that are locked due to Partners leaving.|js}
                           |> text
                         )
                       </MTypography>
