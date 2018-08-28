@@ -150,8 +150,6 @@ let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
     }
   );
 
-let defaultPolicy = Policy.unanimous;
-
 type loadResult =
   | Ok(t, array(EventLog.item))
   | CouldNotLoad(Js.Promise.error);
@@ -264,6 +262,7 @@ module Cmd = {
           session: SessionData.t,
           ~name as ventureName,
           ~defaultAccountSettings,
+          ~initialPolicies,
         ) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
@@ -272,7 +271,8 @@ module Cmd = {
           ~creatorId=session.userId,
           ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
           ~defaultAccountSettings,
-          ~metaPolicy=defaultPolicy,
+          ~metaPolicy=Policy.defaultMetaPolicy,
+          ~initialPolicies,
           ~network=session.network,
         );
       (
@@ -850,6 +850,30 @@ module Cmd = {
       Js.Promise.(
         wallet
         |> Wallet.endorsePayout(processId, signatures, session)
+        |> applyMany(venture)
+        |> persist
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
+      );
+    };
+  };
+  module SignPayout = {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
+    let exec =
+        (
+          ~processId,
+          ~signatures: array(option((string, string))),
+          {session, wallet} as venture,
+        ) => {
+      logMessage("Executing 'EndorsePayout' command");
+      Js.Promise.(
+        wallet
+        |> Wallet.signPayout(processId, signatures, session)
         |> applyMany(venture)
         |> persist
         |> then_(

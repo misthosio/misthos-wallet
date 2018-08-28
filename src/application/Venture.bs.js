@@ -341,9 +341,9 @@ function getEventLog(param) {
   return param[/* log */2];
 }
 
-function exec(session, ventureName, defaultAccountSettings) {
+function exec(session, ventureName, defaultAccountSettings, initialPolicies) {
   logMessage("Executing 'Create' command");
-  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), defaultAccountSettings, Policy.unanimous, session[/* network */5]);
+  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), defaultAccountSettings, Policy.defaultMetaPolicy, initialPolicies, session[/* network */5]);
   var makeResult = make(session, ventureCreated[/* ventureId */0]);
   return /* tuple */[
           ventureCreated[/* ventureId */0],
@@ -807,6 +807,23 @@ function exec$13(processId, signatures, venture) {
 
 var EndorsePayout = /* module */[/* exec */exec$13];
 
+function exec$14(processId, signatures, venture) {
+  logMessage("Executing 'EndorsePayout' command");
+  return persist(undefined, applyMany(undefined, venture)(Venture__Wallet.signPayout(processId, signatures, venture[/* session */0], venture[/* wallet */5]))).then((function (param) {
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
+              }));
+}
+
+var SignPayout = /* module */[/* exec */exec$14];
+
 var Index = [
   Venture__Index.load,
   Venture__Index.encode,
@@ -831,7 +848,8 @@ var Cmd = [
   ExposeIncomeAddress,
   ProposePayout,
   RejectPayout,
-  EndorsePayout
+  EndorsePayout,
+  SignPayout
 ];
 
 exports.Index = Index;

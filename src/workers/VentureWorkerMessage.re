@@ -6,7 +6,7 @@ open WalletTypes;
 
 type incoming =
   | UpdateSession(blockstackItems)
-  | Create(string, AccountSettings.t)
+  | Create(string, AccountSettings.t, Policy.initialPolicies)
   | Load(ventureId)
   | JoinVia(ventureId, userId)
   | ProposePartner(ventureId, userId)
@@ -24,6 +24,7 @@ type incoming =
     )
   | RejectPayout(ventureId, processId)
   | EndorsePayout(ventureId, array(option((string, string))), processId)
+  | SignPayout(ventureId, array(option((string, string))), processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
   | NewItemsDetected(ventureId, array(EventLog.item), userId)
   | SyncWallet(
@@ -40,6 +41,7 @@ type encodedIncoming = Js.Json.t;
 
 type cmdSuccess =
   | KeyChainSubmitted
+  | TransactionSigned
   | ProcessStarted(processId)
   | ProcessEndorsed(processId)
   | ProcessRejected(processId);
@@ -76,6 +78,8 @@ let encodeSuccess =
   fun
   | KeyChainSubmitted =>
     Json.Encode.(object_([("type", string("KeyChainSubmitted"))]))
+  | TransactionSigned =>
+    Json.Encode.(object_([("type", string("TransactionSigned"))]))
   | ProcessStarted(processId) =>
     Json.Encode.(
       object_([
@@ -102,6 +106,7 @@ let decodeSuccess = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
   | "KeyChainSubmitted" => KeyChainSubmitted
+  | "TransactionSigned" => TransactionSigned
   | "ProcessStarted" =>
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     ProcessStarted(processId);
@@ -183,12 +188,13 @@ let encodeIncoming =
         ("blockstackItems", WorkerLocalStorage.encodeItems(blockstackItems)),
       ])
     )
-  | Create(name, accountSettings) =>
+  | Create(name, accountSettings, initialPolicies) =>
     Json.Encode.(
       object_([
         ("type", string("Create")),
         ("name", string(name)),
         ("accountSettings", AccountSettings.encode(accountSettings)),
+        ("initialPolicies", Policy.encodeInitialPolicies(initialPolicies)),
       ])
     )
   | Load(ventureId) =>
@@ -289,6 +295,15 @@ let encodeIncoming =
         ("processId", ProcessId.encode(processId)),
       ])
     )
+  | SignPayout(ventureId, signatures, processId) =>
+    Json.Encode.(
+      object_([
+        ("type", string("SignPayout")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("signatures", array(nullable(pair(string, string)), signatures)),
+        ("processId", ProcessId.encode(processId)),
+      ])
+    )
   | ExposeIncomeAddress(ventureId, accountIdx) =>
     Json.Encode.(
       object_([
@@ -352,7 +367,10 @@ let decodeIncoming = raw => {
     let name = raw |> Json.Decode.(field("name", string));
     let accountSettings =
       raw |> Json.Decode.(field("accountSettings", AccountSettings.decode));
-    Create(name, accountSettings);
+    let initialPolicies =
+      raw
+      |> Json.Decode.(field("initialPolicies", Policy.decodeInitialPolicies));
+    Create(name, accountSettings, initialPolicies);
   | "Load" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     Load(ventureId);
@@ -415,6 +433,15 @@ let decodeIncoming = raw => {
            field("signatures", array(optional(pair(string, string))))
          );
     EndorsePayout(ventureId, signatures, processId);
+  | "SignPayout" =>
+    let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
+    let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
+    let signatures =
+      raw
+      |> Json.Decode.(
+           field("signatures", array(optional(pair(string, string))))
+         );
+    SignPayout(ventureId, signatures, processId);
   | "ExposeIncomeAddress" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let accountIdx =

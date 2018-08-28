@@ -251,7 +251,7 @@ function make(viewData, _) {
                             ]);
                           return ReasonReact.element(PrimitiveTypes.ProcessId[/* toString */0](processId), undefined, AlertListItem.make(/* ArrowUp */2, (function (param) {
                                             return Router.clickToRoute(partial_arg, param);
-                                          }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */2][/* spentWithFees */2]) + " BTC")), Js_primitive.some(ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))), /* array */[]));
+                                          }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */3][/* spentWithFees */2]) + " BTC")), Js_primitive.some(ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))), /* array */[]));
                         })));
               var unconfirmed = viewData[/* unconfirmedTxs */9];
               var confirmed = viewData[/* confirmedTxs */10];

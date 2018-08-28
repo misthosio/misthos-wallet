@@ -2,6 +2,7 @@
 'use strict';
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Policy = require("../../src/application/Policy.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
@@ -17,7 +18,7 @@ describe("Unanimous", (function () {
                       PrimitiveTypes.UserId[/* fromString */1]("b")
                     ]);
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
-                                    return Policy.fulfilled(param)(arg, arg$1);
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
                                   })(Policy.unanimous)));
               }));
         Jest.test("not fulfilled", (function () {
@@ -30,14 +31,14 @@ describe("Unanimous", (function () {
                       PrimitiveTypes.UserId[/* fromString */1]("c")
                     ]);
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                    return Policy.fulfilled(param)(arg, arg$1);
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
                                   })(Policy.unanimous)));
               }));
         Jest.test("at least one eligible", (function () {
                 var arg = PrimitiveTypes.UserId[/* emptySet */9];
                 var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                    return Policy.fulfilled(param)(arg, arg$1);
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
                                   })(Policy.unanimous)));
               }));
         describe("canBeFullfilled", (function () {
@@ -51,7 +52,7 @@ describe("Unanimous", (function () {
                               PrimitiveTypes.UserId[/* fromString */1]("c")
                             ]);
                         return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                            return Policy.canBeFulfilled(param)(arg, arg$1);
+                                            return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
                                           })(Policy.unanimous)));
                       }));
                 return Jest.test("with zero rejections", (function () {
@@ -61,7 +62,7 @@ describe("Unanimous", (function () {
                                   ]);
                               var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
                               return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
-                                                  return Policy.canBeFulfilled(param)(arg, arg$1);
+                                                  return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
                                                 })(Policy.unanimous)));
                             }));
               }));
@@ -79,7 +80,7 @@ describe("UnanimousMinusOne", (function () {
                       PrimitiveTypes.UserId[/* fromString */1]("b")
                     ]);
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
-                                    return Policy.fulfilled(param)(arg, arg$1);
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
         Jest.test("fullfilled with minus 1 votes", (function () {
@@ -92,7 +93,7 @@ describe("UnanimousMinusOne", (function () {
                       PrimitiveTypes.UserId[/* fromString */1]("c")
                     ]);
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
-                                    return Policy.fulfilled(param)(arg, arg$1);
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
         Jest.test("not fullfilled", (function () {
@@ -103,14 +104,14 @@ describe("UnanimousMinusOne", (function () {
                     ]);
                 var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                    return Policy.fulfilled(param)(arg, arg$1);
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
         Jest.test("at least one eligible", (function () {
                 var arg = PrimitiveTypes.UserId[/* emptySet */9];
                 var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                    return Policy.fulfilled(param)(arg, arg$1);
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
         describe("canBeFullfilled", (function () {
@@ -125,7 +126,7 @@ describe("UnanimousMinusOne", (function () {
                               PrimitiveTypes.UserId[/* fromString */1]("b")
                             ]);
                         return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                            return Policy.canBeFulfilled(param)(arg, arg$1);
+                                            return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
                                           })(Policy.unanimousMinusOne)));
                       }));
                 Jest.test("with one rejection", (function () {
@@ -135,7 +136,7 @@ describe("UnanimousMinusOne", (function () {
                             ]);
                         var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
                         return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
-                                            return Policy.canBeFulfilled(param)(arg, arg$1);
+                                            return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
                                           })(Policy.unanimousMinusOne)));
                       }));
                 return Jest.test("with zero rejections", (function () {
@@ -145,8 +146,162 @@ describe("UnanimousMinusOne", (function () {
                                   ]);
                               var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
                               return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
-                                                  return Policy.canBeFulfilled(param)(arg, arg$1);
+                                                  return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
                                                 })(Policy.unanimous)));
+                            }));
+              }));
+        return /* () */0;
+      }));
+
+describe("Percentage", (function () {
+        var p = Policy.percentage(51);
+        Jest.test("fulfilled", (function () {
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b"),
+                      PrimitiveTypes.UserId[/* fromString */1]("c")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
+                                  })(p)));
+              }));
+        Jest.test("not fulfilled", (function () {
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b"),
+                      PrimitiveTypes.UserId[/* fromString */1]("c"),
+                      PrimitiveTypes.UserId[/* fromString */1]("d")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
+                                  })(p)));
+              }));
+        Jest.test("at least one eligible", (function () {
+                var arg = PrimitiveTypes.UserId[/* emptySet */9];
+                var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
+                return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
+                                  })(p)));
+              }));
+        describe("canBeFullfilled", (function () {
+                Jest.test("with one rejection and 2 eligible", (function () {
+                        var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                              PrimitiveTypes.UserId[/* fromString */1]("a"),
+                              PrimitiveTypes.UserId[/* fromString */1]("b")
+                            ]);
+                        var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
+                        return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
+                                            return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
+                                          })(p)));
+                      }));
+                return Jest.test("with one rejection and 3 eligible", (function () {
+                              var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                                    PrimitiveTypes.UserId[/* fromString */1]("a"),
+                                    PrimitiveTypes.UserId[/* fromString */1]("b"),
+                                    PrimitiveTypes.UserId[/* fromString */1]("c")
+                                  ]);
+                              var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
+                              return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
+                                                  return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
+                                                })(p)));
+                            }));
+              }));
+        return /* () */0;
+      }));
+
+describe("AtLeast", (function () {
+        var p = Policy.atLeast(2);
+        Jest.test("fulfilled", (function () {
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
+                                  })(p)));
+              }));
+        Jest.test("fullfilled with n votes", (function () {
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b"),
+                      PrimitiveTypes.UserId[/* fromString */1]("c")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
+                                  })(p)));
+              }));
+        Jest.test("not fullfilled", (function () {
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b"),
+                      PrimitiveTypes.UserId[/* fromString */1]("c"),
+                      PrimitiveTypes.UserId[/* fromString */1]("d")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
+                return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
+                                  })(p)));
+              }));
+        Jest.test("at least one eligible", (function () {
+                var arg = PrimitiveTypes.UserId[/* emptySet */9];
+                var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
+                return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
+                                    return Curry._2(Policy.fulfilled(param), arg, arg$1);
+                                  })(p)));
+              }));
+        describe("canBeFullfilled", (function () {
+                Jest.test("with all but n - 1 rejections", (function () {
+                        var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                              PrimitiveTypes.UserId[/* fromString */1]("a"),
+                              PrimitiveTypes.UserId[/* fromString */1]("b"),
+                              PrimitiveTypes.UserId[/* fromString */1]("c"),
+                              PrimitiveTypes.UserId[/* fromString */1]("d")
+                            ]);
+                        var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                              PrimitiveTypes.UserId[/* fromString */1]("a"),
+                              PrimitiveTypes.UserId[/* fromString */1]("b"),
+                              PrimitiveTypes.UserId[/* fromString */1]("c")
+                            ]);
+                        return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
+                                            return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
+                                          })(p)));
+                      }));
+                Jest.test("with all n but rejections", (function () {
+                        var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                              PrimitiveTypes.UserId[/* fromString */1]("a"),
+                              PrimitiveTypes.UserId[/* fromString */1]("b"),
+                              PrimitiveTypes.UserId[/* fromString */1]("c")
+                            ]);
+                        var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
+                        return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
+                                            return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
+                                          })(p)));
+                      }));
+                return Jest.test("with zero rejections", (function () {
+                              var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                                    PrimitiveTypes.UserId[/* fromString */1]("a"),
+                                    PrimitiveTypes.UserId[/* fromString */1]("b")
+                                  ]);
+                              var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
+                              return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
+                                                  return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
+                                                })(p)));
                             }));
               }));
         return /* () */0;

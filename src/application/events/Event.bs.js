@@ -24,7 +24,7 @@ var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var CustodianKeyChain = require("../wallet/CustodianKeyChain.bs.js");
 var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
 
-function make(ventureName, creatorId, creatorPubKey, defaultAccountSettings, metaPolicy, network) {
+function make(ventureName, creatorId, creatorPubKey, defaultAccountSettings, metaPolicy, initialPolicies, network) {
   return /* record */[
           /* ventureId */PrimitiveTypes.VentureId[/* make */10](/* () */0),
           /* ventureName */ventureName,
@@ -32,6 +32,7 @@ function make(ventureName, creatorId, creatorPubKey, defaultAccountSettings, met
           /* creatorPubKey */creatorPubKey,
           /* defaultAccountSettings */defaultAccountSettings,
           /* metaPolicy */metaPolicy,
+          /* initialPolicies */initialPolicies,
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* network */network
         ];
@@ -70,20 +71,26 @@ function encode($$event) {
                         ],
                         /* :: */[
                           /* tuple */[
-                            "metaPolicy",
-                            Policy.encode($$event[/* metaPolicy */5])
+                            "initialPolicies",
+                            Json_encode.nullable(Policy.encodeInitialPolicies, $$event[/* initialPolicies */6])
                           ],
                           /* :: */[
                             /* tuple */[
-                              "systemIssuer",
-                              $$event[/* systemIssuer */6].toWIF()
+                              "metaPolicy",
+                              Policy.encode($$event[/* metaPolicy */5])
                             ],
                             /* :: */[
                               /* tuple */[
-                                "network",
-                                Network.encode($$event[/* network */7])
+                                "systemIssuer",
+                                $$event[/* systemIssuer */7].toWIF()
                               ],
-                              /* [] */0
+                              /* :: */[
+                                /* tuple */[
+                                  "network",
+                                  Network.encode($$event[/* network */8])
+                                ],
+                                /* [] */0
+                              ]
                             ]
                           ]
                         ]
@@ -103,6 +110,7 @@ function decode(raw) {
           /* creatorPubKey */Json_decode.field("creatorPubKey", Json_decode.string, raw),
           /* defaultAccountSettings */Utils.maybeField("defaultAccountSettings", AccountSettings.decode)(raw),
           /* metaPolicy */Json_decode.field("metaPolicy", Policy.decode, raw),
+          /* initialPolicies */Utils.maybeField("initialPolicies", Policy.decodeInitialPolicies)(raw),
           /* systemIssuer */BitcoinjsLib.ECPair.fromWIF(Json_decode.field("systemIssuer", Json_decode.string, raw)),
           /* network */Json_decode.field("network", Network.decode, raw)
         ];

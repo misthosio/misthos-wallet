@@ -82,7 +82,13 @@ let make = localUser => {
 
 let apply = (event: Event.t, state) =>
   switch (event) {
-  | VentureCreated({metaPolicy}) => {...state, partnerPolicy: metaPolicy}
+  | VentureCreated({initialPolicies}) => {
+      ...state,
+      partnerPolicy:
+        initialPolicies
+        |> Utils.mapOption((p: Policy.initialPolicies) => p.addPartner)
+        |> Js.Option.getWithDefault(Policy.defaultAddPartner),
+    }
   | CustodianKeyChainUpdated({custodianId}) =>
     let partner =
       state.partners

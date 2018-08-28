@@ -100,7 +100,7 @@ exception DeadThread(Js.Promise.error);
 
 module Handle = {
   type ventureAction =
-    | Create(string, AccountSettings.t)
+    | Create(string, AccountSettings.t, Policy.initialPolicies)
     | Load(ventureId)
     | Reload(ventureId)
     | JoinVia(ventureId, userId);
@@ -142,10 +142,15 @@ module Handle = {
              |> Utils.mapOption(((data, ventures)) => {
                   let (ventureId, ventureThread) =
                     switch (ventureAction) {
-                    | Create(name, defaultAccountSettings) =>
+                    | Create(name, defaultAccountSettings, initialPolicies) =>
                       open Venture.Cmd.Create;
                       let (ventureId, venturePromise) =
-                        exec(data, ~name, ~defaultAccountSettings);
+                        exec(
+                          data,
+                          ~name,
+                          ~defaultAccountSettings,
+                          ~initialPolicies,
+                        );
                       (
                         ventureId,
                         venturePromise
@@ -318,10 +323,10 @@ module Handle = {
     logMessage("Handling 'JoinVia'");
     withVenture(JoinVia(ventureId, userId), _ => Js.Promise.resolve);
   };
-  let create = (name, accountSettings) => {
+  let create = (name, accountSettings, initialPolicies) => {
     logMessage("Handling 'Create'");
     withVenture(
-      Create(name, accountSettings),
+      Create(name, accountSettings, initialPolicies),
       (correlationId, venture) => {
         Notify.ventureCreated(~correlationId, venture);
         Js.Promise.resolve(venture);
@@ -683,6 +688,37 @@ module Handle = {
       )
     );
   };
+  let signPayout = (ventureId, signatures, processId) => {
+    logMessage("Handling 'SignPayout'");
+    withVenture(Load(ventureId), (correlationId, venture) =>
+      Js.Promise.(
+        Venture.Cmd.SignPayout.(
+          venture
+          |> exec(~processId, ~signatures)
+          |> then_(
+               fun
+               | Ok(venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     TransactionSigned,
+                   );
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
   let exposeIncomeAddress = (ventureId, accountIdx) => {
     logMessage("Handling 'ExposeIncomeAddress'");
     withVenture(Load(ventureId), (correlationId, venture) =>
@@ -793,8 +829,8 @@ let handleMessage =
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
   | Message.JoinVia(ventureId, userId) => Handle.joinVia(ventureId, userId)
-  | Message.Create(name, accountSettings) =>
-    Handle.create(name, accountSettings)
+  | Message.Create(name, accountSettings, initialPolicies) =>
+    Handle.create(name, accountSettings, initialPolicies)
   | Message.ProposePartner(ventureId, userId) =>
     Handle.proposePartner(ventureId, userId)
   | Message.RejectPartner(ventureId, processId) =>
@@ -815,6 +851,8 @@ let handleMessage =
     Handle.rejectPayout(ventureId, processId)
   | Message.EndorsePayout(ventureId, signatures, processId) =>
     Handle.endorsePayout(ventureId, signatures, processId)
+  | Message.SignPayout(ventureId, signatures, processId) =>
+    Handle.signPayout(ventureId, signatures, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(ventureId, accountIdx)
   | SyncWallet(

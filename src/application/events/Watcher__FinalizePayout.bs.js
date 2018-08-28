@@ -5,12 +5,13 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./Event.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("./EventLog.bs.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
+var AccountKeyChain = require("../wallet/AccountKeyChain.bs.js");
 var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
 
 var class_tables = [
@@ -24,63 +25,130 @@ function make(param, log) {
   var payoutProcess = param[/* processId */0];
   var match = Curry._3(EventLog.reduce, (function (param, param$1) {
           var $$event = param$1[/* event */0];
-          var systemIssuer = param[2];
+          var systemIssuer = param[5];
+          var keyChains = param[4];
+          var custodiansThatSigned = param[3];
+          var currentCustodians = param[2];
           var txs = param[1];
           var broadcast = param[0];
+          var exit = 0;
           switch ($$event.tag | 0) {
             case 0 : 
                 return /* tuple */[
                         broadcast,
                         txs,
-                        $$event[0][/* systemIssuer */6]
+                        currentCustodians,
+                        custodiansThatSigned,
+                        keyChains,
+                        $$event[0][/* systemIssuer */7]
                       ];
-            case 32 : 
+            case 19 : 
+                return /* tuple */[
+                        broadcast,
+                        txs,
+                        Belt_Set.add(currentCustodians, $$event[0][/* data */2][/* partnerId */0]),
+                        custodiansThatSigned,
+                        keyChains,
+                        systemIssuer
+                      ];
+            case 24 : 
+                return /* tuple */[
+                        broadcast,
+                        txs,
+                        Belt_Set.remove(currentCustodians, $$event[0][/* data */2][/* custodianId */0]),
+                        custodiansThatSigned,
+                        keyChains,
+                        systemIssuer
+                      ];
+            case 26 : 
                 var match = $$event[0];
                 if (PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], payoutProcess)) {
                   return /* tuple */[
                           broadcast,
                           /* :: */[
-                            match[/* payoutTx */2],
+                            payoutTx,
                             txs
                           ],
+                          currentCustodians,
+                          Belt_Set.add(custodiansThatSigned, match[/* proposerId */4]),
+                          keyChains,
                           systemIssuer
                         ];
                 } else {
+                  exit = 1;
+                }
+                break;
+            case 32 : 
+                var match$1 = $$event[0];
+                if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
                   return /* tuple */[
                           broadcast,
-                          txs,
+                          /* :: */[
+                            match$1[/* payoutTx */2],
+                            txs
+                          ],
+                          currentCustodians,
+                          Belt_Set.add(custodiansThatSigned, match$1[/* custodianId */1]),
+                          keyChains,
                           systemIssuer
                         ];
+                } else {
+                  exit = 1;
                 }
+                break;
             case 33 : 
                 if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], payoutProcess)) {
                   return /* tuple */[
                           false,
                           txs,
+                          currentCustodians,
+                          custodiansThatSigned,
+                          keyChains,
                           systemIssuer
                         ];
                 } else {
-                  return /* tuple */[
-                          broadcast,
-                          txs,
-                          systemIssuer
-                        ];
+                  exit = 1;
                 }
+                break;
+            case 38 : 
+                return /* tuple */[
+                        broadcast,
+                        txs,
+                        currentCustodians,
+                        custodiansThatSigned,
+                        AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], keyChains),
+                        systemIssuer
+                      ];
             default:
-              return /* tuple */[
-                      broadcast,
-                      txs,
-                      systemIssuer
-                    ];
+              exit = 1;
           }
+          if (exit === 1) {
+            return /* tuple */[
+                    broadcast,
+                    txs,
+                    currentCustodians,
+                    custodiansThatSigned,
+                    keyChains,
+                    systemIssuer
+                  ];
+          }
+          
         }), /* tuple */[
         true,
-        /* :: */[
-          payoutTx,
-          /* [] */0
-        ],
+        /* [] */0,
+        PrimitiveTypes.UserId[/* emptySet */9],
+        PrimitiveTypes.UserId[/* emptySet */9],
+        AccountKeyChain.Collection[/* empty */0],
         BitcoinjsLib.ECPair.makeRandom()
       ], log);
+  var keyChains = match[4];
+  var custodiansThatSigned = match[3];
+  var currentCustodians = match[2];
+  var needsFinalizing = match[0];
+  var missingSigs = PayoutTransaction.missingSignatures(currentCustodians, custodiansThatSigned, keyChains, payoutTx);
+  var sigsReady = function (param) {
+    return Belt_Set.size(Belt_Set.union(param[/* mandatory */0], param[/* additional */1])) === 0;
+  };
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",
@@ -94,30 +162,66 @@ function make(param, log) {
           "pendingEvent"
         ], [
           "finalTransaction",
+          "signedTxs",
+          "custodians",
+          "signatures",
+          "missingSigs",
           "delivered"
         ]);
     var receive = ids[0];
     var processCompleted = ids[1];
     var pendingEvent = ids[2];
     var finalTransaction = ids[3];
-    var delivered = ids[4];
+    var signedTxs = ids[4];
+    var custodians = ids[5];
+    var signatures = ids[6];
+    var missingSigs$1 = ids[7];
+    var delivered = ids[8];
     CamlinternalOO.set_methods($$class, /* array */[
           receive,
           (function (self$1, param) {
+              var env$1 = self$1[env];
               var $$event = param[/* event */0];
-              if ($$event.tag === 33 && PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], self$1[env][0])) {
-                self$1[finalTransaction][0] = undefined;
-                return /* () */0;
-              } else {
-                return /* () */0;
+              switch ($$event.tag | 0) {
+                case 19 : 
+                    self$1[custodians][0] = Belt_Set.add(self$1[custodians][0], $$event[0][/* data */2][/* partnerId */0]);
+                    return /* () */0;
+                case 24 : 
+                    self$1[custodians][0] = Belt_Set.remove(self$1[custodians][0], $$event[0][/* data */2][/* custodianId */0]);
+                    return /* () */0;
+                case 32 : 
+                    var match = $$event[0];
+                    var payoutTx = match[/* payoutTx */2];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], env$1[0])) {
+                      self$1[signedTxs][0] = /* :: */[
+                        payoutTx,
+                        self$1[signedTxs][0]
+                      ];
+                      self$1[signatures][0] = Belt_Set.add(self$1[signatures][0], match[/* custodianId */1]);
+                      self$1[missingSigs$1][0] = PayoutTransaction.missingSignatures(self$1[custodians][0], self$1[signatures][0], env$1[6], payoutTx);
+                      var match$1 = env$1[5] && Curry._1(env$1[7], self$1[missingSigs$1][0]);
+                      self$1[finalTransaction][0] = match$1 ? Js_primitive.some(PayoutTransaction.finalize(self$1[signedTxs][0])) : undefined;
+                      return /* () */0;
+                    } else {
+                      return /* () */0;
+                    }
+                case 33 : 
+                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0])) {
+                      self$1[delivered][0] = true;
+                      return /* () */0;
+                    } else {
+                      return /* () */0;
+                    }
+                default:
+                  return /* () */0;
               }
             }),
           processCompleted,
           (function (self$1, _) {
-              if (self$1[delivered][0]) {
+              if (self$1[env][5] === false) {
                 return true;
               } else {
-                return Js_option.isNone(self$1[finalTransaction][0]);
+                return self$1[delivered][0];
               }
             }),
           pendingEvent,
@@ -138,7 +242,12 @@ function make(param, log) {
         ]);
     var env_init = function (env$1) {
       var self = CamlinternalOO.create_object_opt(0, $$class);
-      self[finalTransaction] = /* record */[/* contents */env$1[1] ? Js_primitive.some(PayoutTransaction.finalize(env$1[2])) : undefined];
+      var match = env$1[1] && Curry._1(env$1[6], env$1[5]);
+      self[finalTransaction] = /* record */[/* contents */match ? Js_primitive.some(PayoutTransaction.finalize(env$1[2])) : undefined];
+      self[signedTxs] = /* record */[/* contents */env$1[2]];
+      self[custodians] = /* record */[/* contents */env$1[3]];
+      self[signatures] = /* record */[/* contents */env$1[4]];
+      self[missingSigs$1] = /* record */[/* contents */env$1[5]];
       self[delivered] = /* record */[/* contents */false];
       self[env] = env$1[0];
       return self;
@@ -152,10 +261,17 @@ function make(param, log) {
                 payoutTx[/* usedInputs */1],
                 payoutTx[/* misthosFeeAddress */2],
                 payoutTx[/* changeAddress */3],
-                match[2]
+                match[5],
+                needsFinalizing,
+                keyChains,
+                sigsReady
               ],
-              match[0],
-              match[1]
+              needsFinalizing,
+              match[1],
+              currentCustodians,
+              custodiansThatSigned,
+              missingSigs,
+              sigsReady
             ]);
 }
 

@@ -8,6 +8,7 @@ module Styles = {
     style([
       marginTop(px(Theme.space(tf))),
       marginBottom(px(Theme.space(bf))),
+      minHeight(px(29)),
     ]);
 
   let inputRoot = style([fontSize(px(14))]);

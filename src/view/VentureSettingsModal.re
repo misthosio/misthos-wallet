@@ -9,6 +9,13 @@ module Styles = {
   let atRiskKeyStatus = style([color(Colors.error)]);
 };
 
+let policyDescription =
+  fun
+  | Policy.Unanimous => "Unanimous"
+  | Policy.UnanimousMinusOne => "Unanimous minus 1"
+  | Policy.Percentage({percentage}) => string_of_int(percentage) ++ "%"
+  | Policy.AtLeast({n}) => "At least " ++ string_of_int(n);
+
 let component = ReasonReact.statelessComponent("VentureSettings");
 let make =
     (
@@ -58,7 +65,7 @@ let make =
           )
         };
       let nSigs =
-        AccountSettings.defaultCoSignerList
+        viewData.accountSettings.coSignerList
         |. Array.mapWithIndexU((. idx, nCoSigners) =>
              MaterialUi.(
                <TableRow>
@@ -87,55 +94,38 @@ let make =
       <Grid
         title1=("Venture Settings" |> text)
         area3={
-          <div className=ScrollList.containerStyles>
-            <ScrollList>
-              <MTypography variant=`Title gutterBottom=true>
-                ("Wallet Settings" |> text)
-              </MTypography>
-              <MTypography variant=`Body2>
-                ("Degrading multisig is enabled." |> text)
-              </MTypography>
-              <MTypography variant=`Body2 gutterBottom=true>
-                (
-                  "The unlock time is "
-                  ++ string_of_int(AccountSettings.defaultSequence)
-                  ++ " blocks (approximately "
-                  ++ string_of_int(AccountSettings.defaultSequence / 144)
-                  ++ " days)."
-                  |> text
-                )
-              </MTypography>
-              <MTypography variant=`Body2 gutterBottom=true>
-                (
-                  "Here is an overview of the required signatures depending on the number of Custodians backing an address:"
-                  |> text
-                )
-              </MTypography>
-              MaterialUi.(
-                <Table>
-                  <TableHead>
-                    <TableRow key="header">
-                      <TableCell>
-                        <MTypography variant=`Body2>
-                          ("Number of Partners" |> text)
-                        </MTypography>
-                      </TableCell>
-                      <TableCell>
-                        <MTypography variant=`Body2>
-                          ("Signatures Required" |> text)
-                        </MTypography>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody> nSigs </TableBody>
-                </Table>
-              )
-            </ScrollList>
-          </div>
-        }
-        area4={
           <div>
             <MTypography variant=`Title gutterBottom=true>
+              ("Policy Settings" |> text)
+            </MTypography>
+            <MTypography variant=`Body2 gutterBottom=true>
+              (
+                "The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:"
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              (
+                "Partner addition: "
+                ++ policyDescription(viewData.policies.addPartner)
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              (
+                "Partner removal: "
+                ++ policyDescription(viewData.policies.removePartner)
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              (
+                "Payout: "
+                ++ policyDescription(viewData.policies.payout)
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Title gutterTop=true gutterBottom=true>
               ("Hardware Wallet Settings" |> text)
             </MTypography>
             <MTypography variant=`Body2 gutterBottom=true>
@@ -159,24 +149,64 @@ let make =
                   cmdStatus
                 />
             )
-            <MTypography variant=`Title gutterTop=true gutterBottom=true>
-              ("Policy Settings" |> text)
+          </div>
+        }
+        area4={
+          <div className=ScrollList.containerStyles>
+            <MTypography variant=`Title gutterBottom=true>
+              ("Wallet Settings" |> text)
             </MTypography>
+            (
+              switch (viewData.accountSettings.sequence) {
+              | Some(nBlocks) =>
+                ReasonReact.array([|
+                  <MTypography variant=`Body2>
+                    ("Degrading multisig is enabled." |> text)
+                  </MTypography>,
+                  <MTypography variant=`Body2 gutterBottom=true>
+                    (
+                      "The unlock time is "
+                      ++ string_of_int(nBlocks)
+                      ++ " blocks (approximately "
+                      ++ string_of_int(nBlocks / 144)
+                      ++ " days)."
+                      |> text
+                    )
+                  </MTypography>,
+                |])
+              | None =>
+                <MTypography variant=`Body2>
+                  ("Degrading multisig is disabled." |> text)
+                </MTypography>
+              }
+            )
             <MTypography variant=`Body2 gutterBottom=true>
               (
-                "The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:"
+                "Here is an overview of the required signatures depending on the number of Custodians backing an address:"
                 |> text
               )
             </MTypography>
-            <MTypography variant=`Body2>
-              ("Partner addition: Unanmious" |> text)
-            </MTypography>
-            <MTypography variant=`Body2>
-              ("Partner removal: Unanmious minus 1" |> text)
-            </MTypography>
-            <MTypography variant=`Body2>
-              ("Payout: Unanmious" |> text)
-            </MTypography>
+            <ScrollList>
+              MaterialUi.(
+                <Table>
+                  <TableHead>
+                    <TableRow key="header">
+                      <TableCell>
+                        <MTypography variant=`Body2>
+                          ("Number of Partners" |> text)
+                        </MTypography>
+                      </TableCell>
+                      <TableCell>
+                        <MTypography variant=`Body2>
+                          ("Signatures Required" |> text)
+                        </MTypography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody> nSigs </TableBody>
+                </Table>
+              )
+            </ScrollList>
           </div>
         }
       />;

@@ -39,10 +39,11 @@ function updateSession(worker) {
   return /* () */0;
 }
 
-function create(name, accountSettings, worker) {
+function create(name, accountSettings, initialPolicies, worker) {
   return Curry._2(postMessage, worker, /* Create */Block.__(1, [
                 name,
-                accountSettings
+                accountSettings,
+                initialPolicies
               ]));
 }
 
@@ -130,8 +131,16 @@ function endorsePayout(worker, ventureId, signatures, processId) {
               ]));
 }
 
+function signPayout(worker, ventureId, signatures, processId) {
+  return Curry._2(postMessage, worker, /* SignPayout */Block.__(14, [
+                ventureId,
+                signatures,
+                processId
+              ]));
+}
+
 function exposeIncomeAddress(worker, ventureId, accountIdx) {
-  return Curry._2(postMessageSync, worker, /* ExposeIncomeAddress */Block.__(14, [
+  return Curry._2(postMessageSync, worker, /* ExposeIncomeAddress */Block.__(15, [
                   ventureId,
                   accountIdx
                 ])).then((function (param) {
@@ -172,6 +181,9 @@ function make(worker, ventureId) {
           /* endorsePayout */(function (param, param$1) {
               return endorsePayout(worker, ventureId, param, param$1);
             }),
+          /* signPayout */(function (param, param$1) {
+              return signPayout(worker, ventureId, param, param$1);
+            }),
           /* rejectPayout */(function (param) {
               return rejectPayout(worker, ventureId, param);
             }),
@@ -209,6 +221,7 @@ exports.submitCustodianKeyChain = submitCustodianKeyChain;
 exports.proposePayout = proposePayout;
 exports.rejectPayout = rejectPayout;
 exports.endorsePayout = endorsePayout;
+exports.signPayout = signPayout;
 exports.exposeIncomeAddress = exposeIncomeAddress;
 exports.Cmd = Cmd;
 /* include Not a pure module */

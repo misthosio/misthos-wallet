@@ -71,7 +71,8 @@ module Cmd: {
       (
         SessionData.t,
         ~name: string,
-        ~defaultAccountSettings: AccountSettings.t
+        ~defaultAccountSettings: AccountSettings.t,
+        ~initialPolicies: Policy.initialPolicies
       ) =>
       (ventureId, Js.Promise.t(result));
   };
@@ -178,6 +179,18 @@ module Cmd: {
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePayout: {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
+    let exec:
+      (
+        ~processId: processId,
+        ~signatures: array(option((string, string))),
+        t
+      ) =>
+      Js.Promise.t(result);
+  };
+  module SignPayout: {
     type result =
       | Ok(t, array(EventLog.item))
       | CouldNotPersist(Js.Promise.error);

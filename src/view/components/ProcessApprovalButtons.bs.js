@@ -120,19 +120,19 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
               switch (exit) {
                 case 1 : 
                     tmp = state >= 4 ? /* array */[
-                        ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */5, /* array */[])),
+                        ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */6, /* array */[])),
                         ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                               return Curry._1(send, /* Cancel */0);
                                             }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Try Again")]))]))
                       ] : /* array */[
-                        ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */6, /* array */[])),
+                        ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */7, /* array */[])),
                         ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                     return Curry._1(send, /* Cancel */0);
                                   }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Try Again")]))
                       ];
                     break;
                 case 2 : 
-                    tmp = state >= 4 ? /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */6, /* array */[]))] : /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */5, /* array */[]))];
+                    tmp = state >= 4 ? /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */7, /* array */[]))] : /* array */[ReasonReact.element(undefined, undefined, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */6, /* array */[]))];
                     break;
                 case 3 : 
                     tmp = /* array */[

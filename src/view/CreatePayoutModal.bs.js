@@ -14,7 +14,6 @@ var MInput = require("./components/MInput.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
-var PolicyText = require("./text/PolicyText.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var Environment = require("../web/Environment.bs.js");
@@ -281,7 +280,7 @@ function make(viewData, commands, cmdStatus, _) {
               if (typeof cmdStatus === "number" || cmdStatus.tag) {
                 exit = 1;
               } else {
-                return ReasonReact.element(undefined, undefined, LedgerConfirmation.make(/* Proposal */4, (function () {
+                return ReasonReact.element(undefined, undefined, LedgerConfirmation.make(/* Proposal */5, (function () {
                                   return Curry._1(send, /* Reset */4);
                                 }), summary, Utils.mapOption((function (tx) {
                                       return tx[/* misthosFeeAddress */2];
@@ -334,7 +333,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                     return Curry._1(send, /* Freeze */3);
                                                   }), (function () {
                                                     return Curry._1(send, /* Reset */4);
-                                                  }), match[/* canSubmitProposal */5], undefined, undefined, cmdStatus, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[PolicyText.payout]))), warning, /* array */[]));
+                                                  }), match[/* canSubmitProposal */5], undefined, undefined, cmdStatus, /* array */[])))), undefined, warning, /* array */[]));
               }
               
             }),
@@ -396,13 +395,13 @@ function make(viewData, commands, cmdStatus, _) {
                                                   return Curry._2(viewData[/* signPayoutTx */11], payoutTx, param[1]);
                                                 })).then((function (param) {
                                                 if (typeof param === "number") {
-                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "The device does not have the correct seed for signing"));
+                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "The device does not have the correct seed for signing"));
                                                 } else if (param.tag) {
                                                   var match = param[0];
                                                   if (match) {
-                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */12], match[0]));
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */13], match[0]));
                                                   } else {
-                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */12], "An unknown error has occured"));
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "An unknown error has occured"));
                                                   }
                                                 } else {
                                                   return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, param[0]));
@@ -410,7 +409,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               }));
                                         return /* () */0;
                                       }), 1);
-                                Curry._1(commands[/* preSubmit */11], "Please confirm this proposal on your ledger device (BTC app)");
+                                Curry._1(commands[/* preSubmit */12], "Please confirm this proposal on your ledger device (BTC app)");
                               } else {
                                 Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, /* array */[]);
                               }

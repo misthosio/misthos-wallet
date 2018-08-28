@@ -13,7 +13,7 @@ let make = () => {
   network: Network.Regtest,
   ventureId: VentureId.fromString(""),
   walletInfoCollector: WalletInfoCollector.make(),
-  payoutPolicy: Policy.unanimous,
+  payoutPolicy: Policy.defaultPayout,
 };
 
 let apply = (event: Event.t, state) => {
@@ -23,11 +23,14 @@ let apply = (event: Event.t, state) => {
       state.walletInfoCollector |> WalletInfoCollector.apply(event),
   };
   switch (event) {
-  | VentureCreated({ventureId, metaPolicy, network}) => {
+  | VentureCreated({ventureId, initialPolicies, network}) => {
       ...state,
       network,
       ventureId,
-      payoutPolicy: metaPolicy,
+      payoutPolicy:
+        initialPolicies
+        |> Utils.mapOption((p: Policy.initialPolicies) => p.payout)
+        |> Js.Option.getWithDefault(Policy.defaultPayout),
     }
   | _ => state
   };
@@ -123,4 +126,31 @@ let endorsePayout =
       Event.makePayoutEndorsed(~processId, ~supporterId=userId),
     ]
   | NotSigned => [Event.makePayoutEndorsed(~processId, ~supporterId=userId)]
+  };
+
+let signPayout =
+    (
+      processId,
+      signatures,
+      {userId, masterKeyChain}: SessionData.t,
+      {ventureId, walletInfoCollector},
+    ) =>
+  switch (
+    PayoutTransaction.signPayout(
+      ~ventureId,
+      ~userId,
+      ~masterKeyChain,
+      ~accountKeyChains=
+        walletInfoCollector |> WalletInfoCollector.accountKeyChains,
+      ~payoutTx=
+        walletInfoCollector |> WalletInfoCollector.getPayoutTx(processId),
+      ~signatures,
+    )
+  ) {
+  | Signed(payoutTx) => [
+      PayoutSigned(
+        Event.Payout.Signed.make(~processId, ~custodianId=userId, ~payoutTx),
+      ),
+    ]
+  | NotSigned => []
   };

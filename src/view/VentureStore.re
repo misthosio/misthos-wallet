@@ -8,7 +8,7 @@ type selectedVenture =
   | VentureLoaded(ventureId, ViewModel.t, VentureWorkerClient.Cmd.t);
 
 type action =
-  | CreateVenture(string, AccountSettings.t)
+  | CreateVenture(string, AccountSettings.t, Policy.initialPolicies)
   | TabSync(VentureWorkerMessage.outgoing)
   | DataWorkerMessage(DataWorkerMessage.outgoing)
   | VentureWorkerMessage(VentureWorkerMessage.outgoing);
@@ -145,10 +145,14 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     switch (state.session) {
     | LoggedIn(sessionData) =>
       switch (action) {
-      | CreateVenture(name, accountSettings) =>
+      | CreateVenture(name, accountSettings, initialPolicies) =>
         let createCmdId =
           state.ventureWorker^
-          |> VentureWorkerClient.create(~name, ~accountSettings);
+          |> VentureWorkerClient.create(
+               ~name,
+               ~accountSettings,
+               ~initialPolicies,
+             );
         ReasonReact.Update({
           ...state,
           selectedVenture: CreatingVenture(Pending(createCmdId)),
@@ -324,7 +328,10 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       ReasonReact.NoUpdate;
     },
   render: ({state: {index, selectedVenture}, send}) =>
-    children(~index, ~selectedVenture, ~createVenture=(name, accountSettings) =>
-      send(CreateVenture(name, accountSettings))
+    children(
+      ~index,
+      ~selectedVenture,
+      ~createVenture=(name, accountSettings, initialPolicies) =>
+      send(CreateVenture(name, accountSettings, initialPolicies))
     ),
 };

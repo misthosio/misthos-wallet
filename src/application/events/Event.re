@@ -12,6 +12,7 @@ module VentureCreated = {
     creatorPubKey: string,
     defaultAccountSettings: option(AccountSettings.t),
     metaPolicy: Policy.t,
+    initialPolicies: option(Policy.initialPolicies),
     systemIssuer: Bitcoin.ECPair.t,
     network: Network.t,
   };
@@ -22,6 +23,7 @@ module VentureCreated = {
         ~creatorPubKey,
         ~defaultAccountSettings,
         ~metaPolicy,
+        ~initialPolicies,
         ~network,
       ) => {
     ventureId: VentureId.make(),
@@ -29,6 +31,7 @@ module VentureCreated = {
     creatorId,
     creatorPubKey,
     defaultAccountSettings: Some(defaultAccountSettings),
+    initialPolicies: Some(initialPolicies),
     metaPolicy,
     systemIssuer: Bitcoin.ECPair.makeRandom(),
     network,
@@ -45,6 +48,10 @@ module VentureCreated = {
           "defaultAccountSettings",
           nullable(AccountSettings.encode, event.defaultAccountSettings),
         ),
+        (
+          "initialPolicies",
+          nullable(Policy.encodeInitialPolicies, event.initialPolicies),
+        ),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
         ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
         ("network", Network.encode(event.network)),
@@ -60,6 +67,9 @@ module VentureCreated = {
         raw
         |> Utils.maybeField("defaultAccountSettings", AccountSettings.decode),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
+      initialPolicies:
+        raw
+        |> Utils.maybeField("initialPolicies", Policy.decodeInitialPolicies),
       systemIssuer:
         raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
       network: raw |> field("network", Network.decode),

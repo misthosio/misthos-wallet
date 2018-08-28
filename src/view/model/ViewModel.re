@@ -18,8 +18,9 @@ type t = {
   lastResponse:
     option((WebWorker.correlationId, VentureWorkerMessage.cmdResponse)),
   ventureName: string,
+  defaultAccountSettings: AccountSettings.t,
+  initialPolicies: Policy.initialPolicies,
   processedItems: ItemsSet.t,
-  metaPolicy: Policy.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
   txDetailsCollector: TxDetailsCollector.t,
@@ -43,8 +44,20 @@ module VentureSettingsView = {
     ledgerId: option(string),
     ledgerUpToDate: bool,
     getCustodianKeyChain: unit => Js.Promise.t(Ledger.result),
+    accountSettings: AccountSettings.t,
+    policies: Policy.initialPolicies,
   };
-  let fromViewModel = ({ventureId, walletInfoCollector, ledgerInfoCollector}) => {
+  let fromViewModel =
+      (
+        {
+          ventureId,
+          defaultAccountSettings,
+          initialPolicies,
+          walletInfoCollector,
+          ledgerInfoCollector,
+        },
+      ) => {
+    policies: initialPolicies,
     ledgerId:
       ledgerInfoCollector
       |> LedgerInfoCollector.ledgerId(AccountIndex.default),
@@ -63,6 +76,7 @@ module VentureSettingsView = {
           ledgerInfoCollector
           |> LedgerInfoCollector.nextKeyChainIdx(AccountIndex.default),
       ),
+    accountSettings: defaultAccountSettings,
   };
 };
 let ventureSettingsView = VentureSettingsView.fromViewModel;
@@ -447,18 +461,20 @@ module ViewPayoutView = {
   type voter = ProcessCollector.voter;
   type payout = TxDetailsCollector.payoutProcess;
   type t = {
+    localUser: userId,
     requiresLedgerSig: bool,
     currentPartners: UserId.set,
     payout,
     collidesWith: ProcessId.set,
     signPayout: unit => Js.Promise.t(Ledger.signResult),
+    missingSignatures: UserId.set,
   };
   let fromViewModelState =
       (
         processId,
         {
-          ventureId,
           localUser,
+          ventureId,
           txDetailsCollector,
           ledgerInfoCollector,
           walletInfoCollector,
@@ -468,8 +484,23 @@ module ViewPayoutView = {
     txDetailsCollector
     |> TxDetailsCollector.getPayout(processId)
     |> Utils.mapOption(
-         ({data: {payoutTx: {usedInputs} as payoutTx}} as payout: payout) => {
+         (
+           {data: {payoutTx: {usedInputs} as payoutTx, signatures}} as payout: payout,
+         ) => {
          open Belt;
+         let missingSignatures =
+           PayoutTransaction.missingSignatures(
+             ~currentCustodians=
+               partnersCollector |> PartnersCollector.currentPartners,
+             ~custodiansThatSigned=signatures,
+             walletInfoCollector |> WalletInfoCollector.accountKeyChains,
+             payoutTx,
+           );
+         let missingSignatures =
+           Set.union(
+             missingSignatures.mandatory,
+             missingSignatures.additional,
+           );
          let txHexPromise =
            usedInputs
            |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
@@ -477,6 +508,8 @@ module ViewPayoutView = {
                 walletInfoCollector |> WalletInfoCollector.network,
               );
          {
+           localUser,
+           missingSignatures,
            signPayout: () =>
              Js.Promise.(
                txHexPromise
@@ -620,9 +653,10 @@ let make = localUser => {
   localUser,
   lastResponse: None,
   ventureName: "",
+  defaultAccountSettings: AccountSettings.default,
+  initialPolicies: Policy.defaultInitialPolicies,
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
-  metaPolicy: Policy.unanimous,
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
   txDetailsCollector: TxDetailsCollector.make(localUser),
@@ -652,11 +686,21 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
-    | VentureCreated({ventureName, metaPolicy, ventureId}) => {
+    | VentureCreated({
+        ventureName,
+        ventureId,
+        defaultAccountSettings,
+        initialPolicies,
+      }) => {
         ...state,
         ventureId,
         ventureName,
-        metaPolicy,
+        defaultAccountSettings:
+          defaultAccountSettings
+          |> Js.Option.getWithDefault(AccountSettings.default),
+        initialPolicies:
+          initialPolicies
+          |> Js.Option.getWithDefault(Policy.defaultInitialPolicies),
       }
     | _ => state
     };

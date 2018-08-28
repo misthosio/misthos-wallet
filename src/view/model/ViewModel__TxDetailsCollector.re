@@ -21,6 +21,7 @@ type payoutStatus =
 
 type data = {
   payoutStatus,
+  signatures: UserId.set,
   payoutTx: PayoutTransaction.t,
   summary: PayoutTransaction.summary,
   explorerLink: option(string),
@@ -98,6 +99,7 @@ let apply = (event, state) =>
                date: None,
                payoutStatus: PendingApproval,
                payoutTx: data.payoutTx,
+               signatures: UserId.emptySet |. Set.add(proposal.proposerId),
                summary:
                  data.payoutTx |> PayoutTransaction.summary(state.network),
              }
@@ -108,6 +110,14 @@ let apply = (event, state) =>
       payouts:
         state.payouts
         |> ProcessCollector.addRejection(state.localUser, rejection),
+    }
+  | PayoutSigned({processId, custodianId}) => {
+      ...state,
+      payouts:
+        state.payouts
+        |> ProcessCollector.updateData(processId, data =>
+             {...data, signatures: data.signatures |. Set.add(custodianId)}
+           ),
     }
   | PayoutEndorsed(endorsement) => {
       ...state,

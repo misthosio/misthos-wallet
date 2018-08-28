@@ -67,7 +67,7 @@ function make(proposal, log) {
                       /* endorsements */init$1[/* endorsements */1],
                       /* rejections */init$1[/* rejections */2],
                       /* policy */init$1[/* policy */3],
-                      /* systemIssuer */$$event$1[/* systemIssuer */6],
+                      /* systemIssuer */$$event$1[/* systemIssuer */7],
                       /* creatorId */$$event$1[/* creatorId */2]
                     ];
                     break;
@@ -123,12 +123,12 @@ function make(proposal, log) {
               var arg = EligibilityCollector.currentEligible(self$1[state][0][/* eligibilityCollector */0]);
               var arg$1 = self$1[state][0][/* rejections */2];
               var match$1 = (function (param) {
-                    return Policy.canBeFulfilled(param)(arg, arg$1);
+                    return Curry._2(Policy.canBeFulfilled(param), arg, arg$1);
                   })(self$1[state][0][/* policy */3]);
               var arg$2 = EligibilityCollector.currentEligible(self$1[state][0][/* eligibilityCollector */0]);
               var arg$3 = self$1[state][0][/* endorsements */1];
               var match$2 = (function (param) {
-                    return Policy.fulfilled(param)(arg$2, arg$3);
+                    return Curry._2(Policy.fulfilled(param), arg$2, arg$3);
                   })(self$1[state][0][/* policy */3]);
               self$1[result][0] = match ? undefined : (
                   match$1 ? (

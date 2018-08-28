@@ -3,11 +3,13 @@
 
 var Utils = require("../../utils/Utils.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
+var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var ProcessCollector = require("./ProcessCollector.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
 
@@ -72,7 +74,7 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         return /* record */[
-                /* network */$$event[0][/* network */7],
+                /* network */$$event[0][/* network */8],
                 /* localUser */state[/* localUser */1],
                 /* payouts */state[/* payouts */2],
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -80,12 +82,14 @@ function apply($$event, state) {
                 /* income */state[/* income */5]
               ];
     case 26 : 
+        var proposal = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
-                /* payouts */ProcessCollector.addProposal(state[/* localUser */1], $$event[0], (function (data) {
+                /* payouts */ProcessCollector.addProposal(state[/* localUser */1], proposal, (function (data) {
                         return /* record */[
                                 /* payoutStatus : PendingApproval */0,
+                                /* signatures */Belt_Set.add(PrimitiveTypes.UserId[/* emptySet */9], proposal[/* proposerId */4]),
                                 /* payoutTx */data[/* payoutTx */1],
                                 /* summary */PayoutTransaction.summary(state[/* network */0], data[/* payoutTx */1]),
                                 /* explorerLink */undefined,
@@ -123,11 +127,12 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.updateData(accepted[/* processId */0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : Accepted */1,
-                                /* payoutTx */data[/* payoutTx */1],
-                                /* summary */data[/* summary */2],
-                                /* explorerLink */data[/* explorerLink */3],
-                                /* txId */data[/* txId */4],
-                                /* date */data[/* date */5]
+                                /* signatures */data[/* signatures */1],
+                                /* payoutTx */data[/* payoutTx */2],
+                                /* summary */data[/* summary */3],
+                                /* explorerLink */data[/* explorerLink */4],
+                                /* txId */data[/* txId */5],
+                                /* date */data[/* date */6]
                               ];
                       }), ProcessCollector.addAcceptance(accepted, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -142,11 +147,12 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.updateData(abort[/* processId */0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : Aborted */3,
-                                /* payoutTx */data[/* payoutTx */1],
-                                /* summary */data[/* summary */2],
-                                /* explorerLink */data[/* explorerLink */3],
-                                /* txId */data[/* txId */4],
-                                /* date */data[/* date */5]
+                                /* signatures */data[/* signatures */1],
+                                /* payoutTx */data[/* payoutTx */2],
+                                /* summary */data[/* summary */3],
+                                /* explorerLink */data[/* explorerLink */4],
+                                /* txId */data[/* txId */5],
+                                /* date */data[/* date */6]
                               ];
                       }), ProcessCollector.addAbort(abort, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -161,21 +167,43 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.updateData(denial[/* processId */0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : Denied */2,
-                                /* payoutTx */data[/* payoutTx */1],
-                                /* summary */data[/* summary */2],
-                                /* explorerLink */data[/* explorerLink */3],
-                                /* txId */data[/* txId */4],
-                                /* date */data[/* date */5]
+                                /* signatures */data[/* signatures */1],
+                                /* payoutTx */data[/* payoutTx */2],
+                                /* summary */data[/* summary */3],
+                                /* explorerLink */data[/* explorerLink */4],
+                                /* txId */data[/* txId */5],
+                                /* date */data[/* date */6]
                               ];
                       }), ProcessCollector.addDenial(denial, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 34 : 
+    case 32 : 
         var match = $$event[0];
-        var txId = match[/* txId */1];
-        var processId = match[/* processId */0];
+        var custodianId = match[/* custodianId */1];
+        return /* record */[
+                /* network */state[/* network */0],
+                /* localUser */state[/* localUser */1],
+                /* payouts */ProcessCollector.updateData(match[/* processId */0], (function (data) {
+                        return /* record */[
+                                /* payoutStatus */data[/* payoutStatus */0],
+                                /* signatures */Belt_Set.add(data[/* signatures */1], custodianId),
+                                /* payoutTx */data[/* payoutTx */2],
+                                /* summary */data[/* summary */3],
+                                /* explorerLink */data[/* explorerLink */4],
+                                /* txId */data[/* txId */5],
+                                /* date */data[/* date */6]
+                              ];
+                      }), state[/* payouts */2]),
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txDates */state[/* txDates */4],
+                /* income */state[/* income */5]
+              ];
+    case 34 : 
+        var match$1 = $$event[0];
+        var txId = match$1[/* txId */1];
+        var processId = match$1[/* processId */0];
         var txDate = Belt_MapString.get(state[/* txDates */4], txId);
         return /* record */[
                 /* network */state[/* network */0],
@@ -184,8 +212,9 @@ function apply($$event, state) {
                         var match = Js_option.isSome(txDate);
                         return /* record */[
                                 /* payoutStatus */match ? /* Confirmed */5 : /* Unconfirmed */4,
-                                /* payoutTx */data[/* payoutTx */1],
-                                /* summary */data[/* summary */2],
+                                /* signatures */data[/* signatures */1],
+                                /* payoutTx */data[/* payoutTx */2],
+                                /* summary */data[/* summary */3],
                                 /* explorerLink */getExplorerLink(state[/* network */0], txId),
                                 /* txId */txId,
                                 /* date */txDate
@@ -196,20 +225,21 @@ function apply($$event, state) {
                 /* income */state[/* income */5]
               ];
     case 36 : 
-        var match$1 = $$event[0];
-        var errorMessage = match$1[/* errorMessage */1];
+        var match$2 = $$event[0];
+        var errorMessage = match$2[/* errorMessage */1];
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
-                /* payouts */ProcessCollector.updateData(match$1[/* processId */0], (function (data) {
+                /* payouts */ProcessCollector.updateData(match$2[/* processId */0], (function (data) {
                         var match = data[/* payoutStatus */0] !== /* Unconfirmed */4 && data[/* payoutStatus */0] !== /* Confirmed */5;
                         return /* record */[
                                 /* payoutStatus */match ? /* Failed */[errorMessage] : data[/* payoutStatus */0],
-                                /* payoutTx */data[/* payoutTx */1],
-                                /* summary */data[/* summary */2],
-                                /* explorerLink */data[/* explorerLink */3],
-                                /* txId */data[/* txId */4],
-                                /* date */data[/* date */5]
+                                /* signatures */data[/* signatures */1],
+                                /* payoutTx */data[/* payoutTx */2],
+                                /* summary */data[/* summary */3],
+                                /* explorerLink */data[/* explorerLink */4],
+                                /* txId */data[/* txId */5],
+                                /* date */data[/* date */6]
                               ];
                       }), state[/* payouts */2]),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -217,10 +247,10 @@ function apply($$event, state) {
                 /* income */state[/* income */5]
               ];
     case 41 : 
-        var match$2 = $$event[0];
-        var amount = match$2[/* amount */4];
-        var txId$1 = match$2[/* txId */2];
-        var address = match$2[/* address */0];
+        var match$3 = $$event[0];
+        var amount = match$3[/* amount */4];
+        var txId$1 = match$3[/* txId */2];
+        var address = match$3[/* address */0];
         var txDate$1 = Belt_MapString.get(state[/* txDates */4], txId$1);
         return /* record */[
                 /* network */state[/* network */0],
@@ -253,20 +283,21 @@ function apply($$event, state) {
                       }))
               ];
     case 43 : 
-        var match$3 = $$event[0];
-        var txId$2 = match$3[/* txId */0];
+        var match$4 = $$event[0];
+        var txId$2 = match$4[/* txId */0];
         var processId$1 = Belt_MapString.get(state[/* txIdToProcessIdMap */3], txId$2);
-        var txDate$2 = new Date(match$3[/* unixTime */2] * 1000);
+        var txDate$2 = new Date(match$4[/* unixTime */2] * 1000);
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
                 /* payouts */processId$1 !== undefined ? ProcessCollector.updateData(Js_primitive.valFromOption(processId$1), (function (data) {
                           return /* record */[
                                   /* payoutStatus : Confirmed */5,
-                                  /* payoutTx */data[/* payoutTx */1],
-                                  /* summary */data[/* summary */2],
-                                  /* explorerLink */data[/* explorerLink */3],
-                                  /* txId */data[/* txId */4],
+                                  /* signatures */data[/* signatures */1],
+                                  /* payoutTx */data[/* payoutTx */2],
+                                  /* summary */data[/* summary */3],
+                                  /* explorerLink */data[/* explorerLink */4],
+                                  /* txId */data[/* txId */5],
                                   /* date */Js_primitive.some(txDate$2)
                                 ];
                         }), state[/* payouts */2]) : state[/* payouts */2],

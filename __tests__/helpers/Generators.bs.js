@@ -153,7 +153,13 @@ function accountKeyChain($staropt$star, $staropt$star$1, users) {
 }
 
 function createVenture(session) {
-  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), AccountSettings.$$default, Policy.unanimous, session[/* network */5]);
+  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), AccountSettings.$$default, Policy.unanimous, /* record */[
+              /* addPartner */Policy.unanimous,
+              /* addCustodian */Policy.unanimous,
+              /* removePartner */Policy.unanimousMinusOne,
+              /* removeCustodian */Policy.unanimousMinusOne,
+              /* payout */Policy.unanimous
+            ], session[/* network */5]);
 }
 
 function partnerProposed($staropt$star, eligibleWhenProposing, $staropt$star$1, lastRemovalAccepted, proposerSession, prospectSession) {
@@ -346,7 +352,7 @@ function fromEventLog(log) {
             var match = $$event[0];
             return /* tuple */[
                     Js_primitive.some(match[/* ventureId */0]),
-                    Js_primitive.some(match[/* systemIssuer */6]),
+                    Js_primitive.some(match[/* systemIssuer */7]),
                     lastItem
                   ];
           }
@@ -367,7 +373,7 @@ function make(session, ventureCreated) {
   var match = Curry._3(EventLog.append, session[/* issuerKeyPair */2], /* VentureCreated */Block.__(0, [ventureCreated]), Curry._1(EventLog.make, /* () */0));
   return /* record */[
           /* ventureId */ventureCreated[/* ventureId */0],
-          /* systemIssuer */ventureCreated[/* systemIssuer */6],
+          /* systemIssuer */ventureCreated[/* systemIssuer */7],
           /* lastItem */match[0],
           /* log */match[1]
         ];

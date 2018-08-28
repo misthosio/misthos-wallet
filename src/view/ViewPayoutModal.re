@@ -1,3 +1,5 @@
+open Belt;
+
 open PrimitiveTypes;
 
 include ViewCommon;
@@ -47,7 +49,7 @@ let make =
       },
     }: ViewData.payout =
       viewData.payout;
-    let executeEndorse = () => {
+    let executeCommand = (~justSign=false, ()) => {
       open Js.Promise;
       let signatures =
         if (viewData.requiresLedgerSig) {
@@ -62,7 +64,12 @@ let make =
       |> then_(
            fun
            | Ledger.Signatures(signatures) =>
-             commands.endorsePayout(~processId, ~signatures) |> resolve
+             (
+               justSign ?
+                 commands.signPayout(~processId, ~signatures) :
+                 commands.endorsePayout(~processId, ~signatures)
+             )
+             |> resolve
            | WrongDevice =>
              commands.preSubmitError(
                "The device does not have the correct seed for signing",
@@ -79,9 +86,9 @@ let make =
 
     let destinationList =
       ReasonReact.array(
-        Array.of_list(
+        List.toArray(
           summary.destinations
-          |> List.mapi((idx, (address, amount)) =>
+          |. List.mapWithIndexU((. idx, (address, amount)) =>
                MaterialUi.(
                  <TableRow key=(idx |> string_of_int)>
                    <TableCell className=Styles.noBorder padding=`None>
@@ -113,6 +120,9 @@ let make =
         };
       <StatusChip label status />;
     };
+    let pendingSignatures =
+      status == Accepted && viewData.missingSignatures |. Set.size > 0;
+
     switch (cmdStatus) {
     | CommandExecutor.PreSubmit(_) =>
       <LedgerConfirmation
@@ -143,6 +153,16 @@ let make =
               ("Status: " |> text)
               payoutStatus
             </MTypography>
+            (
+              switch (pendingSignatures) {
+              | true =>
+                <MTypography variant=`Body2>
+                  ("Transaction Status: " |> text)
+                  <StatusChip label="Pending" status=Pending />
+                </MTypography>
+              | _ => ReasonReact.null
+              }
+            )
             <MTypography variant=`Title gutterTop=true>
               ("Payout" |> text)
             </MTypography>
@@ -193,40 +213,105 @@ let make =
             </ScrollList>
           </div>
         }
-        area4={
-          <div className=ScrollList.containerStyles>
-            <Voters
-              voters
-              currentPartners=viewData.currentPartners
-              processStatus
-            />
-            <ProcessApprovalButtons
-              endorseText="Endorse Payout"
-              rejectText="Reject Payout"
-              canVote
-              onEndorse=executeEndorse
-              onReject=(() => commands.rejectPayout(~processId))
-              onCancel=(() => commands.reset())
-              cmdStatus
-            />
-            (
-              if (viewData.collidesWith |> Belt.Set.size > 0) {
-                <MaterialUi.SnackbarContent
-                  message=(
-                    {|
+        area4=(
+          switch (pendingSignatures) {
+          | false =>
+            <div className=ScrollList.containerStyles>
+              <Voters
+                voters
+                currentPartners=viewData.currentPartners
+                processStatus
+              />
+              <ProcessApprovalButtons
+                endorseText="Endorse Payout"
+                rejectText="Reject Payout"
+                canVote
+                onEndorse=executeCommand
+                onReject=(() => commands.rejectPayout(~processId))
+                onCancel=(() => commands.reset())
+                cmdStatus
+              />
+              (
+                if (viewData.collidesWith |> Belt.Set.size > 0) {
+                  <MaterialUi.SnackbarContent
+                    message=(
+                      {|
                    This Proposal is reusing inputs reserved by another payout.
                    We recommend that you coordinate with your Partners
                    to only endorse one Proposal and reject the other one.
                    |}
-                    |> text
+                      |> text
+                    )
+                  />;
+                } else {
+                  ReasonReact.null;
+                }
+              )
+            </div>
+          | _ =>
+            <div className=ScrollList.containerStyles>
+              <MTypography variant=`Title>
+                ("Pending Signatures" |> text)
+              </MTypography>
+              <MTypography variant=`Body2>
+                (
+                  "Additional signatures are required by the bitcoin network in order for this transaction to proceed. The following custodians have yet to sign this transaction:"
+                  |> text
+                )
+              </MTypography>
+              <ScrollList>
+                <MaterialUi.List disablePadding=true>
+                  (
+                    ReasonReact.array(
+                      viewData.missingSignatures
+                      |. Set.toArray
+                      |. Array.mapU((. userId) =>
+                           <Partner
+                             partnerId=userId
+                             status={
+                               <StatusChip label="Pending" status=Pending />
+                             }
+                           />
+                         ),
+                    )
                   )
-                />;
-              } else {
-                ReasonReact.null;
-              }
-            )
-          </div>
-        }
+                </MaterialUi.List>
+              </ScrollList>
+              (
+                switch (
+                  viewData.missingSignatures |. Set.has(viewData.localUser)
+                ) {
+                | true =>
+                  <SingleActionButton
+                    onSubmit=(executeCommand(~justSign=true))
+                    canSubmitAction=true
+                    withConfirmation=false
+                    action=CommandExecutor.Status.SignTransaction
+                    buttonText="Sign Transaction"
+                    cmdStatus
+                  />
+                | _ => ReasonReact.null
+                }
+              )
+              (
+                if (viewData.collidesWith |> Belt.Set.size > 0) {
+                  <MaterialUi.SnackbarContent
+                    message=(
+                      {|
+                   This Proposal is reusing inputs reserved by another payout.
+                   We recommend that you coordinate with your Partners
+                   to only sign one Proposal.
+                   |}
+                      |> text
+                    )
+                  />;
+                } else {
+                  ReasonReact.null;
+                }
+              )
+            </div>
+          }
+        )
         area5=(
           switch (txId, explorerLink) {
           | (Some(txId), Some(explorerLink)) =>
@@ -240,7 +325,7 @@ let make =
                 </a>
               </MTypography>
             </div>
-          | _ => <MTypography variant=`Body1> PolicyText.payout </MTypography>
+          | _ => ReasonReact.null
           }
         )
       />
