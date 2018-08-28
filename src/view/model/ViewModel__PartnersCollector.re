@@ -29,6 +29,7 @@ type t = {
   partners: list(partner),
   partnerProcesses: ProcessCollector.collection(data),
   partnerPolicy: Policy.t,
+  everJoinedWallet: UserId.set,
 };
 
 let currentPartners = ({partners}) =>
@@ -78,6 +79,7 @@ let make = localUser => {
   partners: [],
   partnerProcesses: ProcessId.makeMap(),
   partnerPolicy: Policy.Unanimous,
+  everJoinedWallet: UserId.emptySet,
 };
 
 let apply = (event: Event.t, state) =>
@@ -113,6 +115,7 @@ let apply = (event: Event.t, state) =>
         |> ProcessCollector.updateData(partner.processId, data =>
              {...data, joinedWallet: true}
            ),
+      everJoinedWallet: state.everJoinedWallet |. Set.add(custodianId),
     };
   | PartnerProposed(proposal) => {
       ...state,
@@ -121,7 +124,7 @@ let apply = (event: Event.t, state) =>
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
              {
                userId: data.id,
-               joinedWallet: false,
+               joinedWallet: state.everJoinedWallet |. Set.has(data.id),
                processType: Addition,
                hasLoggedIn:
                  hasUserLoggedIn(proposal.data.pubKey, proposal.data.id),
@@ -149,7 +152,7 @@ let apply = (event: Event.t, state) =>
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
           hasLoggedIn: hasUserLoggedIn(data.pubKey, data.id),
-          joinedWallet: false,
+          joinedWallet: state.everJoinedWallet |. Set.has(data.id),
         },
         ...state.partners
            |. List.keepU((. {userId}: partner) =>

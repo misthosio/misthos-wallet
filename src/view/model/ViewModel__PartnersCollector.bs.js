@@ -71,7 +71,8 @@ function make(localUser) {
           /* localUser */localUser,
           /* partners : [] */0,
           /* partnerProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
-          /* partnerPolicy : Unanimous */0
+          /* partnerPolicy : Unanimous */0,
+          /* everJoinedWallet */PrimitiveTypes.UserId[/* emptySet */9]
         ];
 }
 
@@ -85,7 +86,8 @@ function apply($$event, state) {
                 /* partnerProcesses */state[/* partnerProcesses */2],
                 /* partnerPolicy */Js_option.getWithDefault(Policy.defaultAddPartner, Utils.mapOption((function (p) {
                             return p[/* addPartner */0];
-                          }), $$event[0][/* initialPolicies */6]))
+                          }), $$event[0][/* initialPolicies */6])),
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 1 : 
         var proposal = $$event[0];
@@ -97,10 +99,11 @@ function apply($$event, state) {
                                 /* userId */data[/* id */1],
                                 /* processType : Addition */1,
                                 /* hasLoggedIn */hasUserLoggedIn(proposal[/* data */6][/* pubKey */2], proposal[/* data */6][/* id */1]),
-                                /* joinedWallet */false
+                                /* joinedWallet */Belt_Set.has(state[/* everJoinedWallet */4], data[/* id */1])
                               ];
                       }), state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 4 : 
         var acceptance = $$event[0];
@@ -114,14 +117,15 @@ function apply($$event, state) {
                     /* name */undefined,
                     /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0]),
                     /* hasLoggedIn */hasUserLoggedIn(data[/* pubKey */2], data[/* id */1]),
-                    /* joinedWallet */false
+                    /* joinedWallet */Belt_Set.has(state[/* everJoinedWallet */4], data[/* id */1])
                   ],
                   Belt_List.keepU(state[/* partners */1], (function (param) {
                           return PrimitiveTypes.UserId[/* neq */6](param[/* userId */0], data[/* id */1]);
                         }))
                 ],
                 /* partnerProcesses */ProcessCollector.addAcceptance(acceptance, state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 6 : 
         var partnerId = $$event[0][/* partnerId */0];
@@ -140,7 +144,8 @@ function apply($$event, state) {
                               ];
                       })),
                 /* partnerProcesses */state[/* partnerProcesses */2],
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 7 : 
         var proposal$1 = $$event[0];
@@ -172,7 +177,8 @@ function apply($$event, state) {
                                 /* joinedWallet */partner[/* joinedWallet */5]
                               ];
                       }), state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 2 : 
     case 8 : 
@@ -191,7 +197,8 @@ function apply($$event, state) {
                         return PrimitiveTypes.UserId[/* neq */6](p[/* userId */0], id);
                       })),
                 /* partnerProcesses */ProcessCollector.addAcceptance(acceptance$1, state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 5 : 
     case 11 : 
@@ -222,7 +229,8 @@ function apply($$event, state) {
                                 /* joinedWallet */true
                               ];
                       }), state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */Belt_Set.add(state[/* everJoinedWallet */4], custodianId)
               ];
     default:
       return state;
@@ -233,21 +241,24 @@ function apply($$event, state) {
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
                 /* partnerProcesses */ProcessCollector.addRejection(state[/* localUser */0], $$event[0], state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 2 : 
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
                 /* partnerProcesses */ProcessCollector.addEndorsement(state[/* localUser */0], $$event[0], state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     case 3 : 
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
                 /* partnerProcesses */ProcessCollector.addDenial($$event[0], state[/* partnerProcesses */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */3],
+                /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
     
   }
