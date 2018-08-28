@@ -9,6 +9,13 @@ module Styles = {
   let atRiskKeyStatus = style([color(Colors.error)]);
 };
 
+let policyDescription =
+  fun
+  | Policy.Unanimous => "Unanimous"
+  | Policy.UnanimousMinusOne => "Unanimous minus 1"
+  | Policy.Percentage({percentage}) => string_of_int(percentage) ++ "%"
+  | Policy.AtLeast({n}) => "At least " ++ string_of_int(n);
+
 let component = ReasonReact.statelessComponent("VentureSettings");
 let make =
     (
@@ -87,6 +94,64 @@ let make =
       <Grid
         title1=("Venture Settings" |> text)
         area3={
+          <div>
+            <MTypography variant=`Title gutterBottom=true>
+              ("Policy Settings" |> text)
+            </MTypography>
+            <MTypography variant=`Body2 gutterBottom=true>
+              (
+                "The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:"
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              (
+                "Partner addition: "
+                ++ policyDescription(viewData.policies.addPartner)
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              (
+                "Partner removal: "
+                ++ policyDescription(viewData.policies.removePartner)
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Body2>
+              (
+                "Payout: "
+                ++ policyDescription(viewData.policies.payout)
+                |> text
+              )
+            </MTypography>
+            <MTypography variant=`Title gutterTop=true gutterBottom=true>
+              ("Hardware Wallet Settings" |> text)
+            </MTypography>
+            <MTypography variant=`Body2 gutterBottom=true>
+              (ledgerIntegrater |> text)
+            </MTypography>
+            <MTypography variant=`Body2>
+              ("Key status: " |> text)
+              <span className=(needsKeyRotation ? Styles.atRiskKeyStatus : "")>
+                (keyStatus |> text)
+              </span>
+            </MTypography>
+            (
+              viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
+                ReasonReact.null :
+                <SingleActionButton
+                  onSubmit=executeSubmit
+                  canSubmitAction=true
+                  withConfirmation=false
+                  action=CommandExecutor.Status.SubmitKeys
+                  buttonText="Submit public keys"
+                  cmdStatus
+                />
+            )
+          </div>
+        }
+        area4={
           <div className=ScrollList.containerStyles>
             <MTypography variant=`Title gutterBottom=true>
               ("Wallet Settings" |> text)
@@ -142,52 +207,6 @@ let make =
                 </Table>
               )
             </ScrollList>
-          </div>
-        }
-        area4={
-          <div>
-            <MTypography variant=`Title gutterBottom=true>
-              ("Hardware Wallet Settings" |> text)
-            </MTypography>
-            <MTypography variant=`Body2 gutterBottom=true>
-              (ledgerIntegrater |> text)
-            </MTypography>
-            <MTypography variant=`Body2>
-              ("Key status: " |> text)
-              <span className=(needsKeyRotation ? Styles.atRiskKeyStatus : "")>
-                (keyStatus |> text)
-              </span>
-            </MTypography>
-            (
-              viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
-                ReasonReact.null :
-                <SingleActionButton
-                  onSubmit=executeSubmit
-                  canSubmitAction=true
-                  withConfirmation=false
-                  action=CommandExecutor.Status.SubmitKeys
-                  buttonText="Submit public keys"
-                  cmdStatus
-                />
-            )
-            <MTypography variant=`Title gutterTop=true gutterBottom=true>
-              ("Policy Settings" |> text)
-            </MTypography>
-            <MTypography variant=`Body2 gutterBottom=true>
-              (
-                "The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:"
-                |> text
-              )
-            </MTypography>
-            <MTypography variant=`Body2>
-              ("Partner addition: Unanmious" |> text)
-            </MTypography>
-            <MTypography variant=`Body2>
-              ("Partner removal: Unanmious minus 1" |> text)
-            </MTypography>
-            <MTypography variant=`Body2>
-              ("Payout: Unanmious" |> text)
-            </MTypography>
           </div>
         }
       />;

@@ -19,6 +19,7 @@ type t = {
     option((WebWorker.correlationId, VentureWorkerMessage.cmdResponse)),
   ventureName: string,
   defaultAccountSettings: AccountSettings.t,
+  initialPolicies: Policy.initialPolicies,
   processedItems: ItemsSet.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
@@ -44,16 +45,19 @@ module VentureSettingsView = {
     ledgerUpToDate: bool,
     getCustodianKeyChain: unit => Js.Promise.t(Ledger.result),
     accountSettings: AccountSettings.t,
+    policies: Policy.initialPolicies,
   };
   let fromViewModel =
       (
         {
           ventureId,
           defaultAccountSettings,
+          initialPolicies,
           walletInfoCollector,
           ledgerInfoCollector,
         },
       ) => {
+    policies: initialPolicies,
     ledgerId:
       ledgerInfoCollector
       |> LedgerInfoCollector.ledgerId(AccountIndex.default),
@@ -650,6 +654,7 @@ let make = localUser => {
   lastResponse: None,
   ventureName: "",
   defaultAccountSettings: AccountSettings.default,
+  initialPolicies: Policy.defaultInitialPolicies,
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   partnersCollector: PartnersCollector.make(localUser),
@@ -681,13 +686,21 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
-    | VentureCreated({ventureName, ventureId, defaultAccountSettings}) => {
+    | VentureCreated({
+        ventureName,
+        ventureId,
+        defaultAccountSettings,
+        initialPolicies,
+      }) => {
         ...state,
         ventureId,
         ventureName,
         defaultAccountSettings:
           defaultAccountSettings
           |> Js.Option.getWithDefault(AccountSettings.default),
+        initialPolicies:
+          initialPolicies
+          |> Js.Option.getWithDefault(Policy.defaultInitialPolicies),
       }
     | _ => state
     };

@@ -27,6 +27,20 @@ var atRiskKeyStatus = Css.style(/* :: */[
 
 var Styles = /* module */[/* atRiskKeyStatus */atRiskKeyStatus];
 
+function policyDescription(param) {
+  if (typeof param === "number") {
+    if (param === 0) {
+      return "Unanimous";
+    } else {
+      return "Unanimous minus 1";
+    }
+  } else if (param.tag) {
+    return "At least " + String(param[0][/* n */0]);
+  } else {
+    return String(param[0][/* percentage */0]) + "%";
+  }
+}
+
 var component = ReasonReact.statelessComponent("VentureSettings");
 
 function make(viewData, commands, cmdStatus, _) {
@@ -80,10 +94,11 @@ function make(viewData, commands, cmdStatus, _) {
                                         ]));
                         })), 1, 10);
               var needsKeyRotation = !viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
-              var match$3 = viewData[/* accountSettings */3][/* sequence */1];
+              var match$3 = viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
+              var match$4 = viewData[/* accountSettings */3][/* sequence */1];
               var tmp;
-              if (match$3 !== undefined) {
-                var nBlocks = match$3;
+              if (match$4 !== undefined) {
+                var nBlocks = match$4;
                 tmp = /* array */[
                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Degrading multisig is enabled.")])),
                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The unlock time is " + (String(nBlocks) + (" blocks (approximately " + (String(nBlocks / 144 | 0) + " days)."))))]))
@@ -91,8 +106,12 @@ function make(viewData, commands, cmdStatus, _) {
               } else {
                 tmp = ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Degrading multisig is disabled.")]));
               }
-              var match$4 = viewData[/* ledgerUpToDate */1] && Js_option.isSome(viewData[/* ledgerId */0]);
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Venture Settings")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
+              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Venture Settings")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Policy Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition: " + policyDescription(viewData[/* policies */4][/* addPartner */0]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal: " + policyDescription(viewData[/* policies */4][/* removePartner */2]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout: " + policyDescription(viewData[/* policies */4][/* payout */4]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Hardware Wallet Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text(match$2[0])])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                              ViewCommon.text("Key status: "),
+                                              React.createElement("span", {
+                                                    className: needsKeyRotation ? atRiskKeyStatus : ""
+                                                  }, ViewCommon.text(match$2[1]))
+                                            ])), match$3 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, /* SubmitKeys */3, cmdStatus, /* array */[])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
                                     }, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Wallet Settings")])), tmp, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Here is an overview of the required signatures depending on the number of Custodians backing an address:")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[
                                                         ReasonReact.element(undefined, undefined, MaterialUi_TableHead.make(undefined, undefined, /* array */[ReasonReact.element("header", undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
@@ -100,12 +119,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                                             ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Signatures Required")]))]))
                                                                           ]))])),
                                                         ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[nSigs]))
-                                                      ]))])))), Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Hardware Wallet Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text(match$2[0])])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                              ViewCommon.text("Key status: "),
-                                              React.createElement("span", {
-                                                    className: needsKeyRotation ? atRiskKeyStatus : ""
-                                                  }, ViewCommon.text(match$2[1]))
-                                            ])), match$4 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, /* SubmitKeys */3, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Policy Settings")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The policies determine the threshold at which a proposal will be accepted. This Venture has the following policies:")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition: Unanmious")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal: Unanmious minus 1")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout: Unanmious")])))), undefined, undefined, /* array */[]));
+                                                      ]))])))), undefined, undefined, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -128,6 +142,7 @@ exports.extractString = extractString;
 exports.ignoreEvent = ignoreEvent;
 exports.ViewData = ViewData;
 exports.Styles = Styles;
+exports.policyDescription = policyDescription;
 exports.component = component;
 exports.make = make;
 /* atRiskKeyStatus Not a pure module */
