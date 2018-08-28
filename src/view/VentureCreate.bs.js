@@ -35,7 +35,6 @@ var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_Tabl
 var MaterialUi_TableHead = require("@jsiebern/bs-material-ui/src/MaterialUi_TableHead.bs.js");
 var MaterialUi_InputLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_InputLabel.bs.js");
 var MaterialUi_FormControl = require("@jsiebern/bs-material-ui/src/MaterialUi_FormControl.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 var MaterialUi_ExpansionPanel = require("@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanel.bs.js");
 var MaterialUi_FormHelperText = require("@jsiebern/bs-material-ui/src/MaterialUi_FormHelperText.bs.js");
 var MaterialUi_InputAdornment = require("@jsiebern/bs-material-ui/src/MaterialUi_InputAdornment.bs.js");
@@ -86,7 +85,9 @@ function make(onCreateVenture, cmdStatus, _) {
                       /* newVenture */state[/* newVenture */0],
                       /* cmdStatus */cmdStatus,
                       /* accountSettings */state[/* accountSettings */2],
-                      /* policies */state[/* policies */3]
+                      /* addPartnerSelection */state[/* addPartnerSelection */3],
+                      /* removePartnerSelection */state[/* removePartnerSelection */4],
+                      /* payoutSelection */state[/* payoutSelection */5]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -132,25 +133,6 @@ function make(onCreateVenture, cmdStatus, _) {
                         })), 2, 9);
               var degradingMultiSig = state[/* accountSettings */2][/* sequence */1] !== undefined;
               var sequence = state[/* accountSettings */2][/* sequence */1];
-              var match = state[/* policies */3][/* addPartner */0];
-              var tmp;
-              tmp = typeof match === "number" ? null : (
-                  match.tag ? ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["N ="])),
-                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `Int */[
-                                        3654863,
-                                        match[0][/* n */0]
-                                      ], undefined, undefined, /* array */[]))
-                            ])) : ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["N ="])),
-                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e) {
-                                          return Curry._1(send, /* ChangeAddPartnerN */Block.__(4, [ViewCommon.extractString(e)]));
-                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `Int */[
-                                        3654863,
-                                        match[0][/* percentage */0]
-                                      ], undefined, undefined, /* array */[]))
-                            ]))
-                );
               var value = sequence !== undefined ? /* `Int */[
                   3654863,
                   sequence
@@ -172,17 +154,16 @@ function make(onCreateVenture, cmdStatus, _) {
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Endorsement Policies")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Decide how many Partners need to endorse a Proposal for it to become Accepted:")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition:")])),
-                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(state[/* policies */3][/* addPartner */0], (function (p) {
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(Policy.defaultInitialPolicies[/* addPartner */0], (function (p) {
                                                                               return Curry._1(send, /* ChangeAddPartnerPolicy */Block.__(3, [p]));
                                                                             }), /* array */[])),
-                                                                  tmp,
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal:")])),
-                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(state[/* policies */3][/* removePartner */2], (function (p) {
-                                                                              return Curry._1(send, /* ChangeRemovePartnerPolicy */Block.__(5, [p]));
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(Policy.defaultInitialPolicies[/* removePartner */2], (function (p) {
+                                                                              return Curry._1(send, /* ChangeRemovePartnerPolicy */Block.__(4, [p]));
                                                                             }), /* array */[])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout:")])),
-                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(state[/* policies */3][/* payout */4], (function (p) {
-                                                                              return Curry._1(send, /* ChangePayoutPolicy */Block.__(6, [p]));
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(Policy.defaultInitialPolicies[/* payout */4], (function (p) {
+                                                                              return Curry._1(send, /* ChangePayoutPolicy */Block.__(5, [p]));
                                                                             }), /* array */[])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Wallet Settings")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("You may adjust the wallet settings for your Venture\n                       here. Once the Venture is created, these settings may not\n                       be changed, so please choose wisely.")])),
@@ -220,7 +201,9 @@ function make(onCreateVenture, cmdStatus, _) {
                       /* newVenture */"",
                       /* cmdStatus */cmdStatus,
                       /* accountSettings */AccountSettings.$$default,
-                      /* policies */Policy.defaultInitialPolicies
+                      /* addPartnerSelection : ValidSelection */[Policy.defaultInitialPolicies[/* addPartner */0]],
+                      /* removePartnerSelection : ValidSelection */[Policy.defaultInitialPolicies[/* removePartner */2]],
+                      /* payoutSelection : ValidSelection */[Policy.defaultInitialPolicies[/* payout */4]]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -239,20 +222,41 @@ function make(onCreateVenture, cmdStatus, _) {
                     if (name === "") {
                       return /* NoUpdate */0;
                     } else {
-                      Curry._3(onCreateVenture, name, state[/* accountSettings */2], state[/* policies */3]);
+                      var match$1 = state[/* addPartnerSelection */3];
+                      var match$2 = state[/* removePartnerSelection */4];
+                      var match$3 = state[/* payoutSelection */5];
+                      if (match$1) {
+                        if (match$2) {
+                          if (match$3) {
+                            var removePartner = match$2[0];
+                            var addPartner = match$1[0];
+                            Curry._3(onCreateVenture, name, state[/* accountSettings */2], /* record */[
+                                  /* addPartner */addPartner,
+                                  /* addCustodian */addPartner,
+                                  /* removePartner */removePartner,
+                                  /* removeCustodian */removePartner,
+                                  /* payout */match$3[0]
+                                ]);
+                          }
+                          
+                        }
+                        
+                      }
                       return /* NoUpdate */0;
                     }
                   } else {
                     var init = state[/* accountSettings */2];
-                    var match$1 = state[/* accountSettings */2][/* sequence */1] === undefined;
+                    var match$4 = state[/* accountSettings */2][/* sequence */1] === undefined;
                     return /* Update */Block.__(0, [/* record */[
                                 /* newVenture */state[/* newVenture */0],
                                 /* cmdStatus */state[/* cmdStatus */1],
                                 /* accountSettings : record */[
                                   /* coSignerList */init[/* coSignerList */0],
-                                  /* sequence */match$1 ? AccountSettings.defaultSequence : undefined
+                                  /* sequence */match$4 ? AccountSettings.defaultSequence : undefined
                                 ],
-                                /* policies */state[/* policies */3]
+                                /* addPartnerSelection */state[/* addPartnerSelection */3],
+                                /* removePartnerSelection */state[/* removePartnerSelection */4],
+                                /* payoutSelection */state[/* payoutSelection */5]
                               ]]);
                   }
                 } else {
@@ -262,12 +266,14 @@ function make(onCreateVenture, cmdStatus, _) {
                                     /* newVenture */action[0],
                                     /* cmdStatus */state[/* cmdStatus */1],
                                     /* accountSettings */state[/* accountSettings */2],
-                                    /* policies */state[/* policies */3]
+                                    /* addPartnerSelection */state[/* addPartnerSelection */3],
+                                    /* removePartnerSelection */state[/* removePartnerSelection */4],
+                                    /* payoutSelection */state[/* payoutSelection */5]
                                   ]]);
                     case 1 : 
-                        var match$2 = action[0];
-                        var nCoSigners = match$2[1];
-                        var idx = match$2[0];
+                        var match$5 = action[0];
+                        var nCoSigners = match$5[1];
+                        var idx = match$5[0];
                         var init$1 = state[/* accountSettings */2];
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
@@ -283,73 +289,51 @@ function make(onCreateVenture, cmdStatus, _) {
                                             })),
                                       /* sequence */init$1[/* sequence */1]
                                     ],
-                                    /* policies */state[/* policies */3]
+                                    /* addPartnerSelection */state[/* addPartnerSelection */3],
+                                    /* removePartnerSelection */state[/* removePartnerSelection */4],
+                                    /* payoutSelection */state[/* payoutSelection */5]
                                   ]]);
                     case 2 : 
                         var sequence = action[0];
                         var init$2 = state[/* accountSettings */2];
-                        var match$3 = sequence > 65500;
+                        var match$6 = sequence > 65500;
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
                                     /* cmdStatus */state[/* cmdStatus */1],
                                     /* accountSettings : record */[
                                       /* coSignerList */init$2[/* coSignerList */0],
-                                      /* sequence */match$3 ? 65500 : sequence
+                                      /* sequence */match$6 ? 65500 : sequence
                                     ],
-                                    /* policies */state[/* policies */3]
+                                    /* addPartnerSelection */state[/* addPartnerSelection */3],
+                                    /* removePartnerSelection */state[/* removePartnerSelection */4],
+                                    /* payoutSelection */state[/* payoutSelection */5]
                                   ]]);
                     case 3 : 
-                        var policy = action[0];
-                        var init$3 = state[/* policies */3];
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
                                     /* cmdStatus */state[/* cmdStatus */1],
                                     /* accountSettings */state[/* accountSettings */2],
-                                    /* policies : record */[
-                                      /* addPartner */policy,
-                                      /* addCustodian */policy,
-                                      /* removePartner */init$3[/* removePartner */2],
-                                      /* removeCustodian */init$3[/* removeCustodian */3],
-                                      /* payout */init$3[/* payout */4]
-                                    ]
+                                    /* addPartnerSelection */action[0],
+                                    /* removePartnerSelection */state[/* removePartnerSelection */4],
+                                    /* payoutSelection */state[/* payoutSelection */5]
                                   ]]);
                     case 4 : 
-                        throw [
-                              Caml_builtin_exceptions.match_failure,
-                              /* tuple */[
-                                "VentureCreate.re",
-                                53,
-                                4
-                              ]
-                            ];
-                    case 5 : 
-                        var policy$1 = action[0];
-                        var init$4 = state[/* policies */3];
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
                                     /* cmdStatus */state[/* cmdStatus */1],
                                     /* accountSettings */state[/* accountSettings */2],
-                                    /* policies : record */[
-                                      /* addPartner */init$4[/* addPartner */0],
-                                      /* addCustodian */init$4[/* addCustodian */1],
-                                      /* removePartner */policy$1,
-                                      /* removeCustodian */policy$1,
-                                      /* payout */init$4[/* payout */4]
-                                    ]
+                                    /* addPartnerSelection */state[/* addPartnerSelection */3],
+                                    /* removePartnerSelection */action[0],
+                                    /* payoutSelection */state[/* payoutSelection */5]
                                   ]]);
-                    case 6 : 
-                        var init$5 = state[/* policies */3];
+                    case 5 : 
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
                                     /* cmdStatus */state[/* cmdStatus */1],
                                     /* accountSettings */state[/* accountSettings */2],
-                                    /* policies : record */[
-                                      /* addPartner */init$5[/* addPartner */0],
-                                      /* addCustodian */init$5[/* addCustodian */1],
-                                      /* removePartner */init$5[/* removePartner */2],
-                                      /* removeCustodian */init$5[/* removeCustodian */3],
-                                      /* payout */action[0]
-                                    ]
+                                    /* addPartnerSelection */state[/* addPartnerSelection */3],
+                                    /* removePartnerSelection */state[/* removePartnerSelection */4],
+                                    /* payoutSelection */action[0]
                                   ]]);
                     
                   }

@@ -15,7 +15,7 @@ var MaterialUi_MenuItem = require("@jsiebern/bs-material-ui/src/MaterialUi_MenuI
 var MaterialUi_InputLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_InputLabel.bs.js");
 var MaterialUi_FormControl = require("@jsiebern/bs-material-ui/src/MaterialUi_FormControl.bs.js");
 
-var component = ReasonReact.statelessComponent("PolicySelect");
+var component = ReasonReact.reducerComponent("PolicySelect");
 
 function policyTypeToString(param) {
   if (typeof param === "number") {
@@ -36,7 +36,7 @@ function stringToPolicy(param) {
     case "At least" : 
         return Policy.atLeast(1);
     case "Percentage" : 
-        return Policy.percentage(50);
+        return Policy.percentage(51);
     case "Unanimous" : 
         return Policy.unanimous;
     case "Unanimous minus 1" : 
@@ -48,31 +48,49 @@ function stringToPolicy(param) {
 
 var policyOptions = /* array */[
   Policy.atLeast(1),
-  Policy.percentage(50),
+  Policy.percentage(51),
   Policy.unanimousMinusOne,
   Policy.unanimous
 ];
 
 function updatePolicyWithN(n, policy) {
   if (typeof policy === "number") {
-    return policy;
+    return /* tuple */[
+            policy,
+            ""
+          ];
   } else if (policy.tag) {
     var match = n < 0;
-    return Policy.atLeast(match ? 1 : n);
+    var n$1 = match ? 1 : n;
+    return /* tuple */[
+            Policy.atLeast(n$1),
+            String(n$1)
+          ];
   } else {
     var match$1 = n < 0;
-    var tmp;
+    var n$2;
     if (match$1) {
-      tmp = 0;
+      n$2 = 0;
     } else {
       var match$2 = n > 100;
-      tmp = match$2 ? 100 : n;
+      n$2 = match$2 ? 100 : n;
     }
-    return Policy.percentage(tmp);
+    return /* tuple */[
+            Policy.percentage(n$2),
+            String(n$2)
+          ];
   }
 }
 
-function make(value, onChange, _) {
+function extractPolicyNumber(param) {
+  if (typeof param === "number") {
+    return "";
+  } else {
+    return String(param[0][/* n */0]);
+  }
+}
+
+function make(initialValue, onChange, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -83,44 +101,89 @@ function make(value, onChange, _) {
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function () {
+          /* render */(function (param) {
+              var send = param[/* send */3];
+              var state = param[/* state */1];
               var policyMenuItems = Belt_Array.mapU(policyOptions, (function (p) {
                       return ReasonReact.element(undefined, undefined, MaterialUi_MenuItem.make(undefined, undefined, undefined, undefined, /* `String */[
                                       -976970511,
                                       policyTypeToString(p)
                                     ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(policyTypeToString(p))]));
                     }));
+              var match = state[/* selectedPolicy */0];
               var tmp;
-              tmp = typeof value === "number" ? null : (
-                  value.tag ? ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["N ="])),
-                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `Int */[
-                                        3654863,
-                                        value[0][/* n */0]
-                                      ], undefined, undefined, /* array */[]))
-                            ])) : ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+              tmp = typeof match === "number" ? null : (
+                  match.tag ? ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, state[/* inputNumber */1] === "", undefined, undefined, undefined, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["N ="])),
                               ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e) {
-                                          return Curry._1(onChange, /* Percentage */Block.__(0, [/* record */[/* percentage */Caml_format.caml_int_of_string(ViewCommon.extractString(e))]]));
-                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `Int */[
-                                        3654863,
-                                        value[0][/* percentage */0]
+                                          return Curry._1(send, /* SelectPolicyNumber */Block.__(1, [ViewCommon.extractString(e)]));
+                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
+                                        -976970511,
+                                        state[/* inputNumber */1]
+                                      ], undefined, undefined, /* array */[]))
+                            ])) : ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, state[/* inputNumber */1] === "", undefined, undefined, undefined, undefined, undefined, /* array */[
+                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["% ="])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e) {
+                                          return Curry._1(send, /* SelectPolicyNumber */Block.__(1, [ViewCommon.extractString(e)]));
+                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
+                                        -976970511,
+                                        state[/* inputNumber */1]
                                       ], undefined, undefined, /* array */[]))
                             ]))
                 );
               return ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, MaterialUi_Select.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e, _) {
-                                          return Curry._1(onChange, stringToPolicy(ViewCommon.extractString(e)));
+                                          return Curry._1(send, /* SelectPolicyType */Block.__(0, [stringToPolicy(ViewCommon.extractString(e))]));
                                         }), undefined, undefined, undefined, undefined, undefined, /* `String */[
                                         -976970511,
-                                        policyTypeToString(value)
+                                        policyTypeToString(state[/* selectedPolicy */0])
                                       ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[policyMenuItems])),
                               tmp
                             ]));
             }),
-          /* initialState */component[/* initialState */10],
+          /* initialState */(function () {
+              return /* record */[
+                      /* selectedPolicy */initialValue,
+                      /* inputNumber */extractPolicyNumber(initialValue)
+                    ];
+            }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
+          /* reducer */(function (action, state) {
+              if (action.tag) {
+                var n = action[0];
+                if (n === "") {
+                  Curry._1(onChange, /* InvalidSelection */0);
+                  return /* Update */Block.__(0, [/* record */[
+                              /* selectedPolicy */state[/* selectedPolicy */0],
+                              /* inputNumber */""
+                            ]]);
+                } else {
+                  try {
+                    var match = updatePolicyWithN(Caml_format.caml_int_of_string(n), state[/* selectedPolicy */0]);
+                    var selectedPolicy = match[0];
+                    var state_001 = /* inputNumber */match[1];
+                    var state$1 = /* record */[
+                      /* selectedPolicy */selectedPolicy,
+                      state_001
+                    ];
+                    Curry._1(onChange, /* ValidSelection */[selectedPolicy]);
+                    return /* Update */Block.__(0, [state$1]);
+                  }
+                  catch (exn){
+                    return /* NoUpdate */0;
+                  }
+                }
+              } else {
+                var policy = action[0];
+                var state_001$1 = /* inputNumber */extractPolicyNumber(policy);
+                var state$2 = /* record */[
+                  /* selectedPolicy */policy,
+                  state_001$1
+                ];
+                Curry._1(onChange, /* ValidSelection */[policy]);
+                return /* Update */Block.__(0, [state$2]);
+              }
+            }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
@@ -140,5 +203,6 @@ exports.policyTypeToString = policyTypeToString;
 exports.stringToPolicy = stringToPolicy;
 exports.policyOptions = policyOptions;
 exports.updatePolicyWithN = updatePolicyWithN;
+exports.extractPolicyNumber = extractPolicyNumber;
 exports.make = make;
 /* component Not a pure module */

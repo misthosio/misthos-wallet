@@ -2,7 +2,15 @@ open Belt;
 
 include ViewCommon;
 
-let component = ReasonReact.statelessComponent("PolicySelect");
+type state = {
+  selectedPolicy: Policy.t,
+  inputNumber: string,
+};
+
+type action =
+  | SelectPolicyType(Policy.t)
+  | SelectPolicyNumber(string);
+let component = ReasonReact.reducerComponent("PolicySelect");
 
 let policyTypeToString =
   fun
@@ -16,66 +24,103 @@ let stringToPolicy =
   | "At least" => Policy.atLeast(1)
   | "Unanimous" => Policy.unanimous
   | "Unanimous minus 1" => Policy.unanimousMinusOne
-  | "Percentage" => Policy.percentage(50)
+  | "Percentage" => Policy.percentage(51)
   | _ => Policy.unanimous;
 
 let policyOptions =
-  Policy.([|atLeast(1), percentage(50), unanimousMinusOne, unanimous|]);
+  Policy.([|atLeast(1), percentage(51), unanimousMinusOne, unanimous|]);
 
 let updatePolicyWithN = n =>
   fun
-  | Policy.Percentage(_) => Policy.percentage(n < 0 ? 0 : n > 100 ? 100 : n)
-  | Policy.AtLeast(_) => Policy.atLeast(n < 0 ? 1 : n)
-  | policy => policy;
+  | Policy.Percentage(_) => {
+      let n = n < 0 ? 0 : n > 100 ? 100 : n;
+      (Policy.percentage(n), n |> string_of_int);
+    }
+  | Policy.AtLeast(_) => {
+      let n = n < 0 ? 1 : n;
+      (Policy.atLeast(n), n |> string_of_int);
+    }
+  | policy => (policy, "");
 
-let make = (~value: Policy.t, ~onChange: Policy.t => unit, _children) => {
+let extractPolicyNumber =
+  fun
+  | Policy.Percentage({percentage}) => string_of_int(percentage)
+  | Policy.AtLeast({n}) => string_of_int(n)
+  | _ => "";
+
+type policySelection =
+  | ValidSelection(Policy.t)
+  | InvalidSelection;
+
+let make =
+    (~initialValue: Policy.t, ~onChange: policySelection => unit, _children) => {
   ...component,
-  render: _ => {
+  initialState: () => {
+    selectedPolicy: initialValue,
+    inputNumber: extractPolicyNumber(initialValue),
+  },
+  reducer: (action, state) =>
+    switch (action) {
+    | SelectPolicyType(policy) =>
+      let state = {
+        selectedPolicy: policy,
+        inputNumber: extractPolicyNumber(policy),
+      };
+      onChange(ValidSelection(state.selectedPolicy));
+      ReasonReact.Update(state);
+    | SelectPolicyNumber(n) =>
+      switch (n) {
+      | "" =>
+        onChange(InvalidSelection);
+        ReasonReact.Update({...state, inputNumber: ""});
+      | n =>
+        try (
+          {
+            let (selectedPolicy, inputNumber) =
+              state.selectedPolicy |> updatePolicyWithN(int_of_string(n));
+            let state = {selectedPolicy, inputNumber};
+            onChange(ValidSelection(state.selectedPolicy));
+            ReasonReact.Update(state);
+          }
+        ) {
+        | _ => ReasonReact.NoUpdate
+        }
+      }
+    },
+  render: ({state, send}) => {
     open MaterialUi;
     let policyMenuItems =
-      MaterialUi.(
-        policyOptions
-        |. Array.mapU((. p) =>
-             <MenuItem value=(`String(p |> policyTypeToString))>
-               (p |> policyTypeToString |> text)
-             </MenuItem>
-           )
-      );
+      policyOptions
+      |. Array.mapU((. p) =>
+           <MaterialUi.MenuItem value=(`String(p |> policyTypeToString))>
+             (p |> policyTypeToString |> text)
+           </MaterialUi.MenuItem>
+         );
     <Grid container=true>
       <Select
-        value=(`String(value |> policyTypeToString))
-        onChange=((e, _) => extractString(e) |> stringToPolicy |> onChange)>
+        value=(`String(state.selectedPolicy |> policyTypeToString))
+        onChange=(
+          (e, _) =>
+            extractString(e) |> stringToPolicy |. SelectPolicyType |> send
+        )>
         (policyMenuItems |> ReasonReact.array)
       </Select>
       (
-        switch (value) {
-        | Policy.Percentage({percentage}) =>
-          <FormControl>
-            <InputLabel> "N =" </InputLabel>
+        switch (state.selectedPolicy) {
+        | Policy.Percentage(_) =>
+          <FormControl error=(state.inputNumber == "")>
+            <InputLabel> "% =" </InputLabel>
             <Input
-              value=(`Int(percentage))
-              onChange=(
-                e =>
-                  Policy.Percentage({
-                    percentage: extractString(e) |> int_of_string,
-                  })
-                  |> onChange
-              )
+              value=(`String(state.inputNumber))
+              onChange=(e => extractString(e) |. SelectPolicyNumber |> send)
             />
           </FormControl>
-        | AtLeast({n}) =>
-          <FormControl>
+        | AtLeast(_) =>
+          <FormControl error=(state.inputNumber == "")>
             <InputLabel> "N =" </InputLabel>
             <Input
-              value=(`Int(n))
-              /* onChange=( */
-              /*   e => */
-              /*     send( */
-              /*       ChangeSequence( */
-              /*         extractString(e) |> int_of_string, */
-              /*       ), */
-              /*     ) */
-              /* ) */
+              value=(`String(state.inputNumber))
+              onChange=(e => extractString(e) |. SelectPolicyNumber |> send)
             />
           </FormControl>
         | _ => ReasonReact.null

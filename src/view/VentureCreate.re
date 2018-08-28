@@ -9,7 +9,9 @@ type state = {
   newVenture: string,
   cmdStatus: CommandExecutor.cmdStatus,
   accountSettings: AccountSettings.t,
-  policies: Policy.initialPolicies,
+  addPartnerSelection: PolicySelect.policySelection,
+  removePartnerSelection: PolicySelect.policySelection,
+  payoutSelection: PolicySelect.policySelection,
 };
 
 type action =
@@ -18,10 +20,9 @@ type action =
   | ChangeNumberOfCoSinger((int, int))
   | ChangeSequence(int)
   | ToggleSequence
-  | ChangeAddPartnerPolicy(Policy.t)
-  | ChangeAddPartnerN(string)
-  | ChangeRemovePartnerPolicy(Policy.t)
-  | ChangePayoutPolicy(Policy.t);
+  | ChangeAddPartnerPolicy(PolicySelect.policySelection)
+  | ChangeRemovePartnerPolicy(PolicySelect.policySelection)
+  | ChangePayoutPolicy(PolicySelect.policySelection);
 
 let component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -45,7 +46,11 @@ let make =
   initialState: () => {
     newVenture: "",
     accountSettings: AccountSettings.default,
-    policies: Policy.defaultInitialPolicies,
+    addPartnerSelection:
+      ValidSelection(Policy.defaultInitialPolicies.addPartner),
+    removePartnerSelection:
+      ValidSelection(Policy.defaultInitialPolicies.removePartner),
+    payoutSelection: ValidSelection(Policy.defaultInitialPolicies.payout),
     cmdStatus,
   },
   willReceiveProps: ({state}) => {...state, cmdStatus},
@@ -83,37 +88,39 @@ let make =
         },
       })
     | (ChangeAddPartnerPolicy(policy), _) =>
-      ReasonReact.Update({
-        ...state,
-        policies: {
-          ...state.policies,
-          addPartner: policy,
-          addCustodian: policy,
-        },
-      })
+      ReasonReact.Update({...state, addPartnerSelection: policy})
     | (ChangeRemovePartnerPolicy(policy), _) =>
-      ReasonReact.Update({
-        ...state,
-        policies: {
-          ...state.policies,
-          removePartner: policy,
-          removeCustodian: policy,
-        },
-      })
+      ReasonReact.Update({...state, removePartnerSelection: policy})
     | (ChangePayoutPolicy(policy), _) =>
-      ReasonReact.Update({
-        ...state,
-        policies: {
-          ...state.policies,
-          payout: policy,
-        },
-      })
+      ReasonReact.Update({...state, payoutSelection: policy})
 
     | (CreateVenture, _) =>
       switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
       | name =>
-        onCreateVenture(name, state.accountSettings, state.policies);
+        switch (
+          state.addPartnerSelection,
+          state.removePartnerSelection,
+          state.payoutSelection,
+        ) {
+        | (
+            ValidSelection(addPartner),
+            ValidSelection(removePartner),
+            ValidSelection(payout),
+          ) =>
+          onCreateVenture(
+            name,
+            state.accountSettings,
+            {
+              addPartner,
+              addCustodian: addPartner,
+              removePartner,
+              removeCustodian: removePartner,
+              payout,
+            }: Policy.initialPolicies,
+          )
+        | _ => ()
+        };
         ReasonReact.NoUpdate;
       }
     },
@@ -211,52 +218,22 @@ let make =
                         ("Partner addition:" |> text)
                       </MTypography>
                       <PolicySelect
-                        value=state.policies.addPartner
+                        initialValue=Policy.defaultInitialPolicies.addPartner
                         onChange=(p => send(ChangeAddPartnerPolicy(p)))
                       />
-                      (
-                        switch (state.policies.addPartner) {
-                        | Percentage({percentage}) =>
-                          <FormControl>
-                            <InputLabel> "N =" </InputLabel>
-                            <Input
-                              value=(`Int(percentage))
-                              onChange=(
-                                e =>
-                                  send(ChangeAddPartnerN(extractString(e)))
-                              )
-                            />
-                          </FormControl>
-                        | AtLeast({n}) =>
-                          <FormControl>
-                            <InputLabel> "N =" </InputLabel>
-                            <Input
-                              value=(`Int(n))
-                              /* onChange=( */
-                              /*   e => */
-                              /*     send( */
-                              /*       ChangeSequence( */
-                              /*         extractString(e) |> int_of_string, */
-                              /*       ), */
-                              /*     ) */
-                              /* ) */
-                            />
-                          </FormControl>
-                        | _ => ReasonReact.null
-                        }
-                      )
                       <MTypography variant=`Body2>
                         ("Partner removal:" |> text)
                       </MTypography>
                       <PolicySelect
-                        value=state.policies.removePartner
+                        initialValue=Policy.defaultInitialPolicies.
+                                       removePartner
                         onChange=(p => send(ChangeRemovePartnerPolicy(p)))
                       />
                       <MTypography variant=`Body2>
                         ("Payout:" |> text)
                       </MTypography>
                       <PolicySelect
-                        value=state.policies.payout
+                        initialValue=Policy.defaultInitialPolicies.payout
                         onChange=(p => send(ChangePayoutPolicy(p)))
                       />
                       <MTypography gutterBottom=true variant=`Title>
