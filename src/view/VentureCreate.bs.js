@@ -153,16 +153,13 @@ function make(onCreateVenture, cmdStatus, _) {
                                                         ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelDetails.make(expansionPanelDetails, undefined, undefined, /* array */[
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Endorsement Policies")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Decide how many Partners need to endorse a Proposal for it to become Accepted:")])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition:")])),
-                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(Policy.defaultInitialPolicies[/* addPartner */0], (function (p) {
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make("Partner addition:", Policy.defaultInitialPolicies[/* addPartner */0], (function (p) {
                                                                               return Curry._1(send, /* ChangeAddPartnerPolicy */Block.__(3, [p]));
                                                                             }), /* array */[])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal:")])),
-                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(Policy.defaultInitialPolicies[/* removePartner */2], (function (p) {
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make("Partner removal:", Policy.defaultInitialPolicies[/* removePartner */2], (function (p) {
                                                                               return Curry._1(send, /* ChangeRemovePartnerPolicy */Block.__(4, [p]));
                                                                             }), /* array */[])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout:")])),
-                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(Policy.defaultInitialPolicies[/* payout */4], (function (p) {
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make("Payout:", Policy.defaultInitialPolicies[/* payout */4], (function (p) {
                                                                               return Curry._1(send, /* ChangePayoutPolicy */Block.__(5, [p]));
                                                                             }), /* array */[])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Wallet Settings")])),

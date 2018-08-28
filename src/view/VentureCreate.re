@@ -214,25 +214,19 @@ let make =
                           |> text
                         )
                       </MTypography>
-                      <MTypography variant=`Body2>
-                        ("Partner addition:" |> text)
-                      </MTypography>
                       <PolicySelect
+                        label="Partner addition:"
                         initialValue=Policy.defaultInitialPolicies.addPartner
                         onChange=(p => send(ChangeAddPartnerPolicy(p)))
                       />
-                      <MTypography variant=`Body2>
-                        ("Partner removal:" |> text)
-                      </MTypography>
                       <PolicySelect
+                        label="Partner removal:"
                         initialValue=Policy.defaultInitialPolicies.
                                        removePartner
                         onChange=(p => send(ChangeRemovePartnerPolicy(p)))
                       />
-                      <MTypography variant=`Body2>
-                        ("Payout:" |> text)
-                      </MTypography>
                       <PolicySelect
+                        label="Payout:"
                         initialValue=Policy.defaultInitialPolicies.payout
                         onChange=(p => send(ChangePayoutPolicy(p)))
                       />

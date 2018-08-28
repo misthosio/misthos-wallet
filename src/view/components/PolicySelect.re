@@ -10,7 +10,14 @@ type state = {
 type action =
   | SelectPolicyType(Policy.t)
   | SelectPolicyNumber(string);
+
 let component = ReasonReact.reducerComponent("PolicySelect");
+
+module Styles = {
+  open Css;
+  let container = style([marginBottom(px(Theme.space(2)))]);
+  let flex = style([flex(1)]);
+};
 
 let policyTypeToString =
   fun
@@ -53,7 +60,12 @@ type policySelection =
   | InvalidSelection;
 
 let make =
-    (~initialValue: Policy.t, ~onChange: policySelection => unit, _children) => {
+    (
+      ~label: string,
+      ~initialValue: Policy.t,
+      ~onChange: policySelection => unit,
+      _children,
+    ) => {
   ...component,
   initialState: () => {
     selectedPolicy: initialValue,
@@ -96,15 +108,18 @@ let make =
              (p |> policyTypeToString |> text)
            </MaterialUi.MenuItem>
          );
-    <Grid container=true>
-      <Select
-        value=(`String(state.selectedPolicy |> policyTypeToString))
-        onChange=(
-          (e, _) =>
-            extractString(e) |> stringToPolicy |. SelectPolicyType |> send
-        )>
-        (policyMenuItems |> ReasonReact.array)
-      </Select>
+    <Grid container=true className=Styles.container>
+      <FormControl className=Styles.flex>
+        <InputLabel> (label |> text) </InputLabel>
+        <Select
+          value=(`String(state.selectedPolicy |> policyTypeToString))
+          onChange=(
+            (e, _) =>
+              extractString(e) |> stringToPolicy |. SelectPolicyType |> send
+          )>
+          (policyMenuItems |> ReasonReact.array)
+        </Select>
+      </FormControl>
       (
         switch (state.selectedPolicy) {
         | Policy.Percentage(_) =>
