@@ -28,6 +28,11 @@ let component = ReasonReact.reducerComponent("VentureCreate");
 
 module Styles = {
   open Css;
+  let expansionPanel =
+    style([
+      boxShadow(Colors.white),
+      before([backgroundColor(Colors.white)]),
+    ]);
   let expansionPanelSummary =
     style([
       paddingLeft(px(0)),
@@ -173,29 +178,29 @@ let make =
       title1=("Create a Venture" |> text)
       area3=MaterialUi.(
               <form onSubmit className=ScrollList.containerStyles>
-                <MTypography variant=`Body2>
-                  (
-                    {js|
+                <ScrollList>
+                  <MTypography variant=`Body2>
+                    (
+                      {js|
                  Set up a new Venture with yourself as the initial Partner.
                  You can add and remove Partners once the Venture is created.
                  But first, let’s start with a name.
                 |js}
-                    |> text
-                  )
-                </MTypography>
-                <MTypography gutterTop=true variant=`Title>
-                  ("Venture Name" |> text)
-                </MTypography>
-                <MInput
-                  placeholder="Enter a Venture Name"
-                  value=(`String(state.newVenture))
-                  onChange=(e => send(ChangeNewVenture(extractString(e))))
-                  autoFocus=true
-                  fullWidth=true
-                />
-                <br />
-                <ScrollList>
-                  <ExpansionPanel>
+                      |> text
+                    )
+                  </MTypography>
+                  <MTypography gutterTop=true variant=`Title>
+                    ("Venture Name" |> text)
+                  </MTypography>
+                  <MInput
+                    placeholder="Enter a Venture Name"
+                    value=(`String(state.newVenture))
+                    onChange=(e => send(ChangeNewVenture(extractString(e))))
+                    autoFocus=true
+                    fullWidth=true
+                  />
+                  <br />
+                  <ExpansionPanel className=Styles.expansionPanel>
                     <ExpansionPanelSummary
                       className=Styles.expansionPanelSummary
                       expandIcon=Icons.chevronDown>

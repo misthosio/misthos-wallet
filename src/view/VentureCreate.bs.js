@@ -44,6 +44,17 @@ var MaterialUi_ExpansionPanelSummary = require("@jsiebern/bs-material-ui/src/Mat
 
 var component = ReasonReact.reducerComponent("VentureCreate");
 
+var expansionPanel = Css.style(/* :: */[
+      Css.boxShadow(undefined, undefined, undefined, undefined, undefined, Colors.white),
+      /* :: */[
+        Css.before(/* :: */[
+              Css.backgroundColor(Colors.white),
+              /* [] */0
+            ]),
+        /* [] */0
+      ]
+    ]);
+
 var expansionPanelSummary = Css.style(/* :: */[
       Css.paddingLeft(Css.px(0)),
       /* :: */[
@@ -70,6 +81,7 @@ var expansionPanelDetails = Css.style(/* :: */[
     ]);
 
 var Styles = /* module */[
+  /* expansionPanel */expansionPanel,
   /* expansionPanelSummary */expansionPanelSummary,
   /* expansionPanelDetails */expansionPanelDetails
 ];
@@ -143,12 +155,17 @@ function make(onCreateVenture, cmdStatus, _) {
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Create a Venture")), undefined, undefined, undefined, Js_primitive.some(React.createElement("form", {
                                       className: ScrollList.containerStyles,
                                       onSubmit: onSubmit
-                                    }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("\n                 Set up a new Venture with yourself as the initial Partner.\n                 You can add and remove Partners once the Venture is created.\n                 But first, let’s start with a name.\n                ")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Venture Name")])), ReasonReact.element(undefined, undefined, MInput.make("Enter a Venture Name", /* `String */[
-                                              -976970511,
-                                              state[/* newVenture */0]
-                                            ], (function (e) {
-                                                return Curry._1(send, /* ChangeNewVenture */Block.__(0, [ViewCommon.extractString(e)]));
-                                              }), true, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])), React.createElement("br", undefined), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                    }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("\n                 Set up a new Venture with yourself as the initial Partner.\n                 You can add and remove Partners once the Venture is created.\n                 But first, let’s start with a name.\n                ")])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Venture Name")])),
+                                              ReasonReact.element(undefined, undefined, MInput.make("Enter a Venture Name", /* `String */[
+                                                        -976970511,
+                                                        state[/* newVenture */0]
+                                                      ], (function (e) {
+                                                          return Curry._1(send, /* ChangeNewVenture */Block.__(0, [ViewCommon.extractString(e)]));
+                                                        }), true, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])),
+                                              React.createElement("br", undefined),
+                                              ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanel.make(expansionPanel, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                         ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelSummary.make(expansionPanelSummary, undefined, undefined, Js_primitive.some(Icons.chevronDown), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Additional Settings")]))])),
                                                         ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelDetails.make(expansionPanelDetails, undefined, undefined, /* array */[
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Endorsement Policies")])),
@@ -191,7 +208,8 @@ function make(onCreateVenture, cmdStatus, _) {
                                                                             ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[nSigs]))
                                                                           ]))
                                                                 ]))
-                                                      ]))])), ReasonReact.element(undefined, undefined, SingleActionButton.make("create venture", undefined, onClick, undefined, undefined, true, false, /* CreateVenture */0, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(/* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
+                                                      ]))
+                                            ])), ReasonReact.element(undefined, undefined, SingleActionButton.make("create venture", undefined, onClick, undefined, undefined, true, false, /* CreateVenture */0, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(/* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
