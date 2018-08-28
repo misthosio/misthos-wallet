@@ -24,7 +24,7 @@ module Styles = {
 
   let scrollContainer =
     style([
-      unsafe("flex", "1 1 auto"),
+      unsafe("flex", "0 1 auto"),
       overflowX(hidden),
       overflowY(auto),
       minHeight(px(0)),
