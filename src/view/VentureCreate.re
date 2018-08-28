@@ -12,29 +12,6 @@ type state = {
   policies: Policy.initialPolicies,
 };
 
-let policyTypeToString =
-  fun
-  | Policy.AtLeast(_) => "At least"
-  | Policy.Unanimous => "Unanimous"
-  | Policy.UnanimousMinusOne => "Unanimous minus 1"
-  | Policy.Percentage(_) => "Percentage";
-let stringToPolicy =
-  fun
-  | "At least" => Policy.atLeast(1)
-  | "Unanimous" => Policy.unanimous
-  | "Unanimous minus 1" => Policy.unanimousMinusOne
-  | "Percentage" => Policy.percentage(50)
-  | _ => Policy.unanimous;
-
-let policyOptions =
-  Policy.([|atLeast(1), percentage(50), unanimousMinusOne, unanimous|]);
-
-let updatePolicyWithN = n =>
-  fun
-  | Policy.Percentage(_) => Policy.percentage(n < 0 ? 0 : n > 100 ? 100 : n)
-  | Policy.AtLeast(_) => Policy.atLeast(n < 0 ? 1 : n)
-  | policy => policy;
-
 type action =
   | ChangeNewVenture(string)
   | CreateVenture
@@ -114,21 +91,6 @@ let make =
           addCustodian: policy,
         },
       })
-    | (ChangeAddPartnerN(n), _) =>
-      let policy =
-        try (
-          state.policies.addPartner |> updatePolicyWithN(int_of_string(n))
-        ) {
-        | _ => state.policies.addPartner
-        };
-      ReasonReact.Update({
-        ...state,
-        policies: {
-          ...state.policies,
-          addPartner: policy,
-          addCustodian: policy,
-        },
-      });
     | (ChangeRemovePartnerPolicy(policy), _) =>
       ReasonReact.Update({
         ...state,
@@ -163,16 +125,6 @@ let make =
       ++ "-of-"
       ++ string_of_int(nCoSigners)
       |> text;
-
-    let policyMenuItems =
-      MaterialUi.(
-        policyOptions
-        |. Array.mapU((. p) =>
-             <MenuItem value=(`String(p |> policyTypeToString))>
-               (p |> policyTypeToString |> text)
-             </MenuItem>
-           )
-      );
 
     let getMenuItems = nCoSigners =>
       Array.range(1, nCoSigners)
@@ -258,23 +210,10 @@ let make =
                       <MTypography variant=`Body2>
                         ("Partner addition:" |> text)
                       </MTypography>
-                      <Select
-                        value=(
-                                `String(
-                                  state.policies.addPartner
-                                  |> policyTypeToString,
-                                )
-                              )
-                        onChange=(
-                          (e, _) =>
-                            send(
-                              ChangeAddPartnerPolicy(
-                                extractString(e) |> stringToPolicy,
-                              ),
-                            )
-                        )>
-                        (policyMenuItems |> ReasonReact.array)
-                      </Select>
+                      <PolicySelect
+                        value=state.policies.addPartner
+                        onChange=(p => send(ChangeAddPartnerPolicy(p)))
+                      />
                       (
                         switch (state.policies.addPartner) {
                         | Percentage({percentage}) =>
@@ -309,42 +248,17 @@ let make =
                       <MTypography variant=`Body2>
                         ("Partner removal:" |> text)
                       </MTypography>
-                      <Select
-                        value=(
-                                `String(
-                                  state.policies.removePartner
-                                  |> policyTypeToString,
-                                )
-                              )
-                        onChange=(
-                          (e, _) =>
-                            send(
-                              ChangeRemovePartnerPolicy(
-                                extractString(e) |> stringToPolicy,
-                              ),
-                            )
-                        )>
-                        (policyMenuItems |> ReasonReact.array)
-                      </Select>
+                      <PolicySelect
+                        value=state.policies.removePartner
+                        onChange=(p => send(ChangeRemovePartnerPolicy(p)))
+                      />
                       <MTypography variant=`Body2>
                         ("Payout:" |> text)
                       </MTypography>
-                      <Select
-                        value=(
-                                `String(
-                                  state.policies.payout |> policyTypeToString,
-                                )
-                              )
-                        onChange=(
-                          (e, _) =>
-                            send(
-                              ChangePayoutPolicy(
-                                extractString(e) |> stringToPolicy,
-                              ),
-                            )
-                        )>
-                        (policyMenuItems |> ReasonReact.array)
-                      </Select>
+                      <PolicySelect
+                        value=state.policies.payout
+                        onChange=(p => send(ChangePayoutPolicy(p)))
+                      />
                       <MTypography gutterBottom=true variant=`Title>
                         ("Wallet Settings" |> text)
                       </MTypography>

@@ -18,6 +18,7 @@ var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
+var PolicySelect = require("./components/PolicySelect.bs.js");
 var VentureInfoBox = require("./components/VentureInfoBox.bs.js");
 var AccountSettings = require("../application/wallet/AccountSettings.bs.js");
 var MaterialUi_Grid = require("@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js");
@@ -34,67 +35,13 @@ var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_Tabl
 var MaterialUi_TableHead = require("@jsiebern/bs-material-ui/src/MaterialUi_TableHead.bs.js");
 var MaterialUi_InputLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_InputLabel.bs.js");
 var MaterialUi_FormControl = require("@jsiebern/bs-material-ui/src/MaterialUi_FormControl.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 var MaterialUi_ExpansionPanel = require("@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanel.bs.js");
 var MaterialUi_FormHelperText = require("@jsiebern/bs-material-ui/src/MaterialUi_FormHelperText.bs.js");
 var MaterialUi_InputAdornment = require("@jsiebern/bs-material-ui/src/MaterialUi_InputAdornment.bs.js");
 var MaterialUi_FormControlLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_FormControlLabel.bs.js");
 var MaterialUi_ExpansionPanelDetails = require("@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelDetails.bs.js");
 var MaterialUi_ExpansionPanelSummary = require("@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelSummary.bs.js");
-
-function policyTypeToString(param) {
-  if (typeof param === "number") {
-    if (param === 0) {
-      return "Unanimous";
-    } else {
-      return "Unanimous minus 1";
-    }
-  } else if (param.tag) {
-    return "At least";
-  } else {
-    return "Percentage";
-  }
-}
-
-function stringToPolicy(param) {
-  switch (param) {
-    case "At least" : 
-        return Policy.atLeast(1);
-    case "Percentage" : 
-        return Policy.percentage(50);
-    case "Unanimous" : 
-        return Policy.unanimous;
-    case "Unanimous minus 1" : 
-        return Policy.unanimousMinusOne;
-    default:
-      return Policy.unanimous;
-  }
-}
-
-var policyOptions = /* array */[
-  Policy.atLeast(1),
-  Policy.percentage(50),
-  Policy.unanimousMinusOne,
-  Policy.unanimous
-];
-
-function updatePolicyWithN(n, policy) {
-  if (typeof policy === "number") {
-    return policy;
-  } else if (policy.tag) {
-    var match = n < 0;
-    return Policy.atLeast(match ? 1 : n);
-  } else {
-    var match$1 = n < 0;
-    var tmp;
-    if (match$1) {
-      tmp = 0;
-    } else {
-      var match$2 = n > 100;
-      tmp = match$2 ? 100 : n;
-    }
-    return Policy.percentage(tmp);
-  }
-}
 
 var component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -161,12 +108,6 @@ function make(onCreateVenture, cmdStatus, _) {
               var stringOfMultiSig = function (nCoSigners, requiredSigners) {
                 return ViewCommon.text(String(requiredSigners) + ("-of-" + String(nCoSigners)));
               };
-              var policyMenuItems = Belt_Array.mapU(policyOptions, (function (p) {
-                      return ReasonReact.element(undefined, undefined, MaterialUi_MenuItem.make(undefined, undefined, undefined, undefined, /* `String */[
-                                      -976970511,
-                                      policyTypeToString(p)
-                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(policyTypeToString(p))]));
-                    }));
               var getMenuItems = function (nCoSigners) {
                 return Belt_Array.mapU(Belt_Array.range(1, nCoSigners), (function (idx) {
                               return ReasonReact.element(undefined, undefined, MaterialUi_MenuItem.make(undefined, undefined, undefined, undefined, /* `Int */[
@@ -231,27 +172,18 @@ function make(onCreateVenture, cmdStatus, _) {
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Endorsement Policies")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Decide how many Partners need to endorse a Proposal for it to become Accepted:")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner addition:")])),
-                                                                  ReasonReact.element(undefined, undefined, MaterialUi_Select.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e, _) {
-                                                                              return Curry._1(send, /* ChangeAddPartnerPolicy */Block.__(3, [stringToPolicy(ViewCommon.extractString(e))]));
-                                                                            }), undefined, undefined, undefined, undefined, undefined, /* `String */[
-                                                                            -976970511,
-                                                                            policyTypeToString(state[/* policies */3][/* addPartner */0])
-                                                                          ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[policyMenuItems])),
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(state[/* policies */3][/* addPartner */0], (function (p) {
+                                                                              return Curry._1(send, /* ChangeAddPartnerPolicy */Block.__(3, [p]));
+                                                                            }), /* array */[])),
                                                                   tmp,
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Partner removal:")])),
-                                                                  ReasonReact.element(undefined, undefined, MaterialUi_Select.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e, _) {
-                                                                              return Curry._1(send, /* ChangeRemovePartnerPolicy */Block.__(5, [stringToPolicy(ViewCommon.extractString(e))]));
-                                                                            }), undefined, undefined, undefined, undefined, undefined, /* `String */[
-                                                                            -976970511,
-                                                                            policyTypeToString(state[/* policies */3][/* removePartner */2])
-                                                                          ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[policyMenuItems])),
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(state[/* policies */3][/* removePartner */2], (function (p) {
+                                                                              return Curry._1(send, /* ChangeRemovePartnerPolicy */Block.__(5, [p]));
+                                                                            }), /* array */[])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Payout:")])),
-                                                                  ReasonReact.element(undefined, undefined, MaterialUi_Select.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e, _) {
-                                                                              return Curry._1(send, /* ChangePayoutPolicy */Block.__(6, [stringToPolicy(ViewCommon.extractString(e))]));
-                                                                            }), undefined, undefined, undefined, undefined, undefined, /* `String */[
-                                                                            -976970511,
-                                                                            policyTypeToString(state[/* policies */3][/* payout */4])
-                                                                          ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[policyMenuItems])),
+                                                                  ReasonReact.element(undefined, undefined, PolicySelect.make(state[/* policies */3][/* payout */4], (function (p) {
+                                                                              return Curry._1(send, /* ChangePayoutPolicy */Block.__(6, [p]));
+                                                                            }), /* array */[])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Wallet Settings")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("You may adjust the wallet settings for your Venture\n                       here. Once the Venture is created, these settings may not\n                       be changed, so please choose wisely.")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Degrading Multisig")])),
@@ -382,28 +314,30 @@ function make(onCreateVenture, cmdStatus, _) {
                                     ]
                                   ]]);
                     case 4 : 
-                        var policy$1;
-                        try {
-                          policy$1 = updatePolicyWithN(Caml_format.caml_int_of_string(action[0]), state[/* policies */3][/* addPartner */0]);
-                        }
-                        catch (exn){
-                          policy$1 = state[/* policies */3][/* addPartner */0];
-                        }
+                        throw [
+                              Caml_builtin_exceptions.match_failure,
+                              /* tuple */[
+                                "VentureCreate.re",
+                                53,
+                                4
+                              ]
+                            ];
+                    case 5 : 
+                        var policy$1 = action[0];
                         var init$4 = state[/* policies */3];
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
                                     /* cmdStatus */state[/* cmdStatus */1],
                                     /* accountSettings */state[/* accountSettings */2],
                                     /* policies : record */[
-                                      /* addPartner */policy$1,
-                                      /* addCustodian */policy$1,
-                                      /* removePartner */init$4[/* removePartner */2],
-                                      /* removeCustodian */init$4[/* removeCustodian */3],
+                                      /* addPartner */init$4[/* addPartner */0],
+                                      /* addCustodian */init$4[/* addCustodian */1],
+                                      /* removePartner */policy$1,
+                                      /* removeCustodian */policy$1,
                                       /* payout */init$4[/* payout */4]
                                     ]
                                   ]]);
-                    case 5 : 
-                        var policy$2 = action[0];
+                    case 6 : 
                         var init$5 = state[/* policies */3];
                         return /* Update */Block.__(0, [/* record */[
                                     /* newVenture */state[/* newVenture */0],
@@ -412,22 +346,8 @@ function make(onCreateVenture, cmdStatus, _) {
                                     /* policies : record */[
                                       /* addPartner */init$5[/* addPartner */0],
                                       /* addCustodian */init$5[/* addCustodian */1],
-                                      /* removePartner */policy$2,
-                                      /* removeCustodian */policy$2,
-                                      /* payout */init$5[/* payout */4]
-                                    ]
-                                  ]]);
-                    case 6 : 
-                        var init$6 = state[/* policies */3];
-                        return /* Update */Block.__(0, [/* record */[
-                                    /* newVenture */state[/* newVenture */0],
-                                    /* cmdStatus */state[/* cmdStatus */1],
-                                    /* accountSettings */state[/* accountSettings */2],
-                                    /* policies : record */[
-                                      /* addPartner */init$6[/* addPartner */0],
-                                      /* addCustodian */init$6[/* addCustodian */1],
-                                      /* removePartner */init$6[/* removePartner */2],
-                                      /* removeCustodian */init$6[/* removeCustodian */3],
+                                      /* removePartner */init$5[/* removePartner */2],
+                                      /* removeCustodian */init$5[/* removeCustodian */3],
                                       /* payout */action[0]
                                     ]
                                   ]]);
@@ -451,11 +371,7 @@ var ignoreEvent = ViewCommon.ignoreEvent;
 exports.text = text;
 exports.extractString = extractString;
 exports.ignoreEvent = ignoreEvent;
-exports.policyTypeToString = policyTypeToString;
-exports.stringToPolicy = stringToPolicy;
-exports.policyOptions = policyOptions;
-exports.updatePolicyWithN = updatePolicyWithN;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;
-/* policyOptions Not a pure module */
+/* component Not a pure module */
