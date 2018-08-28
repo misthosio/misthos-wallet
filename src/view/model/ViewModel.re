@@ -218,13 +218,21 @@ module ManagePartnersView = {
              UserId.emptySet,
              (.
                res,
-               {addressStatus, custodians, balance}: WalletInfoCollector.addressInfo,
+               {addressStatus, custodians, balance, nCoSigners}: WalletInfoCollector.addressInfo,
              ) =>
              switch (addressStatus, balance) {
              | (AtRisk, balance)
              | (TemporarilyInaccessible, balance)
                  when balance |. BTC.gt(BTC.zero) =>
                res |. Set.union(custodians)
+             | _ when balance |. BTC.gt(BTC.zero) =>
+               let activeCustodians =
+                 custodians
+                 |. Set.intersect(
+                      partnersCollector |. PartnersCollector.currentPartners,
+                    );
+               activeCustodians |. Set.size == nCoSigners ?
+                 res |. Set.union(custodians) : res;
              | _ => res
              }
            ),
@@ -284,12 +292,23 @@ module ViewPartnerView = {
                     false,
                     (.
                       res,
-                      {addressStatus, custodians}: WalletInfoCollector.addressInfo,
+                      {addressStatus, custodians, balance, nCoSigners}: WalletInfoCollector.addressInfo,
                     ) =>
                     switch (addressStatus) {
                     | TemporarilyInaccessible
-                    | AtRisk =>
+                    | AtRisk when balance |. BTC.gt(BTC.zero) =>
                       res || custodians |. Set.has(partnerProcess.data.userId)
+                    | _ when balance |. BTC.gt(BTC.zero) =>
+                      let activeCustodians =
+                        custodians
+                        |. Set.intersect(
+                             partnersCollector
+                             |. PartnersCollector.currentPartners,
+                           );
+                      activeCustodians
+                      |. Set.size == nCoSigners
+                      && activeCustodians
+                      |. Set.has(partnerProcess.data.userId);
                     | _ => res
                     }
                   )

@@ -155,21 +155,38 @@ function fromViewModelState(param) {
 var AddressesView = /* module */[/* fromViewModelState */fromViewModelState];
 
 function fromViewModelState$1(param) {
+  var partnersCollector = param[/* partnersCollector */7];
   var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */11]);
   return /* record */[
           /* ventureName */param[/* ventureName */3],
-          /* partners */param[/* partnersCollector */7][/* partners */1],
+          /* partners */partnersCollector[/* partners */1],
           /* alertPartners */Belt_List.reduceU(infos, PrimitiveTypes.UserId[/* emptySet */9], (function (res, param) {
+                  var balance = param[/* balance */6];
                   var addressStatus = param[/* addressStatus */5];
+                  var custodians = param[/* custodians */1];
                   var exit = 0;
+                  var exit$1 = 0;
                   if (addressStatus !== 1 && addressStatus !== 3) {
-                    return res;
-                  } else {
                     exit = 1;
+                  } else {
+                    exit$1 = 2;
+                  }
+                  if (exit$1 === 2) {
+                    if (balance.gt(BTC.zero)) {
+                      return Belt_Set.union(res, custodians);
+                    } else {
+                      exit = 1;
+                    }
                   }
                   if (exit === 1) {
-                    if (param[/* balance */6].gt(BTC.zero)) {
-                      return Belt_Set.union(res, param[/* custodians */1]);
+                    if (balance.gt(BTC.zero)) {
+                      var activeCustodians = Belt_Set.intersect(custodians, ViewModel__PartnersCollector.currentPartners(partnersCollector));
+                      var match = Belt_Set.size(activeCustodians) === param[/* nCoSigners */4];
+                      if (match) {
+                        return Belt_Set.union(res, custodians);
+                      } else {
+                        return res;
+                      }
                     } else {
                       return res;
                     }
@@ -197,18 +214,37 @@ function fromViewModelState$2(processId, param) {
                         /* partnerProcess */partnerProcess,
                         /* currentPartners */ViewModel__PartnersCollector.currentPartners(partnersCollector),
                         /* atRiskWarning */match ? false : Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
+                                  var balance = param[/* balance */6];
                                   var addressStatus = param[/* addressStatus */5];
+                                  var custodians = param[/* custodians */1];
                                   var exit = 0;
+                                  var exit$1 = 0;
                                   if (addressStatus !== 1 && addressStatus !== 3) {
-                                    return res;
-                                  } else {
                                     exit = 1;
+                                  } else {
+                                    exit$1 = 2;
+                                  }
+                                  if (exit$1 === 2) {
+                                    if (balance.gt(BTC.zero)) {
+                                      if (res) {
+                                        return true;
+                                      } else {
+                                        return Belt_Set.has(custodians, partnerProcess[/* data */5][/* userId */0]);
+                                      }
+                                    } else {
+                                      exit = 1;
+                                    }
                                   }
                                   if (exit === 1) {
-                                    if (res) {
-                                      return true;
+                                    if (balance.gt(BTC.zero)) {
+                                      var activeCustodians = Belt_Set.intersect(custodians, ViewModel__PartnersCollector.currentPartners(partnersCollector));
+                                      if (Belt_Set.size(activeCustodians) === param[/* nCoSigners */4]) {
+                                        return Belt_Set.has(activeCustodians, partnerProcess[/* data */5][/* userId */0]);
+                                      } else {
+                                        return false;
+                                      }
                                     } else {
-                                      return Belt_Set.has(param[/* custodians */1], partnerProcess[/* data */5][/* userId */0]);
+                                      return res;
                                     }
                                   }
                                   
