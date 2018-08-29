@@ -6,6 +6,7 @@ var Grid = require("./components/Grid.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
+var Theme = require("./Theme.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
 var MInput = require("./components/MInput.bs.js");
@@ -80,10 +81,16 @@ var expansionPanelDetails = Css.style(/* :: */[
       ]
     ]);
 
+var switchContainer = Css.style(/* :: */[
+      Css.margin2(Css.px(Theme.space(2)), Css.px(0)),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* expansionPanel */expansionPanel,
   /* expansionPanelSummary */expansionPanelSummary,
-  /* expansionPanelDetails */expansionPanelDetails
+  /* expansionPanelDetails */expansionPanelDetails,
+  /* switchContainer */switchContainer
 ];
 
 function make(onCreateVenture, cmdStatus, _) {
@@ -169,7 +176,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                                         ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelSummary.make(expansionPanelSummary, undefined, undefined, Js_primitive.some(Icons.chevronDown), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Additional configuration options")]))])),
                                                         ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelDetails.make(expansionPanelDetails, undefined, undefined, /* array */[
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("These settings determine the governance and security\n                          mechanism of your Venture. They cannot be changed later.")])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Endorsement Policies")])),
+                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Endorsement Policies")])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Decide how many Partners need to endorse a Proposal for it to become Accepted:")])),
                                                                   ReasonReact.element(undefined, undefined, PolicySelect.make("Partner addition:", Policy.defaultInitialPolicies[/* addPartner */0], (function (p) {
                                                                               return Curry._1(send, /* ChangeAddPartnerPolicy */Block.__(3, [p]));
@@ -180,10 +187,10 @@ function make(onCreateVenture, cmdStatus, _) {
                                                                   ReasonReact.element(undefined, undefined, PolicySelect.make("Payout:", Policy.defaultInitialPolicies[/* payout */4], (function (p) {
                                                                               return Curry._1(send, /* ChangePayoutPolicy */Block.__(5, [p]));
                                                                             }), /* array */[])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Wallet Configuration")])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Degrading Multisig")])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("The degrading multisig feature adds a time-release\n                           to funds that are locked due to Partners leaving.")])),
-                                                                  ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, /* Baseline */-354838363, undefined, undefined, true, /* Row */4102650, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Wallet Configuration")])),
+                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Degrading Multisig")])),
+                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("The degrading multisig feature adds a time-release\n                           to funds that are locked due to Partners leaving.")])),
+                                                                  ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, /* Baseline */-354838363, switchContainer, undefined, true, /* Row */4102650, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                                             ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V8 */7, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
                                                                                                             737456202,
                                                                                                             degradingMultiSig
@@ -199,7 +206,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                                                                               ]))]))
                                                                           ])),
                                                                   ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Required Signatures")])),
-                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Select the number of signatures your Venture will\n                       require for transactions, depending on the number of\n                       Partners:")])),
+                                                                  ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Select the number of signatures your Venture will\n                       require for transactions, depending on the number of\n                       Partners:")])),
                                                                   ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[
                                                                             ReasonReact.element(undefined, undefined, MaterialUi_TableHead.make(undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                                                                 ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("NUMBER OF PARTNERS")]))])),

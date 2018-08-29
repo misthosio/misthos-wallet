@@ -43,6 +43,7 @@ module Styles = {
     ]);
   let expansionPanelDetails =
     style([flexDirection(column), paddingLeft(px(0))]);
+  let switchContainer = style([margin2(~v=px(Theme.space(2)), ~h=px(0))]);
 };
 
 let make =
@@ -217,7 +218,8 @@ let make =
                           |> text
                         )
                       </MTypography>
-                      <MTypography gutterBottom=true variant=`Title>
+                      <MTypography
+                        gutterBottom=true gutterTop=true variant=`Title>
                         ("Endorsement Policies" |> text)
                       </MTypography>
                       <MTypography gutterBottom=true variant=`Body2>
@@ -242,22 +244,25 @@ let make =
                         initialValue=Policy.defaultInitialPolicies.payout
                         onChange=(p => send(ChangePayoutPolicy(p)))
                       />
-                      <MTypography gutterBottom=true variant=`Title>
+                      <MTypography
+                        gutterTop=true gutterBottom=true variant=`Title>
                         ("Wallet Configuration" |> text)
                       </MTypography>
-                      <MTypography
-                        gutterTop=true gutterBottom=true variant=`Subheading>
+                      <MTypography variant=`Subheading>
                         ("Degrading Multisig" |> text)
                       </MTypography>
-                      <MTypography
-                        gutterTop=true gutterBottom=true variant=`Body2>
+                      <MTypography gutterBottom=true variant=`Body2>
                         (
                           {js|The degrading multisig feature adds a time-release
                            to funds that are locked due to Partners leaving.|js}
                           |> text
                         )
                       </MTypography>
-                      <Grid container=true direction=`Row alignItems=`Baseline>
+                      <Grid
+                        className=Styles.switchContainer
+                        container=true
+                        direction=`Row
+                        alignItems=`Baseline>
                         <Grid item=true xs=V8>
                           <FormControlLabel
                             control={
@@ -318,8 +323,7 @@ let make =
                         gutterTop=true gutterBottom=true variant=`Subheading>
                         ("Required Signatures" |> text)
                       </MTypography>
-                      <MTypography
-                        gutterTop=true gutterBottom=true variant=`Body2>
+                      <MTypography gutterBottom=true variant=`Body2>
                         (
                           {js|Select the number of signatures your Venture will
                        require for transactions, depending on the number of
