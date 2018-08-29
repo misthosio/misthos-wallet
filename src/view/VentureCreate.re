@@ -205,7 +205,7 @@ let make =
                       className=Styles.expansionPanelSummary
                       expandIcon=Icons.chevronDown>
                       <MTypography variant=`Body2>
-                        ("Additional Settings" |> text)
+                        ("Additional configuration options" |> text)
                       </MTypography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails
@@ -243,7 +243,7 @@ let make =
                         onChange=(p => send(ChangePayoutPolicy(p)))
                       />
                       <MTypography gutterBottom=true variant=`Title>
-                        ("Wallet Settings" |> text)
+                        ("Wallet Configuration" |> text)
                       </MTypography>
                       <MTypography
                         gutterTop=true gutterBottom=true variant=`Subheading>

@@ -92,11 +92,11 @@ let make =
       let needsKeyRotation =
         ! viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome;
       <Grid
-        title1=("Venture Settings" |> text)
+        title1=("Venture Configuration" |> text)
         area3={
-          <div>
+          <div className=ScrollList.containerStyles>
             <MTypography variant=`Title gutterBottom=true>
-              ("Policy Settings" |> text)
+              ("Policies" |> text)
             </MTypography>
             <MTypography variant=`Body2 gutterBottom=true>
               (
@@ -126,35 +126,7 @@ let make =
               )
             </MTypography>
             <MTypography variant=`Title gutterTop=true gutterBottom=true>
-              ("Hardware Wallet Settings" |> text)
-            </MTypography>
-            <MTypography variant=`Body2 gutterBottom=true>
-              (ledgerIntegrater |> text)
-            </MTypography>
-            <MTypography variant=`Body2>
-              ("Key status: " |> text)
-              <span className=(needsKeyRotation ? Styles.atRiskKeyStatus : "")>
-                (keyStatus |> text)
-              </span>
-            </MTypography>
-            (
-              viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
-                ReasonReact.null :
-                <SingleActionButton
-                  onSubmit=executeSubmit
-                  canSubmitAction=true
-                  withConfirmation=false
-                  action=CommandExecutor.Status.SubmitKeys
-                  buttonText="Submit public keys"
-                  cmdStatus
-                />
-            )
-          </div>
-        }
-        area4={
-          <div className=ScrollList.containerStyles>
-            <MTypography variant=`Title gutterBottom=true>
-              ("Wallet Settings" |> text)
+              ("Wallet" |> text)
             </MTypography>
             (
               switch (viewData.accountSettings.sequence) {
@@ -207,6 +179,34 @@ let make =
                 </Table>
               )
             </ScrollList>
+          </div>
+        }
+        area4={
+          <div>
+            <MTypography variant=`Title gutterBottom=true>
+              ("Hardware Wallet Integration" |> text)
+            </MTypography>
+            <MTypography variant=`Body2 gutterBottom=true>
+              (ledgerIntegrater |> text)
+            </MTypography>
+            <MTypography variant=`Body2>
+              ("Key status: " |> text)
+              <span className=(needsKeyRotation ? Styles.atRiskKeyStatus : "")>
+                (keyStatus |> text)
+              </span>
+            </MTypography>
+            (
+              viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
+                ReasonReact.null :
+                <SingleActionButton
+                  onSubmit=executeSubmit
+                  canSubmitAction=true
+                  withConfirmation=false
+                  action=CommandExecutor.Status.SubmitKeys
+                  buttonText="Submit public keys"
+                  cmdStatus
+                />
+            )
           </div>
         }
       />;
