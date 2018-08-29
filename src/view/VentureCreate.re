@@ -210,9 +210,9 @@ let make =
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails
                       className=Styles.expansionPanelDetails>
-                      <MTypography gutterBottom=true variant=`Body1>
+                      <MTypography gutterBottom=true variant=`Body2>
                         (
-                          {js|These settings determin the governance and security
+                          {js|These settings determine the governance and security
                           mechanism of your Venture. They cannot be changed later.|js}
                           |> text
                         )
@@ -220,7 +220,7 @@ let make =
                       <MTypography gutterBottom=true variant=`Title>
                         ("Endorsement Policies" |> text)
                       </MTypography>
-                      <MTypography gutterBottom=true variant=`Body1>
+                      <MTypography gutterBottom=true variant=`Body2>
                         (
                           {js|Decide how many Partners need to endorse a Proposal for it to become Accepted:|js}
                           |> text
@@ -250,7 +250,7 @@ let make =
                         ("Degrading Multisig" |> text)
                       </MTypography>
                       <MTypography
-                        gutterTop=true gutterBottom=true variant=`Body1>
+                        gutterTop=true gutterBottom=true variant=`Body2>
                         (
                           {js|The degrading multisig feature adds a time-release
                            to funds that are locked due to Partners leaving.|js}
@@ -319,7 +319,7 @@ let make =
                         ("Required Signatures" |> text)
                       </MTypography>
                       <MTypography
-                        gutterTop=true gutterBottom=true variant=`Body1>
+                        gutterTop=true gutterBottom=true variant=`Body2>
                         (
                           {js|Select the number of signatures your Venture will
                        require for transactions, depending on the number of
