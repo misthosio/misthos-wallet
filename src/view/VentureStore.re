@@ -96,50 +96,33 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
-  didMount: ({state}) =>
-    loadVentureAndIndex(session, currentRoute, state) |> ignore,
+  didMount: ({onUnmount, state, send}) => {
+    loadVentureAndIndex(session, currentRoute, state) |> ignore;
+    let eventListener = handler(send);
+    DomRe.window |> WindowRe.addEventListener("storage", eventListener);
+    DataWorkerClient.terminate(state.dataWorker^);
+    let worker =
+      DataWorkerClient.make(~onMessage=message =>
+        send(DataWorkerMessage(message))
+      );
+    state.dataWorker := worker;
+    VentureWorkerClient.terminate(state.ventureWorker^);
+    let worker =
+      VentureWorkerClient.make(~onMessage=message =>
+        send(VentureWorkerMessage(message))
+      );
+    state.ventureWorker := worker;
+    onUnmount(() => {
+      DomRe.window |> WindowRe.removeEventListener("storage", eventListener);
+      DataWorkerClient.terminate(state.dataWorker^);
+      PersistWorkerClient.terminate(state.persistWorker^);
+      VentureWorkerClient.terminate(state.ventureWorker^);
+    });
+  },
   willReceiveProps: ({state}) => {
     ...state,
     selectedVenture: loadVentureAndIndex(session, currentRoute, state),
     session,
-  },
-  subscriptions: ({send, state}) => {
-    let eventListener = handler(send);
-    [
-      Sub(
-        () => {
-          DomRe.window |> WindowRe.addEventListener("storage", eventListener);
-          eventListener;
-        },
-        listener =>
-          DomRe.window |> WindowRe.removeEventListener("storage", listener),
-      ),
-      Sub(
-        () => {
-          DataWorkerClient.terminate(state.dataWorker^);
-          let worker =
-            DataWorkerClient.make(~onMessage=message =>
-              send(DataWorkerMessage(message))
-            );
-          state.dataWorker := worker;
-          worker;
-        },
-        DataWorkerClient.terminate,
-      ),
-      Sub(() => state.persistWorker^, PersistWorkerClient.terminate),
-      Sub(
-        () => {
-          VentureWorkerClient.terminate(state.ventureWorker^);
-          let worker =
-            VentureWorkerClient.make(~onMessage=message =>
-              send(VentureWorkerMessage(message))
-            );
-          state.ventureWorker := worker;
-          worker;
-        },
-        VentureWorkerClient.terminate,
-      ),
-    ];
   },
   reducer: (action, state) =>
     switch (state.session) {

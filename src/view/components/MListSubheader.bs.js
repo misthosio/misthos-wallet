@@ -5,6 +5,7 @@ var Css = require("bs-css/src/Css.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
+var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_ListSubheader = require("@jsiebern/bs-material-ui/src/MaterialUi_ListSubheader.bs.js");
 
@@ -71,7 +72,7 @@ function make($staropt$star, children) {
           /* shouldUpdate */statelessComponent[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(undefined, undefined, MaterialUi_ListSubheader.make(root(first), undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.createDomElement("span", {
+                              ReactDOMRe.createElementVariadic("span", {
                                     className: text
                                   }, children),
                               React.createElement("hr", {
@@ -82,8 +83,7 @@ function make($staropt$star, children) {
           /* initialState */statelessComponent[/* initialState */10],
           /* retainedProps */statelessComponent[/* retainedProps */11],
           /* reducer */statelessComponent[/* reducer */12],
-          /* subscriptions */statelessComponent[/* subscriptions */13],
-          /* jsElementWrapped */statelessComponent[/* jsElementWrapped */14]
+          /* jsElementWrapped */statelessComponent[/* jsElementWrapped */13]
         ];
 }
 

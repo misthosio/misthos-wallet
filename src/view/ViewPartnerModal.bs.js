@@ -80,7 +80,12 @@ function make(viewData, commands, cmdStatus, _) {
                     ];
             }),
           /* didMount */(function (param) {
-              return updateLoggedInStatus(viewData[/* partnerProcess */2], param[/* send */3]);
+              updateLoggedInStatus(viewData[/* partnerProcess */2], param[/* send */3]);
+              var clipboard = Clipboard.make(".copy-btn", "modal");
+              return Curry._1(param[/* onUnmount */4], (function () {
+                            clipboard.destroy();
+                            return /* () */0;
+                          }));
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
@@ -266,21 +271,7 @@ function make(viewData, commands, cmdStatus, _) {
                           /* loggedInStatus */action[0]
                         ]]);
             }),
-          /* subscriptions */(function () {
-              return /* :: */[
-                      /* Sub */[
-                        (function () {
-                            return Clipboard.make(".copy-btn", "modal");
-                          }),
-                        (function (prim) {
-                            prim.destroy();
-                            return /* () */0;
-                          })
-                      ],
-                      /* [] */0
-                    ];
-            }),
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

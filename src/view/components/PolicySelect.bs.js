@@ -204,8 +204,7 @@ function make(label, initialValue, onChange, _) {
                 return /* Update */Block.__(0, [state$2]);
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

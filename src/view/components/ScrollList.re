@@ -46,11 +46,7 @@ let component = ReasonReact.statelessComponent("ScrollList");
 let make = children => {
   ...component,
   render: _self =>
-    ReasonReact.createDomElement(
-      "div",
-      ~props={
-        "className": Styles.scrollContainer ++ " " ++ Styles.customScrollBar,
-      },
-      children,
-    ),
+    <div className=(Styles.scrollContainer ++ " " ++ Styles.customScrollBar)>
+      ...children
+    </div>,
 };

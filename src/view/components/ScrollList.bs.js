@@ -3,6 +3,7 @@
 
 var Css = require("bs-css/src/Css.js");
 var Glamor = require("glamor");
+var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
@@ -75,15 +76,14 @@ function make(children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.createDomElement("div", {
+              return ReactDOMRe.createElementVariadic("div", {
                           className: scrollContainer + (" " + customScrollBar)
                         }, children);
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */component[/* reducer */12],
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

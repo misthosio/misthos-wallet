@@ -620,9 +620,9 @@
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@glennsl/bs-json/-/bs-json-3.0.0.tgz#b4e1cf6612270a8dd7287a8a71ebe17e8f0fb683"
 
-"@jsiebern/bs-material-ui@0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.3.3.tgz#a3aeab9c9ed7c5c08fcab3de14b22eab1e57c604"
+"@jsiebern/bs-material-ui@^0.4.0-beta.1":
+  version "0.4.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.4.0-beta.1.tgz#6e28fbe1ad98eb88a1241f4808a6674d465bcc67"
   dependencies:
     object-hash "^1.2.0"
 
@@ -3929,9 +3929,15 @@ iconv-lite@0.4.19:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
-iconv-lite@^0.4.22, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
+iconv-lite@^0.4.22, iconv-lite@^0.4.4:
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.23.tgz#297871f63be507adcfbfca715d0cd0eed84e9a63"
+  dependencies:
+    safer-buffer ">= 2.1.2 < 3"
+
+iconv-lite@~0.4.13:
+  version "0.4.24"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
@@ -6372,16 +6378,16 @@ realpath-native@^1.0.0:
   dependencies:
     util.promisify "^1.0.0"
 
-reason-react@0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/reason-react/-/reason-react-0.4.2.tgz#690d34e3e91a2585cdc5f58384b6c8ff653c32c1"
+reason-react@0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/reason-react/-/reason-react-0.5.3.tgz#10601809742fd991109ec9d69ad4baf2c3f17540"
   dependencies:
     react ">=15.0.0 || >=16.0.0"
     react-dom ">=15.0.0 || >=16.0.0"
 
-reason-reroute@0.0.4:
+reason-reroute@callstackincubator/reroute#15/head:
   version "0.0.4"
-  resolved "https://registry.yarnpkg.com/reason-reroute/-/reason-reroute-0.0.4.tgz#ea480951222da8059c739c645ee9b68860f27738"
+  resolved "https://codeload.github.com/callstackincubator/reroute/tar.gz/fb25901c966506a37801991d0cd651431b122bf4"
 
 recast@~0.11.12:
   version "0.11.23"

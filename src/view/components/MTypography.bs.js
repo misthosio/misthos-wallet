@@ -47,8 +47,7 @@ function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, componen
           /* initialState */statelessComponent[/* initialState */10],
           /* retainedProps */statelessComponent[/* retainedProps */11],
           /* reducer */statelessComponent[/* reducer */12],
-          /* subscriptions */statelessComponent[/* subscriptions */13],
-          /* jsElementWrapped */statelessComponent[/* jsElementWrapped */14]
+          /* jsElementWrapped */statelessComponent[/* jsElementWrapped */13]
         ];
 }
 

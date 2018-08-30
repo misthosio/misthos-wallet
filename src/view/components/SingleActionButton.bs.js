@@ -174,8 +174,7 @@ function make(buttonText, alertText, onSubmit, onPropose, onCancel, canSubmitAct
                 return /* NoUpdate */0;
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

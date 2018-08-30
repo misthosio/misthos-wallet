@@ -65,8 +65,7 @@ function make(children) {
                 return /* Update */Block.__(0, [/* record */[/* session */action[0]]]);
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

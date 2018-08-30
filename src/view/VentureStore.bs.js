@@ -95,8 +95,30 @@ function make(currentRoute, session, children) {
                     ];
             }),
           /* didMount */(function (param) {
-              loadVentureAndIndex(session, currentRoute, param[/* state */1]);
-              return /* () */0;
+              var send = param[/* send */3];
+              var state = param[/* state */1];
+              loadVentureAndIndex(session, currentRoute, state);
+              var eventListener = function (param) {
+                return handler(send, param);
+              };
+              window.addEventListener("storage", eventListener);
+              state[/* dataWorker */3][0].terminate();
+              var worker = Curry._1(DataWorkerClient.make, (function (message) {
+                      return Curry._1(send, /* DataWorkerMessage */Block.__(2, [message]));
+                    }));
+              state[/* dataWorker */3][0] = worker;
+              state[/* ventureWorker */5][0].terminate();
+              var worker$1 = Curry._1(VentureWorkerClient.make, (function (message) {
+                      return Curry._1(send, /* VentureWorkerMessage */Block.__(3, [message]));
+                    }));
+              state[/* ventureWorker */5][0] = worker$1;
+              return Curry._1(param[/* onUnmount */4], (function () {
+                            window.removeEventListener("storage", eventListener);
+                            state[/* dataWorker */3][0].terminate();
+                            state[/* persistWorker */4][0].terminate();
+                            state[/* ventureWorker */5][0].terminate();
+                            return /* () */0;
+                          }));
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
@@ -413,70 +435,7 @@ function make(currentRoute, session, children) {
               }
               
             }),
-          /* subscriptions */(function (param) {
-              var send = param[/* send */3];
-              var state = param[/* state */1];
-              var eventListener = function (param) {
-                return handler(send, param);
-              };
-              return /* :: */[
-                      /* Sub */[
-                        (function () {
-                            window.addEventListener("storage", eventListener);
-                            return eventListener;
-                          }),
-                        (function (listener) {
-                            window.removeEventListener("storage", listener);
-                            return /* () */0;
-                          })
-                      ],
-                      /* :: */[
-                        /* Sub */[
-                          (function () {
-                              state[/* dataWorker */3][0].terminate();
-                              var worker = Curry._1(DataWorkerClient.make, (function (message) {
-                                      return Curry._1(send, /* DataWorkerMessage */Block.__(2, [message]));
-                                    }));
-                              state[/* dataWorker */3][0] = worker;
-                              return worker;
-                            }),
-                          (function (prim) {
-                              prim.terminate();
-                              return /* () */0;
-                            })
-                        ],
-                        /* :: */[
-                          /* Sub */[
-                            (function () {
-                                return state[/* persistWorker */4][0];
-                              }),
-                            (function (prim) {
-                                prim.terminate();
-                                return /* () */0;
-                              })
-                          ],
-                          /* :: */[
-                            /* Sub */[
-                              (function () {
-                                  state[/* ventureWorker */5][0].terminate();
-                                  var worker = Curry._1(VentureWorkerClient.make, (function (message) {
-                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(3, [message]));
-                                        }));
-                                  state[/* ventureWorker */5][0] = worker;
-                                  return worker;
-                                }),
-                              (function (prim) {
-                                  prim.terminate();
-                                  return /* () */0;
-                                })
-                            ],
-                            /* [] */0
-                          ]
-                        ]
-                      ]
-                    ];
-            }),
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

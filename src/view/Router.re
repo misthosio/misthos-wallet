@@ -97,6 +97,6 @@ include ReRoute.CreateRouter(Config);
 let goTo = route => ReasonReact.Router.push(Config.routeToUrl(route));
 
 let clickToRoute = (route, event) => {
-  ReactEventRe.Synthetic.preventDefault(event);
+  ReactEvent.Synthetic.preventDefault(event);
   goTo(route);
 };
