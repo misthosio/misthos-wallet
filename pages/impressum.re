@@ -19,7 +19,6 @@ let make = _children => {
         area3={
           <div>
             ("Misthos UG" |> line)
-            ("Justin Carter" |> line)
             ("Friedrichstrasse 171" |> line)
             ("D10117 Berlin" |> line)
             ("Deutschland" |> line)
