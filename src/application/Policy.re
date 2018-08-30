@@ -58,7 +58,7 @@ module AtLeast = {
     let releventRejections = Set.intersect(eligible, rejected);
     Set.size(eligible)
     - Set.size(releventRejections) >= n
-    && Set.size(releventRejections) > 0;
+    || Set.size(releventRejections) == 0;
   };
   let encode = ({n}) =>
     Json.Encode.(object_([("type", string("AtLeast")), ("n", int(n))]));
