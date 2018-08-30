@@ -120,7 +120,11 @@ function fulfilled$3(param, eligible, endorsed) {
 
 function canBeFulfilled$3(param, eligible, rejected) {
   var releventRejections = Belt_Set.intersect(eligible, rejected);
-  return (Belt_Set.size(eligible) - Belt_Set.size(releventRejections) | 0) >= param[/* n */0];
+  if ((Belt_Set.size(eligible) - Belt_Set.size(releventRejections) | 0) >= param[/* n */0]) {
+    return Belt_Set.size(releventRejections) > 0;
+  } else {
+    return false;
+  }
 }
 
 function encode$3(param) {
