@@ -140,9 +140,9 @@ let make =
                 ~policy=
                   initialPolicies
                   |> Utils.mapOption((p: Policy.initialPolicies) =>
-                       p.addPartner
+                       p.addCustodian
                      )
-                  |> Js.Option.getWithDefault(Policy.defaultAddPartner),
+                  |> Js.Option.getWithDefault(Policy.defaultAddCustodian),
               ),
             ))
           | EndorseCustodian(processId) =>

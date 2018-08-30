@@ -149,8 +149,8 @@ function make(param, param$1, log) {
                   case 5 : 
                       tmp$1 = /* tuple */[
                         env$1[0],
-                        Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), undefined, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */11], Js_option.getWithDefault(Policy.defaultAddPartner, Utils.mapOption((function (p) {
-                                        return p[/* addPartner */0];
+                        Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), undefined, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */11], Js_option.getWithDefault(Policy.defaultAddCustodian, Utils.mapOption((function (p) {
+                                        return p[/* addCustodian */1];
                                       }), env$1[5])))
                       ];
                       break;
