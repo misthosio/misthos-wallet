@@ -679,8 +679,7 @@ function make(viewData, commands, cmdStatus, _) {
                 
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

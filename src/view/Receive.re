@@ -29,10 +29,11 @@ module Styles = {
 let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
   ...component,
   initialState: () => {address: None},
-  didMount: ({send}) => send(GetIncomeAddress),
-  subscriptions: _ => [
-    Sub(() => Clipboard.make(".copy-btn", "modal"), Clipboard.destroy),
-  ],
+  didMount: ({onUnmount, send}) => {
+    send(GetIncomeAddress);
+    let clipboard = Clipboard.make(".copy-btn", "modal");
+    onUnmount(() => Clipboard.destroy(clipboard));
+  },
   reducer: (action, _state) =>
     switch (action) {
     | GetIncomeAddress =>

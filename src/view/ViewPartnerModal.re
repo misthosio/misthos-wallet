@@ -59,10 +59,11 @@ let make =
     | SetHasLoggedIn(known) =>
       ReasonReact.Update({...state, loggedInStatus: Some(known)})
     },
-  didMount: ({send}) => updateLoggedInStatus(viewData.partnerProcess, send),
-  subscriptions: _ => [
-    Sub(() => Clipboard.make(".copy-btn", "modal"), Clipboard.destroy),
-  ],
+  didMount: ({onUnmount, send}) => {
+    updateLoggedInStatus(viewData.partnerProcess, send);
+    let clipboard = Clipboard.make(".copy-btn", "modal");
+    onUnmount(() => Clipboard.destroy(clipboard));
+  },
   render: ({state: {viewData, loggedInStatus}}) => {
     let copyButton = (~element, ~className="", ()) =>
       ReasonReact.cloneElement(
@@ -176,7 +177,7 @@ let make =
                 let element =
                   <a
                     href=viewData.joinVentureUrl
-                    onClick=ReactEventRe.Synthetic.preventDefault>
+                    onClick=ReactEvent.Synthetic.preventDefault>
                     (Text.AlertBox.syncRequiredVentureUrl |> text)
                   </a>;
                 copyButton(~element, ~className=Styles.ventureLink, ());

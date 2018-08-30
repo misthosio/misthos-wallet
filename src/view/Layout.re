@@ -136,13 +136,7 @@ let make =
       header
       drawer
       modalContainer
-      (
-        ReasonReact.createDomElement(
-          "div",
-          ~props={"className": Styles.body},
-          children,
-        )
-      )
+      <div className=Styles.body> ...children </div>
     </div>;
   },
 };

@@ -121,8 +121,7 @@ function make(commands, lastResponse, onProcessStarted, children) {
                 }
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 
@@ -244,8 +243,7 @@ function make$1(cmdStatus, action, _) {
           /* initialState */component$1[/* initialState */10],
           /* retainedProps */component$1[/* retainedProps */11],
           /* reducer */component$1[/* reducer */12],
-          /* subscriptions */component$1[/* subscriptions */13],
-          /* jsElementWrapped */component$1[/* jsElementWrapped */14]
+          /* jsElementWrapped */component$1[/* jsElementWrapped */13]
         ];
 }
 

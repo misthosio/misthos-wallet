@@ -11,6 +11,7 @@ var React = require("react");
 var Header = require("./Header.bs.js");
 var Router = require("./Router.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -248,7 +249,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                 );
               return React.createElement("div", {
                           className: grid(mobileEnabled)
-                        }, match[0], match[1], modalContainer, ReasonReact.createDomElement("div", {
+                        }, match[0], match[1], modalContainer, ReactDOMRe.createElementVariadic("div", {
                               className: body
                             }, children));
             }),
@@ -263,8 +264,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                 return /* Update */Block.__(0, [/* record */[/* drawerOpen */true]]);
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

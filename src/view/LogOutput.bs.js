@@ -41,8 +41,7 @@ function make(ventureId, _) {
           /* reducer */(function (log, _) {
               return /* Update */Block.__(0, [Js_primitive.some(log)]);
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

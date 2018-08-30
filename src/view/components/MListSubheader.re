@@ -33,13 +33,7 @@ let make = (~first=false, children) => {
   ...statelessComponent,
   render: _self =>
     <MaterialUi.ListSubheader className=(Styles.root(first))>
-      (
-        ReasonReact.createDomElement(
-          "span",
-          ~props={"className": Styles.text},
-          children,
-        )
-      )
+      <span className=Styles.text> ...children </span>
       <hr className=Styles.hr />
     </MaterialUi.ListSubheader>,
 };

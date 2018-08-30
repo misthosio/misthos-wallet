@@ -214,8 +214,7 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
                 
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

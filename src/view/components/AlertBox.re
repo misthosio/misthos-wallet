@@ -25,10 +25,5 @@ module Styles = {
 
 let make = children => {
   ...component,
-  render: _self =>
-    ReasonReact.createDomElement(
-      "div",
-      ~props={"className": Styles.alert},
-      children,
-    ),
+  render: _self => <div className=Styles.alert> ...children </div>,
 };

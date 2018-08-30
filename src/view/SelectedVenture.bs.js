@@ -351,8 +351,7 @@ function make(viewData, _) {
                           /* loggedInStatus */Belt_Map.set(state[/* loggedInStatus */1], action[0], action[1])
                         ]]);
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 

@@ -310,8 +310,7 @@ function make(viewData, _) {
               var match = Caml_obj.caml_equal(param[/* expandedAddress */0], address);
               return /* Update */Block.__(0, [/* record */[/* expandedAddress */match ? undefined : address]]);
             }),
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 
