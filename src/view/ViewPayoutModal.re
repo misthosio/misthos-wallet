@@ -184,19 +184,31 @@ let make =
                         </MTypography>
                       </TableCell>
                     </TableRow>
-                    <TableRow key="misthosFee">
-                      <TableCell className=Styles.noBorder padding=`None>
-                        <MTypography variant=`Body2>
-                          ("MISTHOS FEE" |> text)
-                        </MTypography>
-                      </TableCell>
-                      <TableCell
-                        numeric=true className=Styles.noBorder padding=`None>
-                        <MTypography variant=`Body2>
-                          (BTC.format(summary.misthosFee) ++ " BTC" |> text)
-                        </MTypography>
-                      </TableCell>
-                    </TableRow>
+                    (
+                      if (summary.misthosFee |> BTC.gt(BTC.zero)) {
+                        <TableRow key="misthosFee">
+                          <TableCell className=Styles.noBorder padding=`None>
+                            <MTypography variant=`Body2>
+                              ("MISTHOS FEE" |> text)
+                            </MTypography>
+                          </TableCell>
+                          <TableCell
+                            numeric=true
+                            className=Styles.noBorder
+                            padding=`None>
+                            <MTypography variant=`Body2>
+                              (
+                                BTC.format(summary.misthosFee)
+                                ++ " BTC"
+                                |> text
+                              )
+                            </MTypography>
+                          </TableCell>
+                        </TableRow>;
+                      } else {
+                        ReasonReact.null;
+                      }
+                    )
                   </TableBody>
                 </Table>
               )

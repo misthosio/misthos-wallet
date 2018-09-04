@@ -94,10 +94,10 @@ describe("Wallet_integration", (function () {
                       /* hi */0,
                       /* lo */6100
                     ]);
-                var oneKeyChainExpectedFee = BTC.timesRounded(oneKeyChainSpendAmount, PayoutTransaction.misthosFeePercent / 100).plus(BTC.fromSatoshis(/* int64 */[
-                          /* hi */0,
-                          /* lo */1892
-                        ]));
+                var oneKeyChainExpectedFee = BTC.fromSatoshis(/* int64 */[
+                      /* hi */0,
+                      /* lo */1892
+                    ]);
                 var twoKeyChainWalletTotal = address4Satoshis.plus(address3Satoshis.plus(oneKeyChainWalletTotal)).minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee);
                 var twoKeyChainSpendAmount = BTC.fromSatoshis(/* int64 */[
                       /* hi */0,
@@ -290,10 +290,10 @@ describe("Wallet_integration", (function () {
                                 throw PayoutTransaction.NotEnoughFunds;
                               }
                               return tmp.then((function (param) {
-                                            var expectedFee = BTC.timesRounded(twoKeyChainSpendAmount, PayoutTransaction.misthosFeePercent / 100).plus(BTC.fromSatoshis(/* int64 */[
-                                                      /* hi */0,
-                                                      /* lo */5687
-                                                    ]));
+                                            var expectedFee = BTC.fromSatoshis(/* int64 */[
+                                                  /* hi */0,
+                                                  /* lo */5687
+                                                ]);
                                             return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                           return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                                                     return utxo[/* amount */3].plus(total);

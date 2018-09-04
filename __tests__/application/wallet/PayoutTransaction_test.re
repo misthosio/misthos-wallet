@@ -104,7 +104,7 @@ let () =
           ~unlockedInputs=Network.inputSet(),
           ~optionalInputs=inputs,
           ~destinations=[
-            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9700L)),
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L)),
           ],
           ~satsPerByte=BTC.fromSatoshis(1L),
           ~changeAddress,
@@ -167,7 +167,7 @@ let () =
           ~unlockedInputs=Network.inputSet(),
           ~optionalInputs=inputs,
           ~destinations=[
-            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L)),
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9990L)),
           ],
           ~satsPerByte=BTC.fromSatoshis(1L),
           ~changeAddress,
@@ -181,11 +181,11 @@ let () =
              destinations: [
                (
                  "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                 BTC.fromSatoshis(9800L),
+                 BTC.fromSatoshis(9990L),
                ),
              ],
-             spentWithFees: BTC.fromSatoshis(10232L),
-             misthosFee: BTC.fromSatoshis(147L),
+             spentWithFees: BTC.fromSatoshis(10275L),
+             misthosFee: BTC.zero,
              networkFee: BTC.fromSatoshis(285L),
            },
          );
@@ -229,7 +229,7 @@ let () =
                  ),
                ],
                spentWithFees: BTC.fromSatoshis(15000L),
-               misthosFee: BTC.fromSatoshis(217L),
+               misthosFee: BTC.zero,
                networkFee: BTC.fromSatoshis(319L),
              },
            );

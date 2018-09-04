@@ -124,7 +124,7 @@ describe("build", (function () {
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
                               /* hi */0,
-                              /* lo */9700
+                              /* lo */9800
                             ])
                       ],
                       /* [] */0
@@ -191,7 +191,7 @@ describe("build", (function () {
                             "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                             BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
-                                  /* lo */9800
+                                  /* lo */9990
                                 ])
                           ],
                           /* [] */0
@@ -209,19 +209,16 @@ describe("build", (function () {
                                 "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                 BTC.fromSatoshis(/* int64 */[
                                       /* hi */0,
-                                      /* lo */9800
+                                      /* lo */9990
                                     ])
                               ],
                               /* [] */0
                             ],
                             /* spentWithFees */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
-                                  /* lo */10232
+                                  /* lo */10275
                                 ]),
-                            /* misthosFee */BTC.fromSatoshis(/* int64 */[
-                                  /* hi */0,
-                                  /* lo */147
-                                ]),
+                            /* misthosFee */BTC.zero,
                             /* networkFee */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
                                   /* lo */285
@@ -280,10 +277,7 @@ describe("build", (function () {
                                           /* hi */0,
                                           /* lo */15000
                                         ]),
-                                    /* misthosFee */BTC.fromSatoshis(/* int64 */[
-                                          /* hi */0,
-                                          /* lo */217
-                                        ]),
+                                    /* misthosFee */BTC.zero,
                                     /* networkFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
                                           /* lo */319

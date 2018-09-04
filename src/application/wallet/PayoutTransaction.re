@@ -11,8 +11,6 @@ module Fee = TransactionFee;
 
 type input = Network.txInput;
 
-let misthosFeePercent = 1.5;
-
 type t = {
   txHex: string,
   usedInputs: array(input),
@@ -373,7 +371,7 @@ let build =
            i,
          )
        );
-  let outTotalWithoutFee =
+  let outTotal =
     destinations
     |> List.fold_left(
          (total, (address, value)) => {
@@ -384,16 +382,6 @@ let build =
          },
          BTC.zero,
        );
-  let misthosFeeAddress = Network.incomeAddress(network);
-  let misthosFee =
-    outTotalWithoutFee |. BTC.timesRounded(misthosFeePercent /. 100.);
-  txB
-  |. B.TxBuilder.addOutput(
-       misthosFeeAddress,
-       misthosFee |> BTC.toSatoshisFloat,
-     )
-  |> ignore;
-  let outTotal = outTotalWithoutFee |> BTC.plus(misthosFee);
   let currentInputValue =
     usedInputs
     |> List.fold_left(
@@ -427,7 +415,7 @@ let build =
            )
         |> Array.map(((_, input)) => input),
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
-      misthosFeeAddress,
+      misthosFeeAddress: "",
       changeAddress: withChange ? Some(changeAddress) : None,
     };
   } else {
@@ -480,7 +468,7 @@ let build =
              )
           |> Array.map(((_, input)) => input),
         txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
-        misthosFeeAddress,
+        misthosFeeAddress: "",
         changeAddress: withChange ? Some(changeAddress) : None,
       };
     } else {
@@ -522,12 +510,7 @@ let max =
   let totalOutValue =
     destinations
     |. List.reduce(BTC.zero, (res, (_, outVal)) => res |> BTC.plus(outVal));
-  let rest = totalInputValue |. BTC.minus(totalOutValue |> BTC.plus(fee));
-  let totalOutMisthosFee =
-    totalOutValue |. BTC.timesRounded(misthosFeePercent /. 100.);
-  rest
-  |. BTC.minus(totalOutMisthosFee)
-  |. BTC.dividedByRounded(1. +. misthosFeePercent /. 100.);
+  totalInputValue |. BTC.minus(totalOutValue |> BTC.plus(fee));
 };
 
 let finalize = signedTransactions => {

@@ -300,15 +300,11 @@ function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, sa
                   i
                 ];
         }), Belt_Set.toList(mandatoryInputs$1));
-  var outTotalWithoutFee = List.fold_left((function (total, param) {
+  var outTotal = List.fold_left((function (total, param) {
           var value = param[1];
           txB.addOutput(param[0], BTC.toSatoshisFloat(value));
           return value.plus(total);
         }), BTC.zero, destinations);
-  var misthosFeeAddress = Network.incomeAddress(network);
-  var misthosFee = BTC.timesRounded(outTotalWithoutFee, 1.5 / 100);
-  txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
-  var outTotal = misthosFee.plus(outTotalWithoutFee);
   var currentInputValue = List.fold_left((function (total, param) {
           return param[1][/* value */3].plus(total);
         }), BTC.zero, usedInputs);
@@ -326,7 +322,7 @@ function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, sa
                   }), $$Array.of_list(usedInputs).sort((function (param, param$1) {
                         return Caml_primitive.caml_int_compare(param[0], param$1[0]);
                       }))),
-            /* misthosFeeAddress */misthosFeeAddress,
+            /* misthosFeeAddress */"",
             /* changeAddress */withChange ? changeAddress : undefined
           ];
   } else {
@@ -357,7 +353,7 @@ function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, sa
                     }), $$Array.of_list(match$1[2]).sort((function (param, param$1) {
                           return Caml_primitive.caml_int_compare(param[0], param$1[0]);
                         }))),
-              /* misthosFeeAddress */misthosFeeAddress,
+              /* misthosFeeAddress */"",
               /* changeAddress */withChange$1 ? changeAddress : undefined
             ];
     } else {
@@ -402,9 +398,7 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
   var totalOutValue = Belt_List.reduce(destinations, BTC.zero, (function (res, param) {
           return param[1].plus(res);
         }));
-  var rest = totalInputValue.minus(fee.plus(totalOutValue));
-  var totalOutMisthosFee = BTC.timesRounded(totalOutValue, 1.5 / 100);
-  return BTC.dividedByRounded(rest.minus(totalOutMisthosFee), 1 + 1.5 / 100);
+  return totalInputValue.minus(fee.plus(totalOutValue));
 }
 
 function finalize(signedTransactions) {
@@ -477,12 +471,9 @@ function missingSignatures(currentCustodians, custodiansThatSigned, keyChains, p
         ];
 }
 
-var misthosFeePercent = 1.5;
-
 exports.NotEnoughFunds = NotEnoughFunds;
 exports.NotEnoughSignatures = NotEnoughSignatures;
 exports.NoSignaturesForInput = NoSignaturesForInput;
-exports.misthosFeePercent = misthosFeePercent;
 exports.summary = summary;
 exports.txInputForChangeAddress = txInputForChangeAddress;
 exports.build = build;

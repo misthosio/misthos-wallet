@@ -60,13 +60,7 @@ let () =
       let oneKeyChainWalletTotal =
         address1Satoshis |> BTC.plus(address2Satoshis);
       let oneKeyChainSpendAmount = BTC.fromSatoshis(6100L);
-      let misthosFeePercent = PayoutTransaction.misthosFeePercent;
-      let oneKeyChainExpectedFee =
-        BTC.fromSatoshis(1892L)
-        |> BTC.plus(
-             oneKeyChainSpendAmount
-             |. BTC.timesRounded(misthosFeePercent /. 100.),
-           );
+      let oneKeyChainExpectedFee = BTC.fromSatoshis(1892L);
       let twoKeyChainWalletTotal =
         oneKeyChainWalletTotal
         |> BTC.plus(address3Satoshis)
@@ -320,12 +314,7 @@ let () =
                 raise(PayoutTransaction.NotEnoughFunds)
             )
             |> then_(((wallet, _broadcastResult)) => {
-                 let expectedFee =
-                   BTC.fromSatoshis(5687L)
-                   |> BTC.plus(
-                        twoKeyChainSpendAmount
-                        |. BTC.timesRounded(misthosFeePercent /. 100.),
-                      );
+                 let expectedFee = BTC.fromSatoshis(5687L);
                  wallet
                  |> WalletHelpers.getExposedAddresses
                  |> Helpers.getUTXOs
