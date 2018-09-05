@@ -313,50 +313,50 @@ resources:
   type: git
   source:
     ignore_paths: [infra/*, ci/*, Makefile]
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: master
     private_key: ((github-ssh-key.private_key))
 - name: deps
   type: git
   source:
     paths: [yarn.lock]
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: master
     private_key: ((github-ssh-key.private_key))
 - name: staging-branch
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: staging
     private_key: ((github-ssh-key.private_key))
 - name: web-staging-branch
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: web-staging
     private_key: ((github-ssh-key.private_key))
 - name: testnet-branch
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: testnet
     private_key: ((github-ssh-key.private_key))
 - name: web-testnet-branch
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: web-testnet
     private_key: ((github-ssh-key.private_key))
 - name: prod-branch
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: prod
     private_key: ((github-ssh-key.private_key))
 - name: web-prod-branch
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: web-prod
     private_key: ((github-ssh-key.private_key))
 - name: bundled-deps
@@ -410,14 +410,14 @@ resources:
 - name: pipeline-ci-image
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: master
     paths: [ci/ci_image/*]
     private_key: ((github-ssh-key.private_key))
 - name: pipeline-tasks
   type: git
   source:
-    uri: git@github.com:misthosio/misthos.git
+    uri: git@github.com:misthosio/misthos-wallet.git
     branch: master
     paths: [ci/tasks/*, Makefile]
     private_key: ((github-ssh-key.private_key))
