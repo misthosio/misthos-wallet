@@ -247,23 +247,25 @@ let make =
     <Grid
       title1=("Proposed Partner " ++ processTypeString |> text)
       area3={
-        <div>
-          <MTypography variant=`Title>
-            ("Proposed Partner " ++ processTypeString |> text)
-          </MTypography>
-          <Partner key=(userId |> UserId.toString) partnerId=userId />
-          <MTypography variant=`Body2 gutterBottom=true>
-            ("Proposed by " ++ UserId.toString(proposedBy) |> text)
-          </MTypography>
-          <MTypography variant=`Body2>
-            ("Status: " |> text)
-            statusChip
-          </MTypography>
-          onboarding
+        <div className=ScrollList.containerStyles>
+          <ScrollList>
+            <MTypography variant=`Title>
+              ("Proposed Partner " ++ processTypeString |> text)
+            </MTypography>
+            <Partner key=(userId |> UserId.toString) partnerId=userId />
+            <MTypography variant=`Body2 gutterBottom=true>
+              ("Proposed by " ++ UserId.toString(proposedBy) |> text)
+            </MTypography>
+            <MTypography variant=`Body2>
+              ("Status: " |> text)
+              statusChip
+            </MTypography>
+            onboarding
+          </ScrollList>
         </div>
       }
       area4={
-        <div>
+        <div className=ScrollList.containerStyles>
           <Voters
             voters
             currentPartners=viewData.currentPartners

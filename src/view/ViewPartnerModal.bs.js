@@ -15,6 +15,7 @@ var Partner = require("./components/Partner.bs.js");
 var AlertBox = require("./components/AlertBox.bs.js");
 var Clipboard = require("../ffi/Clipboard.bs.js");
 var PolicyText = require("./text/PolicyText.bs.js");
+var ScrollList = require("./components/ScrollList.bs.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -260,10 +261,20 @@ function make(viewData, commands, cmdStatus, _) {
               } else {
                 tmp = null;
               }
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Proposed Partner " + processTypeString)), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](userId), undefined, Partner.make(userId, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match$1[/* proposedBy */2]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                              ViewCommon.text("Status: "),
-                                              statusChip
-                                            ])), onboarding)), Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */3], match$1[/* voters */4], status, /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, alertText, "Reject Partner " + processTypeString, match$1[/* canVote */3], match$3[0], match$3[1], (function () {
+              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Proposed Partner " + processTypeString)), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
+                                      className: ScrollList.containerStyles
+                                    }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])),
+                                              ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](userId), undefined, Partner.make(userId, undefined, undefined, undefined, undefined, undefined, /* array */[])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match$1[/* proposedBy */2]))])),
+                                              ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                        ViewCommon.text("Status: "),
+                                                        statusChip
+                                                      ])),
+                                              onboarding
+                                            ])))), Js_primitive.some(React.createElement("div", {
+                                      className: ScrollList.containerStyles
+                                    }, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */3], match$1[/* voters */4], status, /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, alertText, "Reject Partner " + processTypeString, match$1[/* canVote */3], match$3[0], match$3[1], (function () {
                                                 return Curry._1(commands[/* reset */0], /* () */0);
                                               }), cmdStatus, /* array */[])))), Js_primitive.some(tmp), undefined, /* array */[]));
             }),
