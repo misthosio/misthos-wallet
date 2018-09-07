@@ -4,8 +4,6 @@
 var BitcoinOps = require("./BitcoinOps.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 
-var BigInteger = /* module */[];
-
 var Crypto = /* module */[];
 
 var Networks = /* module */[];
@@ -68,7 +66,6 @@ var Script = /* module */[
   /* Signature */Signature
 ];
 
-exports.BigInteger = BigInteger;
 exports.Crypto = Crypto;
 exports.Networks = Networks;
 exports.Transaction = Transaction;

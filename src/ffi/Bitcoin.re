@@ -1,8 +1,3 @@
-module BigInteger = {
-  type t;
-  [@bs.module "bigi"] external fromHex : string => t = "";
-};
-
 module Crypto = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "crypto"]
   external sha256 : string => Node.buffer = "";
@@ -84,8 +79,6 @@ module ECPair = {
   external fromWIF : string => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIFWithNetwork : (string, Networks.t) => t = "fromWIF";
-  [@bs.module "bitcoinjs-lib"] [@bs.new]
-  external make : BigInteger.t => t = "ECPair";
   [@bs.send] external toWIF : t => string = "";
   [@bs.get] external getNetwork : t => Networks.t = "network";
   [@bs.get] external getPublicKey : t => Node.buffer = "publicKey";
