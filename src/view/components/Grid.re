@@ -1,3 +1,5 @@
+open Belt;
+
 let component = ReasonReact.statelessComponent("Grid");
 
 [@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
@@ -10,6 +12,7 @@ type variant =
 
 module Styles = {
   open Css;
+  open BreakPoints;
   let gap = (Theme.space(4) |> string_of_int) ++ "px 0px";
   let grid = (variant, warning) => {
     let warning = warning == None ? false : true;
@@ -86,6 +89,20 @@ module Styles = {
       color(Colors.white),
       textTransform(uppercase),
       marginBottom(px(4)),
+      sm([display(inline)]),
+      xs([display(none)]),
+    ]);
+  let tabs =
+    style([
+      unsafe("gridColumn", "begin / end"),
+      unsafe("gridRow", "tBegin / tEnd"),
+      fontFamily(Theme.oswald),
+      height(px(45)),
+      fontSize(px(30)),
+      fontWeight(600),
+      color(Colors.white),
+      textTransform(uppercase),
+      sm([display(none)]),
     ]);
   let titleBg =
     style([
@@ -119,6 +136,13 @@ let make =
     ) => {
   ...component,
   render: _self => {
+    let tabs =
+      MaterialUi.(
+        <Tabs className=Styles.tabs fullWidth=true scrollable=true>
+          <Tab label=(title1 |> Js.Option.getWithDefault(ReasonReact.null)) />
+          <Tab label=(title2 |> Js.Option.getWithDefault(ReasonReact.null)) />
+        </Tabs>
+      );
     let variant =
       switch (area1, area3, area4, area5) {
       | (Some(_), Some(_), Some(_), _) => V4
@@ -143,25 +167,29 @@ let make =
       <div className=Styles.titleBg key="titleBg" />
       (
         [|
-          (warning, "warning", WarningBanner.Styles.warning(~inline=false)),
-          (area1, "area1", ""),
-          (area2, "area2", ""),
-          (title1, "title1", Styles.title),
-          (title2, "title2", Styles.title),
-          (area3, "area3", ""),
-          (area4, "area4", ""),
-          (area5, "area5", ""),
+          [|
+            (warning, "warning", WarningBanner.Styles.warning(~inline=false)),
+            (area1, "area1", ""),
+            (area2, "area2", ""),
+            (title1, "title1", Styles.title),
+            (title2, "title2", Styles.title),
+            (area3, "area3", ""),
+            (area4, "area4", ""),
+            (area5, "area5", ""),
+          |]
+          |. Array.map(((item, area, className)) =>
+               switch (item) {
+               | Some(item) =>
+                 <div
+                   className=(Styles.area(area) ++ " " ++ className) key=area>
+                   item
+                 </div>
+               | None => ReasonReact.null
+               }
+             ),
+          [|tabs|],
         |]
-        |> Array.map(((item, area, className)) =>
-             switch (item) {
-             | Some(item) =>
-               <div
-                 className=(Styles.area(area) ++ " " ++ className) key=area>
-                 item
-               </div>
-             | None => ReasonReact.null
-             }
-           )
+        |> Array.concatMany
         |> ReasonReact.array
       )
     </div>;

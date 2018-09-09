@@ -12,7 +12,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
   let mobileEnabled =
     switch (session) {
     | NotLoggedIn => true
-    | _ => false
+    | _ => true
     };
   let modal =
       (

@@ -2,13 +2,17 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var BreakPoints = require("../BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var WarningBanner = require("./WarningBanner.bs.js");
+var MaterialUi_Tab = require("@jsiebern/bs-material-ui/src/MaterialUi_Tab.bs.js");
+var MaterialUi_Tabs = require("@jsiebern/bs-material-ui/src/MaterialUi_Tabs.bs.js");
 
 var component = ReasonReact.statelessComponent("Grid");
 
@@ -103,7 +107,51 @@ var title = Css.style(/* :: */[
                 Css.textTransform(Css.uppercase),
                 /* :: */[
                   Css.marginBottom(Css.px(4)),
-                  /* [] */0
+                  /* :: */[
+                    BreakPoints.sm(/* :: */[
+                          Css.display(Css.inline),
+                          /* [] */0
+                        ]),
+                    /* :: */[
+                      BreakPoints.xs(/* :: */[
+                            Css.display(Css.none),
+                            /* [] */0
+                          ]),
+                      /* [] */0
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var tabs = Css.style(/* :: */[
+      Css.unsafe("gridColumn", "begin / end"),
+      /* :: */[
+        Css.unsafe("gridRow", "tBegin / tEnd"),
+        /* :: */[
+          Css.fontFamily(Theme.oswald),
+          /* :: */[
+            Css.height(Css.px(45)),
+            /* :: */[
+              Css.fontSize(Css.px(30)),
+              /* :: */[
+                Css.fontWeight(600),
+                /* :: */[
+                  Css.color(Colors.white),
+                  /* :: */[
+                    Css.textTransform(Css.uppercase),
+                    /* :: */[
+                      BreakPoints.sm(/* :: */[
+                            Css.display(Css.none),
+                            /* [] */0
+                          ]),
+                      /* [] */0
+                    ]
+                  ]
                 ]
               ]
             ]
@@ -148,6 +196,7 @@ var Styles = /* module */[
   /* grid */grid,
   /* area */area,
   /* title */title,
+  /* tabs */tabs,
   /* titleBg */titleBg,
   /* warningBg */warningBg
 ];
@@ -164,6 +213,10 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (_self) {
+              var tabs$1 = ReasonReact.element(undefined, undefined, MaterialUi_Tabs.make(undefined, undefined, tabs, undefined, true, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                        ReasonReact.element(undefined, undefined, MaterialUi_Tab.make(undefined, undefined, undefined, undefined, undefined, Js_primitive.some(Js_option.getWithDefault(null, title1)), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])),
+                        ReasonReact.element(undefined, undefined, MaterialUi_Tab.make(undefined, undefined, undefined, undefined, undefined, Js_primitive.some(Js_option.getWithDefault(null, title2)), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
+                      ]));
               var variant = area1 !== undefined || area3 === undefined ? /* V4 */3 : (
                   area4 !== undefined ? (
                       area5 !== undefined ? /* V3 */2 : /* V2 */1
@@ -179,58 +232,61 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                               }) : null, React.createElement("div", {
                               key: "titleBg",
                               className: titleBg
-                            }), $$Array.map((function (param) {
-                                var item = param[0];
-                                if (item !== undefined) {
-                                  var area$1 = param[1];
-                                  return React.createElement("div", {
-                                              key: area$1,
-                                              className: area(area$1) + (" " + param[2])
-                                            }, Js_primitive.valFromOption(item));
-                                } else {
-                                  return null;
-                                }
-                              }), /* array */[
-                              /* tuple */[
-                                warning,
-                                "warning",
-                                WarningBanner.Styles[/* warning */0](false)
-                              ],
-                              /* tuple */[
-                                area1,
-                                "area1",
-                                ""
-                              ],
-                              /* tuple */[
-                                area2,
-                                "area2",
-                                ""
-                              ],
-                              /* tuple */[
-                                title1,
-                                "title1",
-                                title
-                              ],
-                              /* tuple */[
-                                title2,
-                                "title2",
-                                title
-                              ],
-                              /* tuple */[
-                                area3,
-                                "area3",
-                                ""
-                              ],
-                              /* tuple */[
-                                area4,
-                                "area4",
-                                ""
-                              ],
-                              /* tuple */[
-                                area5,
-                                "area5",
-                                ""
-                              ]
+                            }), Belt_Array.concatMany(/* array */[
+                              Belt_Array.map(/* array */[
+                                    /* tuple */[
+                                      warning,
+                                      "warning",
+                                      WarningBanner.Styles[/* warning */0](false)
+                                    ],
+                                    /* tuple */[
+                                      area1,
+                                      "area1",
+                                      ""
+                                    ],
+                                    /* tuple */[
+                                      area2,
+                                      "area2",
+                                      ""
+                                    ],
+                                    /* tuple */[
+                                      title1,
+                                      "title1",
+                                      title
+                                    ],
+                                    /* tuple */[
+                                      title2,
+                                      "title2",
+                                      title
+                                    ],
+                                    /* tuple */[
+                                      area3,
+                                      "area3",
+                                      ""
+                                    ],
+                                    /* tuple */[
+                                      area4,
+                                      "area4",
+                                      ""
+                                    ],
+                                    /* tuple */[
+                                      area5,
+                                      "area5",
+                                      ""
+                                    ]
+                                  ], (function (param) {
+                                      var item = param[0];
+                                      if (item !== undefined) {
+                                        var area$1 = param[1];
+                                        return React.createElement("div", {
+                                                    key: area$1,
+                                                    className: area(area$1) + (" " + param[2])
+                                                  }, Js_primitive.valFromOption(item));
+                                      } else {
+                                        return null;
+                                      }
+                                    })),
+                              /* array */[tabs$1]
                             ]));
             }),
           /* initialState */component[/* initialState */10],

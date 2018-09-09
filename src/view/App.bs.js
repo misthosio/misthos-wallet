@@ -44,7 +44,7 @@ function make(session, updateSession, signTAC, _children) {
   var onSignOut = function (_e) {
     return Curry._1(updateSession, /* SignOut */1);
   };
-  var mobileEnabled = typeof session === "number" ? session === 2 : false;
+  var mobileEnabled = true;
   var modal = function (selectedVenture, currentRoute) {
     if (typeof session === "number") {
       return undefined;
