@@ -52,14 +52,23 @@ function grid(mobileEnabled) {
                 /* :: */[
                   Css.minHeight(mobileEnabled ? Css.px(0) : Css.px(Theme.space(88))),
                   /* :: */[
-                    Css.height(Css.vh(100.0)),
-                    /* :: */[
-                      Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
-                      /* :: */[
-                        Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
-                        /* :: */[
-                          Css.unsafe("gridTemplateAreas", "\"header\" \"body\" \".\""),
+                    BreakPoints.sm(/* :: */[
+                          Css.height(Css.vh(100.0)),
                           /* [] */0
+                        ]),
+                    /* :: */[
+                      BreakPoints.xs(/* :: */[
+                            Css.height(Css.auto),
+                            /* [] */0
+                          ]),
+                      /* :: */[
+                        Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+                        /* :: */[
+                          Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
+                          /* :: */[
+                            Css.unsafe("gridTemplateAreas", "\"header\" \"body\" \".\""),
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]

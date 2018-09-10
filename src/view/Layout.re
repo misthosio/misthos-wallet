@@ -10,6 +10,7 @@ let component = ReasonReact.reducerComponent("Layout");
 
 module Styles = {
   open Css;
+  open BreakPoints;
   let flex_ = style([flex(1)]);
   let body = style([minHeight(px(0)), unsafe("gridArea", "body")]);
   let header = style([unsafe("gridArea", "header")]);
@@ -19,7 +20,8 @@ module Styles = {
       display(grid),
       minWidth(mobileEnabled ? px(0) : px(Theme.space(101))),
       minHeight(mobileEnabled ? px(0) : px(Theme.space(88))),
-      height(vh(100.0)),
+      sm([height(vh(100.0))]),
+      xs([height(auto)]),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
       unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
       unsafe("gridTemplateAreas", {|"header" "body" "."|}),
