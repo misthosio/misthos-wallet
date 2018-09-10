@@ -117,9 +117,11 @@ module Styles = {
       unsafe("gridRow", "tBegin / tEnd"),
       backgroundColor(Colors.black),
       borderBottomStyle(solid),
-      unsafe("borderImageSlice", "1"),
-      unsafe("borderImageSource", Colors.uGradient),
-      unsafe("borderWidth", "0px 0px 4px 0px"),
+      sm([
+        unsafe("borderImageSlice", "1"),
+        unsafe("borderImageSource", Colors.uGradient),
+        unsafe("borderWidth", "0px 0px 4px 0px"),
+      ]),
     ]);
 
   let warningBg =

@@ -188,14 +188,17 @@ var titleBg = Css.style(/* :: */[
           /* :: */[
             Css.borderBottomStyle(Css.solid),
             /* :: */[
-              Css.unsafe("borderImageSlice", "1"),
-              /* :: */[
-                Css.unsafe("borderImageSource", Colors.uGradient),
-                /* :: */[
-                  Css.unsafe("borderWidth", "0px 0px 4px 0px"),
-                  /* [] */0
-                ]
-              ]
+              BreakPoints.sm(/* :: */[
+                    Css.unsafe("borderImageSlice", "1"),
+                    /* :: */[
+                      Css.unsafe("borderImageSource", Colors.uGradient),
+                      /* :: */[
+                        Css.unsafe("borderWidth", "0px 0px 4px 0px"),
+                        /* [] */0
+                      ]
+                    ]
+                  ]),
+              /* [] */0
             ]
           ]
         ]
