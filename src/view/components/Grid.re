@@ -1,8 +1,13 @@
 open Belt;
 
-let component = ReasonReact.statelessComponent("Grid");
+include ViewCommon;
 
-[@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
+type state = {activeTab: int};
+
+type action =
+  | ActiveTab(int);
+
+let component = ReasonReact.reducerComponent("Grid");
 
 type variant =
   | V1
@@ -80,6 +85,8 @@ module Styles = {
   };
   let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
 
+  let mobileHidden = hidden =>
+    style([sm([display(block)]), xs([display(hidden ? none : block)])]);
   let title =
     style([
       fontFamily(Theme.oswald),
@@ -135,10 +142,20 @@ let make =
       _children,
     ) => {
   ...component,
-  render: _self => {
+  initialState: () => {activeTab: 0},
+  reducer: (action, _) =>
+    switch (action) {
+    | ActiveTab(i) => ReasonReact.Update({activeTab: i})
+    },
+  render: ({state, send}) => {
     let tabs =
       MaterialUi.(
-        <Tabs className=Styles.tabs fullWidth=true scrollable=true>
+        <Tabs
+          onChange=((_, i) => ActiveTab(i) |> send)
+          value=state.activeTab
+          className=Styles.tabs
+          fullWidth=true
+          scrollable=true>
           <Tab label=(title1 |> Js.Option.getWithDefault(ReasonReact.null)) />
           <Tab label=(title2 |> Js.Option.getWithDefault(ReasonReact.null)) />
         </Tabs>
@@ -173,8 +190,8 @@ let make =
             (area2, "area2", ""),
             (title1, "title1", Styles.title),
             (title2, "title2", Styles.title),
-            (area3, "area3", ""),
-            (area4, "area4", ""),
+            (area3, "area3", Styles.mobileHidden(state.activeTab != 0)),
+            (area4, "area4", Styles.mobileHidden(state.activeTab != 1)),
             (area5, "area5", ""),
           |]
           |. Array.map(((item, area, className)) =>

@@ -2,11 +2,14 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var ViewCommon = require("../ViewCommon.bs.js");
 var BreakPoints = require("../BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
@@ -14,7 +17,7 @@ var WarningBanner = require("./WarningBanner.bs.js");
 var MaterialUi_Tab = require("@jsiebern/bs-material-ui/src/MaterialUi_Tab.bs.js");
 var MaterialUi_Tabs = require("@jsiebern/bs-material-ui/src/MaterialUi_Tabs.bs.js");
 
-var component = ReasonReact.statelessComponent("Grid");
+var component = ReasonReact.reducerComponent("Grid");
 
 var gap = String(Theme.space(4)) + "px 0px";
 
@@ -88,6 +91,22 @@ function area(area$1) {
               Css.unsafe("gridArea", area$1),
               /* :: */[
                 Css.minHeight(Css.px(0)),
+                /* [] */0
+              ]
+            ]);
+}
+
+function mobileHidden(hidden) {
+  return Css.style(/* :: */[
+              BreakPoints.sm(/* :: */[
+                    Css.display(Css.block),
+                    /* [] */0
+                  ]),
+              /* :: */[
+                BreakPoints.xs(/* :: */[
+                      Css.display(hidden ? Css.none : Css.block),
+                      /* [] */0
+                    ]),
                 /* [] */0
               ]
             ]);
@@ -195,6 +214,7 @@ var Styles = /* module */[
   /* gap */gap,
   /* grid */grid,
   /* area */area,
+  /* mobileHidden */mobileHidden,
   /* title */title,
   /* tabs */tabs,
   /* titleBg */titleBg,
@@ -212,8 +232,12 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function (_self) {
-              var tabs$1 = ReasonReact.element(undefined, undefined, MaterialUi_Tabs.make(undefined, undefined, tabs, undefined, true, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+          /* render */(function (param) {
+              var send = param[/* send */3];
+              var state = param[/* state */1];
+              var tabs$1 = ReasonReact.element(undefined, undefined, MaterialUi_Tabs.make(undefined, undefined, tabs, undefined, true, undefined, (function (param, i) {
+                          return Curry._1(send, /* ActiveTab */[i]);
+                        }), true, undefined, undefined, undefined, undefined, undefined, state[/* activeTab */0], undefined, undefined, /* array */[
                         ReasonReact.element(undefined, undefined, MaterialUi_Tab.make(undefined, undefined, undefined, undefined, undefined, Js_primitive.some(Js_option.getWithDefault(null, title1)), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])),
                         ReasonReact.element(undefined, undefined, MaterialUi_Tab.make(undefined, undefined, undefined, undefined, undefined, Js_primitive.some(Js_option.getWithDefault(null, title2)), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
                       ]));
@@ -262,12 +286,12 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                                     /* tuple */[
                                       area3,
                                       "area3",
-                                      ""
+                                      mobileHidden(state[/* activeTab */0] !== 0)
                                     ],
                                     /* tuple */[
                                       area4,
                                       "area4",
-                                      ""
+                                      mobileHidden(state[/* activeTab */0] !== 1)
                                     ],
                                     /* tuple */[
                                       area5,
@@ -289,13 +313,26 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                               /* array */[tabs$1]
                             ]));
             }),
-          /* initialState */component[/* initialState */10],
+          /* initialState */(function (param) {
+              return /* record */[/* activeTab */0];
+            }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
+          /* reducer */(function (action, param) {
+              return /* Update */Block.__(0, [/* record */[/* activeTab */action[0]]]);
+            }),
           /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+var ignoreEvent = ViewCommon.ignoreEvent;
+
+exports.text = text;
+exports.extractString = extractString;
+exports.ignoreEvent = ignoreEvent;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;
