@@ -31,7 +31,7 @@ function make(proposal, log) {
   var txWrapper = TxWrapper.make(match[/* txHex */0]);
   var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
-          if ($$event.tag === 38) {
+          if ($$event.tag === 39) {
             return AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], res);
           } else {
             return res;
@@ -58,7 +58,7 @@ function make(proposal, log) {
     if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, inputs)) > 0) {
       return /* tuple */[
               systemIssuer,
-              /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], proposal)])
+              /* PayoutAborted */Block.__(31, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], proposal)])
             ];
     }
     
@@ -102,13 +102,13 @@ function make(proposal, log) {
                 case 0 : 
                     self$1[systemIssuer][0] = $$event[0][/* systemIssuer */7];
                     return /* () */0;
-                case 19 : 
+                case 20 : 
                     self$1[custodians][0] = Belt_Set.add(self$1[custodians][0], $$event[0][/* data */2][/* partnerId */0]);
                     return /* () */0;
-                case 24 : 
+                case 25 : 
                     self$1[custodians][0] = Belt_Set.remove(self$1[custodians][0], $$event[0][/* data */2][/* custodianId */0]);
                     return /* () */0;
-                case 29 : 
+                case 30 : 
                     var match = $$event[0];
                     var acceptedProcess = match[/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](env$1[2], acceptedProcess)) {
@@ -117,7 +117,7 @@ function make(proposal, log) {
                     } else {
                       return /* () */0;
                     }
-                case 30 : 
+                case 31 : 
                     var abortedProcess = $$event[0][/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* eq */5](abortedProcess, env$1[2])) {
                       self$1[result][0] = undefined;
@@ -142,7 +142,7 @@ function make(proposal, log) {
                         return 0;
                       }
                     }
-                case 31 : 
+                case 32 : 
                     var abortedProcess$1 = $$event[0][/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* eq */5](abortedProcess$1, env$1[2])) {
                       self$1[result][0] = undefined;
@@ -167,7 +167,7 @@ function make(proposal, log) {
                         return 0;
                       }
                     }
-                case 32 : 
+                case 33 : 
                     var match$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], env$1[2])) {
                       self$1[alreadySigned][0] = Belt_Set.add(self$1[alreadySigned][0], match$1[/* custodianId */1]);
@@ -175,7 +175,7 @@ function make(proposal, log) {
                     } else {
                       return /* () */0;
                     }
-                case 33 : 
+                case 34 : 
                     var broadcastProcess = $$event[0][/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](broadcastProcess, env$1[2])) {
                       var broadcastInputs = Belt_Map.getWithDefault(self$1[payoutProcesses][0], broadcastProcess, Network.inputSet(/* () */0));
@@ -190,7 +190,7 @@ function make(proposal, log) {
                     } else {
                       return /* () */0;
                     }
-                case 34 : 
+                case 35 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[2])) {
                       self$1[result][0] = undefined;
                       self$1[completed][0] = true;
@@ -198,7 +198,7 @@ function make(proposal, log) {
                     } else {
                       return /* () */0;
                     }
-                case 36 : 
+                case 37 : 
                     var broadcastProcess$1 = $$event[0][/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* eq */5](broadcastProcess$1, env$1[2])) {
                       self$1[result][0] = undefined;
@@ -238,7 +238,7 @@ function make(proposal, log) {
               if (match) {
                 return /* tuple */[
                         self$1[systemIssuer][0],
-                        /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[0])])
+                        /* PayoutAborted */Block.__(31, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[0])])
                       ];
               } else {
                 return self$1[result][0];

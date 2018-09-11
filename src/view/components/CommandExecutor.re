@@ -12,6 +12,7 @@ type action =
 
 type commands = {
   reset: unit => unit,
+  registerIntegration: (~integrationPubKey: string) => unit,
   proposePartner: (~prospectId: userId) => unit,
   endorsePartner: (~processId: processId) => unit,
   rejectPartner: (~processId: processId) => unit,
@@ -58,6 +59,10 @@ let make =
     ) => {
   let wrapCommands = send => {
     reset: () => send(Reset),
+    registerIntegration: (~integrationPubKey) =>
+      send(
+        CommandExecuted(commands.registerIntegration(~integrationPubKey)),
+      ),
     proposePartner: (~prospectId) =>
       send(CommandExecuted(commands.proposePartner(~prospectId))),
     endorsePartner: (~processId) =>
@@ -217,6 +222,8 @@ module Status = {
           "Your public Keys have been submitted" |> message(Success)
         | TransactionSigned =>
           "You have signed the transaction" |> message(Success)
+        | IntegrationRegistered =>
+          "The integration has been registered" |> message(Success)
         | ProcessStarted(_) =>
           "Your proposal has been submitted" |> message(Success)
         | ProcessEndorsed(_) =>

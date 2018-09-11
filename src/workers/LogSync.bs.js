@@ -37,12 +37,12 @@ var intervalId = /* record */[/* contents */undefined];
 var determinPartnerIds = Curry._2(EventLog.reduce, (function (ids, param) {
         var $$event = param[/* event */0];
         switch ($$event.tag | 0) {
-          case 4 : 
+          case 5 : 
               return /* :: */[
                       $$event[0][/* data */2][/* id */1],
                       ids
                     ];
-          case 10 : 
+          case 11 : 
               var data = $$event[0][/* data */2];
               return Belt_List.keep(ids, (function (id) {
                             return PrimitiveTypes.UserId[/* neq */6](id, data[/* id */0]);
@@ -79,7 +79,7 @@ function getLogFromUser(ventureId, userId, storagePrefix) {
 function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
   getLogFromUser(ventureId, userId, storagePrefix).then((function (other) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
-          return Promise.resolve(items.length !== 0 ? postMessage$1(/* NewItemsDetected */Block.__(16, [
+          return Promise.resolve(items.length !== 0 ? postMessage$1(/* NewItemsDetected */Block.__(17, [
                               ventureId,
                               items,
                               userId

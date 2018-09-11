@@ -20,7 +20,7 @@ function update($$event, param) {
   var custodians = param[/* custodians */0];
   var custodians$1;
   switch ($$event.tag | 0) {
-    case 15 : 
+    case 16 : 
         custodians$1 = /* :: */[
           /* tuple */[
             $$event[0][/* data */2][/* accountIdx */0],
@@ -29,7 +29,7 @@ function update($$event, param) {
           custodians
         ];
         break;
-    case 19 : 
+    case 20 : 
         var match = $$event[0][/* data */2];
         var accountIdx = match[/* accountIdx */3];
         custodians$1 = /* :: */[
@@ -43,7 +43,7 @@ function update($$event, param) {
           List.remove_assoc(accountIdx, custodians)
         ];
         break;
-    case 24 : 
+    case 25 : 
         var match$1 = $$event[0][/* data */2];
         var accountIdx$1 = match$1[/* accountIdx */1];
         var custodianId = match$1[/* custodianId */0];

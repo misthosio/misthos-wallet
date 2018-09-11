@@ -70,7 +70,7 @@ function make(proposal, log) {
                       /* systemIssuer */$$event[0][/* systemIssuer */7]
                     ];
                     break;
-                case 19 : 
+                case 20 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* data */6][/* lastCustodianProcess */2])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
@@ -85,7 +85,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 22 : 
+                case 23 : 
                     var $$event$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$1[/* processId */0], env$1[0][/* processId */0])) {
                       var init$3 = self$1[state][0];
@@ -101,7 +101,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 23 : 
+                case 24 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$4 = self$1[state][0];
@@ -117,8 +117,8 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 24 : 
                 case 25 : 
+                case 26 : 
                     exit = 1;
                     break;
                 default:
@@ -148,11 +148,11 @@ function make(proposal, log) {
                   match$1 ? (
                       match$2 ? /* tuple */[
                           self$1[state][0][/* systemIssuer */5],
-                          /* CustodianRemovalAccepted */Block.__(24, [Curry._1(Event.Custodian[/* Removal */9][/* Accepted */6][/* fromProposal */0], env$1[0])])
+                          /* CustodianRemovalAccepted */Block.__(25, [Curry._1(Event.Custodian[/* Removal */9][/* Accepted */6][/* fromProposal */0], env$1[0])])
                         ] : undefined
                     ) : /* tuple */[
                       self$1[state][0][/* systemIssuer */5],
-                      /* CustodianRemovalDenied */Block.__(25, [Curry._1(Event.Custodian[/* Removal */9][/* Denied */7][/* fromProposal */0], env$1[0])])
+                      /* CustodianRemovalDenied */Block.__(26, [Curry._1(Event.Custodian[/* Removal */9][/* Denied */7][/* fromProposal */0], env$1[0])])
                     ]
                 );
               return /* () */0;

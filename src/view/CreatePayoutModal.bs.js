@@ -395,23 +395,23 @@ function make(viewData, commands, cmdStatus, _) {
                                                   return Curry._2(viewData[/* signPayoutTx */11], payoutTx, param[1]);
                                                 })).then((function (param) {
                                                 if (typeof param === "number") {
-                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "The device does not have the correct seed for signing"));
+                                                  return Promise.resolve(Curry._1(commands[/* preSubmitError */14], "The device does not have the correct seed for signing"));
                                                 } else if (param.tag) {
                                                   var match = param[0];
                                                   if (match) {
-                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */13], match[0]));
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */14], match[0]));
                                                   } else {
-                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "An unknown error has occured"));
+                                                    return Promise.resolve(Curry._1(commands[/* preSubmitError */14], "An unknown error has occured"));
                                                   }
                                                 } else {
-                                                  return Promise.resolve(Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, param[0]));
+                                                  return Promise.resolve(Curry._3(commands[/* proposePayout */9], WalletTypes.AccountIndex[/* default */11], payoutTx, param[0]));
                                                 }
                                               }));
                                         return /* () */0;
                                       }), 1);
-                                Curry._1(commands[/* preSubmit */12], "Please confirm this proposal on your ledger device (BTC app)");
+                                Curry._1(commands[/* preSubmit */13], "Please confirm this proposal on your ledger device (BTC app)");
                               } else {
-                                Curry._3(commands[/* proposePayout */8], WalletTypes.AccountIndex[/* default */11], payoutTx, /* array */[]);
+                                Curry._3(commands[/* proposePayout */9], WalletTypes.AccountIndex[/* default */11], payoutTx, /* array */[]);
                               }
                             }
                             return /* NoUpdate */0;

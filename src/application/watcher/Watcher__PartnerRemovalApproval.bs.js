@@ -71,7 +71,7 @@ function make(proposal, log) {
                       /* creatorId */$$event$1[/* creatorId */2]
                     ];
                     break;
-                case 8 : 
+                case 9 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$2 = self$1[state][0];
@@ -87,7 +87,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 9 : 
+                case 10 : 
                     var $$event$3 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$3[/* processId */0], env$1[0][/* processId */0])) {
                       var init$3 = self$1[state][0];
@@ -103,8 +103,8 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 10 : 
                 case 11 : 
+                case 12 : 
                     exit = 1;
                     break;
                 default:
@@ -134,11 +134,11 @@ function make(proposal, log) {
                   match$1 ? (
                       match$2 ? /* tuple */[
                           self$1[state][0][/* systemIssuer */4],
-                          /* PartnerRemovalAccepted */Block.__(10, [Curry._1(Event.Partner[/* Removal */9][/* Accepted */6][/* fromProposal */0], env$1[0])])
+                          /* PartnerRemovalAccepted */Block.__(11, [Curry._1(Event.Partner[/* Removal */9][/* Accepted */6][/* fromProposal */0], env$1[0])])
                         ] : undefined
                     ) : /* tuple */[
                       self$1[state][0][/* systemIssuer */4],
-                      /* PartnerRemovalDenied */Block.__(11, [Curry._1(Event.Partner[/* Removal */9][/* Denied */7][/* fromProposal */0], env$1[0])])
+                      /* PartnerRemovalDenied */Block.__(12, [Curry._1(Event.Partner[/* Removal */9][/* Denied */7][/* fromProposal */0], env$1[0])])
                     ]
                 );
               return /* () */0;

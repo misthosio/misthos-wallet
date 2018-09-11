@@ -353,12 +353,12 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                       if (prospectId === "") {
                         return /* NoUpdate */0;
                       } else {
-                        Curry._1(proposePartnerCmds[/* proposePartner */1], PrimitiveTypes.UserId[/* fromString */1](prospectId));
+                        Curry._1(proposePartnerCmds[/* proposePartner */2], PrimitiveTypes.UserId[/* fromString */1](prospectId));
                         return /* NoUpdate */0;
                       }
                   case 2 : 
                       Utils.mapOption((function (partnerId) {
-                              return Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], partnerId);
+                              return Curry._1(removePartnerCmds[/* proposePartnerRemoval */5], partnerId);
                             }), state[/* inputs */4][/* removePartnerId */1]);
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],

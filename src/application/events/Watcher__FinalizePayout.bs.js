@@ -42,7 +42,7 @@ function make(param, log) {
                         keyChains,
                         $$event[0][/* systemIssuer */7]
                       ];
-            case 19 : 
+            case 20 : 
                 return /* tuple */[
                         broadcast,
                         txs,
@@ -51,7 +51,7 @@ function make(param, log) {
                         keyChains,
                         systemIssuer
                       ];
-            case 24 : 
+            case 25 : 
                 return /* tuple */[
                         broadcast,
                         txs,
@@ -60,7 +60,7 @@ function make(param, log) {
                         keyChains,
                         systemIssuer
                       ];
-            case 26 : 
+            case 27 : 
                 var match = $$event[0];
                 if (PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], payoutProcess)) {
                   return /* tuple */[
@@ -78,7 +78,7 @@ function make(param, log) {
                   exit = 1;
                 }
                 break;
-            case 32 : 
+            case 33 : 
                 var match$1 = $$event[0];
                 if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
                   return /* tuple */[
@@ -96,7 +96,7 @@ function make(param, log) {
                   exit = 1;
                 }
                 break;
-            case 33 : 
+            case 34 : 
                 if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], payoutProcess)) {
                   return /* tuple */[
                           false,
@@ -110,7 +110,7 @@ function make(param, log) {
                   exit = 1;
                 }
                 break;
-            case 38 : 
+            case 39 : 
                 return /* tuple */[
                         broadcast,
                         txs,
@@ -183,13 +183,13 @@ function make(param, log) {
               var env$1 = self$1[env];
               var $$event = param[/* event */0];
               switch ($$event.tag | 0) {
-                case 19 : 
+                case 20 : 
                     self$1[custodians][0] = Belt_Set.add(self$1[custodians][0], $$event[0][/* data */2][/* partnerId */0]);
                     return /* () */0;
-                case 24 : 
+                case 25 : 
                     self$1[custodians][0] = Belt_Set.remove(self$1[custodians][0], $$event[0][/* data */2][/* custodianId */0]);
                     return /* () */0;
-                case 32 : 
+                case 33 : 
                     var match = $$event[0];
                     var payoutTx = match[/* payoutTx */2];
                     if (PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], env$1[0])) {
@@ -205,7 +205,7 @@ function make(param, log) {
                     } else {
                       return /* () */0;
                     }
-                case 33 : 
+                case 34 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0])) {
                       self$1[delivered][0] = true;
                       return /* () */0;
@@ -230,7 +230,7 @@ function make(param, log) {
               return Utils.mapOption((function (tx) {
                             return /* tuple */[
                                     env$1[4],
-                                    /* PayoutFinalized */Block.__(33, [Curry._3(Event.Payout[/* Finalized */10][/* make */0], env$1[0], tx.getId(), /* record */[
+                                    /* PayoutFinalized */Block.__(34, [Curry._3(Event.Payout[/* Finalized */10][/* make */0], env$1[0], tx.getId(), /* record */[
                                               /* txHex */tx.toHex(),
                                               /* usedInputs */env$1[1],
                                               /* misthosFeeAddress */env$1[2],

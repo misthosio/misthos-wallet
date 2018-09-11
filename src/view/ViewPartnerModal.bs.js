@@ -110,17 +110,17 @@ function make(viewData, commands, cmdStatus, _) {
               var processId = match$1[/* processId */0];
               var match$3 = processType ? /* tuple */[
                   (function () {
-                      return Curry._1(commands[/* endorsePartner */2], processId);
+                      return Curry._1(commands[/* endorsePartner */3], processId);
                     }),
                   (function () {
-                      return Curry._1(commands[/* rejectPartner */3], processId);
+                      return Curry._1(commands[/* rejectPartner */4], processId);
                     })
                 ] : /* tuple */[
                   (function () {
-                      return Curry._1(commands[/* endorsePartnerRemoval */5], processId);
+                      return Curry._1(commands[/* endorsePartnerRemoval */6], processId);
                     }),
                   (function () {
-                      return Curry._1(commands[/* rejectPartnerRemoval */6], processId);
+                      return Curry._1(commands[/* rejectPartnerRemoval */7], processId);
                     })
                 ];
               var onboardingState;

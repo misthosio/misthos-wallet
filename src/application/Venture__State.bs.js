@@ -173,7 +173,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 1 : 
+    case 2 : 
         var proposal = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -189,7 +189,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 4 : 
+    case 5 : 
         var $$event$1 = $$event[0];
         var id = $$event$1[/* data */2][/* id */1];
         return /* record */[
@@ -212,7 +212,7 @@ function apply($$event, state) {
                   state[/* partnerAccepted */11]
                 ]
               ];
-    case 5 : 
+    case 6 : 
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
@@ -227,7 +227,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 7 : 
+    case 8 : 
         var match$1 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -249,7 +249,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 10 : 
+    case 11 : 
         var $$event$2 = $$event[0];
         var id$1 = $$event$2[/* data */2][/* id */0];
         return /* record */[
@@ -272,7 +272,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 16 : 
+    case 17 : 
         var match$2 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -294,7 +294,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 19 : 
+    case 20 : 
         var $$event$3 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -316,7 +316,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 21 : 
+    case 22 : 
         var match$3 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -338,7 +338,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 24 : 
+    case 25 : 
         var $$event$4 = $$event[0];
         var match$4 = $$event$4[/* data */2];
         var lastCustodianProcess = match$4[/* lastCustodianProcess */2];

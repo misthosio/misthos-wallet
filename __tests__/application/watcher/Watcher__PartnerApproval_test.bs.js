@@ -22,7 +22,7 @@ describe("Watcher__PartnerApproval", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](undefined, user1, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 4) {
+                              if (param.tag === 5) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -42,7 +42,7 @@ describe("Watcher__PartnerApproval", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](undefined, user1, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 4) {
+                              if (param.tag === 5) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -98,7 +98,7 @@ describe("Watcher__PartnerApproval", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](undefined, user2, proposal)(Generators.Log[/* withPartnerEndorsed */13](undefined, user1, proposal)(log));
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 4) {
+                              if (param.tag === 5) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -125,7 +125,7 @@ describe("Watcher__PartnerApproval", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](undefined, user1, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 4) {
+                              if (param.tag === 5) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -149,7 +149,7 @@ describe("Watcher__PartnerApproval", (function () {
                 var log$1 = Generators.Log[/* withPartnerRejected */14](undefined, user2, proposal)(log);
                 var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("PartnerDenied", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 5) {
+                              if (param.tag === 6) {
                                 return true;
                               } else {
                                 return false;

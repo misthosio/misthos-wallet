@@ -250,6 +250,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       accountKeyChains:
         state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
     }
+  | IntegrationRegistered(_)
   | IncomeDetected(_)
   | TransactionConfirmed(_)
   | IncomeAddressExposed(_)
@@ -629,6 +630,12 @@ let validateIncomeAddressExposed =
   | Not_found => BadData("Unknown Address")
   };
 
+let validateIntegrationRegistered =
+    ({registratorId}: Integration.Registered.t, state, issuerId) =>
+  UserId.neq(issuerId, registratorId) ?
+    InvalidIssuer :
+    state.currentPartners |. Belt.Set.has(registratorId) ? Ok : Ignore;
+
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
@@ -764,6 +771,7 @@ let validateEvent =
   | AccountKeyChainActivated(update) =>
     validateAccountKeyChainActivated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
+  | IntegrationRegistered(event) => validateIntegrationRegistered(event)
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | IncomeUnlocked(_) => ((_state, _pubKey) => Ok)
   | TransactionConfirmed(_) => ((_state, _pubKey) => Ok)

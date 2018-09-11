@@ -17,12 +17,12 @@ function currentEligible(param) {
 
 function apply($$event, state) {
   switch ($$event.tag | 0) {
-    case 4 : 
+    case 5 : 
         return /* record */[
                 /* eligible */state[/* eligible */0],
                 /* currentPartners */Belt_Set.add(state[/* currentPartners */1], $$event[0][/* data */2][/* id */1])
               ];
-    case 10 : 
+    case 11 : 
         return /* record */[
                 /* eligible */state[/* eligible */0],
                 /* currentPartners */Belt_Set.remove(state[/* currentPartners */1], $$event[0][/* data */2][/* id */0])

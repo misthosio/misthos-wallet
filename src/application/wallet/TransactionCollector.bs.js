@@ -29,7 +29,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
-    case 33 : 
+    case 34 : 
         var finalizedTx = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -39,7 +39,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */Belt_Map.set(state[/* notYetBroadcastPayouts */5], finalizedTx[/* processId */0], finalizedTx)
               ];
-    case 34 : 
+    case 35 : 
         var match$1 = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -49,7 +49,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */Belt_Map.remove(state[/* notYetBroadcastPayouts */5], match$1[/* processId */0])
               ];
-    case 36 : 
+    case 37 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* ventureId */state[/* ventureId */1],
@@ -58,7 +58,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */Belt_Map.remove(state[/* notYetBroadcastPayouts */5], $$event[0][/* processId */0])
               ];
-    case 41 : 
+    case 42 : 
         var txId = $$event[0][/* txId */2];
         return /* record */[
                 /* network */state[/* network */0],
@@ -68,7 +68,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
-    case 43 : 
+    case 44 : 
         var match$2 = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],

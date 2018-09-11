@@ -79,7 +79,7 @@ function endorsePayout(processId, signatures, param, param$1) {
   var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(walletInfoCollector), WalletInfoCollector.getPayoutTx(processId, walletInfoCollector), signatures);
   if (match) {
     return /* :: */[
-            /* PayoutSigned */Block.__(32, [Curry._3(Event.Payout[/* Signed */9][/* make */0], processId, userId, match[0])]),
+            /* PayoutSigned */Block.__(33, [Curry._3(Event.Payout[/* Signed */9][/* make */0], processId, userId, match[0])]),
             /* :: */[
               Event.makePayoutEndorsed(processId, userId),
               /* [] */0
@@ -99,7 +99,7 @@ function signPayout(processId, signatures, param, param$1) {
   var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(walletInfoCollector), WalletInfoCollector.getPayoutTx(processId, walletInfoCollector), signatures);
   if (match) {
     return /* :: */[
-            /* PayoutSigned */Block.__(32, [Curry._3(Event.Payout[/* Signed */9][/* make */0], processId, userId, match[0])]),
+            /* PayoutSigned */Block.__(33, [Curry._3(Event.Payout[/* Signed */9][/* make */0], processId, userId, match[0])]),
             /* [] */0
           ];
   } else {

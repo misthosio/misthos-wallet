@@ -297,6 +297,27 @@ module Cmd = {
       );
     };
   };
+  module RegisterIntegration = {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
+    let exec = (~integrationPubKey, {session} as venture) =>
+      Js.Promise.(
+        venture
+        |> apply(
+             Event.makeIntergationRegistered(
+               ~registratorId=session.userId,
+               ~integrationPubKey,
+             ),
+           )
+        |> persist
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
+      );
+  };
   module SynchronizeLogs = {
     type result =
       | Ok(t, array(EventLog.item))

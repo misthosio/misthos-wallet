@@ -20,13 +20,13 @@ function inputsFor(address, param) {
 
 function apply($$event, state) {
   switch ($$event.tag | 0) {
-    case 29 : 
+    case 30 : 
         var match = $$event[0];
         return /* record */[
                 /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */0], match[/* processId */0], match[/* data */2][/* payoutTx */1]),
                 /* oldInputs */state[/* oldInputs */1]
               ];
-    case 34 : 
+    case 35 : 
         var payoutTx = Belt_Map.getExn(state[/* payoutProcesses */0], $$event[0][/* processId */0]);
         return Belt_Array.reduceU(payoutTx[/* usedInputs */1], state, (function (state, input) {
                       return /* record */[

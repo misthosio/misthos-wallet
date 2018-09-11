@@ -14,7 +14,7 @@ Scenarios.run("three-person-payout", (function (_, newItems) {
         return Jest.test("Payout is finalized", (function () {
                       var lastEvent = Belt_Array.getExn(newItems, 1)[/* event */0];
                       var tmp;
-                      tmp = lastEvent.tag === 33 ? true : false;
+                      tmp = lastEvent.tag === 34 ? true : false;
                       return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](tmp));
                     }));
       }));
@@ -26,7 +26,7 @@ Scenarios.run("four-person-payout", (function (_, newItems) {
         return Jest.test("Payout is finalized", (function () {
                       var lastEvent = Belt_Array.getExn(newItems, 1)[/* event */0];
                       var tmp;
-                      tmp = lastEvent.tag === 33 ? true : false;
+                      tmp = lastEvent.tag === 34 ? true : false;
                       return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](tmp));
                     }));
       }));

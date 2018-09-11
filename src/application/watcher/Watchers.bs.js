@@ -30,32 +30,32 @@ function initWatcherFor(session, param, log) {
                 Watcher__InitializeVenture.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 1 : 
+    case 2 : 
         return /* :: */[
                 Watcher__PartnerApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 4 : 
+    case 5 : 
         return /* :: */[
                 Watcher__AddPubKey.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 7 : 
+    case 8 : 
         return /* :: */[
                 Watcher__PartnerRemovalApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 12 : 
+    case 13 : 
         return /* :: */[
                 Watcher__AccountCreationApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 15 : 
+    case 16 : 
         return /* :: */[
                 Watcher__AccountKeyChain.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 16 : 
+    case 17 : 
         var proposal = $$event[0];
         return /* :: */[
                 Watcher__AutoEndorseCustodianSelf.make(session, proposal, log),
@@ -64,17 +64,17 @@ function initWatcherFor(session, param, log) {
                   /* [] */0
                 ]
               ];
-    case 19 : 
+    case 20 : 
         return /* :: */[
                 Watcher__CustodianKeyChain.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 21 : 
+    case 22 : 
         return /* :: */[
                 Watcher__CustodianRemovalApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 26 : 
+    case 27 : 
         var proposal$1 = $$event[0];
         return /* :: */[
                 Watcher__PayoutApproval.make(proposal$1, log),
@@ -83,7 +83,7 @@ function initWatcherFor(session, param, log) {
                   /* [] */0
                 ]
               ];
-    case 29 : 
+    case 30 : 
         return /* :: */[
                 Watcher__FinalizePayout.make($$event[0], log),
                 /* [] */0

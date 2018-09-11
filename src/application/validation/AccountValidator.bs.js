@@ -18,7 +18,7 @@ function make() {
 function update($$event, param) {
   var accounts = param[/* accounts */0];
   var accounts$1;
-  if ($$event.tag === 15) {
+  if ($$event.tag === 16) {
     var match = $$event[0][/* data */2];
     accounts$1 = Belt_Map.set(accounts, match[/* accountIdx */0], Js_option.getWithDefault(AccountSettings.$$default, match[/* settings */1]));
   } else {

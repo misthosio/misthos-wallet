@@ -18,7 +18,7 @@ describe("Watcher__CustodianApproval", (function () {
                 var log$1 = Generators.Log[/* withCustodianEndorsed */29](user1, proposal)(log);
                 var watcher = Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 19) {
+                              if (param.tag === 20) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -93,7 +93,7 @@ describe("Watcher__CustodianApproval", (function () {
                 var log$1 = Generators.Log[/* withCustodianEndorsed */29](user2, proposal)(Generators.Log[/* withCustodianEndorsed */29](user1, proposal)(log));
                 var watcher = Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 19) {
+                              if (param.tag === 20) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -115,7 +115,7 @@ describe("Watcher__CustodianApproval", (function () {
                 var log$1 = Generators.Log[/* withCustodianEndorsed */29](user1, proposal)(log);
                 var watcher = Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 19) {
+                              if (param.tag === 20) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -139,7 +139,7 @@ describe("Watcher__CustodianApproval", (function () {
                     ], log$1);
                 Caml_oo_curry.js2(710435299, 2, watcher, Generators.Log[/* lastItem */4](log$2));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */3](log$2), (function (param) {
-                              if (param.tag === 19) {
+                              if (param.tag === 20) {
                                 return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */6]);
                               } else {
                                 return false;
@@ -165,7 +165,7 @@ describe("Watcher__CustodianApproval", (function () {
                 var log$1 = Generators.Log[/* withCustodianRejected */30](user2, proposal)(log);
                 var watcher = Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianDenied", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 20) {
+                              if (param.tag === 21) {
                                 return true;
                               } else {
                                 return false;

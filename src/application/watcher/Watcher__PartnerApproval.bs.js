@@ -74,7 +74,7 @@ function make(proposal, log) {
                       /* received */init$1[/* received */6]
                     ];
                     break;
-                case 2 : 
+                case 3 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$2 = self$1[state][0];
@@ -91,7 +91,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 3 : 
+                case 4 : 
                     var $$event$3 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$3[/* processId */0], env$1[0][/* processId */0])) {
                       var init$3 = self$1[state][0];
@@ -108,8 +108,8 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 4 : 
                 case 5 : 
+                case 6 : 
                     exit = 1;
                     break;
                 default:
@@ -139,17 +139,17 @@ function make(proposal, log) {
                   match$1 ? (
                       match$2 ? /* tuple */[
                           self$1[state][0][/* systemIssuer */4],
-                          /* PartnerAccepted */Block.__(4, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
+                          /* PartnerAccepted */Block.__(5, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
                         ] : undefined
                     ) : /* tuple */[
                       self$1[state][0][/* systemIssuer */4],
-                      /* PartnerDenied */Block.__(5, [Curry._1(Event.Partner[/* Denied */7][/* fromProposal */0], env$1[0])])
+                      /* PartnerDenied */Block.__(6, [Curry._1(Event.Partner[/* Denied */7][/* fromProposal */0], env$1[0])])
                     ]
                 );
               if (Caml_obj.caml_equal(env$1[0][/* data */6][/* id */1], self$1[state][0][/* creatorId */5]) && self$1[state][0][/* received */6] === 3) {
                 self$1[result][0] = /* tuple */[
                   self$1[state][0][/* systemIssuer */4],
-                  /* PartnerAccepted */Block.__(4, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
+                  /* PartnerAccepted */Block.__(5, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
                 ];
                 return /* () */0;
               } else {

@@ -38,7 +38,7 @@ function ledgerConnected(accountIdx, param) {
 
 function apply($$event, state) {
   switch ($$event.tag | 0) {
-    case 10 : 
+    case 11 : 
         if (PrimitiveTypes.UserId[/* neq */6]($$event[0][/* data */2][/* id */0], state[/* localUser */0])) {
           return /* record */[
                   /* localUser */state[/* localUser */0],
@@ -50,7 +50,7 @@ function apply($$event, state) {
         } else {
           return state;
         }
-    case 37 : 
+    case 38 : 
         var match = $$event[0];
         var keyChain = match[/* keyChain */2];
         var custodianId = match[/* custodianId */1];

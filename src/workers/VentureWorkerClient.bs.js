@@ -58,57 +58,64 @@ function joinVia(ventureId, userId, worker) {
               ]));
 }
 
+function registerIntegration(worker, ventureId, integrationPubKey) {
+  return Curry._2(postMessage, worker, /* RegisterIntegration */Block.__(4, [
+                ventureId,
+                integrationPubKey
+              ]));
+}
+
 function proposePartner(worker, ventureId, prospectId) {
-  return Curry._2(postMessage, worker, /* ProposePartner */Block.__(4, [
+  return Curry._2(postMessage, worker, /* ProposePartner */Block.__(5, [
                 ventureId,
                 prospectId
               ]));
 }
 
 function rejectPartner(worker, ventureId, processId) {
-  return Curry._2(postMessage, worker, /* RejectPartner */Block.__(5, [
+  return Curry._2(postMessage, worker, /* RejectPartner */Block.__(6, [
                 ventureId,
                 processId
               ]));
 }
 
 function endorsePartner(worker, ventureId, processId) {
-  return Curry._2(postMessage, worker, /* EndorsePartner */Block.__(6, [
+  return Curry._2(postMessage, worker, /* EndorsePartner */Block.__(7, [
                 ventureId,
                 processId
               ]));
 }
 
 function proposePartnerRemoval(worker, ventureId, partnerId) {
-  return Curry._2(postMessage, worker, /* ProposePartnerRemoval */Block.__(7, [
+  return Curry._2(postMessage, worker, /* ProposePartnerRemoval */Block.__(8, [
                 ventureId,
                 partnerId
               ]));
 }
 
 function rejectPartnerRemoval(worker, ventureId, processId) {
-  return Curry._2(postMessage, worker, /* RejectPartnerRemoval */Block.__(8, [
+  return Curry._2(postMessage, worker, /* RejectPartnerRemoval */Block.__(9, [
                 ventureId,
                 processId
               ]));
 }
 
 function endorsePartnerRemoval(worker, ventureId, processId) {
-  return Curry._2(postMessage, worker, /* EndorsePartnerRemoval */Block.__(9, [
+  return Curry._2(postMessage, worker, /* EndorsePartnerRemoval */Block.__(10, [
                 ventureId,
                 processId
               ]));
 }
 
 function submitCustodianKeyChain(worker, ventureId, keyChain) {
-  return Curry._2(postMessage, worker, /* SubmitCustodianKeyChain */Block.__(10, [
+  return Curry._2(postMessage, worker, /* SubmitCustodianKeyChain */Block.__(11, [
                 ventureId,
                 keyChain
               ]));
 }
 
 function proposePayout(worker, ventureId, accountIdx, payoutTx, signatures) {
-  return Curry._2(postMessage, worker, /* ProposePayout */Block.__(11, [
+  return Curry._2(postMessage, worker, /* ProposePayout */Block.__(12, [
                 ventureId,
                 accountIdx,
                 payoutTx,
@@ -117,14 +124,14 @@ function proposePayout(worker, ventureId, accountIdx, payoutTx, signatures) {
 }
 
 function rejectPayout(worker, ventureId, processId) {
-  return Curry._2(postMessage, worker, /* RejectPayout */Block.__(12, [
+  return Curry._2(postMessage, worker, /* RejectPayout */Block.__(13, [
                 ventureId,
                 processId
               ]));
 }
 
 function endorsePayout(worker, ventureId, signatures, processId) {
-  return Curry._2(postMessage, worker, /* EndorsePayout */Block.__(13, [
+  return Curry._2(postMessage, worker, /* EndorsePayout */Block.__(14, [
                 ventureId,
                 signatures,
                 processId
@@ -132,7 +139,7 @@ function endorsePayout(worker, ventureId, signatures, processId) {
 }
 
 function signPayout(worker, ventureId, signatures, processId) {
-  return Curry._2(postMessage, worker, /* SignPayout */Block.__(14, [
+  return Curry._2(postMessage, worker, /* SignPayout */Block.__(15, [
                 ventureId,
                 signatures,
                 processId
@@ -140,7 +147,7 @@ function signPayout(worker, ventureId, signatures, processId) {
 }
 
 function exposeIncomeAddress(worker, ventureId, accountIdx) {
-  return Curry._2(postMessageSync, worker, /* ExposeIncomeAddress */Block.__(15, [
+  return Curry._2(postMessageSync, worker, /* ExposeIncomeAddress */Block.__(16, [
                   ventureId,
                   accountIdx
                 ])).then((function (param) {
@@ -154,6 +161,9 @@ function exposeIncomeAddress(worker, ventureId, accountIdx) {
 
 function make(worker, ventureId) {
   return /* record */[
+          /* registerIntegration */(function (param) {
+              return registerIntegration(worker, ventureId, param);
+            }),
           /* proposePartner */(function (param) {
               return proposePartner(worker, ventureId, param);
             }),
@@ -211,6 +221,7 @@ exports.updateSession = updateSession;
 exports.create = create;
 exports.load = load;
 exports.joinVia = joinVia;
+exports.registerIntegration = registerIntegration;
 exports.proposePartner = proposePartner;
 exports.rejectPartner = rejectPartner;
 exports.endorsePartner = endorsePartner;

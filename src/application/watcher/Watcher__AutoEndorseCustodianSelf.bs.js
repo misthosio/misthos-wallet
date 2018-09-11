@@ -45,19 +45,19 @@ function make(param, param$1, log) {
               if (match) {
                 var exit = 0;
                 switch ($$event.tag | 0) {
-                  case 5 : 
+                  case 6 : 
                       tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[3]) ? /* record */[
                           /* pendingEvent */undefined,
                           /* completed */true
                         ] : self$1[state][0];
                       break;
-                  case 10 : 
+                  case 11 : 
                       tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[3]) ? /* record */[
                           /* pendingEvent */undefined,
                           /* completed */true
                         ] : self$1[state][0];
                       break;
-                  case 16 : 
+                  case 17 : 
                       if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* proposerId */4], env$1[0])) {
                         var init = self$1[state][0];
                         tmp = /* record */[
@@ -68,16 +68,16 @@ function make(param, param$1, log) {
                         tmp = self$1[state][0];
                       }
                       break;
-                  case 18 : 
+                  case 19 : 
                       var match$1 = $$event[0];
                       tmp = PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], env$1[1]) && PrimitiveTypes.UserId[/* eq */5](match$1[/* supporterId */1], env$1[0]) ? /* record */[
                           /* pendingEvent */undefined,
                           /* completed */true
                         ] : self$1[state][0];
                       break;
-                  case 19 : 
                   case 20 : 
-                  case 24 : 
+                  case 21 : 
+                  case 25 : 
                       exit = 1;
                       break;
                   default:

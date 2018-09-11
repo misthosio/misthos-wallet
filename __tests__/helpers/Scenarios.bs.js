@@ -35,9 +35,9 @@ function loadScenario(scenarioName) {
 var findCurrentUsers = Curry._2(EventLog.reduce, (function (users, item) {
         var match = item[/* event */0];
         switch (match.tag | 0) {
-          case 4 : 
+          case 5 : 
               return Belt_Set.add(users, match[0][/* data */2][/* id */1]);
-          case 10 : 
+          case 11 : 
               return Belt_Set.remove(users, match[0][/* data */2][/* id */0]);
           default:
             return users;

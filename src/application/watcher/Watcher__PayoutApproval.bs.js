@@ -68,7 +68,7 @@ function make(proposal, log) {
                       /* systemIssuer */$$event[0][/* systemIssuer */7]
                     ];
                     break;
-                case 27 : 
+                case 28 : 
                     var $$event$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$1[/* processId */0], env$1[0][/* processId */0])) {
                       var init$2 = self$1[state][0];
@@ -83,7 +83,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 28 : 
+                case 29 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$3 = self$1[state][0];
@@ -98,9 +98,9 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 29 : 
                 case 30 : 
                 case 31 : 
+                case 32 : 
                     exit = 1;
                     break;
                 default:
@@ -130,11 +130,11 @@ function make(proposal, log) {
                   match$1 ? (
                       match$2 ? /* tuple */[
                           self$1[state][0][/* systemIssuer */4],
-                          /* PayoutAccepted */Block.__(29, [Curry._1(Event.Payout[/* Accepted */6][/* fromProposal */0], env$1[0])])
+                          /* PayoutAccepted */Block.__(30, [Curry._1(Event.Payout[/* Accepted */6][/* fromProposal */0], env$1[0])])
                         ] : undefined
                     ) : /* tuple */[
                       self$1[state][0][/* systemIssuer */4],
-                      /* PayoutDenied */Block.__(31, [Curry._1(Event.Payout[/* Denied */7][/* fromProposal */0], env$1[0])])
+                      /* PayoutDenied */Block.__(32, [Curry._1(Event.Payout[/* Denied */7][/* fromProposal */0], env$1[0])])
                     ]
                 );
               return /* () */0;

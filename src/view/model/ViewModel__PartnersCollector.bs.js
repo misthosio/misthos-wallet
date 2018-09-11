@@ -89,7 +89,7 @@ function apply($$event, state) {
                           }), $$event[0][/* initialPolicies */6])),
                 /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
-    case 1 : 
+    case 2 : 
         var proposal = $$event[0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
@@ -105,7 +105,7 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3],
                 /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
-    case 4 : 
+    case 5 : 
         var acceptance = $$event[0];
         var data = acceptance[/* data */2];
         return /* record */[
@@ -127,7 +127,7 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3],
                 /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
-    case 6 : 
+    case 7 : 
         var partnerId = $$event[0][/* partnerId */0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
@@ -147,7 +147,7 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3],
                 /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
-    case 7 : 
+    case 8 : 
         var proposal$1 = $$event[0];
         var partner = Js_option.getExn(Belt_List.getByU(state[/* partners */1], (function (p) {
                     return PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], proposal$1[/* data */6][/* id */0]);
@@ -180,15 +180,15 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3],
                 /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
-    case 2 : 
-    case 8 : 
-        exit = 1;
-        break;
     case 3 : 
     case 9 : 
+        exit = 1;
+        break;
+    case 4 : 
+    case 10 : 
         exit = 2;
         break;
-    case 10 : 
+    case 11 : 
         var acceptance$1 = $$event[0];
         var id = acceptance$1[/* data */2][/* id */0];
         return /* record */[
@@ -200,11 +200,11 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3],
                 /* everJoinedWallet */state[/* everJoinedWallet */4]
               ];
-    case 5 : 
-    case 11 : 
+    case 6 : 
+    case 12 : 
         exit = 3;
         break;
-    case 37 : 
+    case 38 : 
         var custodianId = $$event[0][/* custodianId */1];
         var partner$1 = Js_option.getExn(Belt_List.getByU(state[/* partners */1], (function (partner) {
                     return PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId);

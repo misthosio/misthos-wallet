@@ -70,7 +70,7 @@ function make(proposal, log) {
                       /* systemIssuer */$$event[0][/* systemIssuer */7]
                     ];
                     break;
-                case 4 : 
+                case 5 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
@@ -85,7 +85,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 5 : 
+                case 6 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[
@@ -100,7 +100,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 10 : 
+                case 11 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
                       self$1[completed][0] = true;
                       tmp = self$1[state][0];
@@ -108,7 +108,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 17 : 
+                case 18 : 
                     var $$event$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$1[/* processId */0], env$1[0][/* processId */0])) {
                       var init$4 = self$1[state][0];
@@ -124,7 +124,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 18 : 
+                case 19 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$5 = self$1[state][0];
@@ -140,8 +140,8 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 19 : 
                 case 20 : 
+                case 21 : 
                     exit = 1;
                     break;
                 default:
@@ -171,11 +171,11 @@ function make(proposal, log) {
                   match$1 ? (
                       match$2 ? /* tuple */[
                           self$1[state][0][/* systemIssuer */5],
-                          /* CustodianAccepted */Block.__(19, [Curry._1(Event.Custodian[/* Accepted */6][/* fromProposal */0], env$1[0])])
+                          /* CustodianAccepted */Block.__(20, [Curry._1(Event.Custodian[/* Accepted */6][/* fromProposal */0], env$1[0])])
                         ] : undefined
                     ) : /* tuple */[
                       self$1[state][0][/* systemIssuer */5],
-                      /* CustodianDenied */Block.__(20, [Curry._1(Event.Custodian[/* Denied */7][/* fromProposal */0], env$1[0])])
+                      /* CustodianDenied */Block.__(21, [Curry._1(Event.Custodian[/* Denied */7][/* fromProposal */0], env$1[0])])
                     ]
                 );
               return /* () */0;

@@ -25,7 +25,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                 var acceptance = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var watcher = Watcher__CustodianKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianKeyChainUpdated", watcher, user1[/* issuerKeyPair */2], (function (param) {
-                              if (param.tag === 37) {
+                              if (param.tag === 38) {
                                 var match = param[0];
                                 if (PrimitiveTypes.ProcessId[/* eq */5](match[/* custodianApprovalProcess */0], acceptance[/* processId */0]) && PrimitiveTypes.UserId[/* eq */5](match[/* custodianId */1], user1[/* userId */0])) {
                                   return keyChainEq(Generators.custodianKeyChain(undefined, undefined, Generators.Log[/* ventureId */2](log), 0, user1), match[/* keyChain */2]);
@@ -68,7 +68,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                         ], Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, log)));
                 var watcher = Watcher__CustodianKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianKeyChainUpdated", watcher, user1[/* issuerKeyPair */2], (function (param) {
-                              if (param.tag === 37) {
+                              if (param.tag === 38) {
                                 var match = param[0];
                                 if (PrimitiveTypes.ProcessId[/* eq */5](match[/* custodianApprovalProcess */0], acceptance[/* processId */0]) && PrimitiveTypes.UserId[/* eq */5](match[/* custodianId */1], user1[/* userId */0])) {
                                   return keyChainEq(Generators.custodianKeyChain(undefined, undefined, Generators.Log[/* ventureId */2](log$1), 1, user1), match[/* keyChain */2]);
@@ -124,7 +124,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                 var acceptance = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */5](log));
                 var watcher = Watcher__CustodianKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log));
                 return WatcherHelpers.testWatcherHasEventPending("CustodianKeyChainUpdated", watcher, user1[/* issuerKeyPair */2], (function (param) {
-                              if (param.tag === 37) {
+                              if (param.tag === 38) {
                                 var match = param[0];
                                 if (PrimitiveTypes.ProcessId[/* eq */5](match[/* custodianApprovalProcess */0], acceptance[/* processId */0]) && PrimitiveTypes.UserId[/* eq */5](match[/* custodianId */1], user1[/* userId */0])) {
                                   return keyChainEq(Generators.custodianKeyChain(undefined, undefined, Generators.Log[/* ventureId */2](log), 1, user1), match[/* keyChain */2]);

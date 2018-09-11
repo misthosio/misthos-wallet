@@ -35,7 +35,7 @@ function update($$event, param) {
   var identified = param[/* identified */0];
   var match;
   switch ($$event.tag | 0) {
-    case 15 : 
+    case 16 : 
         match = /* tuple */[
           /* :: */[
             /* tuple */[
@@ -47,7 +47,7 @@ function update($$event, param) {
           activations
         ];
         break;
-    case 38 : 
+    case 39 : 
         var match$1 = $$event[0][/* keyChain */0];
         var accountIdx = match$1[/* accountIdx */0];
         match = /* tuple */[
@@ -64,7 +64,7 @@ function update($$event, param) {
           activations
         ];
         break;
-    case 39 : 
+    case 40 : 
         var match$2 = $$event[0];
         var identifier = match$2[/* identifier */2];
         var custodianId = match$2[/* custodianId */1];

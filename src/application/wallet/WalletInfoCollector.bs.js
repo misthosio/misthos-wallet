@@ -714,7 +714,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 15 : 
+    case 16 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* spendable */state[/* spendable */1],
@@ -736,7 +736,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 19 : 
+    case 20 : 
         var match = $$event[0][/* data */2];
         var accountIdx = match[/* accountIdx */3];
         var partnerId = match[/* partnerId */0];
@@ -758,7 +758,7 @@ function apply($$event, state) {
                     /* addressInfos */state[/* addressInfos */11],
                     /* currentCustodians */currentCustodians
                   ]);
-    case 24 : 
+    case 25 : 
         var match$1 = $$event[0][/* data */2];
         var accountIdx$1 = match$1[/* accountIdx */1];
         var custodianId = match$1[/* custodianId */0];
@@ -780,7 +780,7 @@ function apply($$event, state) {
                     /* addressInfos */state[/* addressInfos */11],
                     /* currentCustodians */currentCustodians$1
                   ]);
-    case 26 : 
+    case 27 : 
         var match$2 = $$event[0];
         var payoutTx = match$2[/* data */6][/* payoutTx */1];
         var changeAddress = payoutTx[/* changeAddress */3];
@@ -812,7 +812,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 30 : 
+    case 31 : 
         var processId$1 = $$event[0][/* processId */0];
         var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$1);
         var accountIdx$3 = Address.Coordinates[/* accountIdx */3](Belt_Array.getExn(payoutTx$1[/* usedInputs */1], 0)[/* coordinates */6]);
@@ -832,7 +832,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 31 : 
+    case 32 : 
         var processId$2 = $$event[0][/* processId */0];
         var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$2);
         var accountIdx$4 = Address.Coordinates[/* accountIdx */3](Belt_Array.getExn(payoutTx$2[/* usedInputs */1], 0)[/* coordinates */6]);
@@ -852,7 +852,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 34 : 
+    case 35 : 
         var match$3 = $$event[0];
         var processId$3 = match$3[/* processId */0];
         var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$3);
@@ -938,7 +938,7 @@ function apply($$event, state) {
                 /* addressInfos */init[/* addressInfos */11],
                 /* currentCustodians */init[/* currentCustodians */12]
               ];
-    case 36 : 
+    case 37 : 
         var processId$4 = $$event[0][/* processId */0];
         var payoutTx$4 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$4);
         var accountIdx$6 = Address.Coordinates[/* accountIdx */3](Belt_Array.getExn(payoutTx$4[/* usedInputs */1], 0)[/* coordinates */6]);
@@ -958,7 +958,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 38 : 
+    case 39 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* spendable */state[/* spendable */1],
@@ -974,7 +974,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 39 : 
+    case 40 : 
         var match$6 = $$event[0];
         var accountIdx$7 = match$6[/* accountIdx */0];
         return /* record */[
@@ -1004,7 +1004,7 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */11],
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 40 : 
+    case 41 : 
         var match$7 = $$event[0];
         var match$8 = match$7[/* address */1];
         var displayAddress = match$8[/* displayAddress */5];
@@ -1057,7 +1057,7 @@ function apply($$event, state) {
                       })),
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
-    case 41 : 
+    case 42 : 
         var match$10 = $$event[0];
         var amount = match$10[/* amount */4];
         var coordinates$1 = match$10[/* coordinates */1];
@@ -1082,7 +1082,7 @@ function apply($$event, state) {
           /* unlocked */false
         ];
         return addToBalance(accountIdx$9, address, amount, addTxInput(addressStatus$1, accountIdx$9, input, state));
-    case 42 : 
+    case 43 : 
         var input$1 = $$event[0][/* input */0];
         var accountIdx$10 = Address.Coordinates[/* accountIdx */3](input$1[/* coordinates */6]);
         var addressStatus$2 = addressInfoFor(accountIdx$10, input$1[/* address */2], state)[/* addressStatus */5];

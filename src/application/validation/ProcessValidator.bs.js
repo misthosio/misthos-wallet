@@ -107,7 +107,7 @@ function update($$event, state) {
   var match;
   var exit = 0;
   switch ($$event.tag | 0) {
-    case 4 : 
+    case 5 : 
         var acceptance = $$event[0];
         match = /* record */[
           /* processes */addAcceptance(acceptance, processes),
@@ -120,7 +120,7 @@ function update($$event, state) {
           /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
-    case 10 : 
+    case 11 : 
         var acceptance$1 = $$event[0];
         match = /* record */[
           /* processes */addAcceptance(acceptance$1, processes),
@@ -133,21 +133,13 @@ function update($$event, state) {
           /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
-    case 1 : 
-    case 7 : 
-    case 12 : 
-    case 16 : 
-    case 21 : 
-    case 26 : 
-        exit = 1;
-        break;
     case 2 : 
     case 8 : 
     case 13 : 
     case 17 : 
     case 22 : 
     case 27 : 
-        exit = 2;
+        exit = 1;
         break;
     case 3 : 
     case 9 : 
@@ -155,19 +147,27 @@ function update($$event, state) {
     case 18 : 
     case 23 : 
     case 28 : 
-        exit = 3;
+        exit = 2;
         break;
+    case 4 : 
+    case 10 : 
     case 15 : 
     case 19 : 
     case 24 : 
     case 29 : 
-        exit = 5;
+        exit = 3;
         break;
-    case 5 : 
-    case 11 : 
+    case 16 : 
     case 20 : 
     case 25 : 
-    case 31 : 
+    case 30 : 
+        exit = 5;
+        break;
+    case 6 : 
+    case 12 : 
+    case 21 : 
+    case 26 : 
+    case 32 : 
         exit = 4;
         break;
     default:

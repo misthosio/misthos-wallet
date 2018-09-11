@@ -53,7 +53,7 @@ function make(param, param$1, log) {
               var match = self$1[state][0];
               var tmp;
               if (typeof match === "number") {
-                if (match === 0 && $$event.tag === 1) {
+                if (match === 0 && $$event.tag === 2) {
                   var $$event$1 = $$event[0];
                   tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */6][/* id */1], env$1[1]) ? /* EndorsePartner */Block.__(0, [$$event$1]) : self$1[state][0];
                 } else {
@@ -62,7 +62,7 @@ function make(param, param$1, log) {
               } else {
                 switch (match.tag | 0) {
                   case 0 : 
-                      if ($$event.tag === 3) {
+                      if ($$event.tag === 4) {
                         var partnerProposedEvent = match[0];
                         tmp = PrimitiveTypes.ProcessId[/* eq */5](partnerProposedEvent[/* processId */0], $$event[0][/* processId */0]) ? /* PartnerEndorsed */Block.__(1, [partnerProposedEvent]) : self$1[state][0];
                       } else {
@@ -70,7 +70,7 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 1 : 
-                      if ($$event.tag === 4) {
+                      if ($$event.tag === 5) {
                         var partnerProposedEvent$1 = match[0];
                         tmp = PrimitiveTypes.ProcessId[/* eq */5](partnerProposedEvent$1[/* processId */0], $$event[0][/* processId */0]) ? /* ProposeAccountCreation */Block.__(2, [partnerProposedEvent$1]) : self$1[state][0];
                       } else {
@@ -78,7 +78,7 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 2 : 
-                      if ($$event.tag === 12) {
+                      if ($$event.tag === 13) {
                         var $$event$2 = $$event[0];
                         tmp = WalletTypes.AccountIndex[/* eq */7]($$event$2[/* data */6][/* accountIdx */0], WalletTypes.AccountIndex[/* default */11]) ? /* EndorseAccountCreation */Block.__(3, [
                               $$event$2[/* processId */0],
@@ -89,7 +89,7 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 3 : 
-                      if ($$event.tag === 14) {
+                      if ($$event.tag === 15) {
                         var processId = match[0];
                         tmp = PrimitiveTypes.ProcessId[/* eq */5](processId, $$event[0][/* processId */0]) ? /* AccountCreationEndorsed */Block.__(4, [
                               processId,
@@ -100,10 +100,10 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 4 : 
-                      tmp = $$event.tag === 15 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* ProposeCustodian */Block.__(5, [match[1]]) : self$1[state][0];
+                      tmp = $$event.tag === 16 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* ProposeCustodian */Block.__(5, [match[1]]) : self$1[state][0];
                       break;
                   case 5 : 
-                      if ($$event.tag === 16) {
+                      if ($$event.tag === 17) {
                         var $$event$3 = $$event[0];
                         tmp = PrimitiveTypes.UserId[/* eq */5]($$event$3[/* data */6][/* partnerId */0], env$1[1]) ? /* EndorseCustodian */Block.__(6, [$$event$3[/* processId */0]]) : self$1[state][0];
                       } else {
@@ -111,7 +111,7 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 6 : 
-                      tmp = $$event.tag === 18 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* Complete */1 : self$1[state][0];
+                      tmp = $$event.tag === 19 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* Complete */1 : self$1[state][0];
                       break;
                   
                 }

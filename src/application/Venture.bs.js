@@ -365,7 +365,23 @@ function exec(session, ventureName, defaultAccountSettings, initialPolicies) {
 
 var Create = /* module */[/* exec */exec];
 
-function exec$1(partnerId, newItems, venture) {
+function exec$1(integrationPubKey, venture) {
+  return persist(undefined, apply(undefined, undefined, Event.makeIntergationRegistered(venture[/* session */0][/* userId */0], integrationPubKey), venture)).then((function (param) {
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
+              }));
+}
+
+var RegisterIntegration = /* module */[/* exec */exec$1];
+
+function exec$2(partnerId, newItems, venture) {
   var session = venture[/* session */0];
   var match = $$Array.fold_left((function (param, item) {
           var $$event = item[/* event */0];
@@ -473,27 +489,27 @@ function exec$1(partnerId, newItems, venture) {
               }));
 }
 
-var SynchronizeLogs = /* module */[/* exec */exec$1];
+var SynchronizeLogs = /* module */[/* exec */exec$2];
 
-function exec$2(broadcasts, broadcastFailures, incomeEvents, unlockedEvents, txConfs, venture) {
+function exec$3(broadcasts, broadcastFailures, incomeEvents, unlockedEvents, txConfs, venture) {
   logMessage("Synchronizing wallet");
   var __x = List.fold_left((function (param, $$event) {
-          return apply(true, param[1], /* IncomeDetected */Block.__(41, [$$event]), param[0]);
+          return apply(true, param[1], /* IncomeDetected */Block.__(42, [$$event]), param[0]);
         }), /* tuple */[
         venture,
         /* array */[]
       ], incomeEvents);
   var __x$1 = List.fold_left((function (param, $$event) {
-          return apply(true, param[1], /* IncomeUnlocked */Block.__(42, [$$event]), param[0]);
+          return apply(true, param[1], /* IncomeUnlocked */Block.__(43, [$$event]), param[0]);
         }), __x, unlockedEvents);
   var __x$2 = List.fold_left((function (param, $$event) {
-          return apply(true, param[1], /* PayoutBroadcast */Block.__(34, [$$event]), param[0]);
+          return apply(true, param[1], /* PayoutBroadcast */Block.__(35, [$$event]), param[0]);
         }), __x$1, broadcasts);
   var __x$3 = List.fold_left((function (param, $$event) {
-          return apply(true, param[1], /* PayoutBroadcastFailed */Block.__(36, [$$event]), param[0]);
+          return apply(true, param[1], /* PayoutBroadcastFailed */Block.__(37, [$$event]), param[0]);
         }), __x$2, broadcastFailures);
   return persist(undefined, List.fold_left((function (param, $$event) {
-                      return apply(true, param[1], /* TransactionConfirmed */Block.__(43, [$$event]), param[0]);
+                      return apply(true, param[1], /* TransactionConfirmed */Block.__(44, [$$event]), param[0]);
                     }), __x$3, txConfs)).then((function (param) {
                 if (param.tag) {
                   return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
@@ -507,13 +523,13 @@ function exec$2(broadcasts, broadcastFailures, incomeEvents, unlockedEvents, txC
               }));
 }
 
-var SynchronizeWallet = /* module */[/* exec */exec$2];
+var SynchronizeWallet = /* module */[/* exec */exec$3];
 
-function exec$3(keyChain, venture) {
+function exec$4(keyChain, venture) {
   var userId = venture[/* session */0][/* userId */0];
   var match = Venture__State.custodianAcceptedFor(userId, venture[/* state */3]);
   if (match !== undefined) {
-    return persist(undefined, apply(undefined, undefined, /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](match[/* processId */0], userId, keyChain)]), venture)).then((function (param) {
+    return persist(undefined, apply(undefined, undefined, /* CustodianKeyChainUpdated */Block.__(38, [Event.CustodianKeyChainUpdated[/* make */0](match[/* processId */0], userId, keyChain)]), venture)).then((function (param) {
                   if (param.tag) {
                     return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
                   } else {
@@ -529,9 +545,9 @@ function exec$3(keyChain, venture) {
   }
 }
 
-var SubmitCustodianKeyChain = /* module */[/* exec */exec$3];
+var SubmitCustodianKeyChain = /* module */[/* exec */exec$4];
 
-function exec$4(prospectId, venture) {
+function exec$5(prospectId, venture) {
   var state = venture[/* state */3];
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePartner' command");
@@ -553,11 +569,11 @@ function exec$4(prospectId, venture) {
                     if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
                       var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */11], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
                       return persist(undefined, applyMany(undefined, venture)(/* :: */[
-                                        /* PartnerProposed */Block.__(1, [partnerProposed]),
+                                        /* PartnerProposed */Block.__(2, [partnerProposed]),
                                         /* :: */[
                                           Event.makePartnerEndorsed(partnerProposed[/* processId */0], session[/* userId */0]),
                                           /* :: */[
-                                            /* CustodianProposed */Block.__(16, [custodianProposal]),
+                                            /* CustodianProposed */Block.__(17, [custodianProposal]),
                                             /* :: */[
                                               Event.makeCustodianEndorsed(custodianProposal[/* processId */0], session[/* userId */0]),
                                               /* [] */0
@@ -585,7 +601,7 @@ function exec$4(prospectId, venture) {
   }
 }
 
-function exec$5(processId, venture) {
+function exec$6(processId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'RejectPartner' command");
   var custodianProcessId = Venture__State.custodianProcessForPartnerProcess(processId, venture[/* state */3]);
@@ -608,9 +624,9 @@ function exec$5(processId, venture) {
               }));
 }
 
-var RejectPartner = /* module */[/* exec */exec$5];
+var RejectPartner = /* module */[/* exec */exec$6];
 
-function exec$6(processId, venture) {
+function exec$7(processId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'EndorsePartner' command");
   var custodianProcessId = Venture__State.custodianProcessForPartnerProcess(processId, venture[/* state */3]);
@@ -633,9 +649,9 @@ function exec$6(processId, venture) {
               }));
 }
 
-var EndorsePartner = /* module */[/* exec */exec$6];
+var EndorsePartner = /* module */[/* exec */exec$7];
 
-function exec$7(partnerId, venture) {
+function exec$8(partnerId, venture) {
   var state = venture[/* state */3];
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePartnerRemoval' command");
@@ -647,7 +663,7 @@ function exec$7(partnerId, venture) {
     if (match !== undefined) {
       var custodianRemoval = Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match, session[/* userId */0], WalletTypes.AccountIndex[/* default */11], Venture__State.currentPolicy(Event.Custodian[/* Removal */9][/* processName */1], state)));
       param = applyMany(undefined, venture)(/* :: */[
-            /* CustodianRemovalProposed */Block.__(21, [custodianRemoval]),
+            /* CustodianRemovalProposed */Block.__(22, [custodianRemoval]),
             /* :: */[
               Event.makeCustodianRemovalEndorsed(custodianRemoval[/* processId */0], session[/* userId */0]),
               /* [] */0
@@ -661,7 +677,7 @@ function exec$7(partnerId, venture) {
     }
     var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */9][/* processName */1], state)));
     return persist(undefined, applyMany(param[1], param[0])(/* :: */[
-                      /* PartnerRemovalProposed */Block.__(7, [proposal]),
+                      /* PartnerRemovalProposed */Block.__(8, [proposal]),
                       /* :: */[
                         Event.makePartnerRemovalEndorsed(proposal[/* processId */0], session[/* userId */0]),
                         /* [] */0
@@ -681,9 +697,9 @@ function exec$7(partnerId, venture) {
   }
 }
 
-var ProposePartnerRemoval = /* module */[/* exec */exec$7];
+var ProposePartnerRemoval = /* module */[/* exec */exec$8];
 
-function exec$8(processId, venture) {
+function exec$9(processId, venture) {
   logMessage("Executing 'RejectPartnerRemoval' command");
   return persist(undefined, apply(undefined, undefined, Event.makePartnerRemovalRejected(processId, venture[/* session */0][/* userId */0]), venture)).then((function (param) {
                 if (param.tag) {
@@ -698,9 +714,9 @@ function exec$8(processId, venture) {
               }));
 }
 
-var RejectPartnerRemoval = /* module */[/* exec */exec$8];
+var RejectPartnerRemoval = /* module */[/* exec */exec$9];
 
-function exec$9(processId, venture) {
+function exec$10(processId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'EndorsePartnerRemoval' command");
   var match = Venture__State.custodianRemovalProcessForPartnerRemovalProcess(processId, venture[/* state */3]);
@@ -721,12 +737,12 @@ function exec$9(processId, venture) {
               }));
 }
 
-var EndorsePartnerRemoval = /* module */[/* exec */exec$9];
+var EndorsePartnerRemoval = /* module */[/* exec */exec$10];
 
-function exec$10(accountIdx, venture) {
+function exec$11(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return persist(undefined, apply(undefined, undefined, /* IncomeAddressExposed */Block.__(40, [exposeEvent]), venture)).then((function (param) {
+  return persist(undefined, apply(undefined, undefined, /* IncomeAddressExposed */Block.__(41, [exposeEvent]), venture)).then((function (param) {
                 if (param.tag) {
                   return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
                 } else {
@@ -740,16 +756,16 @@ function exec$10(accountIdx, venture) {
               }));
 }
 
-var ExposeIncomeAddress = /* module */[/* exec */exec$10];
+var ExposeIncomeAddress = /* module */[/* exec */exec$11];
 
-function exec$11(accountIdx, payoutTx, signatures, venture) {
+function exec$12(accountIdx, payoutTx, signatures, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePayout' command");
   var param = Venture__Wallet.preparePayoutTx(Venture__State.currentPartners(venture[/* state */3]), session, accountIdx, payoutTx, signatures, venture[/* wallet */5]);
   if (param) {
     var proposal = param[0];
     return persist(undefined, applyMany(undefined, venture)(/* :: */[
-                      /* PayoutProposed */Block.__(26, [proposal]),
+                      /* PayoutProposed */Block.__(27, [proposal]),
                       /* :: */[
                         Event.makePayoutEndorsed(proposal[/* processId */0], session[/* userId */0]),
                         /* [] */0
@@ -771,9 +787,9 @@ function exec$11(accountIdx, payoutTx, signatures, venture) {
   }
 }
 
-var ProposePayout = /* module */[/* exec */exec$11];
+var ProposePayout = /* module */[/* exec */exec$12];
 
-function exec$12(processId, venture) {
+function exec$13(processId, venture) {
   logMessage("Executing 'RejectPayout' command");
   return persist(undefined, apply(undefined, undefined, Event.makePayoutRejected(processId, venture[/* session */0][/* userId */0]), venture)).then((function (param) {
                 if (param.tag) {
@@ -788,9 +804,9 @@ function exec$12(processId, venture) {
               }));
 }
 
-var RejectPayout = /* module */[/* exec */exec$12];
+var RejectPayout = /* module */[/* exec */exec$13];
 
-function exec$13(processId, signatures, venture) {
+function exec$14(processId, signatures, venture) {
   logMessage("Executing 'EndorsePayout' command");
   return persist(undefined, applyMany(undefined, venture)(Venture__Wallet.endorsePayout(processId, signatures, venture[/* session */0], venture[/* wallet */5]))).then((function (param) {
                 if (param.tag) {
@@ -805,9 +821,9 @@ function exec$13(processId, signatures, venture) {
               }));
 }
 
-var EndorsePayout = /* module */[/* exec */exec$13];
+var EndorsePayout = /* module */[/* exec */exec$14];
 
-function exec$14(processId, signatures, venture) {
+function exec$15(processId, signatures, venture) {
   logMessage("Executing 'EndorsePayout' command");
   return persist(undefined, applyMany(undefined, venture)(Venture__Wallet.signPayout(processId, signatures, venture[/* session */0], venture[/* wallet */5]))).then((function (param) {
                 if (param.tag) {
@@ -822,7 +838,7 @@ function exec$14(processId, signatures, venture) {
               }));
 }
 
-var SignPayout = /* module */[/* exec */exec$14];
+var SignPayout = /* module */[/* exec */exec$15];
 
 var Index = [
   Venture__Index.load,
@@ -832,14 +848,15 @@ var Index = [
 
 var Validation = [Venture__Validation.resultToString];
 
-var Cmd_004 = [exec$4];
+var Cmd_005 = [exec$5];
 
 var Cmd = [
   Create,
+  RegisterIntegration,
   SynchronizeLogs,
   SynchronizeWallet,
   SubmitCustodianKeyChain,
-  Cmd_004,
+  Cmd_005,
   RejectPartner,
   EndorsePartner,
   ProposePartnerRemoval,

@@ -43,13 +43,13 @@ function make(param, param$1, log) {
               var $$event = param[/* event */0];
               var tmp;
               switch ($$event.tag | 0) {
-                case 6 : 
+                case 7 : 
                     tmp = PrimitiveTypes.UserId[/* eq */5]($$event[0][/* partnerId */0], env$1[1]) ? /* record */[
                         /* pendingEvent */undefined,
                         /* completed */true
                       ] : self$1[state][0];
                     break;
-                case 10 : 
+                case 11 : 
                     tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[0]) ? /* record */[
                         /* pendingEvent */undefined,
                         /* completed */true
@@ -76,7 +76,7 @@ function make(param, param$1, log) {
       self[state] = /* record */[/* contents : record */[
           /* pendingEvent */match ? /* tuple */[
               env$1[2],
-              /* PartnerPubKeyAdded */Block.__(6, [Curry._2(Event.Partner[/* PubKeyAdded */10][/* make */0], env$1[1], Utils.publicKeyFromKeyPair(env$1[2]))])
+              /* PartnerPubKeyAdded */Block.__(7, [Curry._2(Event.Partner[/* PubKeyAdded */10][/* make */0], env$1[1], Utils.publicKeyFromKeyPair(env$1[2]))])
             ] : undefined,
           /* completed */PrimitiveTypes.UserId[/* neq */6](env$1[3], env$1[1]) || Js_option.isSome(env$1[4])
         ]];

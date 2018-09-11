@@ -333,6 +333,37 @@ module Handle = {
       },
     );
   };
+  let registerIntegration = (ventureId, integrationPubKey) => {
+    logMessage("Handling 'RegisterIntegration'");
+    withVenture(Load(ventureId), (correlationId, venture) =>
+      Js.Promise.(
+        Venture.Cmd.RegisterIntegration.(
+          venture
+          |> exec(~integrationPubKey)
+          |> then_(
+               fun
+               | Ok(venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     IntegrationRegistered,
+                   );
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
   let proposePartner = (ventureId, prospectId) => {
     logMessage("Handling 'ProposePartner'");
     withVenture(Load(ventureId), (correlationId, venture) =>
@@ -829,6 +860,8 @@ let handleMessage =
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
   | Message.JoinVia(ventureId, userId) => Handle.joinVia(ventureId, userId)
+  | Message.RegisterIntegration(ventureId, integrationPubKey) =>
+    Handle.registerIntegration(ventureId, integrationPubKey)
   | Message.Create(name, accountSettings, initialPolicies) =>
     Handle.create(name, accountSettings, initialPolicies)
   | Message.ProposePartner(ventureId, userId) =>

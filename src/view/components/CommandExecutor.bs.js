@@ -20,38 +20,41 @@ function make(commands, lastResponse, onProcessStarted, children) {
             /* reset */(function () {
                 return Curry._1(send, /* Reset */0);
               }),
+            /* registerIntegration */(function (integrationPubKey) {
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* registerIntegration */0], integrationPubKey)]));
+              }),
             /* proposePartner */(function (prospectId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* proposePartner */0], prospectId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* proposePartner */1], prospectId)]));
               }),
             /* endorsePartner */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePartner */1], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePartner */2], processId)]));
               }),
             /* rejectPartner */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPartner */2], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPartner */3], processId)]));
               }),
             /* proposePartnerRemoval */(function (partnerId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* proposePartnerRemoval */3], partnerId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* proposePartnerRemoval */4], partnerId)]));
               }),
             /* endorsePartnerRemoval */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePartnerRemoval */5], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* endorsePartnerRemoval */6], processId)]));
               }),
             /* rejectPartnerRemoval */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPartnerRemoval */4], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPartnerRemoval */5], processId)]));
               }),
             /* submitCustodianKeyChain */(function (keyChain) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* submitCustodianKeyChain */6], keyChain)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* submitCustodianKeyChain */7], keyChain)]));
               }),
             /* proposePayout */(function (accountIdx, payoutTx, signatures) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._3(commands[/* proposePayout */7], accountIdx, payoutTx, signatures)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._3(commands[/* proposePayout */8], accountIdx, payoutTx, signatures)]));
               }),
             /* endorsePayout */(function (signatures, processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._2(commands[/* endorsePayout */8], signatures, processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._2(commands[/* endorsePayout */9], signatures, processId)]));
               }),
             /* signPayout */(function (signatures, processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._2(commands[/* signPayout */9], signatures, processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._2(commands[/* signPayout */10], signatures, processId)]));
               }),
             /* rejectPayout */(function (processId) {
-                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPayout */10], processId)]));
+                return Curry._1(send, /* CommandExecuted */Block.__(2, [Curry._1(commands[/* rejectPayout */11], processId)]));
               }),
             /* preSubmit */(function (message) {
                 return Curry._1(send, /* PreSubmit */Block.__(0, [message]));
@@ -220,10 +223,14 @@ function make$1(cmdStatus, action, _) {
                   case 4 : 
                       var tmp$1 = cmdStatus[0];
                       if (typeof tmp$1 === "number") {
-                        if (tmp$1 === 0) {
-                          return message(/* Success */0, "Your public Keys have been submitted");
-                        } else {
-                          return message(/* Success */0, "You have signed the transaction");
+                        switch (tmp$1) {
+                          case 0 : 
+                              return message(/* Success */0, "Your public Keys have been submitted");
+                          case 1 : 
+                              return message(/* Success */0, "You have signed the transaction");
+                          case 2 : 
+                              return message(/* Success */0, "The integration has been registered");
+                          
                         }
                       } else {
                         switch (tmp$1.tag | 0) {

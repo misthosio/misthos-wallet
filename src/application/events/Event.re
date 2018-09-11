@@ -76,6 +76,32 @@ module VentureCreated = {
     };
 };
 
+module Integration = {
+  module Registered = {
+    type t = {
+      registratorId: userId,
+      integrationPubKey: string,
+    };
+    let make = (~registratorId, ~integrationPubKey) => {
+      registratorId,
+      integrationPubKey,
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("IntegrationRegistered")),
+          ("registratorId", UserId.encode(event.registratorId)),
+          ("integrationPubKey", string(event.integrationPubKey)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        registratorId: raw |> field("registratorId", UserId.decode),
+        integrationPubKey: raw |> field("integrationPubKey", string),
+      };
+  };
+};
+
 module Partner = {
   module Data = {
     type t = {
@@ -548,6 +574,7 @@ module Transaction = {
 
 type t =
   | VentureCreated(VentureCreated.t)
+  | IntegrationRegistered(Integration.Registered.t)
   | PartnerProposed(Partner.Proposed.t)
   | PartnerRejected(Partner.Rejected.t)
   | PartnerEndorsed(Partner.Endorsed.t)
@@ -593,6 +620,10 @@ type t =
   | TransactionConfirmed(Transaction.Confirmed.t);
 
 exception BadData(string);
+let makeIntergationRegistered = (~registratorId, ~integrationPubKey) =>
+  IntegrationRegistered(
+    Integration.Registered.make(~registratorId, ~integrationPubKey),
+  );
 
 let makePartnerProposed =
     (
@@ -783,6 +814,7 @@ let makePayoutRejected = (~processId, ~rejectorId) =>
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
+  | IntegrationRegistered(event) => Integration.Registered.encode(event)
   | PartnerProposed(event) => Partner.Proposed.encode(event)
   | PartnerRejected(event) => Partner.Rejected.encode(event)
   | PartnerEndorsed(event) => Partner.Endorsed.encode(event)
@@ -863,6 +895,8 @@ let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
   | "VentureCreated" => VentureCreated(VentureCreated.decode(raw))
+  | "IntegrationRegistered" =>
+    IntegrationRegistered(Integration.Registered.decode(raw))
   | "PartnerProposed" => PartnerProposed(Partner.Proposed.decode(raw))
   | "PartnerRejected" => PartnerRejected(Partner.Rejected.decode(raw))
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsed.decode(raw))

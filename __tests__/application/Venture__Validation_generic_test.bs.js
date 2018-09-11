@@ -363,7 +363,7 @@ describe("Any acceptance type", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](undefined, user2, proposal)(log);
                 var init = Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], proposal);
                 var init$1 = proposal[/* data */6];
-                return ValidationHelpers.testValidationResult(undefined, ValidationHelpers.constructState(undefined, log$1), Generators.Log[/* lastItem */4](Generators.Log[/* appendSystemEvent */8](/* PartnerAccepted */Block.__(4, [/* record */[
+                return ValidationHelpers.testValidationResult(undefined, ValidationHelpers.constructState(undefined, log$1), Generators.Log[/* lastItem */4](Generators.Log[/* appendSystemEvent */8](/* PartnerAccepted */Block.__(5, [/* record */[
                                         /* processId */init[/* processId */0],
                                         /* dependsOnCompletions */init[/* dependsOnCompletions */1],
                                         /* data : record */[

@@ -9,6 +9,7 @@ type incoming =
   | Create(string, AccountSettings.t, Policy.initialPolicies)
   | Load(ventureId)
   | JoinVia(ventureId, userId)
+  | RegisterIntegration(ventureId, string)
   | ProposePartner(ventureId, userId)
   | RejectPartner(ventureId, processId)
   | EndorsePartner(ventureId, processId)
@@ -42,6 +43,7 @@ type encodedIncoming = Js.Json.t;
 type cmdSuccess =
   | KeyChainSubmitted
   | TransactionSigned
+  | IntegrationRegistered
   | ProcessStarted(processId)
   | ProcessEndorsed(processId)
   | ProcessRejected(processId);
@@ -80,6 +82,8 @@ let encodeSuccess =
     Json.Encode.(object_([("type", string("KeyChainSubmitted"))]))
   | TransactionSigned =>
     Json.Encode.(object_([("type", string("TransactionSigned"))]))
+  | IntegrationRegistered =>
+    Json.Encode.(object_([("type", string("IntegrationRegistered"))]))
   | ProcessStarted(processId) =>
     Json.Encode.(
       object_([
@@ -107,6 +111,7 @@ let decodeSuccess = raw => {
   switch (type_) {
   | "KeyChainSubmitted" => KeyChainSubmitted
   | "TransactionSigned" => TransactionSigned
+  | "IntegrationRegistered" => IntegrationRegistered
   | "ProcessStarted" =>
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     ProcessStarted(processId);
@@ -210,6 +215,14 @@ let encodeIncoming =
         ("type", string("JoinVia")),
         ("ventureId", VentureId.encode(ventureId)),
         ("userId", UserId.encode(userId)),
+      ])
+    )
+  | RegisterIntegration(ventureId, integrationPubKey) =>
+    Json.Encode.(
+      object_([
+        ("type", string("JoinVia")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("integrationPubKey", string(integrationPubKey)),
       ])
     )
   | ProposePartner(ventureId, userId) =>
@@ -378,6 +391,11 @@ let decodeIncoming = raw => {
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let userId = raw |> Json.Decode.field("userId", UserId.decode);
     JoinVia(ventureId, userId);
+  | "RegisterIntegration" =>
+    let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
+    let integrationPubKey =
+      raw |> Json.Decode.(field("integrationPubKey", string));
+    RegisterIntegration(ventureId, integrationPubKey);
   | "ProposePartner" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let userId = raw |> Json.Decode.field("userId", UserId.decode);

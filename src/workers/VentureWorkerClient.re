@@ -32,6 +32,12 @@ let load = (~ventureId, worker) =>
 let joinVia = (~ventureId, ~userId, worker) =>
   worker |. postMessage(VentureWorkerMessage.JoinVia(ventureId, userId));
 
+let registerIntegration = (worker, ventureId, ~integrationPubKey) =>
+  worker
+  |. postMessage(
+       VentureWorkerMessage.RegisterIntegration(ventureId, integrationPubKey),
+     );
+
 let proposePartner = (worker, ventureId, ~prospectId) =>
   worker
   |. postMessage(VentureWorkerMessage.ProposePartner(ventureId, prospectId));
@@ -112,6 +118,8 @@ let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
 
 module Cmd = {
   type t = {
+    registerIntegration:
+      (~integrationPubKey: string) => WebWorker.correlationId,
     proposePartner: (~prospectId: userId) => WebWorker.correlationId,
     endorsePartner: (~processId: processId) => WebWorker.correlationId,
     rejectPartner: (~processId: processId) => WebWorker.correlationId,
@@ -143,6 +151,7 @@ module Cmd = {
     exposeIncomeAddress: (~accountIdx: accountIdx) => Js.Promise.t(string),
   };
   let make = (worker, ventureId) => {
+    registerIntegration: registerIntegration(worker, ventureId),
     proposePartner: proposePartner(worker, ventureId),
     rejectPartner: rejectPartner(worker, ventureId),
     endorsePartner: endorsePartner(worker, ventureId),

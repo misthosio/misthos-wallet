@@ -180,13 +180,13 @@ describe("Wallet_integration", (function () {
                                                 var incomeEvent = Curry._5(Event.Income[/* Detected */1][/* make */0], txOutputN, List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, txId, amount);
                                                 var match = List.mem_assoc(address, walletOneAddresses);
                                                 if (match) {
-                                                  oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(41, [incomeEvent]), oneKeyChainWallet[0]);
-                                                  twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(41, [incomeEvent]), twoKeyChainWallet[0]);
+                                                  oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(42, [incomeEvent]), oneKeyChainWallet[0]);
+                                                  twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(42, [incomeEvent]), twoKeyChainWallet[0]);
                                                   return /* () */0;
                                                 } else {
-                                                  twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(41, [incomeEvent]), twoKeyChainWallet[0]);
+                                                  twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(42, [incomeEvent]), twoKeyChainWallet[0]);
                                                   if (address === address3[/* address */1][/* displayAddress */5]) {
-                                                    twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeUnlocked */Block.__(42, [Curry._1(Event.Income[/* Unlocked */2][/* make */0], /* record */[
+                                                    twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeUnlocked */Block.__(43, [Curry._1(Event.Income[/* Unlocked */2][/* make */0], /* record */[
                                                                   /* txId */txId,
                                                                   /* txOutputN */txOutputN,
                                                                   /* address */address,
@@ -223,8 +223,8 @@ describe("Wallet_integration", (function () {
                                                 ]), user1, accountIdx, payoutTx, /* array */[], oneKeyChainWallet[0]);
                                         if (param) {
                                           var $$event = param[0];
-                                          oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(26, [$$event]), oneKeyChainWallet[0]);
-                                          twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(26, [$$event]), twoKeyChainWallet[0]);
+                                          oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(27, [$$event]), oneKeyChainWallet[0]);
+                                          twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(27, [$$event]), twoKeyChainWallet[0]);
                                           return Promise.all(/* tuple */[
                                                       Promise.resolve($$event[/* processId */0]),
                                                       Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
@@ -238,8 +238,8 @@ describe("Wallet_integration", (function () {
                                       })).then((function (param) {
                                       var txId = param[1];
                                       var processId = param[0];
-                                      oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(34, [Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
-                                      twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(34, [Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
+                                      oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(35, [Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
+                                      twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(35, [Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
                                       return Promise.resolve(/* () */0);
                                     }));
                       }));
@@ -277,7 +277,7 @@ describe("Wallet_integration", (function () {
                                 var data = $$event[/* data */6];
                                 var payoutTx$1 = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1], /* array */[]));
                                 tmp = Promise.all(/* tuple */[
-                                      Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(26, [$$event]), twoKeyChainWallet[0])),
+                                      Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(27, [$$event]), twoKeyChainWallet[0])),
                                       Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
                                                 data[/* payoutTx */1],
                                                 /* :: */[

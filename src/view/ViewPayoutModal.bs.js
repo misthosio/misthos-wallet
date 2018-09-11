@@ -98,20 +98,20 @@ function make(viewData, commands, cmdStatus, _) {
               var processId = match[/* processId */0];
               var executeCommand = function ($staropt$star, _) {
                 var justSign = $staropt$star !== undefined ? $staropt$star : false;
-                var signatures = viewData[/* requiresLedgerSig */1] ? (Curry._1(commands[/* preSubmit */12], "Please confirm this endorsement on your ledger device (BTC app)"), Curry._1(viewData[/* signPayout */5], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
+                var signatures = viewData[/* requiresLedgerSig */1] ? (Curry._1(commands[/* preSubmit */13], "Please confirm this endorsement on your ledger device (BTC app)"), Curry._1(viewData[/* signPayout */5], /* () */0)) : Promise.resolve(/* Signatures */Block.__(0, [/* array */[]]));
                 signatures.then((function (param) {
                         if (typeof param === "number") {
-                          return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "The device does not have the correct seed for signing"));
+                          return Promise.resolve(Curry._1(commands[/* preSubmitError */14], "The device does not have the correct seed for signing"));
                         } else if (param.tag) {
                           var match = param[0];
                           if (match) {
-                            return Promise.resolve(Curry._1(commands[/* preSubmitError */13], match[0]));
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */14], match[0]));
                           } else {
-                            return Promise.resolve(Curry._1(commands[/* preSubmitError */13], "An unknown error has occured"));
+                            return Promise.resolve(Curry._1(commands[/* preSubmitError */14], "An unknown error has occured"));
                           }
                         } else {
                           var signatures = param[0];
-                          return Promise.resolve(justSign ? Curry._2(commands[/* signPayout */10], signatures, processId) : Curry._2(commands[/* endorsePayout */9], signatures, processId));
+                          return Promise.resolve(justSign ? Curry._2(commands[/* signPayout */11], signatures, processId) : Curry._2(commands[/* endorsePayout */10], signatures, processId));
                         }
                       }));
                 return /* () */0;
@@ -203,7 +203,7 @@ function make(viewData, commands, cmdStatus, _) {
                       }, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* currentPartners */2], match[/* voters */4], match[/* status */1], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", undefined, "Reject Payout", match[/* canVote */3], (function (eta) {
                                   return executeCommand(undefined, eta);
                                 }), (function () {
-                                  return Curry._1(commands[/* rejectPayout */11], processId);
+                                  return Curry._1(commands[/* rejectPayout */12], processId);
                                 }), (function () {
                                   return Curry._1(commands[/* reset */0], /* () */0);
                                 }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */4]) > 0 ? ReasonReact.element(undefined, undefined, MaterialUi_SnackbarContent.make(undefined, undefined, Js_primitive.some(ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")), undefined, undefined, undefined, undefined, undefined, /* array */[])) : null);

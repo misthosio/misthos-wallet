@@ -76,6 +76,12 @@ module Cmd: {
       ) =>
       (ventureId, Js.Promise.t(result));
   };
+  module RegisterIntegration: {
+    type result =
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
+    let exec: (~integrationPubKey: string, t) => Js.Promise.t(result);
+  };
   module SynchronizeLogs: {
     type result =
       | Ok(t, array(EventLog.item))
