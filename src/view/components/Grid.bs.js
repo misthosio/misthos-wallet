@@ -19,7 +19,9 @@ var MaterialUi_Tabs = require("@jsiebern/bs-material-ui/src/MaterialUi_Tabs.bs.j
 
 var component = ReasonReact.reducerComponent("Grid");
 
-var gap = String(Theme.space(4)) + "px 0px";
+var gapSM = String(Theme.space(4)) + "px 0px";
+
+var gapXS = String(Theme.space(2)) + "px 0px";
 
 function grid(variant, warning) {
   var match = warning === undefined;
@@ -48,37 +50,87 @@ function grid(variant, warning) {
         break;
     
   }
+  var tmp$1;
+  switch (variant) {
+    case 0 : 
+        tmp$1 = "\n              \". title1 .\"\n              \". area3 .\"\n              " + (
+          warning$1 ? "\". warning .\"" : ""
+        );
+        break;
+    case 1 : 
+        tmp$1 = "\n               \". tabs .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
+          warning$1 ? "\" . warning  .\"" : ""
+        );
+        break;
+    case 2 : 
+        tmp$1 = "\n               \". tabs .\"\n               \". area3 . \"\n               \". area4 .\"\n               \". area5 .\"\n               " + (
+          warning$1 ? "\" . warning .\"" : ""
+        );
+        break;
+    case 3 : 
+        tmp$1 = (
+          warning$1 ? "\". warning  .\"" : ""
+        ) + "\n                \". area1 .\"\n                \". area2 .\"\n                \". tabs .\"\n                \". area3 . \"\n                \". area4 .\"\n                ";
+        break;
+    
+  }
   return Css.style(/* :: */[
               Css.display(Css.grid),
               /* :: */[
-                Css.unsafe("gridGap", gap),
-                /* :: */[
-                  Css.unsafe("gridTemplateAreas", tmp),
-                  /* :: */[
-                    Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
-                    /* :: */[
-                      Css.unsafe("gridTemplateRows", variant !== 2 ? (
-                              variant >= 3 ? (
-                                  warning$1 ? "[wBegin] min-content [wEnd] " : ""
-                                ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
-                                  warning$1 ? " [wBegin] min-content [wEnd]" : ""
-                                )
-                            ) : "[tBegin] min-content [tEnd] auto min-content" + (
-                              warning$1 ? " [wBegin] min-content [wEnd]" : ""
-                            )),
+                BreakPoints.sm(/* :: */[
+                      Css.unsafe("gridGap", gapSM),
                       /* :: */[
-                        Css.width(/* `percent */[
-                              -119887163,
-                              100.0
-                            ]),
+                        Css.unsafe("gridTemplateAreas", tmp),
                         /* :: */[
-                          Css.height(/* `percent */[
-                                -119887163,
-                                100.0
-                              ]),
-                          /* [] */0
+                          Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
+                          /* :: */[
+                            Css.unsafe("gridTemplateRows", variant !== 2 ? (
+                                    variant >= 3 ? (
+                                        warning$1 ? "[wBegin] min-content [wEnd] " : ""
+                                      ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
+                                        warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                                      )
+                                  ) : "[tBegin] min-content [tEnd] auto min-content" + (
+                                    warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                                  )),
+                            /* [] */0
+                          ]
                         ]
                       ]
+                    ]),
+                /* :: */[
+                  BreakPoints.xs(/* :: */[
+                        Css.unsafe("gridGap", gapXS),
+                        /* :: */[
+                          Css.unsafe("gridTemplateAreas", tmp$1),
+                          /* :: */[
+                            Css.unsafe("gridTemplateColumns", "[begin] minmax(16px, 1fr) minmax(100px, 9fr) minmax(16px, 1fr) [end]"),
+                            /* :: */[
+                              Css.unsafe("gridTemplateRows", variant !== 2 ? (
+                                      variant >= 3 ? (
+                                          warning$1 ? "[wBegin] min-content [wEnd] " : ""
+                                        ) + "min-content min-content [tBegin] min-content [tEnd] min-content min-content " : "[tBegin] min-content [tEnd] min-content" + (
+                                          warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                                        )
+                                    ) : "[tBegin] min-content [tEnd] min-content min-content" + (
+                                      warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                                    )),
+                              /* [] */0
+                            ]
+                          ]
+                        ]
+                      ]),
+                  /* :: */[
+                    Css.width(/* `percent */[
+                          -119887163,
+                          100.0
+                        ]),
+                    /* :: */[
+                      Css.height(/* `percent */[
+                            -119887163,
+                            100.0
+                          ]),
+                      /* [] */0
                     ]
                   ]
                 ]
@@ -214,7 +266,8 @@ var warningBg = Css.style(/* :: */[
     ]);
 
 var Styles = /* module */[
-  /* gap */gap,
+  /* gapSM */gapSM,
+  /* gapXS */gapXS,
   /* grid */grid,
   /* area */area,
   /* mobileHidden */mobileHidden,

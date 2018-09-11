@@ -18,67 +18,133 @@ type variant =
 module Styles = {
   open Css;
   open BreakPoints;
-  let gap = (Theme.space(4) |> string_of_int) ++ "px 0px";
+  let gapSM = (Theme.space(4) |> string_of_int) ++ "px 0px";
+  let gapXS = (Theme.space(2) |> string_of_int) ++ "px 0px";
   let grid = (variant, warning) => {
     let warning = warning == None ? false : true;
     style([
       display(grid),
-      unsafe("gridGap", gap),
-      unsafe(
-        "gridTemplateAreas",
-        switch (variant) {
-        | V4 =>
-          (warning ? {|" . warning warning warning ."|} : "")
-          ++ {|
+      sm([
+        unsafe("gridGap", gapSM),
+        unsafe(
+          "gridTemplateAreas",
+          switch (variant) {
+          | V4 =>
+            (warning ? {|" . warning warning warning ."|} : "")
+            ++ {|
               ". area1 . area2 ."
               ". title1 . title2 ."
               ". area3 . area4 ."
               |}
-        | V2 =>
-          {|
+          | V2 =>
+            {|
               ". title1 . title2 ."
               ". area3 . area4 ."
            |}
-          ++ (warning ? {|" . warning warning warning ."|} : "")
-        | V3 =>
-          {|
+            ++ (warning ? {|" . warning warning warning ."|} : "")
+          | V3 =>
+            {|
            ". title1 . title2 ."
            ". area3 . area4 ."
            ". area5 area5 area5 ."
            |}
-          ++ (warning ? {|" . warning warning warning ."|} : "")
-        | V1 =>
-          {|
+            ++ (warning ? {|" . warning warning warning ."|} : "")
+          | V1 =>
+            {|
               ". title1 ."
               ". area3 ."
               |}
-          ++ (warning ? {|". warning ."|} : "")
-        },
-      ),
-      unsafe(
-        "gridTemplateColumns",
-        switch (variant) {
-        | V4
-        | V3
-        | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
-        | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"
-        },
-      ),
-      unsafe(
-        "gridTemplateRows",
-        switch (variant) {
-        | V4 =>
-          (warning ? "[wBegin] min-content [wEnd] " : "")
-          ++ "min-content [tBegin] min-content [tEnd] auto"
-        | V3 =>
-          "[tBegin] min-content [tEnd] auto min-content"
-          ++ (warning ? " [wBegin] min-content [wEnd]" : "")
-        | V2
-        | V1 =>
-          "[tBegin] min-content [tEnd] auto"
-          ++ (warning ? " [wBegin] min-content [wEnd]" : "")
-        },
-      ),
+            ++ (warning ? {|". warning ."|} : "")
+          },
+        ),
+        unsafe(
+          "gridTemplateColumns",
+          switch (variant) {
+          | V4
+          | V3
+          | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
+          | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"
+          },
+        ),
+        unsafe(
+          "gridTemplateRows",
+          switch (variant) {
+          | V4 =>
+            (warning ? "[wBegin] min-content [wEnd] " : "")
+            ++ "min-content [tBegin] min-content [tEnd] auto"
+          | V3 =>
+            "[tBegin] min-content [tEnd] auto min-content"
+            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          | V2
+          | V1 =>
+            "[tBegin] min-content [tEnd] auto"
+            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          },
+        ),
+      ]),
+      xs([
+        unsafe("gridGap", gapXS),
+        unsafe(
+          "gridTemplateAreas",
+          switch (variant) {
+          | V4 =>
+            (warning ? {|". warning  ."|} : "")
+            ++ {|
+                ". area1 ."
+                ". area2 ."
+                ". tabs ."
+                ". area3 . "
+                ". area4 ."
+                |}
+          | V2 =>
+            {|
+               ". tabs ."
+               ". area3 . "
+               ". area4 ."
+               |}
+            ++ (warning ? {|" . warning  ."|} : "")
+          | V3 =>
+            {|
+               ". tabs ."
+               ". area3 . "
+               ". area4 ."
+               ". area5 ."
+               |}
+            ++ (warning ? {|" . warning ."|} : "")
+          | V1 =>
+            {|
+              ". title1 ."
+              ". area3 ."
+              |}
+            ++ (warning ? {|". warning ."|} : "")
+          },
+        ),
+        unsafe(
+          "gridTemplateColumns",
+          switch (variant) {
+          | V4
+          | V3
+          | V2
+          | V1 => "[begin] minmax(16px, 1fr) minmax(100px, 9fr) minmax(16px, 1fr) [end]"
+          },
+        ),
+        unsafe(
+          "gridTemplateRows",
+          switch (variant) {
+          | V4 =>
+            (warning ? "[wBegin] min-content [wEnd] " : "")
+            ++ "min-content min-content [tBegin] "
+            ++ "min-content [tEnd] min-content min-content "
+          | V3 =>
+            "[tBegin] min-content [tEnd] min-content min-content"
+            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          | V2
+          | V1 =>
+            "[tBegin] min-content [tEnd] min-content"
+            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          },
+        ),
+      ]),
       width(`percent(100.0)),
       height(`percent(100.0)),
     ]);
