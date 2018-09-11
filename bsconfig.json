@@ -20,6 +20,7 @@
   ],
   "bs-dependencies": [
     "reason-react",
+    "misthos-js",
     "@glennsl/bs-json",
     "bs-fetch",
     "@jsiebern/bs-material-ui",
