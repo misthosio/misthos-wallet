@@ -4,6 +4,7 @@
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
@@ -13,6 +14,7 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
+var BitcoinjsLib = require("bitcoinjs-lib");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var SingleActionButton = require("./components/SingleActionButton.bs.js");
 var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
@@ -43,21 +45,26 @@ function policyDescription(param) {
 
 var component = ReasonReact.statelessComponent("VentureSettings");
 
-function make(viewData, commands, cmdStatus, _) {
-  var executeSubmit = function () {
-    Curry._1(commands[/* preSubmit */13], "Please connect your Ledger device and open the BTC app");
+function make(viewData, submitKeysCmds, submitKeysStatus, submitIntegrationCmds, submitIntegrationStatus, _) {
+  var executeSubmitIntegration = function () {
+    var keyPair = BitcoinjsLib.ECPair.fromWIF("L4mq6KSmWo6VAoMzDvVuSEG5sqWw2CPujQjeHQYWHnzr89CFKHzs");
+    Curry._1(submitIntegrationCmds[/* registerIntegration */1], Utils.publicKeyFromKeyPair(keyPair));
+    return /* () */0;
+  };
+  var executeSubmitKeys = function () {
+    Curry._1(submitKeysCmds[/* preSubmit */13], "Please connect your Ledger device and open the BTC app");
     Curry._1(viewData[/* getCustodianKeyChain */2], /* () */0).then((function (param) {
             if (typeof param === "number") {
-              return Promise.resolve(Curry._1(commands[/* preSubmitError */14], "This device has the wrong seed"));
+              return Promise.resolve(Curry._1(submitKeysCmds[/* preSubmitError */14], "This device has the wrong seed"));
             } else if (param.tag) {
               var match = param[0];
               if (match) {
-                return Promise.resolve(Curry._1(commands[/* preSubmitError */14], match[0]));
+                return Promise.resolve(Curry._1(submitKeysCmds[/* preSubmitError */14], match[0]));
               } else {
-                return Promise.resolve(Curry._1(commands[/* preSubmitError */14], "An unknown error has occured"));
+                return Promise.resolve(Curry._1(submitKeysCmds[/* preSubmitError */14], "An unknown error has occured"));
               }
             } else {
-              return Promise.resolve(Curry._1(commands[/* submitCustodianKeyChain */8], param[0]));
+              return Promise.resolve(Curry._1(submitKeysCmds[/* submitCustodianKeyChain */8], param[0]));
             }
           }));
     return /* () */0;
@@ -119,7 +126,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               React.createElement("span", {
                                                     className: needsKeyRotation ? atRiskKeyStatus : ""
                                                   }, ViewCommon.text(match$2[1]))
-                                            ])), match$4 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmit, undefined, undefined, true, false, /* SubmitKeys */3, cmdStatus, /* array */[])))), undefined, undefined, /* array */[]));
+                                            ])), match$4 ? null : ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit public keys", undefined, executeSubmitKeys, undefined, undefined, true, false, /* SubmitKeys */3, submitKeysStatus, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, true, undefined, undefined, /* array */[ViewCommon.text("Integration")])), ReasonReact.element(undefined, undefined, SingleActionButton.make("Submit integration", undefined, executeSubmitIntegration, undefined, undefined, true, false, /* SubmitKeys */3, submitIntegrationStatus, /* array */[])))), undefined, undefined, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

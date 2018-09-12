@@ -181,12 +181,28 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
           <CommandExecutor
             commands lastResponse=(venture |> ViewModel.lastResponse)>
             ...(
-                 (~commands, ~cmdStatus) =>
-                   <VentureSettingsModal
-                     viewData=(venture |> ViewModel.ventureSettingsView)
-                     commands
-                     cmdStatus
-                   />
+                 (
+                   ~commands as submitIntegrationCmds,
+                   ~cmdStatus as submitIntegrationStatus,
+                 ) =>
+                   <CommandExecutor
+                     commands lastResponse=(venture |> ViewModel.lastResponse)>
+                     ...(
+                          (
+                            ~commands as submitKeysCmds,
+                            ~cmdStatus as submitKeysStatus,
+                          ) =>
+                            <VentureSettingsModal
+                              viewData=(
+                                venture |> ViewModel.ventureSettingsView
+                              )
+                              submitKeysCmds
+                              submitKeysStatus
+                              submitIntegrationCmds
+                              submitIntegrationStatus
+                            />
+                        )
+                   </CommandExecutor>
                )
           </CommandExecutor>,
           Some(onCloseModal(selected)),

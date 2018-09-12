@@ -303,6 +303,7 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
 };
 
 let persistIntegrations = (ventureId, eventLog) => {
+  Js.log("persist integrations");
   let (integrations, addresses) =
     eventLog
     |> EventLog.reduce(
@@ -392,7 +393,11 @@ let handleMessage =
   | NewItems(ventureId, _) => persistVenture(ventureId)
   | _ => Js.Promise.resolve();
 
-onMessage(self, msg =>
-  handleMessage(msg##data##payload |> PersistWorkerMessage.decodeIncoming)
-  |> ignore
+onMessage(
+  self,
+  msg => {
+    Js.log("persist worker");
+    handleMessage(msg##data##payload |> PersistWorkerMessage.decodeIncoming)
+    |> ignore;
+  },
 );

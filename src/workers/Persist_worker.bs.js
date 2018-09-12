@@ -368,6 +368,7 @@ function persist(ventureId, eventLog, param) {
 }
 
 function persistIntegrations(ventureId, eventLog) {
+  console.log("persist integrations");
   var match = Curry._3(EventLog.reduce, (function (param, param$1) {
           var $$event = param$1[/* event */0];
           var addresses = param[1];
@@ -465,6 +466,7 @@ function handleMessage(param) {
 }
 
 self.onmessage = (function (msg) {
+    console.log("persist worker");
     handleMessage(PersistWorkerMessage.decodeIncoming(msg.data.payload));
     return /* () */0;
   });

@@ -220,7 +220,7 @@ let encodeIncoming =
   | RegisterIntegration(ventureId, integrationPubKey) =>
     Json.Encode.(
       object_([
-        ("type", string("JoinVia")),
+        ("type", string("RegisterIntegration")),
         ("ventureId", VentureId.encode(ventureId)),
         ("integrationPubKey", string(integrationPubKey)),
       ])

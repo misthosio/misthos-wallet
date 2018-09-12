@@ -60,14 +60,17 @@ function make(session, updateSession, signTAC, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
+                  var commands = selectedVenture[2];
                   var venture = selectedVenture[1];
                   var match$1 = ViewModel.readOnly(venture);
                   if (match$1) {
                     return undefined;
                   } else {
                     return /* tuple */[
-                            ReasonReact.element(undefined, undefined, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture), undefined, (function (commands, cmdStatus) {
-                                        return ReasonReact.element(undefined, undefined, VentureSettingsModal.make(ViewModel.ventureSettingsView(venture), commands, cmdStatus, /* array */[]));
+                            ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture), undefined, (function (submitIntegrationCmds, submitIntegrationStatus) {
+                                        return ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture), undefined, (function (submitKeysCmds, submitKeysStatus) {
+                                                          return ReasonReact.element(undefined, undefined, VentureSettingsModal.make(ViewModel.ventureSettingsView(venture), submitKeysCmds, submitKeysStatus, submitIntegrationCmds, submitIntegrationStatus, /* array */[]));
+                                                        })));
                                       }))),
                             (function () {
                                 return Router.goTo(/* Venture */Block.__(0, [
@@ -82,7 +85,7 @@ function make(session, updateSession, signTAC, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                   return undefined;
                 } else {
-                  var commands = selectedVenture[2];
+                  var commands$1 = selectedVenture[2];
                   var venture$1 = selectedVenture[1];
                   var ventureId = selectedVenture[0];
                   var match$2 = ViewModel.readOnly(venture$1);
@@ -90,13 +93,13 @@ function make(session, updateSession, signTAC, _) {
                     return undefined;
                   } else {
                     return /* tuple */[
-                            ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture$1), (function (processId) {
+                            ReasonReact.element(undefined, undefined, CommandExecutor.make(commands$1, ViewModel.lastResponse(venture$1), (function (processId) {
                                         return Router.goTo(/* Venture */Block.__(0, [
                                                       ventureId,
                                                       /* Partner */Block.__(0, [processId])
                                                     ]));
                                       }), (function (proposePartnerCmds, proposeCmdStatus) {
-                                        return ReasonReact.element(undefined, undefined, CommandExecutor.make(commands, ViewModel.lastResponse(venture$1), (function (processId) {
+                                        return ReasonReact.element(undefined, undefined, CommandExecutor.make(commands$1, ViewModel.lastResponse(venture$1), (function (processId) {
                                                           return Router.goTo(/* Venture */Block.__(0, [
                                                                         ventureId,
                                                                         /* Partner */Block.__(0, [processId])

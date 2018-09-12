@@ -20,11 +20,24 @@ let component = ReasonReact.statelessComponent("VentureSettings");
 let make =
     (
       ~viewData: ViewData.t,
-      ~commands: CommandExecutor.commands,
-      ~cmdStatus,
+      ~submitKeysCmds: CommandExecutor.commands,
+      ~submitKeysStatus,
+      ~submitIntegrationCmds: CommandExecutor.commands,
+      ~submitIntegrationStatus,
       _children,
     ) => {
-  let executeSubmit = () => {
+  let executeSubmitIntegration = () => {
+    let keyPair =
+      Bitcoin.ECPair.fromWIF(
+        "L4mq6KSmWo6VAoMzDvVuSEG5sqWw2CPujQjeHQYWHnzr89CFKHzs",
+      );
+    submitIntegrationCmds.registerIntegration(
+      ~integrationPubKey=keyPair |> Utils.publicKeyFromKeyPair,
+    )
+    |> ignore;
+  };
+  let executeSubmitKeys = () => {
+    let commands = submitKeysCmds;
     commands.preSubmit(
       "Please connect your Ledger device and open the BTC app",
     );
@@ -199,14 +212,25 @@ let make =
               viewData.ledgerUpToDate && viewData.ledgerId |> Js.Option.isSome ?
                 ReasonReact.null :
                 <SingleActionButton
-                  onSubmit=executeSubmit
+                  onSubmit=executeSubmitKeys
                   canSubmitAction=true
                   withConfirmation=false
                   action=CommandExecutor.Status.SubmitKeys
                   buttonText="Submit public keys"
-                  cmdStatus
+                  cmdStatus=submitKeysStatus
                 />
             )
+            <MTypography variant=`Title gutterTop=true gutterBottom=true>
+              ("Integration" |> text)
+            </MTypography>
+            <SingleActionButton
+              onSubmit=executeSubmitIntegration
+              canSubmitAction=true
+              withConfirmation=false
+              action=CommandExecutor.Status.SubmitKeys
+              buttonText="Submit integration"
+              cmdStatus=submitIntegrationStatus
+            />
           </div>
         }
       />;

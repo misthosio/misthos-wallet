@@ -345,7 +345,7 @@ function encodeIncoming(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "JoinVia"
+                      "RegisterIntegration"
                     ],
                     /* :: */[
                       /* tuple */[
