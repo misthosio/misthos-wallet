@@ -29,6 +29,30 @@ module Styles = {
       ),
       unsafe("backgroundOrigin", "border-box"),
       unsafe("backgroundClip", "content-box, border-box"),
+      active([
+        unsafe(
+          "backgroundImage",
+          "linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), "
+          ++ (
+            switch (variant) {
+            | Aqua => Colors.uGradientAqua
+            | Orange => Colors.uGradientOrange
+            }
+          ),
+        ),
+        unsafe("border", "none"),
+        unsafe("boxShadow", "none"),
+      ]),
+      hover([
+        unsafe(
+          "backgroundImage",
+          switch (variant) {
+          | Aqua => Colors.uGradientAqua
+          | Orange => Colors.uGradientOrange
+          },
+        ),
+        unsafe("border", "none"),
+      ]),
     ]);
 };
 
@@ -39,6 +63,7 @@ let make = (~variant, ~route, children) => {
     <MaterialUi.Button
       className=(Styles.button(variant))
       variant=`Fab
+      focusRipple=false
       onClick=(ignoreEvent(() => ReasonReact.Router.push(href)))>
       children
     </MaterialUi.Button>;
