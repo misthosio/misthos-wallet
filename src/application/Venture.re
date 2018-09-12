@@ -305,7 +305,7 @@ module Cmd = {
       Js.Promise.(
         venture
         |> apply(
-             Event.makeIntergationRegistered(
+             Event.makeIntegrationRegistered(
                ~registratorId=session.userId,
                ~integrationPubKey,
              ),

@@ -302,6 +302,55 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
   );
 };
 
+let persistIntegrations = (ventureId, eventLog) => {
+  let (integrations, addresses) =
+    eventLog
+    |> EventLog.reduce(
+         ((integrations, addresses), {event}) =>
+           switch (event) {
+           | IncomeAddressExposed({address: {displayAddress}}) => (
+               integrations,
+               [displayAddress, ...addresses],
+             )
+           | PayoutAccepted({data: {payoutTx: {changeAddress}}}) => (
+               integrations,
+               switch (changeAddress) {
+               | Some({displayAddress}) => [displayAddress, ...addresses]
+               | None => addresses
+               },
+             )
+           | IntegrationRegistered({integrationPubKey}) => (
+               [integrationPubKey, ...integrations],
+               addresses,
+             )
+
+           | _ => (integrations, addresses)
+           },
+         ([], []),
+       );
+  let sharedDataString =
+    ({addresses: addresses |. Belt.List.toArray}: MisthosJs.sharedData)
+    |> MisthosJs.encodeSharedData
+    |> Json.stringify;
+  Js.Promise.(
+    integrations
+    |. Belt.List.reduceU(resolve(), (. promise, pubKey) =>
+         promise
+         |> then_(() =>
+              Blockstack.putFileEncryptedFor(
+                ~path=
+                  (ventureId |> VentureId.toString)
+                  ++ "/"
+                  ++ UserInfo.storagePrefix(~appPubKey=pubKey)
+                  ++ "/sharedData.json",
+                ~content=sharedDataString,
+                ~pubKey,
+              )
+            )
+       )
+  );
+};
+
 let persistVenture = ventureId => {
   logMessage("Persisting venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
@@ -314,8 +363,9 @@ let persistVenture = ventureId => {
                 eventLog
                 |> determinPartnerKeysAndRemovals
                 |> persist(ventureId, eventLog)
+                |> then_(persistRemovals(ventureId))
+                |> then_(() => eventLog |> persistIntegrations(ventureId))
               )
-           |> then_(persistRemovals(ventureId))
          | _ => resolve(),
        )
   );

@@ -2,7 +2,7 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
-var Bitcoin = require("../../ffi/Bitcoin.bs.js");
+var Bitcoin = require("misthos-js/src/ffi/Bitcoin.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var BitcoinOps = require("bitcoin-ops");
 var BitcoinjsLib = require("bitcoinjs-lib");

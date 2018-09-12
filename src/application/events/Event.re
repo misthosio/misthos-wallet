@@ -620,7 +620,8 @@ type t =
   | TransactionConfirmed(Transaction.Confirmed.t);
 
 exception BadData(string);
-let makeIntergationRegistered = (~registratorId, ~integrationPubKey) =>
+
+let makeIntegrationRegistered = (~registratorId, ~integrationPubKey) =>
   IntegrationRegistered(
     Integration.Registered.make(~registratorId, ~integrationPubKey),
   );

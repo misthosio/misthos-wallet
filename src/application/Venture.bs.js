@@ -366,7 +366,7 @@ function exec(session, ventureName, defaultAccountSettings, initialPolicies) {
 var Create = /* module */[/* exec */exec];
 
 function exec$1(integrationPubKey, venture) {
-  return persist(undefined, apply(undefined, undefined, Event.makeIntergationRegistered(venture[/* session */0][/* userId */0], integrationPubKey), venture)).then((function (param) {
+  return persist(undefined, apply(undefined, undefined, Event.makeIntegrationRegistered(venture[/* session */0][/* userId */0], integrationPubKey), venture)).then((function (param) {
                 if (param.tag) {
                   return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
                 } else {

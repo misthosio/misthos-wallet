@@ -9,6 +9,7 @@ var Venture = require("../application/Venture.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var MisthosJs = require("misthos-js/src/MisthosJs.bs.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
@@ -366,6 +367,55 @@ function persist(ventureId, eventLog, param) {
               }));
 }
 
+function persistIntegrations(ventureId, eventLog) {
+  var match = Curry._3(EventLog.reduce, (function (param, param$1) {
+          var $$event = param$1[/* event */0];
+          var addresses = param[1];
+          var integrations = param[0];
+          switch ($$event.tag | 0) {
+            case 1 : 
+                return /* tuple */[
+                        /* :: */[
+                          $$event[0][/* integrationPubKey */1],
+                          integrations
+                        ],
+                        addresses
+                      ];
+            case 30 : 
+                var changeAddress = $$event[0][/* data */2][/* payoutTx */1][/* changeAddress */3];
+                return /* tuple */[
+                        integrations,
+                        changeAddress !== undefined ? /* :: */[
+                            changeAddress[/* displayAddress */5],
+                            addresses
+                          ] : addresses
+                      ];
+            case 41 : 
+                return /* tuple */[
+                        integrations,
+                        /* :: */[
+                          $$event[0][/* address */1][/* displayAddress */5],
+                          addresses
+                        ]
+                      ];
+            default:
+              return /* tuple */[
+                      integrations,
+                      addresses
+                    ];
+          }
+        }), /* tuple */[
+        /* [] */0,
+        /* [] */0
+      ], eventLog);
+  var sharedDataString = Json.stringify(MisthosJs.encodeSharedData(/* record */[/* addresses */Belt_List.toArray(match[1])]));
+  return Belt_List.reduceU(match[0], Promise.resolve(/* () */0), (function (promise, pubKey) {
+                return promise.then((function () {
+                              return Blockstack.putFileEncryptedFor(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/sharedData.json")), sharedDataString, pubKey);
+                            }));
+              }));
+}
+
 function persistVenture(ventureId) {
   logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return Session.getCurrentSession(/* () */0).then((function (param) {
@@ -373,9 +423,11 @@ function persistVenture(ventureId) {
                   return Promise.resolve(/* () */0);
                 } else {
                   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                                  return persist(ventureId, eventLog, determinPartnerKeysAndRemovals(eventLog));
-                                })).then((function (param) {
-                                return persistRemovals(ventureId, param);
+                                return persist(ventureId, eventLog, determinPartnerKeysAndRemovals(eventLog)).then((function (param) {
+                                                return persistRemovals(ventureId, param);
+                                              })).then((function () {
+                                              return persistIntegrations(ventureId, eventLog);
+                                            }));
                               }));
                 }
               }));
@@ -426,6 +478,7 @@ exports.missingKeys = missingKeys;
 exports.addToMissingKeys = addToMissingKeys;
 exports.removeVentureFromMissingKeys = removeVentureFromMissingKeys;
 exports.persist = persist;
+exports.persistIntegrations = persistIntegrations;
 exports.persistVenture = persistVenture;
 exports.handleMessage = handleMessage;
 /*  Not a pure module */

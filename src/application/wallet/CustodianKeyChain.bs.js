@@ -2,7 +2,7 @@
 'use strict';
 
 var Utils = require("../../utils/Utils.bs.js");
-var Bitcoin = require("../../ffi/Bitcoin.bs.js");
+var Bitcoin = require("misthos-js/src/ffi/Bitcoin.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");

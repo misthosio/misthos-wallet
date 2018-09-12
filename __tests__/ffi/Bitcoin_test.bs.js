@@ -4,7 +4,7 @@
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Utils = require("../../src/utils/Utils.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
-var Bitcoin = require("../../src/ffi/Bitcoin.bs.js");
+var Bitcoin = require("misthos-js/src/ffi/Bitcoin.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 

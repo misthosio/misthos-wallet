@@ -1159,7 +1159,7 @@ var Transaction = /* module */[/* Confirmed */Confirmed];
 
 var BadData = Caml_exceptions.create("Event.BadData");
 
-function makeIntergationRegistered(registratorId, integrationPubKey) {
+function makeIntegrationRegistered(registratorId, integrationPubKey) {
   return /* IntegrationRegistered */Block.__(1, [/* record */[
               /* registratorId */registratorId,
               /* integrationPubKey */integrationPubKey
@@ -1725,7 +1725,7 @@ exports.AccountKeyChainActivated = AccountKeyChainActivated;
 exports.Income = Income;
 exports.Transaction = Transaction;
 exports.BadData = BadData;
-exports.makeIntergationRegistered = makeIntergationRegistered;
+exports.makeIntegrationRegistered = makeIntegrationRegistered;
 exports.makePartnerProposed = makePartnerProposed;
 exports.makePartnerRemovalProposed = makePartnerRemovalProposed;
 exports.makeAccountCreationProposed = makeAccountCreationProposed;
