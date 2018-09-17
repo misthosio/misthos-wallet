@@ -119,6 +119,14 @@ function area(area$1) {
             ]);
 }
 
+var signInbutton = Css.style(/* :: */[
+      Css.unsafe("gridArea", "button"),
+      /* :: */[
+        Css.alignSelf(/* flexStart */662439529),
+        /* [] */0
+      ]
+    ]);
+
 var title = Css.style(/* :: */[
       Css.lineHeight(/* `abs */[
             4845682,
@@ -149,6 +157,7 @@ var Styles = /* module */[
   /* grid */grid,
   /* logo */logo,
   /* area */area,
+  /* signInbutton */signInbutton,
   /* title */title
 ];
 
@@ -178,8 +187,8 @@ function make(onSignIn, _) {
                                       React.createElement("br", undefined),
                                       ViewCommon.text("Use it for projects. Use it for payments.")
                                     ])), React.createElement("div", {
-                                  className: area("button")
-                                }, ReasonReact.element(undefined, undefined, MButton.make(/* Inherit */-72987685, onSignIn, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                  className: signInbutton
+                                }, ReasonReact.element(undefined, undefined, MButton.make(/* Inherit */-72987685, onSignIn, undefined, true, undefined, undefined, false, undefined, undefined, undefined, undefined, /* array */[
                                           ReasonReact.element(undefined, undefined, MaterialUi_SvgIcon.make(Css.style(/* :: */[
                                                         Css.marginRight(Css.px(16)),
                                                         /* [] */0
