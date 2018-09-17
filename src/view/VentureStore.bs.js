@@ -6,8 +6,10 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Router = require("./Router.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var DataWorkerClient = require("../workers/DataWorkerClient.bs.js");
 var PersistWorkerClient = require("../workers/PersistWorkerClient.bs.js");
@@ -68,7 +70,7 @@ function handler(send, msg) {
   var match = msg.key;
   if (match === "tab-sync") {
     try {
-      return Curry._1(send, /* TabSync */Block.__(1, [VentureWorkerMessage.decodeOutgoing(Json.parseOrRaise(msg.newValue))]));
+      return Curry._1(send, /* TabSync */Block.__(1, [VentureWorkerMessage.decodeOutgoing(Json.parseOrRaise(Js_option.getExn(Js_primitive.nullable_to_opt(msg.newValue))))]));
     }
     catch (exn){
       return /* () */0;

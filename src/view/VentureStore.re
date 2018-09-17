@@ -75,6 +75,8 @@ let handler = (send, msg) => {
       TabSync(
         storageEvent
         |> StorageEventRe.newValue
+        |> Js.Nullable.toOption
+        |> Js.Option.getExn
         |> Json.parseOrRaise
         |> VentureWorkerMessage.decodeOutgoing,
       )
