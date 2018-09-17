@@ -2012,9 +2012,9 @@ bs-platform@4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-4.0.5.tgz#d4fd9bbdd11765af5b75110a5655065ece05eed6"
 
-bs-webapi@0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.11.0.tgz#b4302be75c8f4b3f88a64febd873da065924b26a"
+bs-webapi@0.12.1:
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.12.1.tgz#caa8bb6359b5650b1a4b05852caf0b31a5c07639"
 
 bs58@^4.0.0:
   version "4.0.1"
