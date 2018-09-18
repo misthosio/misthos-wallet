@@ -66,7 +66,7 @@ let make =
         ?href
         ?component
         ?onClick>
-        children
+        ...children
       </MaterialUi.Button>;
     submitBtn ?
       button |. ReasonReact.cloneElement(~props={"type": "submit"}, [||]) :

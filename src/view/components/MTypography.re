@@ -30,7 +30,7 @@ let make =
       className=(style ++ " " ++ className)
       variant
       gutterBottom>
-      children
+      ...children
     </MaterialUi.Typography>;
   },
 };
