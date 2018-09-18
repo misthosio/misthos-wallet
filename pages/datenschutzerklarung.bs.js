@@ -55,7 +55,7 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, true, /* array */[
+              return ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text(DatenschutzText.title)), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
                                                 className: ScrollList.containerStyles + (" " + Css.style(/* :: */[
                                                         Css.paddingBottom(Css.px(Theme.space(4))),

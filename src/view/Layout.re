@@ -15,11 +15,9 @@ module Styles = {
   let body = style([minHeight(px(0)), unsafe("gridArea", "body")]);
   let header = style([unsafe("gridArea", "header")]);
   let gap = (Theme.space(8) |> string_of_int) ++ "px";
-  let grid = mobileEnabled =>
+  let grid =
     style([
       display(grid),
-      minWidth(mobileEnabled ? px(0) : px(Theme.space(101))),
-      minHeight(mobileEnabled ? px(0) : px(Theme.space(88))),
       sm([height(vh(100.0))]),
       xs([height(auto)]),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
@@ -51,7 +49,6 @@ let make =
       ~header=?,
       ~drawer: option(ReasonReact.reactElement)=?,
       ~modal=?,
-      ~mobileEnabled=false,
       children,
     ) => {
   ...component,
@@ -134,7 +131,7 @@ let make =
           </Drawer>,
         )
       };
-    <div className=(Styles.grid(mobileEnabled))>
+    <div className=Styles.grid>
       header
       drawer
       modalContainer

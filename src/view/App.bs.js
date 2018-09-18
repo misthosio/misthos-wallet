@@ -44,7 +44,6 @@ function make(session, updateSession, signTAC, _children) {
   var onSignOut = function (_e) {
     return Curry._1(updateSession, /* SignOut */1);
   };
-  var mobileEnabled = true;
   var modal = function (selectedVenture, currentRoute) {
     if (typeof session === "number") {
       return undefined;
@@ -397,7 +396,7 @@ function make(session, updateSession, signTAC, _children) {
                                 return ReasonReact.element(undefined, undefined, VentureStore.make(currentRoute, session, (function (index, selectedVenture, createVenture) {
                                                   var drawer$1 = drawer(index, currentRoute);
                                                   var modal$1 = modal(selectedVenture, currentRoute);
-                                                  return ReasonReact.element(undefined, undefined, Layout.make(undefined, drawer$1, modal$1, mobileEnabled, /* array */[body(index, selectedVenture, createVenture, currentRoute)]));
+                                                  return ReasonReact.element(undefined, undefined, Layout.make(undefined, drawer$1, modal$1, /* array */[body(index, selectedVenture, createVenture, currentRoute)]));
                                                 })));
                               })));
             }),

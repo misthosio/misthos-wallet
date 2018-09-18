@@ -9,11 +9,6 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
   let onSignOut = _e => updateSession(SessionStore.SignOut);
   let onCloseModal = (ventureId, ()) =>
     Router.goTo(Venture(ventureId, None));
-  let mobileEnabled =
-    switch (session) {
-    | NotLoggedIn => true
-    | _ => true
-    };
   let modal =
       (
         selectedVenture: VentureStore.selectedVenture,
@@ -260,7 +255,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
                       (~index, ~selectedVenture, ~createVenture) => {
                         let drawer = currentRoute |> drawer(index);
                         let modal = currentRoute |> modal(selectedVenture);
-                        <Layout mobileEnabled ?drawer ?modal>
+                        <Layout ?drawer ?modal>
                           (
                             currentRoute
                             |> body(index, selectedVenture, createVenture)

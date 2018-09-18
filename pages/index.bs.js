@@ -24,7 +24,7 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return ReasonReact.element(undefined, undefined, Layout.make(undefined, undefined, undefined, true, /* array */[
+              return ReasonReact.element(undefined, undefined, Layout.make(undefined, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, PublicHome.make((function (_e) {
                                           Session.signIn(/* () */0);
                                           return /* () */0;

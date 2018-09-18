@@ -44,39 +44,31 @@ var header = Css.style(/* :: */[
 
 var gap = String(Theme.space(8)) + "px";
 
-function grid(mobileEnabled) {
-  return Css.style(/* :: */[
-              Css.display(Css.grid),
+var grid = Css.style(/* :: */[
+      Css.display(Css.grid),
+      /* :: */[
+        BreakPoints.sm(/* :: */[
+              Css.height(Css.vh(100.0)),
+              /* [] */0
+            ]),
+        /* :: */[
+          BreakPoints.xs(/* :: */[
+                Css.height(Css.auto),
+                /* [] */0
+              ]),
+          /* :: */[
+            Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+            /* :: */[
+              Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
               /* :: */[
-                Css.minWidth(mobileEnabled ? Css.px(0) : Css.px(Theme.space(101))),
-                /* :: */[
-                  Css.minHeight(mobileEnabled ? Css.px(0) : Css.px(Theme.space(88))),
-                  /* :: */[
-                    BreakPoints.sm(/* :: */[
-                          Css.height(Css.vh(100.0)),
-                          /* [] */0
-                        ]),
-                    /* :: */[
-                      BreakPoints.xs(/* :: */[
-                            Css.height(Css.auto),
-                            /* [] */0
-                          ]),
-                      /* :: */[
-                        Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
-                        /* :: */[
-                          Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
-                          /* :: */[
-                            Css.unsafe("gridTemplateAreas", "\"header\" \"body\" \".\""),
-                            /* [] */0
-                          ]
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
+                Css.unsafe("gridTemplateAreas", "\"header\" \"body\" \".\""),
+                /* [] */0
               ]
-            ]);
-}
+            ]
+          ]
+        ]
+      ]
+    ]);
 
 var drawer = Css.style(/* :: */[
       Css.width(/* `px */[
@@ -177,8 +169,7 @@ var Styles = /* module */[
   /* modal */modal
 ];
 
-function make(header$1, drawer$1, modal$1, $staropt$star, children) {
-  var mobileEnabled = $staropt$star !== undefined ? $staropt$star : false;
+function make(header$1, drawer$1, modal$1, children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -257,7 +248,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                     ]
                 );
               return React.createElement("div", {
-                          className: grid(mobileEnabled)
+                          className: grid
                         }, match[0], match[1], modalContainer, ReactDOMRe.createElementVariadic("div", {
                               className: body
                             }, children));
