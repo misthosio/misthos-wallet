@@ -24,7 +24,12 @@ module Styles = {
       unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
       unsafe("gridTemplateAreas", {|"header" "body" "."|}),
     ]);
-  let drawer = style([width(`px(440)), height(`percent(100.0))]);
+  let drawer =
+    style([
+      width(vw(80.0)),
+      maxWidth(`px(440)),
+      height(`percent(100.0)),
+    ]);
   let drawerPaper = style([height(`percent(100.0))]);
   let modalContent =
     style([

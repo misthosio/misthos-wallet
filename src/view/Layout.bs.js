@@ -71,16 +71,19 @@ var grid = Css.style(/* :: */[
     ]);
 
 var drawer = Css.style(/* :: */[
-      Css.width(/* `px */[
-            25096,
-            440
-          ]),
+      Css.width(Css.vw(80.0)),
       /* :: */[
-        Css.height(/* `percent */[
-              -119887163,
-              100.0
+        Css.maxWidth(/* `px */[
+              25096,
+              440
             ]),
-        /* [] */0
+        /* :: */[
+          Css.height(/* `percent */[
+                -119887163,
+                100.0
+              ]),
+          /* [] */0
+        ]
       ]
     ]);
 
