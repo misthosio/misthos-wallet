@@ -8,10 +8,11 @@ type variant =
 
 module Styles = {
   open Css;
+  open BreakPoints;
   let button = (variant: variant) =>
     style([
-      width(px(Theme.space(19))),
-      height(px(Theme.space(19))),
+      sm([width(px(Theme.space(19))), height(px(Theme.space(19)))]),
+      xs([width(px(Theme.space(14))), height(px(Theme.space(14)))]),
       borderRadius(px(Theme.space(19))),
       fontSize(px(16)),
       unsafe("boxShadow", "none"),

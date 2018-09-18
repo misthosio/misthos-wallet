@@ -6,6 +6,7 @@ var Theme = require("../Theme.bs.js");
 var Colors = require("../Colors.bs.js");
 var Router = require("../Router.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
+var BreakPoints = require("../BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 
@@ -13,9 +14,21 @@ var component = ReasonReact.statelessComponent("MFabButton");
 
 function button(variant) {
   return Css.style(/* :: */[
-              Css.width(Css.px(Theme.space(19))),
+              BreakPoints.sm(/* :: */[
+                    Css.width(Css.px(Theme.space(19))),
+                    /* :: */[
+                      Css.height(Css.px(Theme.space(19))),
+                      /* [] */0
+                    ]
+                  ]),
               /* :: */[
-                Css.height(Css.px(Theme.space(19))),
+                BreakPoints.xs(/* :: */[
+                      Css.width(Css.px(Theme.space(14))),
+                      /* :: */[
+                        Css.height(Css.px(Theme.space(14))),
+                        /* [] */0
+                      ]
+                    ]),
                 /* :: */[
                   Css.borderRadius(Css.px(Theme.space(19))),
                   /* :: */[
