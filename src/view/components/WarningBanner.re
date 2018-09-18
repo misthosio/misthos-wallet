@@ -13,9 +13,7 @@ module Styles = {
       textTransform(uppercase),
       padding2(~h=px(inline ? Theme.space(3) : 0), ~v=px(Theme.space(1))),
       marginBottom(px(inline ? Theme.space(3) : 0)),
-      position(sticky),
       zIndex(10),
-      top(px(0)),
       selector(
         "> a",
         [
