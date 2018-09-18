@@ -30,7 +30,7 @@ function make(signTAC, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Misthos Terms of Use")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
+              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Latest Misthos Terms of Use")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
                                     }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[Belt_Array.concatMany(Belt_Array.map(TACText.terms, (function (section) {
                                                           var match = section[/* body */1];

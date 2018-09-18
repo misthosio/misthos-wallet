@@ -77,10 +77,6 @@ var terms = /* array */[
           "Any Partner within a Venture can propose the addition of a new\n          Partner. For the proposal to be successful, it requires N-of-N\n          endorsements i.e all Partner within a Venture need to unanimously\n          endorse the proposal.",
           "Any Partner within a Venture can propose the removal of another\n          Partner. For the removal to be successful, this proposal requires\n          N-1-of-N endorsements. E.g If a Venture has four Partners, then three\n          Partners have to endorse the proposed removal.."
         ]])
-  ],
-  /* record */[
-    /* heading */"Misthos Fee",
-    /* body : L */Block.__(1, [/* array */["We do charge a transaction and handling fee for the use of our\n         interface whenever you make a payout. Receiving income is not\n         charged."]])
   ]
 ];
 

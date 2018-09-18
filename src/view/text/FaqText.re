@@ -547,18 +547,11 @@ let faq = [|
     |],
   },
   {
-    q: "What is the Network fees and Misthos fees?",
+    q: "What is the Network fee?",
     a: [|
       S(
         {|The Network fee is the transaction fee that is collected by the miners
          on the Bitcoin network for processing and confirming transactions.
-         |},
-      ),
-      S(
-        {|The Misthos fee is the fee collected by Misthos for using the software.
-         The fee is 1.49% of the total amount of a payout
-         (disregarding thenetwork fee). Other than usual in crypto exchanges
-         there is no fee for income.
          |},
       ),
     |],

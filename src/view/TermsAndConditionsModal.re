@@ -10,7 +10,7 @@ let make = (~signTAC, _children) => {
     ...component,
     render: _ =>
       <Grid
-        title1=("Misthos Terms of Use" |> text)
+        title1=("Latest Misthos Terms of Use" |> text)
         area3={
           <div className=ScrollList.containerStyles>
             <ScrollList>

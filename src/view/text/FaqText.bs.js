@@ -201,11 +201,8 @@ var faq = /* array */[
     /* a : array */[/* S */Block.__(0, ["All existing Partners within a Venture can see the transactions and\n         make proposals. Any Partner who has left the Venture has read-only\n         access and can see the state at time of leaving."])]
   ],
   /* record */[
-    /* q */"What is the Network fees and Misthos fees?",
-    /* a : array */[
-      /* S */Block.__(0, ["The Network fee is the transaction fee that is collected by the miners\n         on the Bitcoin network for processing and confirming transactions.\n         "]),
-      /* S */Block.__(0, ["The Misthos fee is the fee collected by Misthos for using the software.\n         The fee is 1.49% of the total amount of a payout\n         (disregarding thenetwork fee). Other than usual in crypto exchanges\n         there is no fee for income.\n         "])
-    ]
+    /* q */"What is the Network fee?",
+    /* a : array */[/* S */Block.__(0, ["The Network fee is the transaction fee that is collected by the miners\n         on the Bitcoin network for processing and confirming transactions.\n         "])]
   ],
   /* record */[
     /* q */"What is a policy in Misthos?",

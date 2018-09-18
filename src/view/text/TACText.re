@@ -148,15 +148,6 @@ let terms = [|
           Partners have to endorse the proposed removal..|},
       |]),
   },
-  {
-    heading: "Misthos Fee",
-    body:
-      L([|
-        {|We do charge a transaction and handling fee for the use of our
-         interface whenever you make a payout. Receiving income is not
-         charged.|},
-      |]),
-  },
 |];
 
 let hash =
