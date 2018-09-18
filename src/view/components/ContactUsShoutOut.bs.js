@@ -11,10 +11,12 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("ContactUsShoutOut");
 
-var root = Css.style(/* :: */[
-      Css.margin2(Css.px(Theme.space(2)), Css.px(0)),
-      /* [] */0
-    ]);
+function root(gutterBottom) {
+  return Css.style(/* :: */[
+              Css.margin4(Css.px(Theme.space(2)), Css.px(0), Css.px(gutterBottom ? Theme.space(2) : 0), Css.px(0)),
+              /* [] */0
+            ]);
+}
 
 var link = Css.style(/* :: */[
       Css.color(Colors.misthosTeal),
@@ -35,7 +37,8 @@ var Styles = /* module */[
   /* link */link
 ];
 
-function make() {
+function make($staropt$star, _) {
+  var gutterBottom = $staropt$star !== undefined ? $staropt$star : true;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -48,7 +51,7 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return React.createElement("div", {
-                          className: root
+                          className: root(gutterBottom)
                         }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
                                   React.createElement("a", {
                                         className: link,

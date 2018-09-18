@@ -66,9 +66,6 @@ module Styles = {
 
   let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
 
-  let signInbutton =
-    style([unsafe("gridArea", "button"), alignSelf(`flexStart)]);
-
   let title =
     style([
       lineHeight(`abs(0.92)),
@@ -101,7 +98,7 @@ let make = (~onSignIn, _children) => {
             <br />
             ("Use it for projects. Use it for payments." |> text)
           </Typography>
-          <div className=Styles.signInbutton>
+          <div className=(Styles.area("button"))>
             <MButton
               color=`Inherit gutterTop=false onClick=onSignIn fullWidth=true>
               <SvgIcon className=Css.(style([marginRight(px(16))]))>
@@ -109,7 +106,7 @@ let make = (~onSignIn, _children) => {
               </SvgIcon>
               ("Sign In with Blockstack" |> text)
             </MButton>
-            <ContactUsShoutOut />
+            <ContactUsShoutOut gutterBottom=false />
           </div>
         </div>
       </div>

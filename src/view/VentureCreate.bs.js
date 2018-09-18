@@ -216,7 +216,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                                                           ]))
                                                                 ]))
                                                       ]))
-                                            ])), ReasonReact.element(undefined, undefined, SingleActionButton.make("create venture", undefined, onClick, undefined, undefined, true, false, /* CreateVenture */0, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(/* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
+                                            ])), ReasonReact.element(undefined, undefined, SingleActionButton.make("create venture", undefined, onClick, undefined, undefined, true, false, /* CreateVenture */0, cmdStatus, /* array */[])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(undefined, /* array */[])))), Js_primitive.some(ReasonReact.element(undefined, undefined, VentureInfoBox.make(/* array */[]))), undefined, undefined, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

@@ -4,7 +4,15 @@ let component = ReasonReact.statelessComponent("ContactUsShoutOut");
 
 module Styles = {
   open Css;
-  let root = style([margin2(~v=px(Theme.space(2)), ~h=px(0))]);
+  let root = gutterBottom =>
+    style([
+      margin4(
+        ~top=px(Theme.space(2)),
+        ~bottom=px(gutterBottom ? Theme.space(2) : 0),
+        ~left=px(0),
+        ~right=px(0),
+      ),
+    ]);
   let link =
     style([
       color(Colors.misthosTeal),
@@ -13,10 +21,10 @@ module Styles = {
     ]);
 };
 
-let make = _children => {
+let make = (~gutterBottom=true, _children) => {
   ...component,
   render: _self =>
-    <div className=Styles.root>
+    <div className=(Styles.root(gutterBottom))>
       <MTypography variant=`Body2>
         <a className=Styles.link href="mailto:contact@misthos.io">
           ("Contact us" |> text)
