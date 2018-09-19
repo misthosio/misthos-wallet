@@ -125,7 +125,7 @@ module Styles = {
           | V4
           | V3
           | V2
-          | V1 => "[begin] minmax(16px, 1fr) minmax(100px, 9fr) minmax(16px, 1fr) [end]"
+          | V1 => "[begin] 16px minmax(100px, 9fr) 16px [end]"
           },
         ),
         unsafe(

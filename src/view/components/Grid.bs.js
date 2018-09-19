@@ -104,7 +104,7 @@ function grid(variant, warning) {
                         /* :: */[
                           Css.unsafe("gridTemplateAreas", tmp$1),
                           /* :: */[
-                            Css.unsafe("gridTemplateColumns", "[begin] minmax(16px, 1fr) minmax(100px, 9fr) minmax(16px, 1fr) [end]"),
+                            Css.unsafe("gridTemplateColumns", "[begin] 16px minmax(100px, 9fr) 16px [end]"),
                             /* :: */[
                               Css.unsafe("gridTemplateRows", variant !== 2 ? (
                                       variant >= 3 ? (

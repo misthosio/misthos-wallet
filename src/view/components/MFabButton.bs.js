@@ -23,9 +23,9 @@ function button(variant) {
                   ]),
               /* :: */[
                 BreakPoints.xs(/* :: */[
-                      Css.width(Css.px(Theme.space(14))),
+                      Css.width(Css.px(Theme.space(16))),
                       /* :: */[
-                        Css.height(Css.px(Theme.space(14))),
+                        Css.height(Css.px(Theme.space(16))),
                         /* [] */0
                       ]
                     ]),

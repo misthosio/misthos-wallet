@@ -12,7 +12,7 @@ module Styles = {
   let button = (variant: variant) =>
     style([
       sm([width(px(Theme.space(19))), height(px(Theme.space(19)))]),
-      xs([width(px(Theme.space(14))), height(px(Theme.space(14)))]),
+      xs([width(px(Theme.space(16))), height(px(Theme.space(16)))]),
       borderRadius(px(Theme.space(19))),
       fontSize(px(16)),
       unsafe("boxShadow", "none"),
