@@ -14,11 +14,16 @@ let component = ReasonReact.reducerComponent("Receive");
 
 module Styles = {
   open Css;
+  open BreakPoints;
   let alignCenter =
     style([display(`flex), flexDirection(column), alignItems(`center)]);
+  let addressImage =
+    style([sm([height(px(250))]), xs([height(px(200))])]);
+  let copyButton = style([sm([display(inline)]), xs([display(none)])]);
   let spinner =
     style([
-      height(px(298)),
+      sm([height(px(297))]),
+      xs([height(px(219))]),
       display(`flex),
       flexDirection(`column),
       alignItems(center),
@@ -62,7 +67,8 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
       |> Utils.mapOption(address => {
            let button =
              ReasonReact.cloneElement(
-               <MaterialUi.IconButton className="copy-btn">
+               <MaterialUi.IconButton
+                 className=("copy-btn " ++ Styles.copyButton)>
                  Icons.copy
                </MaterialUi.IconButton>,
                ~props={"data-clipboard-text": address},
@@ -88,7 +94,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
                 switch (state.address) {
                 | Some(address) =>
                   <img
-                    height="250px"
+                    className=Styles.addressImage
                     src=(
                       "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl="
                       ++ address
@@ -106,7 +112,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
                 copyButton
               </MTypography>
               <MButton onClick=(_e => send(GetIncomeAddress))>
-                (text("Generate new income address"))
+                (text("Generate new address"))
               </MButton>
             </div>
           </ScrollList>

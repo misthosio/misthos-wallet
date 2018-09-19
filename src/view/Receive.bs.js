@@ -14,6 +14,7 @@ var Clipboard = require("../ffi/Clipboard.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var BreakPoints = require("./BreakPoints.bs.js");
 var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -36,17 +37,54 @@ var alignCenter = Css.style(/* :: */[
       ]
     ]);
 
-var spinner = Css.style(/* :: */[
-      Css.height(Css.px(298)),
+var addressImage = Css.style(/* :: */[
+      BreakPoints.sm(/* :: */[
+            Css.height(Css.px(250)),
+            /* [] */0
+          ]),
       /* :: */[
-        Css.display(/* flex */-1010954439),
-        /* :: */[
-          Css.flexDirection(/* column */-963948842),
-          /* :: */[
-            Css.alignItems(Css.center),
-            /* :: */[
-              Css.justifyContent(/* spaceAround */-485895757),
+        BreakPoints.xs(/* :: */[
+              Css.height(Css.px(200)),
               /* [] */0
+            ]),
+        /* [] */0
+      ]
+    ]);
+
+var copyButton = Css.style(/* :: */[
+      BreakPoints.sm(/* :: */[
+            Css.display(Css.inline),
+            /* [] */0
+          ]),
+      /* :: */[
+        BreakPoints.xs(/* :: */[
+              Css.display(Css.none),
+              /* [] */0
+            ]),
+        /* [] */0
+      ]
+    ]);
+
+var spinner = Css.style(/* :: */[
+      BreakPoints.sm(/* :: */[
+            Css.height(Css.px(297)),
+            /* [] */0
+          ]),
+      /* :: */[
+        BreakPoints.xs(/* :: */[
+              Css.height(Css.px(219)),
+              /* [] */0
+            ]),
+        /* :: */[
+          Css.display(/* flex */-1010954439),
+          /* :: */[
+            Css.flexDirection(/* column */-963948842),
+            /* :: */[
+              Css.alignItems(Css.center),
+              /* :: */[
+                Css.justifyContent(/* spaceAround */-485895757),
+                /* [] */0
+              ]
             ]
           ]
         ]
@@ -55,6 +93,8 @@ var spinner = Css.style(/* :: */[
 
 var Styles = /* module */[
   /* alignCenter */alignCenter,
+  /* addressImage */addressImage,
+  /* copyButton */copyButton,
   /* spinner */spinner
 ];
 
@@ -81,8 +121,8 @@ function make(commands, _children) {
               var state = param[/* state */1];
               var match = Environment.get(/* () */0)[/* network */5];
               var warning = match !== 1 ? undefined : Js_primitive.some(WarningsText.testnet);
-              var copyButton = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
-                          var button = React.cloneElement(ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make("copy-btn", undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.copy])), {
+              var copyButton$1 = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
+                          var button = React.cloneElement(ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make("copy-btn " + copyButton, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.copy])), {
                                 "data-clipboard-text": address
                               });
                           return ReasonReact.element(undefined, undefined, MaterialUi_Tooltip.make(undefined, undefined, undefined, undefined, undefined, "address-copy-btn", undefined, undefined, undefined, undefined, undefined, undefined, /* Bottom */437082891, undefined, undefined, ViewCommon.text("Copy to Clipboard"), undefined, undefined, undefined, undefined, /* array */[button]));
@@ -93,14 +133,14 @@ function make(commands, _children) {
                                     }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[React.createElement("div", {
                                                     className: alignCenter
                                                   }, match$1 !== undefined ? React.createElement("img", {
-                                                          height: "250px",
+                                                          className: addressImage,
                                                           src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match$1
                                                         }) : ReasonReact.element(undefined, undefined, Spinner.make("Generating new address", spinner, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                             ViewCommon.text(Js_option.getWithDefault("", state[/* address */0])),
-                                                            copyButton
+                                                            copyButton$1
                                                           ])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function (_e) {
                                                               return Curry._1(send, /* GetIncomeAddress */0);
-                                                            }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Generate new income address")])))])))), undefined, undefined, warning, /* array */[]));
+                                                            }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Generate new address")])))])))), undefined, undefined, warning, /* array */[]));
             }),
           /* initialState */(function (param) {
               return /* record */[/* address */undefined];
