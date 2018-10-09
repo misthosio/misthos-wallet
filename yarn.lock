@@ -620,9 +620,9 @@
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@glennsl/bs-json/-/bs-json-3.0.0.tgz#b4e1cf6612270a8dd7287a8a71ebe17e8f0fb683"
 
-"@jsiebern/bs-material-ui@0.4.0-beta.1":
-  version "0.4.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.4.0-beta.1.tgz#6e28fbe1ad98eb88a1241f4808a6674d465bcc67"
+"@jsiebern/bs-material-ui@0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.4.2.tgz#6b62375735d9b2e748bb4e9d22d8f7423bc4af78"
   dependencies:
     object-hash "^1.2.0"
 
