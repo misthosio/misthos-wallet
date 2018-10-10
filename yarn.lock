@@ -626,9 +626,9 @@
   dependencies:
     object-hash "^1.2.0"
 
-"@ledgerhq/hw-app-btc@4.21.0":
-  version "4.21.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.21.0.tgz#4f94571bb3d63cd785e31a7e1f77ce597c344516"
+"@ledgerhq/hw-app-btc@4.23.0":
+  version "4.23.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.23.0.tgz#e4b9e909badbdf5ccb58c74b4199e0916bb44825"
   dependencies:
     "@ledgerhq/hw-transport" "^4.21.0"
     create-hash "^1.1.3"
