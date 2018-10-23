@@ -49,8 +49,8 @@ let make =
                 <TableBody>
                   destRows
                   (
-                    switch (misthosFeeAddress) {
-                    | Some(address) =>
+                    switch (misthosFeeAddress, summary.misthosFee) {
+                    | (Some(address), fee) when fee |> BTC.gt(BTC.zero) =>
                       <TableRow key="misthos-fee">
                         <TableCell> (address |> text) </TableCell>
                         <TableCell>
