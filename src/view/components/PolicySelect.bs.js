@@ -130,33 +130,33 @@ function make(label, initialValue, onChange, _) {
               var match = state[/* selectedPolicy */0];
               var tmp;
               tmp = typeof match === "number" ? null : (
-                  match.tag ? ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, state[/* inputNumber */1] === "", undefined, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["N ="])),
-                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e) {
+                  match.tag ? ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, state[/* inputNumber */1] === "", undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["N ="])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e) {
                                           return Curry._1(send, /* SelectPolicyNumber */Block.__(1, [ViewCommon.extractString(e)]));
-                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
+                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
                                         -976970511,
                                         state[/* inputNumber */1]
-                                      ], undefined, undefined, /* array */[]))
-                            ])) : ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, state[/* inputNumber */1] === "", undefined, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["% ="])),
-                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e) {
+                                      ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
+                            ])) : ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, undefined, undefined, state[/* inputNumber */1] === "", undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                              ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["% ="])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e) {
                                           return Curry._1(send, /* SelectPolicyNumber */Block.__(1, [ViewCommon.extractString(e)]));
-                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
+                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
                                         -976970511,
                                         state[/* inputNumber */1]
-                                      ], undefined, undefined, /* array */[]))
+                                      ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
                             ]))
                 );
               return ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, container, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(flex, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                        ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(label)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(flex, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                        ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(label)])),
                                         ReasonReact.element(undefined, undefined, MaterialUi_Select.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e, _) {
                                                     return Curry._1(send, /* SelectPolicyType */Block.__(0, [stringToPolicy(ViewCommon.extractString(e))]));
                                                   }), undefined, undefined, undefined, undefined, undefined, /* `String */[
                                                   -976970511,
                                                   policyTypeToString(state[/* selectedPolicy */0])
-                                                ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[policyMenuItems]))
+                                                ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[policyMenuItems]))
                                       ])),
                               tmp
                             ]));

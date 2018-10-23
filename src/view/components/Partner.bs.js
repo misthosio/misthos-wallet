@@ -173,7 +173,7 @@ function make(partnerId, name, button, status, onClick, $staropt$star, _) {
               if (exit === 1) {
                 tmp = ex ? ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, exPartnerStatus, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("EX-PARTNER")])) : ReasonReact.element(undefined, undefined, MaterialUi_ListItemSecondaryAction.make(undefined, undefined, undefined, /* array */[Js_primitive.valFromOption(button)]));
               }
-              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(onClick !== undefined, undefined, undefined, undefined, undefined, true, undefined, true, undefined, undefined, undefined, undefined, onClick, /* :: */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(onClick !== undefined, undefined, undefined, undefined, undefined, true, undefined, true, undefined, undefined, undefined, undefined, undefined, onClick, /* :: */[
                               /* SecondaryAction */Block.__(9, [secondaryAction(status)]),
                               /* [] */0
                             ], undefined, /* array */[

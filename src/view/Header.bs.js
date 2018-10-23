@@ -75,7 +75,7 @@ function make(onClickLogo, hrefLogo, onClickMenu, _) {
                   ];
               }
               var href = match[1];
-              return ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(appBar, undefined, /* Static */982536398, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(appBar, undefined, /* Static */982536398, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, undefined, /* array */[
                                         href !== undefined ? React.createElement("a", {
                                                 href: href
                                               }, Icons.logoSolid) : ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(logo, /* Inherit */-72987685, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, match[0], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.logoSolid])),

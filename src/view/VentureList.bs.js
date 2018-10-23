@@ -76,7 +76,7 @@ function make(selected, index, _) {
                               return ReasonReact.element(ids, undefined, MaterialUi_ListItem.make(true, undefined, /* `String */[
                                               -976970511,
                                               "li"
-                                            ], undefined, undefined, true, undefined, undefined, undefined, undefined, /* `String */[
+                                            ], undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, /* `String */[
                                               -976970511,
                                               ids
                                             ], undefined, (function (param) {

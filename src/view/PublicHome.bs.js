@@ -168,11 +168,11 @@ function make(onSignIn, _) {
                               className: grid
                             }, React.createElement("div", {
                                   className: logo
-                                }), ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, area("title") + (" " + title), undefined, undefined, undefined, undefined, undefined, undefined, /* Display4 */-11760686, undefined, undefined, /* array */[
+                                }), ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, area("title") + (" " + title), undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Display4 */-11760686, undefined, undefined, /* array */[
                                       ViewCommon.text("Distribute Funds"),
                                       React.createElement("br", undefined),
                                       ViewCommon.text("with Misthos.")
-                                    ])), ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, area("sub"), undefined, undefined, undefined, undefined, undefined, undefined, /* Display1 */-11760689, undefined, undefined, /* array */[
+                                    ])), ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, area("sub"), undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Display1 */-11760689, undefined, undefined, /* array */[
                                       ViewCommon.text("Misthos is the most advanced multisig bitcoin wallet for businesses, emphasizing frictionless setup, low risk and streamlined collaboration."),
                                       React.createElement("br", undefined),
                                       React.createElement("br", undefined),
@@ -183,7 +183,7 @@ function make(onSignIn, _) {
                                           ReasonReact.element(undefined, undefined, MaterialUi_SvgIcon.make(Css.style(/* :: */[
                                                         Css.marginRight(Css.px(16)),
                                                         /* [] */0
-                                                      ]), undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.blockStack])),
+                                                      ]), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.blockStack])),
                                           ViewCommon.text("Sign In with Blockstack")
                                         ])), ReasonReact.element(undefined, undefined, ContactUsShoutOut.make(false, /* array */[])))));
             }),

@@ -42,7 +42,7 @@ function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, componen
               if (exit === 1) {
                 style = gutterTop ? margin(4) : margin(0);
               }
-              return ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, style + (" " + className), color, component, gutterBottom, undefined, undefined, undefined, variant, undefined, undefined, children));
+              return ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, style + (" " + className), color, component, gutterBottom, undefined, undefined, undefined, undefined, variant, undefined, undefined, children));
             }),
           /* initialState */statelessComponent[/* initialState */10],
           /* retainedProps */statelessComponent[/* retainedProps */11],

@@ -71,7 +71,7 @@ function make(icon$1, onClick, primary, secondary, _) {
                     break;
                 
               }
-              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(true, alert, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, onClick, undefined, undefined, /* array */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(true, alert, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onClick, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, MaterialUi_Avatar.make(undefined, undefined, icon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[icon$2])),
                               ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, Js_primitive.some(primary), undefined, secondary, undefined, undefined, undefined, /* array */[])),
                               ReasonReact.element(undefined, undefined, MaterialUi_ListItemSecondaryAction.make(undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onClick, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.arrowRight]))]))

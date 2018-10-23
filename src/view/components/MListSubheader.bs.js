@@ -71,7 +71,7 @@ function make($staropt$star, children) {
           /* willUpdate */statelessComponent[/* willUpdate */7],
           /* shouldUpdate */statelessComponent[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(undefined, undefined, MaterialUi_ListSubheader.make(root(first), undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_ListSubheader.make(root(first), undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                               ReactDOMRe.createElementVariadic("span", {
                                     className: text
                                   }, children),

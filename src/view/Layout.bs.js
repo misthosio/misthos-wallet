@@ -201,7 +201,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                                     });
                                 }), onClose);
                           var inner = React.cloneElement(ReasonReact.element(undefined, undefined, MaterialUi_Paper.make(modal, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                        ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
+                                        ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, undefined, /* array */[
                                                   React.createElement("div", {
                                                         className: flex_
                                                       }),
@@ -213,7 +213,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                                       ])), {
                                 id: "modal"
                               });
-                          return ReasonReact.element(undefined, undefined, MaterialUi_Modal.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onBackdropClick, undefined, onEscapeKeyDown, undefined, true, undefined, undefined, /* array */[inner]));
+                          return ReasonReact.element(undefined, undefined, MaterialUi_Modal.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onBackdropClick, undefined, onEscapeKeyDown, undefined, true, undefined, undefined, /* array */[inner]));
                         }), modal$1));
               var match = header$1 !== undefined ? /* tuple */[
                   React.createElement("div", {

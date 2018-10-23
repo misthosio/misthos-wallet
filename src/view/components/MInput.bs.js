@@ -56,12 +56,12 @@ function make(placeholder, value, onChange, autoFocus, fullWidth, endAdornment, 
                   ""
                 ];
               var error$1 = match[0];
-              return ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(margin(ensuring ? 4 : 3, 0), undefined, undefined, error$1, fullWidth, undefined, undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, autoFocus, undefined, undefined, undefined, undefined, endAdornment, undefined, undefined, undefined, undefined, inputProps, undefined, undefined, undefined, name, undefined, onChange, undefined, undefined, undefined, undefined, undefined, placeholder, undefined, undefined, undefined, undefined, type_, value, /* :: */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(margin(ensuring ? 4 : 3, 0), undefined, undefined, error$1, fullWidth, undefined, undefined, undefined, undefined, undefined, /* array */[
+                              ReasonReact.element(undefined, undefined, MaterialUi_Input.make(undefined, autoFocus, undefined, undefined, undefined, undefined, endAdornment, undefined, undefined, undefined, undefined, inputProps, undefined, undefined, undefined, name, onChange, placeholder, undefined, undefined, undefined, undefined, undefined, type_, value, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* :: */[
                                         /* Root */Block.__(0, [inputRoot]),
                                         /* [] */0
                                       ], undefined, /* array */[])),
-                              error$1 ? ReasonReact.element(undefined, undefined, MaterialUi_FormHelperText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(match[1])])) : null
+                              error$1 ? ReasonReact.element(undefined, undefined, MaterialUi_FormHelperText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(match[1])])) : null
                             ]));
             }),
           /* initialState */component[/* initialState */10],
