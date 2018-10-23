@@ -282,8 +282,13 @@ function make(viewData, commands, cmdStatus, _) {
               } else {
                 return ReasonReact.element(undefined, undefined, LedgerConfirmation.make(/* Proposal */5, (function () {
                                   return Curry._1(send, /* Reset */4);
-                                }), summary, Utils.mapOption((function (tx) {
-                                      return tx[/* misthosFeeAddress */2];
+                                }), summary, Js_option.andThen((function (tx) {
+                                      var address = tx[/* misthosFeeAddress */2];
+                                      if (address === "") {
+                                        return undefined;
+                                      } else {
+                                        return address;
+                                      }
                                     }), payoutTx), Js_option.getWithDefault(undefined, Utils.mapOption((function (tx) {
                                           return tx[/* changeAddress */3];
                                         }), payoutTx)), cmdStatus, /* array */[]));

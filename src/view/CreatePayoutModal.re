@@ -417,8 +417,11 @@ let make =
         summary
         misthosFeeAddress=(
           payoutTx
-          |> Utils.mapOption((tx: PayoutTransaction.t) =>
-               tx.misthosFeeAddress
+          |> Js.Option.andThen((. tx: PayoutTransaction.t) =>
+               switch (tx.misthosFeeAddress) {
+               | "" => None
+               | address => Some(address)
+               }
              )
         )
         changeAddress=(
