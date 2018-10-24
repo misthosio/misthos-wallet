@@ -33,7 +33,7 @@ module Config = {
       )
     | ["ventures", id, "partners"] =>
       Venture(id |> VentureId.fromString, ManagePartners)
-    | ["ventures", id, "hidden"] =>
+    | ["ventures", id, "hidden", "log"] =>
       Venture(id |> VentureId.fromString, HiddenOutputLog)
     | ["ventures", id, "payouts", "new"] =>
       Venture(id |> VentureId.fromString, CreatePayout)
@@ -63,7 +63,7 @@ module Config = {
     | Venture(id, ManagePartners) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/partners"
     | Venture(id, HiddenOutputLog) =>
-      "/ventures/" ++ (id |> VentureId.toString) ++ "/hidden"
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/hidden/log"
     | Venture(id, Partner(processId)) =>
       "/ventures/"
       ++ (id |> VentureId.toString)

@@ -40,43 +40,44 @@ function routeFromUrl(url) {
                                 ]);
                       }
                   case "hidden" : 
-                      if (match$2[1]) {
-                        return /* Home */0;
-                      } else {
+                      var match$3 = match$2[1];
+                      if (match$3 && match$3[0] === "log" && !match$3[1]) {
                         return /* Venture */Block.__(0, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
                                   /* HiddenOutputLog */4
                                 ]);
+                      } else {
+                        return /* Home */0;
                       }
                   case "income" : 
-                      var match$3 = match$2[1];
-                      if (match$3 && !match$3[1]) {
+                      var match$4 = match$2[1];
+                      if (match$4 && !match$4[1]) {
                         return /* Venture */Block.__(0, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  /* Income */Block.__(2, [match$3[0]])
+                                  /* Income */Block.__(2, [match$4[0]])
                                 ]);
                       } else {
                         return /* Home */0;
                       }
                   case "joinvia" : 
-                      var match$4 = match$2[1];
-                      if (match$4 && !match$4[1]) {
+                      var match$5 = match$2[1];
+                      if (match$5 && !match$5[1]) {
                         return /* JoinVenture */Block.__(1, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  PrimitiveTypes.UserId[/* fromString */1](match$4[0])
+                                  PrimitiveTypes.UserId[/* fromString */1](match$5[0])
                                 ]);
                       } else {
                         return /* Home */0;
                       }
                   case "partners" : 
-                      var match$5 = match$2[1];
-                      if (match$5) {
-                        if (match$5[1]) {
+                      var match$6 = match$2[1];
+                      if (match$6) {
+                        if (match$6[1]) {
                           return /* Home */0;
                         } else {
                           return /* Venture */Block.__(0, [
                                     PrimitiveTypes.VentureId[/* fromString */1](id),
-                                    /* Partner */Block.__(0, [PrimitiveTypes.ProcessId[/* fromString */1](match$5[0])])
+                                    /* Partner */Block.__(0, [PrimitiveTypes.ProcessId[/* fromString */1](match$6[0])])
                                   ]);
                         }
                       } else {
@@ -86,11 +87,11 @@ function routeFromUrl(url) {
                                 ]);
                       }
                   case "payouts" : 
-                      var match$6 = match$2[1];
-                      if (match$6) {
-                        var processId = match$6[0];
+                      var match$7 = match$2[1];
+                      if (match$7) {
+                        var processId = match$7[0];
                         if (processId === "new") {
-                          if (match$6[1]) {
+                          if (match$7[1]) {
                             return /* Home */0;
                           } else {
                             return /* Venture */Block.__(0, [
@@ -98,7 +99,7 @@ function routeFromUrl(url) {
                                       /* CreatePayout */3
                                     ]);
                           }
-                        } else if (match$6[1]) {
+                        } else if (match$7[1]) {
                           return /* Home */0;
                         } else {
                           return /* Venture */Block.__(0, [
@@ -177,7 +178,7 @@ function routeToUrl(route) {
         case 3 : 
             return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/payouts/new");
         case 4 : 
-            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/hidden");
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/hidden/log");
         case 5 : 
             return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/addresses");
         case 6 : 
