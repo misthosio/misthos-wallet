@@ -98,14 +98,14 @@ module Styles = {
                 |}
           | V2 =>
             {|
-               ". tabs ."
+               ". title1 ."
                ". area3 . "
                ". area4 ."
                |}
             ++ (warning ? {|" . warning  ."|} : "")
           | V3 =>
             {|
-               ". tabs ."
+               ". title1 ."
                ". area3 . "
                ". area4 ."
                ". area5 ."
@@ -153,7 +153,7 @@ module Styles = {
 
   let mobileHidden = hidden =>
     style([sm([display(block)]), xs([display(hidden ? none : block)])]);
-  let title =
+  let title = variant =>
     style([
       fontFamily(Theme.oswald),
       height(px(45)),
@@ -163,7 +163,7 @@ module Styles = {
       textTransform(uppercase),
       marginBottom(px(4)),
       sm([display(inline)]),
-      xs([display(none)]),
+      xs([display(variant == V4 ? none : inline)]),
     ]);
   let tabs =
     style([
@@ -256,10 +256,18 @@ let make =
             (warning, "warning", WarningBanner.Styles.warning(~inline=false)),
             (area1, "area1", ""),
             (area2, "area2", ""),
-            (title1, "title1", Styles.title),
-            (title2, "title2", Styles.title),
-            (area3, "area3", Styles.mobileHidden(state.activeTab != 0)),
-            (area4, "area4", Styles.mobileHidden(state.activeTab != 1)),
+            (title1, "title1", Styles.title(variant)),
+            (title2, "title2", Styles.title(variant)),
+            (
+              area3,
+              "area3",
+              Styles.mobileHidden(state.activeTab != 0 && variant == V4),
+            ),
+            (
+              area4,
+              "area4",
+              Styles.mobileHidden(state.activeTab != 1 && variant == V4),
+            ),
             (area5, "area5", ""),
           |]
           |. Array.map(((item, area, className)) =>
@@ -272,7 +280,7 @@ let make =
                | None => ReasonReact.null
                }
              ),
-          [|tabs|],
+          [|variant == V4 ? tabs : ReasonReact.null|],
         |]
         |> Array.concatMany
         |> ReasonReact.array

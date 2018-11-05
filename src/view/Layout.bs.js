@@ -11,6 +11,7 @@ var React = require("react");
 var Header = require("./Header.bs.js");
 var Router = require("./Router.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var WithWidth = require("./components/WithWidth.bs.js");
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var BreakPoints = require("./BreakPoints.bs.js");
@@ -216,7 +217,7 @@ function make(header$1, drawer$1, modal$1, children) {
                                       ])), {
                                 id: "modal"
                               });
-                          return ReasonReact.element(undefined, undefined, MaterialUi_Modal.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onBackdropClick, undefined, onEscapeKeyDown, undefined, true, undefined, undefined, /* array */[inner]));
+                          return ReasonReact.element(undefined, undefined, WithWidth.make(/* SM */18586, inner, ReasonReact.element(undefined, undefined, MaterialUi_Modal.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onBackdropClick, undefined, onEscapeKeyDown, undefined, true, undefined, undefined, /* array */[inner])), /* array */[]));
                         }), modal$1));
               var match = header$1 !== undefined ? /* tuple */[
                   React.createElement("div", {

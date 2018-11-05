@@ -58,12 +58,12 @@ function grid(variant, warning) {
         );
         break;
     case 1 : 
-        tmp$1 = "\n               \". tabs .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
+        tmp$1 = "\n               \". title1 .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
           warning$1 ? "\" . warning  .\"" : ""
         );
         break;
     case 2 : 
-        tmp$1 = "\n               \". tabs .\"\n               \". area3 . \"\n               \". area4 .\"\n               \". area5 .\"\n               " + (
+        tmp$1 = "\n               \". title1 .\"\n               \". area3 . \"\n               \". area4 .\"\n               \". area5 .\"\n               " + (
           warning$1 ? "\" . warning .\"" : ""
         );
         break;
@@ -164,40 +164,43 @@ function mobileHidden(hidden) {
             ]);
 }
 
-var title = Css.style(/* :: */[
-      Css.fontFamily(Theme.oswald),
-      /* :: */[
-        Css.height(Css.px(45)),
-        /* :: */[
-          Css.fontSize(Css.px(30)),
-          /* :: */[
-            Css.fontWeight(600),
-            /* :: */[
-              Css.color(Colors.white),
+function title(variant) {
+  var match = variant === /* V4 */3;
+  return Css.style(/* :: */[
+              Css.fontFamily(Theme.oswald),
               /* :: */[
-                Css.textTransform(Css.uppercase),
+                Css.height(Css.px(45)),
                 /* :: */[
-                  Css.marginBottom(Css.px(4)),
+                  Css.fontSize(Css.px(30)),
                   /* :: */[
-                    BreakPoints.sm(/* :: */[
-                          Css.display(Css.inline),
-                          /* [] */0
-                        ]),
+                    Css.fontWeight(600),
                     /* :: */[
-                      BreakPoints.xs(/* :: */[
-                            Css.display(Css.none),
-                            /* [] */0
-                          ]),
-                      /* [] */0
+                      Css.color(Colors.white),
+                      /* :: */[
+                        Css.textTransform(Css.uppercase),
+                        /* :: */[
+                          Css.marginBottom(Css.px(4)),
+                          /* :: */[
+                            BreakPoints.sm(/* :: */[
+                                  Css.display(Css.inline),
+                                  /* [] */0
+                                ]),
+                            /* :: */[
+                              BreakPoints.xs(/* :: */[
+                                    Css.display(match ? Css.none : Css.inline),
+                                    /* [] */0
+                                  ]),
+                              /* [] */0
+                            ]
+                          ]
+                        ]
+                      ]
                     ]
                   ]
                 ]
               ]
-            ]
-          ]
-        ]
-      ]
-    ]);
+            ]);
+}
 
 var tabs = Css.style(/* :: */[
       Css.unsafe("gridColumn", "begin / end"),
@@ -304,6 +307,7 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                       area5 !== undefined ? /* V4 */3 : /* V1 */0
                     )
                 );
+              var match = variant === /* V4 */3;
               return React.createElement("div", {
                           className: grid(variant, warning)
                         }, warning !== undefined ? React.createElement("div", {
@@ -332,22 +336,22 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                                     /* tuple */[
                                       title1,
                                       "title1",
-                                      title
+                                      title(variant)
                                     ],
                                     /* tuple */[
                                       title2,
                                       "title2",
-                                      title
+                                      title(variant)
                                     ],
                                     /* tuple */[
                                       area3,
                                       "area3",
-                                      mobileHidden(state[/* activeTab */0] !== 0)
+                                      mobileHidden(state[/* activeTab */0] !== 0 && variant === /* V4 */3)
                                     ],
                                     /* tuple */[
                                       area4,
                                       "area4",
-                                      mobileHidden(state[/* activeTab */0] !== 1)
+                                      mobileHidden(state[/* activeTab */0] !== 1 && variant === /* V4 */3)
                                     ],
                                     /* tuple */[
                                       area5,
@@ -366,7 +370,7 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                                         return null;
                                       }
                                     })),
-                              /* array */[tabs$1]
+                              /* array */[match ? tabs$1 : null]
                             ]));
             }),
           /* initialState */(function (param) {

@@ -98,9 +98,15 @@ let make =
                  ~props={"id": "modal"},
                  [||],
                );
-             <Modal open_=true ?onBackdropClick ?onEscapeKeyDown>
-               inner
-             </Modal>;
+             <WithWidth
+               breakPoint=`SM
+               beforeBreak=inner
+               afterBreak={
+                 <Modal open_=true ?onBackdropClick ?onEscapeKeyDown>
+                   inner
+                 </Modal>
+               }
+             />;
            })
         |> Js.Option.getWithDefault(ReasonReact.null)
       );
