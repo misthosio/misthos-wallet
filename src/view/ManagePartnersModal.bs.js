@@ -173,7 +173,7 @@ function renderSuggestion(suggestion, vals) {
   return ReasonReact.element(undefined, undefined, MaterialUi_MenuItem.make(suggestionItem, /* `String */[
                   -976970511,
                   "div"
-                ], undefined, isHighlighted, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("div", undefined, Belt_Array.mapWithIndexU(parts, (function (index, part) {
+                ], undefined, undefined, isHighlighted, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("div", undefined, Belt_Array.mapWithIndexU(parts, (function (index, part) {
                               var match = part.highlight;
                               if (match) {
                                 return React.createElement("span", {

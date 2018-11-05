@@ -167,7 +167,7 @@ function make(_children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (_self) {
               var environment = Environment.get(/* () */0);
-              return ReasonReact.element(undefined, undefined, MaterialUi_MuiThemeProvider.make(undefined, undefined, /* `ObjectGeneric */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_MuiThemeProvider.make(undefined, undefined, undefined, /* `ObjectGeneric */[
                               -317959944,
                               Theme.toJsUnsafe(Theme.theme(true, /* () */0))
                             ], /* array */[React.createElement("div", {

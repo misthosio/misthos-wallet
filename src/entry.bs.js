@@ -15,7 +15,7 @@ var MaterialUi_MuiThemeProvider = require("@jsiebern/bs-material-ui/src/Material
 var theme = Theme.toJsUnsafe(Theme.theme(undefined, /* () */0));
 
 ReactDOMRe.renderToElementWithId(ReasonReact.element(undefined, undefined, JssProvider.make(/* array */[ReasonReact.element(undefined, undefined, SessionStore.make((function (session, updateSession, signTAC) {
-                          return ReasonReact.element(undefined, undefined, MaterialUi_MuiThemeProvider.make(undefined, undefined, /* `ObjectGeneric */[
+                          return ReasonReact.element(undefined, undefined, MaterialUi_MuiThemeProvider.make(undefined, undefined, undefined, /* `ObjectGeneric */[
                                           -317959944,
                                           theme
                                         ], /* array */[ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[ReasonReact.element(undefined, undefined, App.make(session, updateSession, signTAC, /* array */[]))]))]));

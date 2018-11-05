@@ -122,10 +122,10 @@ function make(label, initialValue, onChange, _children) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var policyMenuItems = Belt_Array.mapU(policyOptions, (function (p) {
-                      return ReasonReact.element(undefined, undefined, MaterialUi_MenuItem.make(undefined, undefined, undefined, undefined, /* `String */[
+                      return ReasonReact.element(undefined, undefined, MaterialUi_MenuItem.make(undefined, undefined, undefined, undefined, undefined, /* `String */[
                                       -976970511,
                                       policyTypeToString(p)
-                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(policyTypeToString(p))]));
+                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(policyTypeToString(p))]));
                     }));
               var match = state[/* selectedPolicy */0];
               var tmp;
@@ -148,7 +148,7 @@ function make(label, initialValue, onChange, _children) {
                                       ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
                             ]))
                 );
-              return ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, container, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, container, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(flex, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                         ReasonReact.element(undefined, undefined, MaterialUi_InputLabel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(label)])),
                                         ReasonReact.element(undefined, undefined, MaterialUi_Select.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (e, param) {

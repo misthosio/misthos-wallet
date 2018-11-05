@@ -85,7 +85,7 @@ function make(commands, _children) {
                           var button = React.cloneElement(ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make("copy-btn", undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.copy])), {
                                 "data-clipboard-text": address
                               });
-                          return ReasonReact.element(undefined, undefined, MaterialUi_Tooltip.make(undefined, undefined, undefined, undefined, undefined, "address-copy-btn", undefined, undefined, undefined, undefined, undefined, /* Bottom */437082891, undefined, undefined, ViewCommon.text("Copy to Clipboard"), undefined, undefined, undefined, undefined, /* array */[button]));
+                          return ReasonReact.element(undefined, undefined, MaterialUi_Tooltip.make(undefined, undefined, undefined, undefined, undefined, "address-copy-btn", undefined, undefined, undefined, undefined, undefined, undefined, /* Bottom */437082891, undefined, undefined, ViewCommon.text("Copy to Clipboard"), undefined, undefined, undefined, undefined, /* array */[button]));
                         }), state[/* address */0]));
               var match$1 = state[/* address */0];
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Receive BTC")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
