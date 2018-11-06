@@ -55,7 +55,10 @@ var total = Css.style(/* :: */[
 
 var noBorder = Css.style(/* :: */[
       Css.borderColor(/* transparent */582626130),
-      /* [] */0
+      /* :: */[
+        Css.maxWidth(Css.vw(50.0)),
+        /* [] */0
+      ]
     ]);
 
 var link = Css.style(/* :: */[
@@ -69,7 +72,7 @@ var link = Css.style(/* :: */[
       ]
     ]);
 
-var linkContainer = Css.style(/* :: */[
+var ellipsis = Css.style(/* :: */[
       Css.textOverflow(Css.ellipsis),
       /* :: */[
         Css.overflow(Css.hidden),
@@ -81,7 +84,7 @@ var Styles = /* module */[
   /* total */total,
   /* noBorder */noBorder,
   /* link */link,
-  /* linkContainer */linkContainer
+  /* ellipsis */ellipsis
 ];
 
 function make(viewData, commands, cmdStatus, _children) {
@@ -127,7 +130,7 @@ function make(viewData, commands, cmdStatus, _children) {
               };
               var destinationList = Belt_List.toArray(Belt_List.mapWithIndexU(summary[/* destinations */1], (function (idx, param) {
                           return ReasonReact.element(String(idx), undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                          ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(param[0])]))])),
+                                          ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, ellipsis, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(param[0])]))])),
                                           ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(noBorder, undefined, true, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(param[1]) + " BTC")]))]))
                                         ]));
                         })));
@@ -240,7 +243,7 @@ function make(viewData, commands, cmdStatus, _children) {
                                                 React.createElement("div", {
                                                       className: total
                                                     }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, total, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                              ])))), Js_primitive.some(tmp), Js_primitive.some(txId !== undefined && explorerLink !== undefined ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, linkContainer, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
+                                              ])))), Js_primitive.some(tmp), Js_primitive.some(txId !== undefined && explorerLink !== undefined ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, ellipsis, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
                                                         className: link,
                                                         href: explorerLink,
                                                         target: "_blank"

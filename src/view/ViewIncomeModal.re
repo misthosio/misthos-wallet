@@ -7,7 +7,7 @@ module Styles = {
   open Css;
   let link =
     style([color(Colors.black), hover([color(Colors.misthosTeal)])]);
-  let linkContainer = style([textOverflow(ellipsis), overflow(hidden)]);
+  let ellipsis = style([textOverflow(ellipsis), overflow(hidden)]);
 };
 
 let component = ReasonReact.statelessComponent("ViewIncomeModal");
@@ -64,7 +64,7 @@ let make = (~viewData: ViewData.t, _children) => {
             <MTypography variant=`Title gutterTop=true>
               ("Transaction ID" |> text)
             </MTypography>
-            <MTypography className=Styles.linkContainer variant=`Body2>
+            <MTypography className=Styles.ellipsis variant=`Body2>
               <a className=Styles.link href=explorerLink target="_blank">
                 (txId |> text)
               </a>
