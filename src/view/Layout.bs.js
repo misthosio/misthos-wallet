@@ -8,6 +8,7 @@ var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
+var Colors = require("./Colors.bs.js");
 var Header = require("./Header.bs.js");
 var Router = require("./Router.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
@@ -117,6 +118,17 @@ var modalContent = Css.style(/* :: */[
       ]
     ]);
 
+var modalToolbar = Css.style(/* :: */[
+      Css.position(Css.sticky),
+      /* :: */[
+        Css.top(Css.px(0)),
+        /* :: */[
+          Css.backgroundColor(Colors.white),
+          /* [] */0
+        ]
+      ]
+    ]);
+
 var modal = Css.style(/* :: */[
       BreakPoints.md(/* :: */[
             Css.width(/* `vw */[
@@ -129,14 +141,17 @@ var modal = Css.style(/* :: */[
                     90.0
                   ]),
               /* :: */[
-                Css.margin2(/* `vh */[
-                      26418,
-                      5.0
-                    ], /* `vw */[
-                      26433,
-                      5.0
-                    ]),
-                /* [] */0
+                Css.minHeight(Css.auto),
+                /* :: */[
+                  Css.margin2(/* `vh */[
+                        26418,
+                        5.0
+                      ], /* `vw */[
+                        26433,
+                        5.0
+                      ]),
+                  /* [] */0
+                ]
               ]
             ]
           ]),
@@ -146,16 +161,22 @@ var modal = Css.style(/* :: */[
               100.0
             ]),
         /* :: */[
-          Css.height(/* `percent */[
-                -119887163,
-                100.0
-              ]),
+          Css.height(Css.auto),
           /* :: */[
-            Css.focus(/* :: */[
-                  Css.outlineStyle(/* none */-922086728),
-                  /* [] */0
+            Css.minHeight(/* `percent */[
+                  -119887163,
+                  100.0
                 ]),
-            /* [] */0
+            /* :: */[
+              Css.position(Css.absolute),
+              /* :: */[
+                Css.focus(/* :: */[
+                      Css.outlineStyle(/* none */-922086728),
+                      /* [] */0
+                    ]),
+                /* [] */0
+              ]
+            ]
           ]
         ]
       ]
@@ -170,6 +191,7 @@ var Styles = /* module */[
   /* drawer */drawer,
   /* drawerPaper */drawerPaper,
   /* modalContent */modalContent,
+  /* modalToolbar */modalToolbar,
   /* modal */modal
 ];
 
@@ -205,7 +227,7 @@ function make(header$1, drawer$1, modal$1, children) {
                                     });
                                 }), onClose);
                           var inner = React.cloneElement(ReasonReact.element(undefined, undefined, MaterialUi_Paper.make(modal, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                        ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, undefined, /* array */[
+                                        ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(modalToolbar, undefined, undefined, undefined, undefined, /* array */[
                                                   React.createElement("div", {
                                                         className: flex_
                                                       }),
@@ -217,7 +239,7 @@ function make(header$1, drawer$1, modal$1, children) {
                                       ])), {
                                 id: "modal"
                               });
-                          return ReasonReact.element(undefined, undefined, WithWidth.make(/* SM */18586, inner, ReasonReact.element(undefined, undefined, MaterialUi_Modal.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onBackdropClick, undefined, onEscapeKeyDown, undefined, true, undefined, undefined, /* array */[inner])), /* array */[]));
+                          return ReasonReact.element(undefined, undefined, WithWidth.make(/* SM */18586, ReasonReact.element(undefined, undefined, MaterialUi_Modal.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, onBackdropClick, undefined, onEscapeKeyDown, undefined, true, undefined, undefined, /* array */[inner])), inner, /* array */[]));
                         }), modal$1));
               var match = header$1 !== undefined ? /* tuple */[
                   React.createElement("div", {
@@ -251,11 +273,17 @@ function make(header$1, drawer$1, modal$1, children) {
                       null
                     ]
                 );
-              return React.createElement("div", {
-                          className: grid
-                        }, match[0], match[1], modalContainer, ReactDOMRe.createElementVariadic("div", {
-                              className: body
-                            }, children));
+              var drawer$2 = match[1];
+              var header$2 = match[0];
+              return ReasonReact.element(undefined, undefined, WithWidth.make(/* SM */18586, React.createElement("div", {
+                                  className: grid
+                                }, header$2, drawer$2, modalContainer, ReactDOMRe.createElementVariadic("div", {
+                                      className: body
+                                    }, children)), modal$1 !== undefined ? modalContainer : React.createElement("div", {
+                                    className: grid
+                                  }, header$2, drawer$2, ReactDOMRe.createElementVariadic("div", {
+                                        className: body
+                                      }, children)), /* array */[]));
             }),
           /* initialState */(function (param) {
               return /* record */[/* drawerOpen */false];

@@ -36,15 +36,20 @@ module Styles = {
       height(`calc((`sub, `percent(100.0), `px(64)))),
       paddingBottom(px(Theme.space(8))),
     ]);
+  let modalToolbar =
+    style([position(sticky), top(px(0)), backgroundColor(Colors.white)]);
   let modal =
     style([
       BreakPoints.md([
         width(`vw(90.0)),
         height(`vh(90.0)),
+        minHeight(auto),
         margin2(~v=`vh(5.0), ~h=`vw(5.0)),
       ]),
       width(`percent(100.0)),
-      height(`percent(100.0)),
+      height(auto),
+      minHeight(`percent(100.0)),
+      position(absolute),
       focus([outlineStyle(`none)]),
     ]);
 };
@@ -80,7 +85,7 @@ let make =
              let inner =
                ReasonReact.cloneElement(
                  <Paper className=Styles.modal>
-                   <Toolbar>
+                   <Toolbar className=Styles.modalToolbar>
                      <div className=Styles.flex_ />
                      (
                        switch (onClick) {
@@ -100,8 +105,8 @@ let make =
                );
              <WithWidth
                breakPoint=`SM
-               beforeBreak=inner
-               afterBreak={
+               afterBreak=inner
+               beforeBreak={
                  <Modal open_=true ?onBackdropClick ?onEscapeKeyDown>
                    inner
                  </Modal>
@@ -142,11 +147,27 @@ let make =
           </Drawer>,
         )
       };
-    <div className=Styles.grid>
-      header
-      drawer
-      modalContainer
-      <div className=Styles.body> ...children </div>
-    </div>;
+    <WithWidth
+      breakPoint=`SM
+      beforeBreak={
+        <div className=Styles.grid>
+          header
+          drawer
+          modalContainer
+          <div className=Styles.body> ...children </div>
+        </div>
+      }
+      afterBreak=(
+        switch (modal) {
+        | None =>
+          <div className=Styles.grid>
+            header
+            drawer
+            <div className=Styles.body> ...children </div>
+          </div>
+        | Some(_) => modalContainer
+        }
+      )
+    />;
   },
 };
