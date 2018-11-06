@@ -22,6 +22,7 @@ module Styles = {
   let noBorder = style([borderColor(`transparent)]);
   let link =
     style([color(Colors.black), hover([color(Colors.misthosTeal)])]);
+  let linkContainer = style([textOverflow(ellipsis), overflow(hidden)]);
 };
 
 let make =
@@ -331,7 +332,7 @@ let make =
               <MTypography variant=`Title>
                 ("Transaction ID" |> text)
               </MTypography>
-              <MTypography variant=`Body2>
+              <MTypography className=Styles.linkContainer variant=`Body2>
                 <a className=Styles.link href=explorerLink target="_blank">
                   (txId |> text)
                 </a>

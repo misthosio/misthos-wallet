@@ -69,10 +69,19 @@ var link = Css.style(/* :: */[
       ]
     ]);
 
+var linkContainer = Css.style(/* :: */[
+      Css.textOverflow(Css.ellipsis),
+      /* :: */[
+        Css.overflow(Css.hidden),
+        /* [] */0
+      ]
+    ]);
+
 var Styles = /* module */[
   /* total */total,
   /* noBorder */noBorder,
-  /* link */link
+  /* link */link,
+  /* linkContainer */linkContainer
 ];
 
 function make(viewData, commands, cmdStatus, _children) {
@@ -231,7 +240,7 @@ function make(viewData, commands, cmdStatus, _children) {
                                                 React.createElement("div", {
                                                       className: total
                                                     }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, total, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                              ])))), Js_primitive.some(tmp), Js_primitive.some(txId !== undefined && explorerLink !== undefined ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
+                                              ])))), Js_primitive.some(tmp), Js_primitive.some(txId !== undefined && explorerLink !== undefined ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, linkContainer, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
                                                         className: link,
                                                         href: explorerLink,
                                                         target: "_blank"
