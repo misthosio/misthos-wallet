@@ -74,6 +74,26 @@ function grid(variant, warning) {
         break;
     
   }
+  var tmp$2;
+  switch (variant) {
+    case 0 : 
+        tmp$2 = "[tBegin] min-content [tEnd] min-content" + (
+          warning$1 ? " [wBegin] min-content [wEnd]" : ""
+        );
+        break;
+    case 1 : 
+    case 2 : 
+        tmp$2 = "[tBegin] min-content [tEnd] min-content min-content" + (
+          warning$1 ? " [wBegin] min-content [wEnd]" : ""
+        );
+        break;
+    case 3 : 
+        tmp$2 = (
+          warning$1 ? "[wBegin] min-content [wEnd] " : ""
+        ) + "min-content min-content [tBegin] min-content [tEnd] min-content min-content ";
+        break;
+    
+  }
   return Css.style(/* :: */[
               Css.display(Css.grid),
               /* :: */[
@@ -106,15 +126,7 @@ function grid(variant, warning) {
                           /* :: */[
                             Css.unsafe("gridTemplateColumns", "[begin] 16px minmax(100px, 9fr) 16px [end]"),
                             /* :: */[
-                              Css.unsafe("gridTemplateRows", variant !== 2 ? (
-                                      variant >= 3 ? (
-                                          warning$1 ? "[wBegin] min-content [wEnd] " : ""
-                                        ) + "min-content min-content [tBegin] min-content [tEnd] min-content min-content " : "[tBegin] min-content [tEnd] min-content" + (
-                                          warning$1 ? " [wBegin] min-content [wEnd]" : ""
-                                        )
-                                    ) : "[tBegin] min-content [tEnd] min-content min-content" + (
-                                      warning$1 ? " [wBegin] min-content [wEnd]" : ""
-                                    )),
+                              Css.unsafe("gridTemplateRows", tmp$2),
                               /* [] */0
                             ]
                           ]

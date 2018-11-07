@@ -36,6 +36,19 @@ var MaterialUi_InputAdornment = require("@jsiebern/bs-material-ui/src/MaterialUi
 
 var component = ReasonReact.reducerComponent("CreatePayout");
 
+var ellipsis = Css.style(/* :: */[
+      Css.textOverflow(Css.ellipsis),
+      /* :: */[
+        Css.overflow(Css.hidden),
+        /* [] */0
+      ]
+    ]);
+
+var maxHalfWidth = Css.style(/* :: */[
+      Css.maxWidth(Css.vw(50.0)),
+      /* [] */0
+    ]);
+
 var maxButton = Css.style(/* :: */[
       Css.color(Colors.clickableGray),
       /* [] */0
@@ -92,6 +105,8 @@ var total = Css.style(/* :: */[
     ]);
 
 var Styles = /* module */[
+  /* ellipsis */ellipsis,
+  /* maxHalfWidth */maxHalfWidth,
   /* maxButton */maxButton,
   /* maxWidth */maxWidth,
   /* cellHeight */cellHeight,
@@ -258,8 +273,8 @@ function make(viewData, commands, cmdStatus, _children) {
                 var match = address !== "" && amount.gt(BTC.zero);
                 if (match) {
                   return ReasonReact.element(String(idx), undefined, MaterialUi_TableRow.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                  ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(spaceBetween(/* center */98248149) + (" " + (noBorder + (" " + cellHeight))), undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                            ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(address)])),
+                                  ReasonReact.element(undefined, undefined, MaterialUi_TableCell.make(spaceBetween(/* center */98248149) + (" " + (noBorder + (" " + (cellHeight + (" " + maxHalfWidth))))), undefined, undefined, /* None */870530776, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                            ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, ellipsis, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(address)])),
                                             withRemoveBtn ? ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_e) {
                                                           return Curry._1(send, /* RemoveDestination */Block.__(2, [idx - 1 | 0]));
                                                         }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.remove])) : null

@@ -138,7 +138,9 @@ module Styles = {
           | V3 =>
             "[tBegin] min-content [tEnd] min-content min-content"
             ++ (warning ? " [wBegin] min-content [wEnd]" : "")
-          | V2
+          | V2 =>
+            "[tBegin] min-content [tEnd] min-content min-content"
+            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
           | V1 =>
             "[tBegin] min-content [tEnd] min-content"
             ++ (warning ? " [wBegin] min-content [wEnd]" : "")
