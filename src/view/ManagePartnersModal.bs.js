@@ -17,6 +17,7 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var WithWidth = require("./components/WithWidth.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
@@ -288,7 +289,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                           
                         })));
               var partial_arg = state[/* suggestions */5];
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Addition Proposal")), Js_primitive.some(ViewCommon.text("Removal Proposal")), undefined, undefined, Js_primitive.some(React.createElement("form", {
+              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ReasonReact.element(undefined, undefined, WithWidth.make(/* SM */18586, ViewCommon.text("Addition Proposal"), ViewCommon.text("Add"), /* array */[]))), Js_primitive.some(ReasonReact.element(undefined, undefined, WithWidth.make(/* SM */18586, ViewCommon.text("Removal Proposal"), ViewCommon.text("Remove"), /* array */[]))), undefined, undefined, Js_primitive.some(React.createElement("form", {
                                       onSubmit: (function (param) {
                                           return ViewCommon.ignoreEvent(onSubmit, param);
                                         })

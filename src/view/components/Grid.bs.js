@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("../ViewCommon.bs.js");
@@ -34,16 +35,17 @@ function grid(variant, warning) {
         );
         break;
     case 1 : 
+    case 2 : 
         tmp = "\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n           " + (
           warning$1 ? "\" . warning warning warning .\"" : ""
         );
         break;
-    case 2 : 
+    case 3 : 
         tmp = "\n           \". title1 . title2 .\"\n           \". area3 . area4 .\"\n           \". area5 area5 area5 .\"\n           " + (
           warning$1 ? "\" . warning warning warning .\"" : ""
         );
         break;
-    case 3 : 
+    case 4 : 
         tmp = (
           warning$1 ? "\" . warning warning warning .\"" : ""
         ) + "\n              \". area1 . area2 .\"\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n              ";
@@ -63,11 +65,16 @@ function grid(variant, warning) {
         );
         break;
     case 2 : 
+        tmp$1 = "\n               \". tabs .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
+          warning$1 ? "\" . warning  .\"" : ""
+        );
+        break;
+    case 3 : 
         tmp$1 = "\n               \". title1 .\"\n               \". area3 . \"\n               \". area4 .\"\n               \". area5 .\"\n               " + (
           warning$1 ? "\" . warning .\"" : ""
         );
         break;
-    case 3 : 
+    case 4 : 
         tmp$1 = (
           warning$1 ? "\". warning  .\"" : ""
         ) + "\n                \". area1 .\"\n                \". area2 .\"\n                \". tabs .\"\n                \". area3 . \"\n                \". area4 .\"\n                ";
@@ -83,11 +90,12 @@ function grid(variant, warning) {
         break;
     case 1 : 
     case 2 : 
+    case 3 : 
         tmp$2 = "[tBegin] min-content [tEnd] min-content min-content" + (
           warning$1 ? " [wBegin] min-content [wEnd]" : ""
         );
         break;
-    case 3 : 
+    case 4 : 
         tmp$2 = (
           warning$1 ? "[wBegin] min-content [wEnd] " : ""
         ) + "min-content min-content [tBegin] min-content [tEnd] min-content min-content ";
@@ -104,8 +112,8 @@ function grid(variant, warning) {
                         /* :: */[
                           Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
                           /* :: */[
-                            Css.unsafe("gridTemplateRows", variant !== 2 ? (
-                                    variant >= 3 ? (
+                            Css.unsafe("gridTemplateRows", variant !== 3 ? (
+                                    variant >= 4 ? (
                                         warning$1 ? "[wBegin] min-content [wEnd] " : ""
                                       ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
                                         warning$1 ? " [wBegin] min-content [wEnd]" : ""
@@ -177,7 +185,15 @@ function mobileHidden(hidden) {
 }
 
 function title(variant) {
-  var match = variant === /* V4 */3;
+  var match = Belt_List.some(/* :: */[
+        /* V4 */4,
+        /* :: */[
+          /* V2t */2,
+          /* [] */0
+        ]
+      ], (function (v) {
+          return v === variant;
+        }));
   return Css.style(/* :: */[
               Css.fontFamily(Theme.oswald),
               /* :: */[
@@ -312,14 +328,24 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                         ReasonReact.element(undefined, undefined, MaterialUi_Tab.make(undefined, undefined, undefined, undefined, undefined, Js_primitive.some(Js_option.getWithDefault(null, title1)), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[])),
                         ReasonReact.element(undefined, undefined, MaterialUi_Tab.make(undefined, undefined, undefined, undefined, undefined, Js_primitive.some(Js_option.getWithDefault(null, title2)), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[]))
                       ]));
-              var variant = area1 !== undefined || area3 === undefined ? /* V4 */3 : (
+              var variant = area1 !== undefined || area3 === undefined ? /* V4 */4 : (
                   area4 !== undefined ? (
-                      area5 !== undefined ? /* V3 */2 : /* V2 */1
+                      area5 !== undefined ? /* V3 */3 : (
+                          title2 !== undefined ? /* V2t */2 : /* V2 */1
+                        )
                     ) : (
-                      area5 !== undefined ? /* V4 */3 : /* V1 */0
+                      area5 !== undefined ? /* V4 */4 : /* V1 */0
                     )
                 );
-              var match = variant === /* V4 */3;
+              var match = Belt_List.some(/* :: */[
+                    /* V4 */4,
+                    /* :: */[
+                      /* V2t */2,
+                      /* [] */0
+                    ]
+                  ], (function (v) {
+                      return v === variant;
+                    }));
               return React.createElement("div", {
                           className: grid(variant, warning)
                         }, warning !== undefined ? React.createElement("div", {
@@ -358,12 +384,28 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning, _child
                                     /* tuple */[
                                       area3,
                                       "area3",
-                                      mobileHidden(state[/* activeTab */0] !== 0 && variant === /* V4 */3)
+                                      mobileHidden(state[/* activeTab */0] !== 0 && Belt_List.some(/* :: */[
+                                                /* V4 */4,
+                                                /* :: */[
+                                                  /* V2t */2,
+                                                  /* [] */0
+                                                ]
+                                              ], (function (v) {
+                                                  return v === variant;
+                                                })))
                                     ],
                                     /* tuple */[
                                       area4,
                                       "area4",
-                                      mobileHidden(state[/* activeTab */0] !== 1 && variant === /* V4 */3)
+                                      mobileHidden(state[/* activeTab */0] !== 1 && Belt_List.some(/* :: */[
+                                                /* V4 */4,
+                                                /* :: */[
+                                                  /* V2t */2,
+                                                  /* [] */0
+                                                ]
+                                              ], (function (v) {
+                                                  return v === variant;
+                                                })))
                                     ],
                                     /* tuple */[
                                       area5,

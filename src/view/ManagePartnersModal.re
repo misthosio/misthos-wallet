@@ -326,8 +326,20 @@ let make =
       );
 
     <Grid
-      title1=("Addition Proposal" |> text)
-      title2=("Removal Proposal" |> text)
+      title1={
+        <WithWidth
+          breakPoint=`SM
+          beforeBreak=("Addition Proposal" |> text)
+          afterBreak=("Add" |> text)
+        />
+      }
+      title2={
+        <WithWidth
+          breakPoint=`SM
+          beforeBreak=("Removal Proposal" |> text)
+          afterBreak=("Remove" |> text)
+        />
+      }
       area3={
         <form onSubmit=(ignoreEvent(onSubmit))>
           <MTypography variant=`Body2>

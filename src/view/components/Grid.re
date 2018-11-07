@@ -12,6 +12,7 @@ let component = ReasonReact.reducerComponent("Grid");
 type variant =
   | V1
   | V2
+  | V2t
   | V3
   | V4;
 
@@ -36,6 +37,7 @@ module Styles = {
               ". title1 . title2 ."
               ". area3 . area4 ."
               |}
+          | V2t
           | V2 =>
             {|
               ". title1 . title2 ."
@@ -62,6 +64,7 @@ module Styles = {
           switch (variant) {
           | V4
           | V3
+          | V2t
           | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
           | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"
           },
@@ -75,6 +78,7 @@ module Styles = {
           | V3 =>
             "[tBegin] min-content [tEnd] auto min-content"
             ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          | V2t
           | V2
           | V1 =>
             "[tBegin] min-content [tEnd] auto"
@@ -96,6 +100,13 @@ module Styles = {
                 ". area3 . "
                 ". area4 ."
                 |}
+          | V2t =>
+            {|
+               ". tabs ."
+               ". area3 . "
+               ". area4 ."
+               |}
+            ++ (warning ? {|" . warning  ."|} : "")
           | V2 =>
             {|
                ". title1 ."
@@ -124,6 +135,7 @@ module Styles = {
           switch (variant) {
           | V4
           | V3
+          | V2t
           | V2
           | V1 => "[begin] 16px minmax(100px, 9fr) 16px [end]"
           },
@@ -138,6 +150,7 @@ module Styles = {
           | V3 =>
             "[tBegin] min-content [tEnd] min-content min-content"
             ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          | V2t
           | V2 =>
             "[tBegin] min-content [tEnd] min-content min-content"
             ++ (warning ? " [wBegin] min-content [wEnd]" : "")
@@ -165,7 +178,9 @@ module Styles = {
       textTransform(uppercase),
       marginBottom(px(4)),
       sm([display(inline)]),
-      xs([display(variant == V4 ? none : inline)]),
+      xs([
+        display(List.some([V4, V2t], v => v == variant) ? none : inline),
+      ]),
     ]);
   let tabs =
     style([
@@ -231,12 +246,13 @@ let make =
         </Tabs>
       );
     let variant =
-      switch (area1, area3, area4, area5) {
-      | (Some(_), Some(_), Some(_), _) => V4
-      | (None, Some(_), Some(_), None) => V2
-      | (None, Some(_), Some(_), Some(_)) => V3
-      | (None, Some(_), None, None) => V1
-      | (_, _, _, _) => V4
+      switch (title2, area1, area3, area4, area5) {
+      | (_, Some(_), Some(_), Some(_), _) => V4
+      | (Some(_), None, Some(_), Some(_), None) => V2t
+      | (_, None, Some(_), Some(_), None) => V2
+      | (_, None, Some(_), Some(_), Some(_)) => V3
+      | (_, None, Some(_), None, None) => V1
+      | (_, _, _, _, _) => V4
       };
     <div className=(Styles.grid(variant, warning))>
       (
@@ -263,12 +279,18 @@ let make =
             (
               area3,
               "area3",
-              Styles.mobileHidden(state.activeTab != 0 && variant == V4),
+              Styles.mobileHidden(
+                state.activeTab != 0
+                && List.some([V4, V2t], v => v == variant),
+              ),
             ),
             (
               area4,
               "area4",
-              Styles.mobileHidden(state.activeTab != 1 && variant == V4),
+              Styles.mobileHidden(
+                state.activeTab != 1
+                && List.some([V4, V2t], v => v == variant),
+              ),
             ),
             (area5, "area5", ""),
           |]
@@ -282,7 +304,9 @@ let make =
                | None => ReasonReact.null
                }
              ),
-          [|variant == V4 ? tabs : ReasonReact.null|],
+          [|
+            List.some([V4, V2t], v => v == variant) ? tabs : ReasonReact.null,
+          |],
         |]
         |> Array.concatMany
         |> ReasonReact.array
