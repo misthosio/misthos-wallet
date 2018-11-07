@@ -9,7 +9,7 @@
     "@ledgerhq/hw-transport-u2f": "4.24.0",
     "@material-ui/core": "3.2.2",
     "autosuggest-highlight": "3.1.1",
-    "bignumber.js": "7.0.1",
+    "bignumber.js": "8.0.1",
     "bip39": "2.5.0",
     "bitcoin-ops": "1.4.1",
     "bitcoinjs-lib": "4.0.2",
