@@ -40,6 +40,8 @@ let component = ReasonReact.reducerComponent("CreatePayout");
 
 module Styles = {
   open Css;
+  let ellipsis = style([textOverflow(ellipsis), overflow(hidden)]);
+  let maxHalfWidth = style([maxWidth(vw(50.0))]);
   let maxButton = style([color(Colors.clickableGray)]);
   let maxWidth = style([width(`percent(99.0))]);
   let cellHeight = style([height(px(49))]);
@@ -374,9 +376,13 @@ let make =
                 ++ Styles.noBorder
                 ++ " "
                 ++ Styles.cellHeight
+                ++ " "
+                ++ Styles.maxHalfWidth
               )
               padding=`None>
-              <MTypography variant=`Body2> (address |> text) </MTypography>
+              <MTypography className=Styles.ellipsis variant=`Body2>
+                (address |> text)
+              </MTypography>
               (
                 withRemoveBtn ?
                   <IconButton

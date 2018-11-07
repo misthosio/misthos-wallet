@@ -5,7 +5,7 @@ let component = ReasonReact.statelessComponent("index");
 let make = _children => {
   ...component,
   render: _ =>
-    <Layout mobileEnabled=true>
+    <Layout>
       <PublicHome onSignIn=(_e => Session.signIn() |> ignore) />
       <MisthosIs
         primary="Collaborative"

@@ -10,36 +10,51 @@ let component = ReasonReact.reducerComponent("Layout");
 
 module Styles = {
   open Css;
+  open BreakPoints;
   let flex_ = style([flex(1)]);
   let body = style([minHeight(px(0)), unsafe("gridArea", "body")]);
   let header = style([unsafe("gridArea", "header")]);
   let gap = (Theme.space(8) |> string_of_int) ++ "px";
-  let grid = mobileEnabled =>
+  let grid =
     style([
       display(grid),
-      minWidth(mobileEnabled ? px(0) : px(Theme.space(101))),
-      minHeight(mobileEnabled ? px(0) : px(Theme.space(88))),
-      height(vh(100.0)),
+      sm([
+        height(vh(100.0)),
+        unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
+      ]),
+      xs([
+        height(auto),
+        unsafe("gridTemplateRows", {j|[begin] min-content 1fr [end]|j}),
+      ]),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
-      unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
       unsafe("gridTemplateAreas", {|"header" "body" "."|}),
     ]);
-  let drawer = style([width(`px(440)), height(`percent(100.0))]);
+  let drawer =
+    style([
+      width(vw(80.0)),
+      maxWidth(`px(440)),
+      height(`percent(100.0)),
+    ]);
   let drawerPaper = style([height(`percent(100.0))]);
   let modalContent =
     style([
       height(`calc((`sub, `percent(100.0), `px(64)))),
       paddingBottom(px(Theme.space(8))),
     ]);
+  let modalToolbar =
+    style([position(sticky), top(px(0)), backgroundColor(Colors.white)]);
   let modal =
     style([
       BreakPoints.md([
         width(`vw(90.0)),
         height(`vh(90.0)),
+        minHeight(auto),
         margin2(~v=`vh(5.0), ~h=`vw(5.0)),
       ]),
       width(`percent(100.0)),
-      height(`percent(100.0)),
+      height(auto),
+      minHeight(`percent(100.0)),
+      position(absolute),
       focus([outlineStyle(`none)]),
     ]);
 };
@@ -49,7 +64,6 @@ let make =
       ~header=?,
       ~drawer: option(ReasonReact.reactElement)=?,
       ~modal=?,
-      ~mobileEnabled=false,
       children,
     ) => {
   ...component,
@@ -76,7 +90,7 @@ let make =
              let inner =
                ReasonReact.cloneElement(
                  <Paper className=Styles.modal>
-                   <Toolbar>
+                   <Toolbar className=Styles.modalToolbar>
                      <div className=Styles.flex_ />
                      (
                        switch (onClick) {
@@ -94,9 +108,15 @@ let make =
                  ~props={"id": "modal"},
                  [||],
                );
-             <Modal open_=true ?onBackdropClick ?onEscapeKeyDown>
-               inner
-             </Modal>;
+             <WithWidth
+               breakPoint=`SM
+               afterBreak=inner
+               beforeBreak={
+                 <Modal open_=true ?onBackdropClick ?onEscapeKeyDown>
+                   inner
+                 </Modal>
+               }
+             />;
            })
         |> Js.Option.getWithDefault(ReasonReact.null)
       );
@@ -132,11 +152,27 @@ let make =
           </Drawer>,
         )
       };
-    <div className=(Styles.grid(mobileEnabled))>
-      header
-      drawer
-      modalContainer
-      <div className=Styles.body> ...children </div>
-    </div>;
+    <WithWidth
+      breakPoint=`SM
+      beforeBreak={
+        <div className=Styles.grid>
+          header
+          drawer
+          modalContainer
+          <div className=Styles.body> ...children </div>
+        </div>
+      }
+      afterBreak=(
+        switch (modal) {
+        | None =>
+          <div className=Styles.grid>
+            header
+            drawer
+            <div className=Styles.body> ...children </div>
+          </div>
+        | Some(_) => modalContainer
+        }
+      )
+    />;
   },
 };

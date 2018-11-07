@@ -24,7 +24,18 @@ var link = Css.style(/* :: */[
       ]
     ]);
 
-var Styles = /* module */[/* link */link];
+var ellipsis = Css.style(/* :: */[
+      Css.textOverflow(Css.ellipsis),
+      /* :: */[
+        Css.overflow(Css.hidden),
+        /* [] */0
+      ]
+    ]);
+
+var Styles = /* module */[
+  /* link */link,
+  /* ellipsis */ellipsis
+];
 
 var component = ReasonReact.statelessComponent("ViewIncomeModal");
 
@@ -61,7 +72,7 @@ function make(viewData, _children) {
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Income Transaction Details")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, undefined, /* array */[date !== undefined ? ViewCommon.text("Transaction confirmed on " + (Js_primitive.valFromOption(date).toDateString() + " ")) : null])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[
                                               ViewCommon.text("Status: "),
                                               txStatus
-                                            ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Income Amount")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(amount) + " BTC")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Income Address")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(addresses$2)])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
+                                            ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Income Amount")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(amount) + " BTC")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Income Address")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(addresses$2)])), ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, ellipsis, undefined, undefined, undefined, undefined, /* array */[React.createElement("a", {
                                                     className: link,
                                                     href: explorerLink,
                                                     target: "_blank"

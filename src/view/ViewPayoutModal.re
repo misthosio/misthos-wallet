@@ -19,9 +19,10 @@ module Styles = {
       position(sticky),
       bottom(px(0)),
     ]);
-  let noBorder = style([borderColor(`transparent)]);
+  let noBorder = style([borderColor(`transparent), maxWidth(vw(50.0))]);
   let link =
     style([color(Colors.black), hover([color(Colors.misthosTeal)])]);
+  let ellipsis = style([textOverflow(ellipsis), overflow(hidden)]);
 };
 
 let make =
@@ -92,7 +93,7 @@ let make =
                MaterialUi.(
                  <TableRow key=(idx |> string_of_int)>
                    <TableCell className=Styles.noBorder padding=`None>
-                     <MTypography variant=`Body2>
+                     <MTypography className=Styles.ellipsis variant=`Body2>
                        (address |> text)
                      </MTypography>
                    </TableCell>
@@ -331,7 +332,7 @@ let make =
               <MTypography variant=`Title>
                 ("Transaction ID" |> text)
               </MTypography>
-              <MTypography variant=`Body2>
+              <MTypography className=Styles.ellipsis variant=`Body2>
                 <a className=Styles.link href=explorerLink target="_blank">
                   (txId |> text)
                 </a>

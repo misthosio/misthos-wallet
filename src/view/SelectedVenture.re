@@ -18,6 +18,13 @@ let component = ReasonReact.reducerComponent("SelectedVenture");
 
 module Styles = {
   open Css;
+  open BreakPoints;
+  let fabSpace =
+    style([
+      sm([width(px(Theme.space(8)))]),
+      xs([width(px(Theme.space(5)))]),
+    ]);
+
   let addressesButtonIcon =
     style([
       marginTop(px(Theme.space(2) * (-1))),
@@ -343,7 +350,7 @@ let make = (~viewData: ViewData.t, _children) => {
             variant=Aqua route=(Venture(viewData.ventureId, Receive))>
             ("RECEIVE" |> text)
           </MFabButton>
-          <div className=Css.(style([width(px(Theme.space(8)))])) />
+          <div className=Styles.fabSpace />
           <MFabButton
             variant=Orange route=(Venture(viewData.ventureId, CreatePayout))>
             ("PAY OUT" |> text)

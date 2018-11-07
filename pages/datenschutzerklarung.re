@@ -24,9 +24,7 @@ let environment = Environment.get();
 let make = _children => {
   ...component,
   render: _ =>
-    <Layout
-      header={<Header hrefLogo=(environment.webDomain ++ "/") />}
-      mobileEnabled=true>
+    <Layout header={<Header hrefLogo=(environment.webDomain ++ "/") />}>
       <Grid
         title1=(T.title |> text)
         area3={

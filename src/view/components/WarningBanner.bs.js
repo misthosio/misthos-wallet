@@ -26,28 +26,22 @@ function warning(inline) {
                         /* :: */[
                           Css.marginBottom(Css.px(inline ? Theme.space(3) : 0)),
                           /* :: */[
-                            Css.position(Css.sticky),
+                            Css.zIndex(10),
                             /* :: */[
-                              Css.zIndex(10),
-                              /* :: */[
-                                Css.top(Css.px(0)),
-                                /* :: */[
-                                  Css.selector("> a", /* :: */[
-                                        Css.color(Colors.white),
-                                        /* :: */[
-                                          Css.unsafe("textDecorationColor", Colors.uWhite),
-                                          /* :: */[
-                                            Css.hover(/* :: */[
-                                                  Css.color(Colors.misthosTeal),
-                                                  /* [] */0
-                                                ]),
-                                            /* [] */0
-                                          ]
-                                        ]
-                                      ]),
-                                  /* [] */0
-                                ]
-                              ]
+                              Css.selector("> a", /* :: */[
+                                    Css.color(Colors.white),
+                                    /* :: */[
+                                      Css.unsafe("textDecorationColor", Colors.uWhite),
+                                      /* :: */[
+                                        Css.hover(/* :: */[
+                                              Css.color(Colors.misthosTeal),
+                                              /* [] */0
+                                            ]),
+                                        /* [] */0
+                                      ]
+                                    ]
+                                  ]),
+                              /* [] */0
                             ]
                           ]
                         ]

@@ -33,7 +33,7 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, true, /* array */[
+              return ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("impressum")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, line("Misthos UG"), line("Friedrichstrasse 171"), line("D10117 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                         ViewCommon.text("Email: "),
                                                         React.createElement("a", {

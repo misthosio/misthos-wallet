@@ -22,6 +22,7 @@ var MFabButton = require("./components/MFabButton.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var BreakPoints = require("./BreakPoints.bs.js");
 var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -35,6 +36,20 @@ var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.j
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 
 var component = ReasonReact.reducerComponent("SelectedVenture");
+
+var fabSpace = Css.style(/* :: */[
+      BreakPoints.sm(/* :: */[
+            Css.width(Css.px(Theme.space(8))),
+            /* [] */0
+          ]),
+      /* :: */[
+        BreakPoints.xs(/* :: */[
+              Css.width(Css.px(Theme.space(5))),
+              /* [] */0
+            ]),
+        /* [] */0
+      ]
+    ]);
 
 var addressesButtonIcon = Css.style(/* :: */[
       Css.marginTop(Css.px(Caml_int32.imul(Theme.space(2), -1))),
@@ -95,6 +110,7 @@ var ledgerBacked = Css.style(/* :: */[
     ]);
 
 var Styles = /* module */[
+  /* fabSpace */fabSpace,
   /* addressesButtonIcon */addressesButtonIcon,
   /* atRiskAddressButtonIcon */atRiskAddressButtonIcon,
   /* settingsButtonIcon */settingsButtonIcon,
@@ -320,10 +336,7 @@ function make(viewData, _children) {
                                                 viewData[/* ventureId */0],
                                                 /* Receive */6
                                               ]), /* array */[ViewCommon.text("RECEIVE")])), React.createElement("div", {
-                                          className: Css.style(/* :: */[
-                                                Css.width(Css.px(Theme.space(8))),
-                                                /* [] */0
-                                              ])
+                                          className: fabSpace
                                         }), ReasonReact.element(undefined, undefined, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
                                                 viewData[/* ventureId */0],
                                                 /* CreatePayout */3
