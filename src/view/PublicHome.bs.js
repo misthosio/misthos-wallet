@@ -136,7 +136,7 @@ var title = Css.style(/* :: */[
               ]),
           /* :: */[
             BreakPoints.xs(/* :: */[
-                  Css.fontSize(Css.px(68)),
+                  Css.fontSize(Css.px(60)),
                   /* [] */0
                 ]),
             /* [] */0

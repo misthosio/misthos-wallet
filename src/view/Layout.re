@@ -18,10 +18,15 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      sm([height(vh(100.0))]),
-      xs([height(auto)]),
+      sm([
+        height(vh(100.0)),
+        unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
+      ]),
+      xs([
+        height(auto),
+        unsafe("gridTemplateRows", {j|[begin] min-content 1fr [end]|j}),
+      ]),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
-      unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
       unsafe("gridTemplateAreas", {|"header" "body" "."|}),
     ]);
   let drawer =

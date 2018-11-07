@@ -71,7 +71,7 @@ module Styles = {
       lineHeight(`abs(0.92)),
       lg([fontSize(px(124))]),
       sm([fontSize(px(72))]),
-      xs([fontSize(px(68))]),
+      xs([fontSize(px(60))]),
     ]);
 };
 
