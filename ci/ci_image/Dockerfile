@@ -5,7 +5,7 @@ RUN apt-get update && \
       apt-add-repository -y ppa:bitcoin/bitcoin && \
       apt-get update && \
       apt-get install -y bitcoind curl make gcc git build-essential g++ && \
-      curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
+      curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
       apt-get install -y nodejs && \
       apt-get clean
 
