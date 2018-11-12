@@ -19,11 +19,10 @@ module Styles = {
     style([display(`flex), flexDirection(column), alignItems(`center)]);
   let addressImage =
     style([sm([height(px(250))]), xs([height(px(200))])]);
-  let copyButton = style([sm([display(inline)]), xs([display(none)])]);
   let spinner =
     style([
       sm([height(px(297))]),
-      xs([height(px(219))]),
+      xs([height(px(259))]),
       display(`flex),
       flexDirection(`column),
       alignItems(center),
@@ -62,13 +61,12 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
       | _ => None
       };
 
-    let copyButton =
+    let copyButtonSM =
       state.address
       |> Utils.mapOption(address => {
            let button =
              ReasonReact.cloneElement(
-               <MaterialUi.IconButton
-                 className=("copy-btn " ++ Styles.copyButton)>
+               <MaterialUi.IconButton className="copy-btn">
                  Icons.copy
                </MaterialUi.IconButton>,
                ~props={"data-clipboard-text": address},
@@ -82,6 +80,19 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
            </MaterialUi.Tooltip>;
          })
       |> Js.Option.getWithDefault(ReasonReact.null);
+    let copyButtonXS =
+      state.address
+      |> Utils.mapOption(address =>
+           ReasonReact.cloneElement(
+             <MaterialUi.Button className="copy-btn">
+               (text("Copy Address"))
+             </MaterialUi.Button>,
+             ~props={"data-clipboard-text": address},
+             [||],
+           )
+         )
+      |> Js.Option.getWithDefault(ReasonReact.null);
+
     <Grid
       ?warning
       title1=("Receive BTC" |> text)
@@ -107,10 +118,24 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
                   />
                 }
               )
-              <MTypography variant=`Body2>
-                (state.address |> Js.Option.getWithDefault("") |> text)
-                copyButton
-              </MTypography>
+              <WithWidth
+                breakPoint=`SM
+                beforeBreak={
+                  <MTypography variant=`Body2>
+                    (state.address |> Js.Option.getWithDefault("") |> text)
+                    copyButtonSM
+                  </MTypography>
+                }
+                afterBreak=(
+                  [|
+                    <MTypography variant=`Body2>
+                      (state.address |> Js.Option.getWithDefault("") |> text)
+                    </MTypography>,
+                    copyButtonXS,
+                  |]
+                  |> ReasonReact.array
+                )
+              />
               <MButton onClick=(_e => send(GetIncomeAddress))>
                 (text("Generate new address"))
               </MButton>
