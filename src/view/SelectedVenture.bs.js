@@ -38,16 +38,39 @@ var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_Ico
 var component = ReasonReact.reducerComponent("SelectedVenture");
 
 var fabSpace = Css.style(/* :: */[
-      BreakPoints.sm(/* :: */[
-            Css.width(Css.px(Theme.space(8))),
-            /* [] */0
+      BreakPoints.xs(/* :: */[
+            Css.width(Css.px(0)),
+            /* :: */[
+              BreakPoints.sm(/* :: */[
+                    Css.width(Css.px(Theme.space(8))),
+                    /* [] */0
+                  ]),
+              /* [] */0
+            ]
+          ]),
+      /* [] */0
+    ]);
+
+var fabContainer = Css.style(/* :: */[
+      BreakPoints.xs(/* :: */[
+            Css.justifyContent(/* spaceBetween */516682146),
+            /* :: */[
+              Css.marginBottom(Css.px(Theme.space(2))),
+              /* [] */0
+            ]
           ]),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.width(Css.px(Theme.space(5))),
-              /* [] */0
+        BreakPoints.sm(/* :: */[
+              Css.justifyContent(/* flexStart */662439529),
+              /* :: */[
+                Css.marginBottom(Css.zero),
+                /* [] */0
+              ]
             ]),
-        /* [] */0
+        /* :: */[
+          Css.display(/* flex */-1010954439),
+          /* [] */0
+        ]
       ]
     ]);
 
@@ -111,6 +134,7 @@ var ledgerBacked = Css.style(/* :: */[
 
 var Styles = /* module */[
   /* fabSpace */fabSpace,
+  /* fabContainer */fabContainer,
   /* addressesButtonIcon */addressesButtonIcon,
   /* atRiskAddressButtonIcon */atRiskAddressButtonIcon,
   /* settingsButtonIcon */settingsButtonIcon,
@@ -328,10 +352,7 @@ function make(viewData, _children) {
                                                           return Router.clickToRoute(partial_arg$1, param);
                                                         }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.settings]))
                                             ])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */12][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */12][/* reserved */1]), /* array */[])))), Js_primitive.some(React.createElement("div", {
-                                      className: Css.style(/* :: */[
-                                            Css.display(/* flex */-1010954439),
-                                            /* [] */0
-                                          ])
+                                      className: fabContainer
                                     }, ReasonReact.element(undefined, undefined, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
                                                 viewData[/* ventureId */0],
                                                 /* Receive */6

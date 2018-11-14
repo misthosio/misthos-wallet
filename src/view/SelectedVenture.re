@@ -20,9 +20,15 @@ module Styles = {
   open Css;
   open BreakPoints;
   let fabSpace =
+    style([xs([width(px(0)), sm([width(px(Theme.space(8)))])])]);
+  let fabContainer =
     style([
-      sm([width(px(Theme.space(8)))]),
-      xs([width(px(Theme.space(5)))]),
+      xs([
+        justifyContent(`spaceBetween),
+        marginBottom(px(Theme.space(2))),
+      ]),
+      sm([justifyContent(`flexStart), marginBottom(zero)]),
+      display(`flex),
     ]);
 
   let addressesButtonIcon =
@@ -345,7 +351,7 @@ let make = (~viewData: ViewData.t, _children) => {
         </div>
       }
       area2={
-        <div className=Css.(style([display(`flex)]))>
+        <div className=Styles.fabContainer>
           <MFabButton
             variant=Aqua route=(Venture(viewData.ventureId, Receive))>
             ("RECEIVE" |> text)

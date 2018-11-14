@@ -262,8 +262,8 @@ let make =
                         className=Styles.switchContainer
                         container=true
                         direction=`Row
-                        alignItems=`Baseline>
-                        <Grid item=true xs=V8>
+                        alignItems=`Center>
+                        <Grid item=true sm=V7 xs=V12>
                           <FormControlLabel
                             control={
                               <Switch
@@ -275,7 +275,7 @@ let make =
                             label=("Degrading Multisig" |> text)
                           />
                         </Grid>
-                        <Grid item=true xs=V4>
+                        <Grid item=true sm=V5 xs=V12>
                           {
                             let value =
                               switch (sequence) {
