@@ -165,12 +165,12 @@ let make =
                     <TableRow key="header">
                       <TableCell>
                         <MTypography variant=`Body2>
-                          ("Number of Partners" |> text)
+                          ("NUMBER OF PARTNERS" |> text)
                         </MTypography>
                       </TableCell>
                       <TableCell>
                         <MTypography variant=`Body2>
-                          ("Signatures Required" |> text)
+                          ("SIGNATURES REQUIRED" |> text)
                         </MTypography>
                       </TableCell>
                     </TableRow>
