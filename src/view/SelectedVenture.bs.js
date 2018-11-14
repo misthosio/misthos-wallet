@@ -44,7 +44,7 @@ var fabSpace = Css.style(/* :: */[
           ]),
       /* :: */[
         BreakPoints.xs(/* :: */[
-              Css.width(Css.px(Theme.space(5))),
+              Css.width(Css.px(Theme.space(4))),
               /* [] */0
             ]),
         /* [] */0

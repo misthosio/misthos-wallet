@@ -22,7 +22,7 @@ module Styles = {
   let fabSpace =
     style([
       sm([width(px(Theme.space(8)))]),
-      xs([width(px(Theme.space(5)))]),
+      xs([width(px(Theme.space(4)))]),
     ]);
   let fabContainer =
     style([
