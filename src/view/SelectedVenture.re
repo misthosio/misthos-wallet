@@ -25,7 +25,11 @@ module Styles = {
       xs([width(px(Theme.space(5)))]),
     ]);
   let fabContainer =
-    style([sm([justifyContent(`flexStart)]), xs([justifyContent(`center)]), display(`flex)]);
+    style([
+      sm([justifyContent(`flexStart), marginBottom(zero)]),
+      xs([justifyContent(`center), marginBottom(px(Theme.space(2)))]),
+      display(`flex),
+    ]);
 
   let addressesButtonIcon =
     style([

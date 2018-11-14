@@ -54,12 +54,18 @@ var fabSpace = Css.style(/* :: */[
 var fabContainer = Css.style(/* :: */[
       BreakPoints.sm(/* :: */[
             Css.justifyContent(/* flexStart */662439529),
-            /* [] */0
+            /* :: */[
+              Css.marginBottom(Css.zero),
+              /* [] */0
+            ]
           ]),
       /* :: */[
         BreakPoints.xs(/* :: */[
               Css.justifyContent(/* center */98248149),
-              /* [] */0
+              /* :: */[
+                Css.marginBottom(Css.px(Theme.space(2))),
+                /* [] */0
+              ]
             ]),
         /* :: */[
           Css.display(/* flex */-1010954439),
