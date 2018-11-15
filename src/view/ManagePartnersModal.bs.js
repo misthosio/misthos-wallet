@@ -449,7 +449,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                   /* canSubmitProposal */text !== "",
                                   /* removeInputFrozen */state[/* removeInputFrozen */3],
                                   /* inputs : record */[
-                                    /* prospectId */text,
+                                    /* prospectId */$$String.lowercase(text),
                                     /* removePartnerId */init$1[/* removePartnerId */1]
                                   ],
                                   /* suggestions */state[/* suggestions */5],

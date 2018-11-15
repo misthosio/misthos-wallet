@@ -224,7 +224,7 @@ let make =
         canSubmitProposal: text != "",
         inputs: {
           ...state.inputs,
-          prospectId: text,
+          prospectId: text |> String.lowercase,
         },
       })
     | ProposePartner =>
