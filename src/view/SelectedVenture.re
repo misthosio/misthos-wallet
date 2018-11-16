@@ -20,14 +20,18 @@ module Styles = {
   open Css;
   open BreakPoints;
   let fabSpace =
-    style([xs([width(px(0)), sm([width(px(Theme.space(8)))])])]);
+    style([
+      sm([display(block)]),
+      xs([display(none)]),
+      width(px(Theme.space(8))),
+    ]);
   let fabContainer =
     style([
+      sm([justifyContent(`flexStart), marginBottom(zero)]),
       xs([
-        justifyContent(`spaceBetween),
+        justifyContent(`spaceAround),
         marginBottom(px(Theme.space(2))),
       ]),
-      sm([justifyContent(`flexStart), marginBottom(zero)]),
       display(`flex),
     ]);
 

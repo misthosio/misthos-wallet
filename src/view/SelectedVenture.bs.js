@@ -38,32 +38,35 @@ var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_Ico
 var component = ReasonReact.reducerComponent("SelectedVenture");
 
 var fabSpace = Css.style(/* :: */[
-      BreakPoints.xs(/* :: */[
-            Css.width(Css.px(0)),
-            /* :: */[
-              BreakPoints.sm(/* :: */[
-                    Css.width(Css.px(Theme.space(8))),
-                    /* [] */0
-                  ]),
-              /* [] */0
-            ]
+      BreakPoints.sm(/* :: */[
+            Css.display(Css.block),
+            /* [] */0
           ]),
-      /* [] */0
+      /* :: */[
+        BreakPoints.xs(/* :: */[
+              Css.display(Css.none),
+              /* [] */0
+            ]),
+        /* :: */[
+          Css.width(Css.px(Theme.space(8))),
+          /* [] */0
+        ]
+      ]
     ]);
 
 var fabContainer = Css.style(/* :: */[
-      BreakPoints.xs(/* :: */[
-            Css.justifyContent(/* spaceBetween */516682146),
+      BreakPoints.sm(/* :: */[
+            Css.justifyContent(/* flexStart */662439529),
             /* :: */[
-              Css.marginBottom(Css.px(Theme.space(2))),
+              Css.marginBottom(Css.zero),
               /* [] */0
             ]
           ]),
       /* :: */[
-        BreakPoints.sm(/* :: */[
-              Css.justifyContent(/* flexStart */662439529),
+        BreakPoints.xs(/* :: */[
+              Css.justifyContent(/* spaceAround */-485895757),
               /* :: */[
-                Css.marginBottom(Css.zero),
+                Css.marginBottom(Css.px(Theme.space(2))),
                 /* [] */0
               ]
             ]),
