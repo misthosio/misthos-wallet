@@ -42,7 +42,12 @@ module Styles = {
       paddingBottom(px(Theme.space(8))),
     ]);
   let modalToolbar =
-    style([position(sticky), top(px(0)), backgroundColor(Colors.white)]);
+    style([
+      position(sticky),
+      top(px(0)),
+      backgroundColor(Colors.white),
+      zIndex(1100),
+    ]);
   let modal =
     style([
       BreakPoints.md([

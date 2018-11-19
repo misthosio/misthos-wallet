@@ -127,7 +127,10 @@ var modalToolbar = Css.style(/* :: */[
         Css.top(Css.px(0)),
         /* :: */[
           Css.backgroundColor(Colors.white),
-          /* [] */0
+          /* :: */[
+            Css.zIndex(1100),
+            /* [] */0
+          ]
         ]
       ]
     ]);

@@ -19,6 +19,7 @@ var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var BreakPoints = require("./BreakPoints.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Transaction = require("./components/Transaction.bs.js");
@@ -142,18 +143,27 @@ var grid = Css.style(/* :: */[
 
 function header(warning) {
   return Css.style(/* :: */[
-              Css.borderBottom(Css.px(1), /* solid */12956715, Colors.devider),
+              BreakPoints.sm(/* :: */[
+                    Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
+                    /* [] */0
+                  ]),
               /* :: */[
-                Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
+                BreakPoints.xs(/* :: */[
+                      Css.padding2(Css.px(Theme.space(1)), Css.px(Theme.space(1))),
+                      /* [] */0
+                    ]),
                 /* :: */[
-                  Css.position(Css.sticky),
+                  Css.borderBottom(Css.px(1), /* solid */12956715, Colors.devider),
                   /* :: */[
-                    Css.zIndex(1),
+                    Css.position(Css.sticky),
                     /* :: */[
-                      Css.top(Css.px(warning ? Theme.space(4) : 0)),
+                      Css.zIndex(900),
                       /* :: */[
-                        Css.backgroundColor(Colors.white),
-                        /* [] */0
+                        Css.top(Css.px(warning ? Theme.space(4) : 0)),
+                        /* :: */[
+                          Css.backgroundColor(Colors.white),
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -163,8 +173,26 @@ function header(warning) {
 }
 
 var summary = Css.style(/* :: */[
-      Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
-      /* [] */0
+      BreakPoints.sm(/* :: */[
+            Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
+            /* [] */0
+          ]),
+      /* :: */[
+        BreakPoints.xs(/* :: */[
+              Css.padding2(Css.px(Theme.space(1)), Css.px(Theme.space(1))),
+              /* [] */0
+            ]),
+        /* :: */[
+          Css.maxWidth(Css.vw(40.0)),
+          /* :: */[
+            Css.overflow(Css.hidden),
+            /* :: */[
+              Css.textOverflow(Css.ellipsis),
+              /* [] */0
+            ]
+          ]
+        ]
+      ]
     ]);
 
 var details = Css.style(/* :: */[
@@ -178,13 +206,28 @@ var details = Css.style(/* :: */[
 var detailsGrid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        Css.gridGap(Css.px(Theme.space(3))),
+        BreakPoints.sm(/* :: */[
+              Css.gridGap(Css.px(Theme.space(3))),
+              /* :: */[
+                Css.padding4(Css.px(Theme.space(4)), Css.px(Theme.space(3)), Css.px(Theme.space(5)), Css.px(Theme.space(3))),
+                /* :: */[
+                  Css.unsafe("gridTemplateColumns", "[begin] 1fr 1fr [end]"),
+                  /* [] */0
+                ]
+              ]
+            ]),
         /* :: */[
-          Css.unsafe("gridTemplateColumns", "[begin] 1fr 1fr [end]"),
-          /* :: */[
-            Css.padding4(Css.px(Theme.space(4)), Css.px(Theme.space(3)), Css.px(Theme.space(5)), Css.px(Theme.space(3))),
-            /* [] */0
-          ]
+          BreakPoints.xs(/* :: */[
+                Css.gridGap(Css.px(Theme.space(1))),
+                /* :: */[
+                  Css.padding4(Css.px(Theme.space(1)), Css.px(Theme.space(1)), Css.px(Theme.space(2)), Css.px(Theme.space(1))),
+                  /* :: */[
+                    Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+                    /* [] */0
+                  ]
+                ]
+              ]),
+          /* [] */0
         ]
       ]
     ]);

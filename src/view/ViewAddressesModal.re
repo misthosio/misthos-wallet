@@ -76,6 +76,8 @@ let component = ReasonReact.reducerComponent("AddressesModal");
 
 module Styles = {
   open Css;
+  open BreakPoints;
+
   let chevron = rotate =>
     style([
       unsafe(
@@ -91,15 +93,22 @@ module Styles = {
     ]);
   let header = warning =>
     style([
+      sm([padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3)))]),
+      xs([padding2(~v=px(Theme.space(1)), ~h=px(Theme.space(1)))]),
       borderBottom(px(1), `solid, Colors.devider),
-      padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3))),
       position(sticky),
-      zIndex(1),
+      zIndex(900),
       top(px(warning ? Theme.space(4) : 0)),
       backgroundColor(Colors.white),
     ]);
   let summary =
-    style([padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3)))]);
+    style([
+      sm([padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3)))]),
+      xs([padding2(~v=px(Theme.space(1)), ~h=px(Theme.space(1)))]),
+      maxWidth(vw(40.0)),
+      overflow(hidden),
+      textOverflow(ellipsis),
+    ]);
   let details =
     style([
       unsafe("gridColumn", "begin / end"),
@@ -108,14 +117,26 @@ module Styles = {
   let detailsGrid =
     style([
       display(Css.grid),
-      gridGap(px(Theme.space(3))),
-      unsafe("gridTemplateColumns", "[begin] 1fr 1fr [end]"),
-      padding4(
-        ~right=px(Theme.space(3)),
-        ~left=px(Theme.space(3)),
-        ~top=px(Theme.space(4)),
-        ~bottom=px(Theme.space(5)),
-      ),
+      sm([
+        gridGap(px(Theme.space(3))),
+        padding4(
+          ~right=px(Theme.space(3)),
+          ~left=px(Theme.space(3)),
+          ~top=px(Theme.space(4)),
+          ~bottom=px(Theme.space(5)),
+        ),
+        unsafe("gridTemplateColumns", "[begin] 1fr 1fr [end]"),
+      ]),
+      xs([
+        gridGap(px(Theme.space(1))),
+        padding4(
+          ~right=px(Theme.space(1)),
+          ~left=px(Theme.space(1)),
+          ~top=px(Theme.space(1)),
+          ~bottom=px(Theme.space(2)),
+        ),
+        unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+      ]),
     ]);
   let changeAddress =
     style([color(Colors.grayedOut), textTransform(uppercase)]);
