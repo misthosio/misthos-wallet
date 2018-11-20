@@ -1,4 +1,4 @@
-FROM ubuntu:latest@sha256:195df22596b69cce2e4cba89ae44aae076e3e653ae261a8caad81f976d88416c
+FROM ubuntu:latest@sha256:886c96d54eaa055353c487c8abeb107e89e5e30aee15e97d7d39a64abbf0dbb0
 
 RUN apt-get update && \
       apt-get install -y software-properties-common && \
