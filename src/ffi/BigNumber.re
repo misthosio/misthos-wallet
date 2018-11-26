@@ -2,11 +2,13 @@ type t;
 
 module RoundingMode = {
   type t;
-  [@bs.module "bignumber.js"] [@bs.val] external ceil : t = "ROUND_CEIL";
-  [@bs.module "bignumber.js"] [@bs.val] external floor : t = "ROUND_FLOOR";
+  [@bs.module "bignumber.js/bignumber.js"] [@bs.val]
+  external ceil : t = "ROUND_CEIL";
+  [@bs.module "bignumber.js/bignumber.js"] [@bs.val]
+  external floor : t = "ROUND_FLOOR";
 };
 
-[@bs.module "bignumber.js"] [@bs.new]
+[@bs.module "bignumber.js/bignumber.js"] [@bs.new]
 external make : ([@bs.unwrap] [ | `String(string) | `Float(float)]) => t =
   "BigNumber";
 

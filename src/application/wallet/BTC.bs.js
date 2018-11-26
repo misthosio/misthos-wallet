@@ -4,7 +4,7 @@
 var BigNumber = require("../../ffi/BigNumber.bs.js");
 var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
-var BignumberJs = require("bignumber.js");
+var BignumberJs = require("bignumber.js/bignumber.js");
 
 function fromSatoshis(satoshis) {
   return new BignumberJs.BigNumber(Caml_int64.to_float(satoshis));
