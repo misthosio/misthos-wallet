@@ -25,7 +25,10 @@ function root(first) {
 }
 
 var text = Css.style(/* :: */[
-      Css.fontWeight(400),
+      Css.fontWeight(/* `num */[
+            5496390,
+            400
+          ]),
       /* :: */[
         Css.textTransform(Css.uppercase),
         /* [] */0

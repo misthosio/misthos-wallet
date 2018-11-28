@@ -29,7 +29,7 @@ module Styles = {
         },
       ),
       fontFamily(Theme.sourceSansPro),
-      fontWeight(400),
+      fontWeight(`num(400)),
       fontSize(px(12)),
       textTransform(uppercase),
       borderRadius(px(0)),
@@ -41,6 +41,6 @@ let make = (~status: status, ~label: string, _children) => {
   ...component,
   render: _self => {
     let label = text(label);
-    <MaterialUi.Chip className=(Styles.chip(status)) label />;
+    <MaterialUi.Chip className={Styles.chip(status)} label />;
   },
 };

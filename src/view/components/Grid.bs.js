@@ -35,106 +35,106 @@ function grid(variant, warning) {
         );
         break;
     case 1 : 
+        tmp = "\n               \". title1 .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
+          warning$1 ? "\" . warning  .\"" : ""
+        );
+        break;
     case 2 : 
-        tmp = "\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n           " + (
-          warning$1 ? "\" . warning warning warning .\"" : ""
+        tmp = "\n               \". tabs .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
+          warning$1 ? "\" . warning  .\"" : ""
         );
         break;
     case 3 : 
-        tmp = "\n           \". title1 . title2 .\"\n           \". area3 . area4 .\"\n           \". area5 area5 area5 .\"\n           " + (
-          warning$1 ? "\" . warning warning warning .\"" : ""
+        tmp = "\n               \". title1 .\"\n               \". area3 . \"\n               \". area4 .\"\n               \". area5 .\"\n               " + (
+          warning$1 ? "\" . warning .\"" : ""
         );
         break;
     case 4 : 
         tmp = (
-          warning$1 ? "\" . warning warning warning .\"" : ""
-        ) + "\n              \". area1 . area2 .\"\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n              ";
+          warning$1 ? "\". warning  .\"" : ""
+        ) + "\n                \". area1 .\"\n                \". area2 .\"\n                \". tabs .\"\n                \". area3 . \"\n                \". area4 .\"\n                ";
         break;
     
   }
   var tmp$1;
   switch (variant) {
     case 0 : 
-        tmp$1 = "\n              \". title1 .\"\n              \". area3 .\"\n              " + (
-          warning$1 ? "\". warning .\"" : ""
+        tmp$1 = "[tBegin] min-content [tEnd] min-content" + (
+          warning$1 ? " [wBegin] min-content [wEnd]" : ""
         );
         break;
     case 1 : 
-        tmp$1 = "\n               \". title1 .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
-          warning$1 ? "\" . warning  .\"" : ""
-        );
-        break;
     case 2 : 
-        tmp$1 = "\n               \". tabs .\"\n               \". area3 . \"\n               \". area4 .\"\n               " + (
-          warning$1 ? "\" . warning  .\"" : ""
-        );
-        break;
     case 3 : 
-        tmp$1 = "\n               \". title1 .\"\n               \". area3 . \"\n               \". area4 .\"\n               \". area5 .\"\n               " + (
-          warning$1 ? "\" . warning .\"" : ""
+        tmp$1 = "[tBegin] min-content [tEnd] min-content min-content" + (
+          warning$1 ? " [wBegin] min-content [wEnd]" : ""
         );
         break;
     case 4 : 
         tmp$1 = (
-          warning$1 ? "\". warning  .\"" : ""
-        ) + "\n                \". area1 .\"\n                \". area2 .\"\n                \". tabs .\"\n                \". area3 . \"\n                \". area4 .\"\n                ";
+          warning$1 ? "[wBegin] min-content [wEnd] " : ""
+        ) + "min-content min-content [tBegin] min-content [tEnd] min-content min-content ";
         break;
     
   }
   var tmp$2;
   switch (variant) {
     case 0 : 
-        tmp$2 = "[tBegin] min-content [tEnd] min-content" + (
-          warning$1 ? " [wBegin] min-content [wEnd]" : ""
+        tmp$2 = "\n              \". title1 .\"\n              \". area3 .\"\n              " + (
+          warning$1 ? "\". warning .\"" : ""
         );
         break;
     case 1 : 
     case 2 : 
+        tmp$2 = "\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n           " + (
+          warning$1 ? "\" . warning warning warning .\"" : ""
+        );
+        break;
     case 3 : 
-        tmp$2 = "[tBegin] min-content [tEnd] min-content min-content" + (
-          warning$1 ? " [wBegin] min-content [wEnd]" : ""
+        tmp$2 = "\n           \". title1 . title2 .\"\n           \". area3 . area4 .\"\n           \". area5 area5 area5 .\"\n           " + (
+          warning$1 ? "\" . warning warning warning .\"" : ""
         );
         break;
     case 4 : 
         tmp$2 = (
-          warning$1 ? "[wBegin] min-content [wEnd] " : ""
-        ) + "min-content min-content [tBegin] min-content [tEnd] min-content min-content ";
+          warning$1 ? "\" . warning warning warning .\"" : ""
+        ) + "\n              \". area1 . area2 .\"\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n              ";
         break;
     
   }
   return Css.style(/* :: */[
               Css.display(Css.grid),
               /* :: */[
-                BreakPoints.sm(/* :: */[
-                      Css.unsafe("gridGap", gapSM),
+                BreakPoints.xs(/* :: */[
+                      Css.unsafe("gridGap", gapXS),
                       /* :: */[
                         Css.unsafe("gridTemplateAreas", tmp),
                         /* :: */[
-                          Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
+                          Css.unsafe("gridTemplateColumns", "[begin] 16px minmax(100px, 9fr) 16px [end]"),
                           /* :: */[
-                            Css.unsafe("gridTemplateRows", variant !== 3 ? (
-                                    variant >= 4 ? (
-                                        warning$1 ? "[wBegin] min-content [wEnd] " : ""
-                                      ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
-                                        warning$1 ? " [wBegin] min-content [wEnd]" : ""
-                                      )
-                                  ) : "[tBegin] min-content [tEnd] auto min-content" + (
-                                    warning$1 ? " [wBegin] min-content [wEnd]" : ""
-                                  )),
+                            Css.unsafe("gridTemplateRows", tmp$1),
                             /* [] */0
                           ]
                         ]
                       ]
                     ]),
                 /* :: */[
-                  BreakPoints.xs(/* :: */[
-                        Css.unsafe("gridGap", gapXS),
+                  BreakPoints.sm(/* :: */[
+                        Css.unsafe("gridGap", gapSM),
                         /* :: */[
-                          Css.unsafe("gridTemplateAreas", tmp$1),
+                          Css.unsafe("gridTemplateAreas", tmp$2),
                           /* :: */[
-                            Css.unsafe("gridTemplateColumns", "[begin] 16px minmax(100px, 9fr) 16px [end]"),
+                            Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
                             /* :: */[
-                              Css.unsafe("gridTemplateRows", tmp$2),
+                              Css.unsafe("gridTemplateRows", variant !== 3 ? (
+                                      variant >= 4 ? (
+                                          warning$1 ? "[wBegin] min-content [wEnd] " : ""
+                                        ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
+                                          warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                                        )
+                                    ) : "[tBegin] min-content [tEnd] auto min-content" + (
+                                      warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                                    )),
                               /* [] */0
                             ]
                           ]
@@ -170,13 +170,13 @@ function area(area$1) {
 
 function mobileHidden(hidden) {
   return Css.style(/* :: */[
-              BreakPoints.sm(/* :: */[
-                    Css.display(Css.block),
+              BreakPoints.xs(/* :: */[
+                    Css.display(hidden ? Css.none : Css.block),
                     /* [] */0
                   ]),
               /* :: */[
-                BreakPoints.xs(/* :: */[
-                      Css.display(hidden ? Css.none : Css.block),
+                BreakPoints.sm(/* :: */[
+                      Css.display(Css.block),
                       /* [] */0
                     ]),
                 /* [] */0
@@ -201,7 +201,10 @@ function title(variant) {
                 /* :: */[
                   Css.fontSize(Css.px(30)),
                   /* :: */[
-                    Css.fontWeight(600),
+                    Css.fontWeight(/* `num */[
+                          5496390,
+                          600
+                        ]),
                     /* :: */[
                       Css.color(Colors.white),
                       /* :: */[
@@ -209,13 +212,13 @@ function title(variant) {
                         /* :: */[
                           Css.marginBottom(Css.px(4)),
                           /* :: */[
-                            BreakPoints.sm(/* :: */[
-                                  Css.display(Css.inline),
+                            BreakPoints.xs(/* :: */[
+                                  Css.display(match ? Css.none : Css.inline),
                                   /* [] */0
                                 ]),
                             /* :: */[
-                              BreakPoints.xs(/* :: */[
-                                    Css.display(match ? Css.none : Css.inline),
+                              BreakPoints.sm(/* :: */[
+                                    Css.display(Css.inline),
                                     /* [] */0
                                   ]),
                               /* [] */0
@@ -241,7 +244,10 @@ var tabs = Css.style(/* :: */[
             /* :: */[
               Css.fontSize(Css.px(30)),
               /* :: */[
-                Css.fontWeight(600),
+                Css.fontWeight(/* `num */[
+                      5496390,
+                      600
+                    ]),
                 /* :: */[
                   Css.color(Colors.white),
                   /* :: */[

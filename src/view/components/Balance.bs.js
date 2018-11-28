@@ -14,7 +14,10 @@ var component = ReasonReact.statelessComponent("Balance");
 var balance = Css.style(/* :: */[
       Css.fontFamily(Theme.sourceSansPro),
       /* :: */[
-        Css.fontWeight(600),
+        Css.fontWeight(/* `num */[
+              5496390,
+              600
+            ]),
         /* :: */[
           Css.fontSize(Css.px(92)),
           /* :: */[
@@ -38,7 +41,10 @@ var balance = Css.style(/* :: */[
     ]);
 
 var btc = Css.style(/* :: */[
-      Css.fontWeight(300),
+      Css.fontWeight(/* `num */[
+            5496390,
+            300
+          ]),
       /* [] */0
     ]);
 

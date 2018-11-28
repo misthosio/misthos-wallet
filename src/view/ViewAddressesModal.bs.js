@@ -143,13 +143,13 @@ var grid = Css.style(/* :: */[
 
 function header(warning) {
   return Css.style(/* :: */[
-              BreakPoints.sm(/* :: */[
-                    Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
+              BreakPoints.xs(/* :: */[
+                    Css.padding2(Css.px(Theme.space(1)), Css.px(Theme.space(1))),
                     /* [] */0
                   ]),
               /* :: */[
-                BreakPoints.xs(/* :: */[
-                      Css.padding2(Css.px(Theme.space(1)), Css.px(Theme.space(1))),
+                BreakPoints.sm(/* :: */[
+                      Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
                       /* [] */0
                     ]),
                 /* :: */[
@@ -173,13 +173,13 @@ function header(warning) {
 }
 
 var summary = Css.style(/* :: */[
-      BreakPoints.sm(/* :: */[
-            Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
+      BreakPoints.xs(/* :: */[
+            Css.padding2(Css.px(Theme.space(1)), Css.px(Theme.space(1))),
             /* [] */0
           ]),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.padding2(Css.px(Theme.space(1)), Css.px(Theme.space(1))),
+        BreakPoints.sm(/* :: */[
+              Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
               /* [] */0
             ]),
         /* :: */[
@@ -206,23 +206,23 @@ var details = Css.style(/* :: */[
 var detailsGrid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        BreakPoints.sm(/* :: */[
-              Css.gridGap(Css.px(Theme.space(3))),
+        BreakPoints.xs(/* :: */[
+              Css.gridGap(Css.px(Theme.space(1))),
               /* :: */[
-                Css.padding4(Css.px(Theme.space(4)), Css.px(Theme.space(3)), Css.px(Theme.space(5)), Css.px(Theme.space(3))),
+                Css.padding4(Css.px(Theme.space(1)), Css.px(Theme.space(1)), Css.px(Theme.space(2)), Css.px(Theme.space(1))),
                 /* :: */[
-                  Css.unsafe("gridTemplateColumns", "[begin] 1fr 1fr [end]"),
+                  Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
                   /* [] */0
                 ]
               ]
             ]),
         /* :: */[
-          BreakPoints.xs(/* :: */[
-                Css.gridGap(Css.px(Theme.space(1))),
+          BreakPoints.sm(/* :: */[
+                Css.gridGap(Css.px(Theme.space(3))),
                 /* :: */[
-                  Css.padding4(Css.px(Theme.space(1)), Css.px(Theme.space(1)), Css.px(Theme.space(2)), Css.px(Theme.space(1))),
+                  Css.padding4(Css.px(Theme.space(4)), Css.px(Theme.space(3)), Css.px(Theme.space(5)), Css.px(Theme.space(3))),
                   /* :: */[
-                    Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+                    Css.unsafe("gridTemplateColumns", "[begin] 1fr 1fr [end]"),
                     /* [] */0
                   ]
                 ]

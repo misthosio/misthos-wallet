@@ -2,12 +2,12 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var Glamor = require("glamor");
+var Emotion = require("emotion");
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
-var customScrollBar = Glamor.css({
+var customScrollBar = Emotion.css({
       "::-webkit-scrollbar-track": {
         borderLeft: "9px solid white",
         borderRight: "1px solid white",

@@ -8,6 +8,7 @@ var React = require("react");
 var Footer = require("../src/view/Footer.bs.js");
 var Header = require("../src/view/Header.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
+var PageLayout = require("../src/view/PageLayout.bs.js");
 var ScrollList = require("../src/view/components/ScrollList.bs.js");
 var ViewCommon = require("../src/view/ViewCommon.bs.js");
 var Environment = require("../src/web/Environment.bs.js");
@@ -15,7 +16,6 @@ var MTypography = require("../src/view/components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var DatenschutzText = require("../src/view/text/DatenschutzText.bs.js");
-var WithRoot = require("../src/web/withRoot");
 
 var component = ReasonReact.statelessComponent("datenshutzerklarung");
 
@@ -55,112 +55,112 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text(DatenschutzText.title)), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
-                                                className: ScrollList.containerStyles + (" " + Css.style(/* :: */[
-                                                        Css.paddingBottom(Css.px(Theme.space(4))),
-                                                        /* [] */0
-                                                      ]))
-                                              }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
-                                                        paragraph(DatenschutzText.section1),
-                                                        subheading(DatenschutzText.section2Heading),
-                                                        React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                      ViewCommon.text("Email: "),
-                                                                      React.createElement("a", {
-                                                                            href: "mailto:Contact@misthos.io"
-                                                                          }, ViewCommon.text("contact@misthos.io"))
-                                                                    ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                      ViewCommon.text("Link zum Impressum: "),
-                                                                      React.createElement("a", {
-                                                                            href: environment[/* webDomain */3] + "/impressum",
-                                                                            target: "_blank"
-                                                                          }, ViewCommon.text("https://www.misthos.io/impressum"))
-                                                                    ]))),
-                                                        subheading(DatenschutzText.section3Heading),
-                                                        wrapWithDiv(DatenschutzText.section3),
-                                                        subheading(DatenschutzText.section4Heading),
-                                                        paragraph(DatenschutzText.section4),
-                                                        subheading(DatenschutzText.section5Heading),
-                                                        wrapWithDiv(DatenschutzText.section5),
-                                                        subheading(DatenschutzText.section6Heading),
-                                                        paragraph(DatenschutzText.section6P1),
-                                                        paragraph(DatenschutzText.section6P2),
-                                                        paragraph(DatenschutzText.section6P3),
-                                                        paragraph(DatenschutzText.section6P4),
-                                                        paragraph(DatenschutzText.section6P5),
-                                                        paragraph(DatenschutzText.section6P6),
-                                                        subheading(DatenschutzText.section7Heading),
-                                                        paragraph(DatenschutzText.section7),
-                                                        subheading(DatenschutzText.section8Heading),
-                                                        paragraph(DatenschutzText.section8P1),
-                                                        paragraph(DatenschutzText.section8P2),
-                                                        subheading(DatenschutzText.section9Heading),
-                                                        paragraph(DatenschutzText.section9P1),
-                                                        paragraph(DatenschutzText.section9P2),
-                                                        subheading(DatenschutzText.section10Heading),
-                                                        paragraph(DatenschutzText.section10),
-                                                        subheading(DatenschutzText.section11Heading),
-                                                        paragraph(DatenschutzText.section11P1),
-                                                        paragraph(DatenschutzText.section11P2),
-                                                        paragraph(DatenschutzText.section11P3),
-                                                        paragraph(DatenschutzText.section11P4),
-                                                        paragraph(DatenschutzText.section11P5),
-                                                        subheading(DatenschutzText.section12Heading),
-                                                        paragraph(DatenschutzText.section12),
-                                                        subheading(DatenschutzText.section13Heading),
-                                                        paragraph(DatenschutzText.section13),
-                                                        subheading(DatenschutzText.section14Heading),
-                                                        paragraph(DatenschutzText.section14P1),
-                                                        paragraph(DatenschutzText.section14P2),
-                                                        paragraph(DatenschutzText.section14P3),
-                                                        wrapWithDiv(DatenschutzText.section14P4),
-                                                        subheading(DatenschutzText.section15Heading),
-                                                        paragraph(DatenschutzText.section15P1),
-                                                        paragraph(DatenschutzText.section15P2),
-                                                        paragraph(DatenschutzText.section15P3),
-                                                        subheading(DatenschutzText.section16Heading),
-                                                        paragraph(DatenschutzText.section16P1),
-                                                        paragraph(DatenschutzText.section16P2),
-                                                        subheading(DatenschutzText.section17Heading),
-                                                        wrapWithDiv(DatenschutzText.section17P1),
-                                                        paragraph(DatenschutzText.section17P2),
-                                                        paragraph(DatenschutzText.section17P3),
-                                                        wrapWithDiv(DatenschutzText.section17P4),
-                                                        wrapWithDiv(DatenschutzText.section17P5),
-                                                        wrapWithDiv(DatenschutzText.section17P6),
-                                                        subheading(DatenschutzText.section18Heading),
-                                                        paragraph(DatenschutzText.section18P1),
-                                                        paragraph(DatenschutzText.section18P2),
-                                                        paragraph(DatenschutzText.section18P3),
-                                                        paragraph(DatenschutzText.section18P4),
-                                                        paragraph(DatenschutzText.section18P5),
-                                                        paragraph(DatenschutzText.section18P6),
-                                                        paragraph(DatenschutzText.section18P7),
-                                                        subheading(DatenschutzText.section19Heading),
-                                                        wrapWithDiv(DatenschutzText.section19P1),
-                                                        paragraph(DatenschutzText.section19P2),
-                                                        subheading(DatenschutzText.section20Heading),
-                                                        paragraph(DatenschutzText.section20P1),
-                                                        paragraph(DatenschutzText.section20P2),
-                                                        paragraph(DatenschutzText.section20P3),
-                                                        paragraph(DatenschutzText.section20P4),
-                                                        paragraph(DatenschutzText.section20P5),
-                                                        paragraph(DatenschutzText.section20P6),
-                                                        wrapWithDiv(DatenschutzText.section20P7),
-                                                        paragraph(DatenschutzText.section20P8),
-                                                        wrapWithDiv(DatenschutzText.section20P9),
-                                                        paragraph(DatenschutzText.section20P10),
-                                                        wrapWithDiv(DatenschutzText.section20P11),
-                                                        subheading(DatenschutzText.section21Heading),
-                                                        paragraph(DatenschutzText.section21P1),
-                                                        wrapWithDiv(DatenschutzText.section21P2),
-                                                        paragraph(DatenschutzText.section21P3),
-                                                        paragraph(DatenschutzText.section21P4),
-                                                        wrapWithDiv(DatenschutzText.section21P6),
-                                                        wrapWithDiv(DatenschutzText.section22)
-                                                      ])))), undefined, undefined, undefined, /* array */[])),
-                              ReasonReact.element(undefined, undefined, Footer.make(/* array */[]))
-                            ]));
+              return ReasonReact.element(undefined, undefined, PageLayout.make(/* array */[ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, /* array */[
+                                        ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text(DatenschutzText.title)), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
+                                                          className: ScrollList.containerStyles + (" " + Css.style(/* :: */[
+                                                                  Css.paddingBottom(Css.px(Theme.space(4))),
+                                                                  /* [] */0
+                                                                ]))
+                                                        }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                                                  paragraph(DatenschutzText.section1),
+                                                                  subheading(DatenschutzText.section2Heading),
+                                                                  React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                                ViewCommon.text("Email: "),
+                                                                                React.createElement("a", {
+                                                                                      href: "mailto:Contact@misthos.io"
+                                                                                    }, ViewCommon.text("contact@misthos.io"))
+                                                                              ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                                ViewCommon.text("Link zum Impressum: "),
+                                                                                React.createElement("a", {
+                                                                                      href: environment[/* webDomain */3] + "/impressum",
+                                                                                      target: "_blank"
+                                                                                    }, ViewCommon.text("https://www.misthos.io/impressum"))
+                                                                              ]))),
+                                                                  subheading(DatenschutzText.section3Heading),
+                                                                  wrapWithDiv(DatenschutzText.section3),
+                                                                  subheading(DatenschutzText.section4Heading),
+                                                                  paragraph(DatenschutzText.section4),
+                                                                  subheading(DatenschutzText.section5Heading),
+                                                                  wrapWithDiv(DatenschutzText.section5),
+                                                                  subheading(DatenschutzText.section6Heading),
+                                                                  paragraph(DatenschutzText.section6P1),
+                                                                  paragraph(DatenschutzText.section6P2),
+                                                                  paragraph(DatenschutzText.section6P3),
+                                                                  paragraph(DatenschutzText.section6P4),
+                                                                  paragraph(DatenschutzText.section6P5),
+                                                                  paragraph(DatenschutzText.section6P6),
+                                                                  subheading(DatenschutzText.section7Heading),
+                                                                  paragraph(DatenschutzText.section7),
+                                                                  subheading(DatenschutzText.section8Heading),
+                                                                  paragraph(DatenschutzText.section8P1),
+                                                                  paragraph(DatenschutzText.section8P2),
+                                                                  subheading(DatenschutzText.section9Heading),
+                                                                  paragraph(DatenschutzText.section9P1),
+                                                                  paragraph(DatenschutzText.section9P2),
+                                                                  subheading(DatenschutzText.section10Heading),
+                                                                  paragraph(DatenschutzText.section10),
+                                                                  subheading(DatenschutzText.section11Heading),
+                                                                  paragraph(DatenschutzText.section11P1),
+                                                                  paragraph(DatenschutzText.section11P2),
+                                                                  paragraph(DatenschutzText.section11P3),
+                                                                  paragraph(DatenschutzText.section11P4),
+                                                                  paragraph(DatenschutzText.section11P5),
+                                                                  subheading(DatenschutzText.section12Heading),
+                                                                  paragraph(DatenschutzText.section12),
+                                                                  subheading(DatenschutzText.section13Heading),
+                                                                  paragraph(DatenschutzText.section13),
+                                                                  subheading(DatenschutzText.section14Heading),
+                                                                  paragraph(DatenschutzText.section14P1),
+                                                                  paragraph(DatenschutzText.section14P2),
+                                                                  paragraph(DatenschutzText.section14P3),
+                                                                  wrapWithDiv(DatenschutzText.section14P4),
+                                                                  subheading(DatenschutzText.section15Heading),
+                                                                  paragraph(DatenschutzText.section15P1),
+                                                                  paragraph(DatenschutzText.section15P2),
+                                                                  paragraph(DatenschutzText.section15P3),
+                                                                  subheading(DatenschutzText.section16Heading),
+                                                                  paragraph(DatenschutzText.section16P1),
+                                                                  paragraph(DatenschutzText.section16P2),
+                                                                  subheading(DatenschutzText.section17Heading),
+                                                                  wrapWithDiv(DatenschutzText.section17P1),
+                                                                  paragraph(DatenschutzText.section17P2),
+                                                                  paragraph(DatenschutzText.section17P3),
+                                                                  wrapWithDiv(DatenschutzText.section17P4),
+                                                                  wrapWithDiv(DatenschutzText.section17P5),
+                                                                  wrapWithDiv(DatenschutzText.section17P6),
+                                                                  subheading(DatenschutzText.section18Heading),
+                                                                  paragraph(DatenschutzText.section18P1),
+                                                                  paragraph(DatenschutzText.section18P2),
+                                                                  paragraph(DatenschutzText.section18P3),
+                                                                  paragraph(DatenschutzText.section18P4),
+                                                                  paragraph(DatenschutzText.section18P5),
+                                                                  paragraph(DatenschutzText.section18P6),
+                                                                  paragraph(DatenschutzText.section18P7),
+                                                                  subheading(DatenschutzText.section19Heading),
+                                                                  wrapWithDiv(DatenschutzText.section19P1),
+                                                                  paragraph(DatenschutzText.section19P2),
+                                                                  subheading(DatenschutzText.section20Heading),
+                                                                  paragraph(DatenschutzText.section20P1),
+                                                                  paragraph(DatenschutzText.section20P2),
+                                                                  paragraph(DatenschutzText.section20P3),
+                                                                  paragraph(DatenschutzText.section20P4),
+                                                                  paragraph(DatenschutzText.section20P5),
+                                                                  paragraph(DatenschutzText.section20P6),
+                                                                  wrapWithDiv(DatenschutzText.section20P7),
+                                                                  paragraph(DatenschutzText.section20P8),
+                                                                  wrapWithDiv(DatenschutzText.section20P9),
+                                                                  paragraph(DatenschutzText.section20P10),
+                                                                  wrapWithDiv(DatenschutzText.section20P11),
+                                                                  subheading(DatenschutzText.section21Heading),
+                                                                  paragraph(DatenschutzText.section21P1),
+                                                                  wrapWithDiv(DatenschutzText.section21P2),
+                                                                  paragraph(DatenschutzText.section21P3),
+                                                                  paragraph(DatenschutzText.section21P4),
+                                                                  wrapWithDiv(DatenschutzText.section21P6),
+                                                                  wrapWithDiv(DatenschutzText.section22)
+                                                                ])))), undefined, undefined, undefined, /* array */[])),
+                                        ReasonReact.element(undefined, undefined, Footer.make(/* array */[]))
+                                      ]))]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -169,9 +169,9 @@ function make(_children) {
         ];
 }
 
-var $$default = WithRoot.default(ReasonReact.wrapReasonForJs(component, (function (_jsProps) {
-            return make(/* array */[]);
-          })));
+var $$default = ReasonReact.wrapReasonForJs(component, (function (_jsProps) {
+        return make(/* array */[]);
+      }));
 
 var text = ViewCommon.text;
 

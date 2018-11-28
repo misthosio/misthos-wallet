@@ -40,13 +40,13 @@ var alignCenter = Css.style(/* :: */[
     ]);
 
 var addressImage = Css.style(/* :: */[
-      BreakPoints.sm(/* :: */[
-            Css.height(Css.px(250)),
+      BreakPoints.xs(/* :: */[
+            Css.height(Css.px(200)),
             /* [] */0
           ]),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.height(Css.px(200)),
+        BreakPoints.sm(/* :: */[
+              Css.height(Css.px(250)),
               /* [] */0
             ]),
         /* [] */0
@@ -54,13 +54,13 @@ var addressImage = Css.style(/* :: */[
     ]);
 
 var spinner = Css.style(/* :: */[
-      BreakPoints.sm(/* :: */[
-            Css.height(Css.px(297)),
+      BreakPoints.xs(/* :: */[
+            Css.height(Css.px(259)),
             /* [] */0
           ]),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.height(Css.px(259)),
+        BreakPoints.sm(/* :: */[
+              Css.height(Css.px(297)),
               /* [] */0
             ]),
         /* :: */[

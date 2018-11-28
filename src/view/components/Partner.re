@@ -15,13 +15,13 @@ module Styles = {
       height(px(lenght)),
       fontSize(px(24)),
       lineHeight(`abs(1.0)),
-      fontWeight(600),
+      fontWeight(`num(600)),
     ]);
   let primary = ex =>
     style([
       fontFamily(Theme.oswald),
       fontSize(px(16)),
-      fontWeight(600),
+      fontWeight(`num(600)),
       unsafe("letterSpacing", "0.7px"),
       textTransform(uppercase),
       whiteSpace(nowrap),
@@ -33,7 +33,7 @@ module Styles = {
     style([
       fontFamily(Theme.sourceSansPro),
       fontSize(px(16)),
-      fontWeight(300),
+      fontWeight(`num(300)),
       unsafe("letterSpacing", "0.5px"),
       color(ex ? Colors.grayedOut : Colors.black),
     ]);
@@ -69,10 +69,10 @@ let make =
         dense=true
         classes=[SecondaryAction(Styles.secondaryAction(status))]
         disableGutters=true
-        button=(onClick != None)
+        button={onClick != None}
         ?onClick>
         <Avatar className=Styles.avatar>
-          (userId.[0] |> String.make(1) |> String.uppercase |> text)
+          {userId.[0] |> String.make(1) |> String.uppercase |> text}
         </Avatar>
         <ListItemText
           classes=[
@@ -82,19 +82,19 @@ let make =
           primary
           ?secondary
         />
-        (
+        {
           switch (button, status, ex) {
           | (None, None, false) => ReasonReact.null
           | (None, Some(action), _) =>
             <ListItemSecondaryAction> action </ListItemSecondaryAction>
           | (_, _, true) =>
             <MTypography variant=`Body2 className=Styles.exPartnerStatus>
-              ("EX-PARTNER" |> text)
+              {"EX-PARTNER" |> text}
             </MTypography>
           | (Some(action), _, _) =>
             <ListItemSecondaryAction> action </ListItemSecondaryAction>
           }
-        )
+        }
       </ListItem>
     );
   },

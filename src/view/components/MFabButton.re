@@ -11,8 +11,8 @@ module Styles = {
   open BreakPoints;
   let button = (variant: variant) =>
     style([
-      sm([width(px(Theme.space(19))), height(px(Theme.space(19)))]),
       xs([width(px(Theme.space(16))), height(px(Theme.space(16)))]),
+      sm([width(px(Theme.space(19))), height(px(Theme.space(19)))]),
       borderRadius(px(Theme.space(19))),
       fontSize(px(16)),
       unsafe("boxShadow", "none"),
@@ -62,10 +62,10 @@ let make = (~variant, ~route, children) => {
   render: _self => {
     let href = Router.Config.routeToUrl(route);
     <MaterialUi.Button
-      className=(Styles.button(variant))
+      className={Styles.button(variant)}
       variant=`Fab
       focusRipple=false
-      onClick=(ignoreEvent(() => ReasonReact.Router.push(href)))>
+      onClick={ignoreEvent(() => ReasonReact.Router.push(href))}>
       children
     </MaterialUi.Button>;
   },

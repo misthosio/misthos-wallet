@@ -18,16 +18,16 @@ var arrowIcon = Icons.asDataUrl(Icons.arrowDownBig);
 var grid = Css.style(/* :: */[
       Css.height(Css.vh(95.0)),
       /* :: */[
-        BreakPoints.md(/* :: */[
-              Css.unsafe("gridTemplateAreas", "\n           \". .    line .   .\"\n           \". text line img .\"\n           \". .    line .   .\"\n           "),
+        BreakPoints.xs(/* :: */[
+              Css.unsafe("gridTemplateAreas", "\n           \". .    .\"\n           \". text .\"\n           \". img  .\"\n           \". .    .\"\n           "),
               /* :: */[
-                Css.unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
+                Css.unsafe("gridTemplateColumns", "0px 1fr 0px"),
                 /* :: */[
-                  Css.unsafe("gridTemplateRows", "auto min-content auto"),
+                  Css.unsafe("gridTemplateRows", "auto min-content min-content auto"),
                   /* :: */[
-                    Css.gridGap(Css.px(Theme.space(5))),
+                    Css.gridGap(Css.px(Theme.space(1))),
                     /* :: */[
-                      Css.display(Css.grid),
+                      Css.display(Css.none),
                       /* [] */0
                     ]
                   ]
@@ -35,16 +35,16 @@ var grid = Css.style(/* :: */[
               ]
             ]),
         /* :: */[
-          BreakPoints.xs(/* :: */[
-                Css.unsafe("gridTemplateAreas", "\n           \". .    .\"\n           \". text .\"\n           \". img  .\"\n           \". .    .\"\n           "),
+          BreakPoints.md(/* :: */[
+                Css.unsafe("gridTemplateAreas", "\n           \". .    line .   .\"\n           \". text line img .\"\n           \". .    line .   .\"\n           "),
                 /* :: */[
-                  Css.unsafe("gridTemplateColumns", "0px 1fr 0px"),
+                  Css.unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
                   /* :: */[
-                    Css.unsafe("gridTemplateRows", "auto min-content min-content auto"),
+                    Css.unsafe("gridTemplateRows", "auto min-content auto"),
                     /* :: */[
-                      Css.gridGap(Css.px(Theme.space(1))),
+                      Css.gridGap(Css.px(Theme.space(5))),
                       /* :: */[
-                        Css.display(Css.none),
+                        Css.display(Css.grid),
                         /* [] */0
                       ]
                     ]
@@ -124,13 +124,13 @@ var display2 = Css.style(/* :: */[
     ]);
 
 var display4 = Css.style(/* :: */[
-      BreakPoints.lg(/* :: */[
-            Css.fontSize(Css.px(80)),
+      BreakPoints.xs(/* :: */[
+            Css.fontSize(Css.px(65)),
             /* [] */0
           ]),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.fontSize(Css.px(65)),
+        BreakPoints.lg(/* :: */[
+              Css.fontSize(Css.px(80)),
               /* [] */0
             ]),
         /* :: */[

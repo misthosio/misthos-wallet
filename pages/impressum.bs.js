@@ -6,12 +6,12 @@ var React = require("react");
 var Footer = require("../src/view/Footer.bs.js");
 var Header = require("../src/view/Header.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
+var PageLayout = require("../src/view/PageLayout.bs.js");
 var ViewCommon = require("../src/view/ViewCommon.bs.js");
 var Environment = require("../src/web/Environment.bs.js");
 var MTypography = require("../src/view/components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
-var WithRoot = require("../src/web/withRoot");
 
 var component = ReasonReact.statelessComponent("impressum");
 
@@ -33,27 +33,27 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("impressum")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, line("Misthos UG"), line("Friedrichstrasse 171"), line("D10117 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                        ViewCommon.text("Email: "),
-                                                        React.createElement("a", {
-                                                              href: "mailto:Contact@misthos.io"
-                                                            }, ViewCommon.text("contact@misthos.io"))
-                                                      ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                        ViewCommon.text("Link zum Impressum: "),
-                                                        React.createElement("a", {
-                                                              href: environment[/* webDomain */3] + "/impressum",
-                                                              target: "_blank"
-                                                            }, ViewCommon.text("https://www.misthos.io/impressum"))
-                                                      ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                        ViewCommon.text("Link zur Datenschutzerklärung: "),
-                                                        React.createElement("a", {
-                                                              href: environment[/* webDomain */3] + "/datenschutzerklarung",
-                                                              target: "_blank"
-                                                            }, ViewCommon.text("https://www.misthos.io/datenschutzerklarung"))
-                                                      ])))), undefined, undefined, undefined, /* array */[])),
-                              ReasonReact.element(undefined, undefined, Footer.make(/* array */[]))
-                            ]));
+              return ReasonReact.element(undefined, undefined, PageLayout.make(/* array */[ReasonReact.element(undefined, undefined, Layout.make(Js_primitive.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, /* array */[
+                                        ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("impressum")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, line("Misthos UG"), line("Friedrichstrasse 171"), line("D10117 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                  ViewCommon.text("Email: "),
+                                                                  React.createElement("a", {
+                                                                        href: "mailto:Contact@misthos.io"
+                                                                      }, ViewCommon.text("contact@misthos.io"))
+                                                                ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                  ViewCommon.text("Link zum Impressum: "),
+                                                                  React.createElement("a", {
+                                                                        href: environment[/* webDomain */3] + "/impressum",
+                                                                        target: "_blank"
+                                                                      }, ViewCommon.text("https://www.misthos.io/impressum"))
+                                                                ])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                  ViewCommon.text("Link zur Datenschutzerklärung: "),
+                                                                  React.createElement("a", {
+                                                                        href: environment[/* webDomain */3] + "/datenschutzerklarung",
+                                                                        target: "_blank"
+                                                                      }, ViewCommon.text("https://www.misthos.io/datenschutzerklarung"))
+                                                                ])))), undefined, undefined, undefined, /* array */[])),
+                                        ReasonReact.element(undefined, undefined, Footer.make(/* array */[]))
+                                      ]))]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -62,9 +62,9 @@ function make(_children) {
         ];
 }
 
-var $$default = WithRoot.default(ReasonReact.wrapReasonForJs(component, (function (_jsProps) {
-            return make(/* array */[]);
-          })));
+var $$default = ReasonReact.wrapReasonForJs(component, (function (_jsProps) {
+        return make(/* array */[]);
+      }));
 
 var text = ViewCommon.text;
 

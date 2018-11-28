@@ -14,18 +14,18 @@ var component = ReasonReact.statelessComponent("MFabButton");
 
 function button(variant) {
   return Css.style(/* :: */[
-              BreakPoints.sm(/* :: */[
-                    Css.width(Css.px(Theme.space(19))),
+              BreakPoints.xs(/* :: */[
+                    Css.width(Css.px(Theme.space(16))),
                     /* :: */[
-                      Css.height(Css.px(Theme.space(19))),
+                      Css.height(Css.px(Theme.space(16))),
                       /* [] */0
                     ]
                   ]),
               /* :: */[
-                BreakPoints.xs(/* :: */[
-                      Css.width(Css.px(Theme.space(16))),
+                BreakPoints.sm(/* :: */[
+                      Css.width(Css.px(Theme.space(19))),
                       /* :: */[
-                        Css.height(Css.px(Theme.space(16))),
+                        Css.height(Css.px(Theme.space(19))),
                         /* [] */0
                       ]
                     ]),

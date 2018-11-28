@@ -38,13 +38,13 @@ var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_Ico
 var component = ReasonReact.reducerComponent("SelectedVenture");
 
 var fabSpace = Css.style(/* :: */[
-      BreakPoints.sm(/* :: */[
-            Css.display(Css.block),
+      BreakPoints.xs(/* :: */[
+            Css.display(Css.none),
             /* [] */0
           ]),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.display(Css.none),
+        BreakPoints.sm(/* :: */[
+              Css.display(Css.block),
               /* [] */0
             ]),
         /* :: */[
@@ -55,18 +55,18 @@ var fabSpace = Css.style(/* :: */[
     ]);
 
 var fabContainer = Css.style(/* :: */[
-      BreakPoints.sm(/* :: */[
-            Css.justifyContent(/* flexStart */662439529),
+      BreakPoints.xs(/* :: */[
+            Css.justifyContent(/* spaceAround */-485895757),
             /* :: */[
-              Css.marginBottom(Css.zero),
+              Css.marginBottom(Css.px(Theme.space(2))),
               /* [] */0
             ]
           ]),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.justifyContent(/* spaceAround */-485895757),
+        BreakPoints.sm(/* :: */[
+              Css.justifyContent(/* flexStart */662439529),
               /* :: */[
-                Css.marginBottom(Css.px(Theme.space(2))),
+                Css.marginBottom(Css.zero),
                 /* [] */0
               ]
             ]),

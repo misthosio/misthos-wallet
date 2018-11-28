@@ -51,7 +51,10 @@ function chip(status) {
                 /* :: */[
                   Css.fontFamily(Theme.sourceSansPro),
                   /* :: */[
-                    Css.fontWeight(400),
+                    Css.fontWeight(/* `num */[
+                          5496390,
+                          400
+                        ]),
                     /* :: */[
                       Css.fontSize(Css.px(12)),
                       /* :: */[

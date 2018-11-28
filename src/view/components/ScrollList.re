@@ -1,6 +1,6 @@
 include ViewCommon;
 
-[@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
+[@bs.module "emotion"] external cssUnsafe: Js.t({..}) => string = "css";
 
 module Styles = {
   open Css;
@@ -46,7 +46,7 @@ let component = ReasonReact.statelessComponent("ScrollList");
 let make = children => {
   ...component,
   render: _self =>
-    <div className=(Styles.scrollContainer ++ " " ++ Styles.customScrollBar)>
+    <div className={Styles.scrollContainer ++ " " ++ Styles.customScrollBar}>
       ...children
     </div>,
 };

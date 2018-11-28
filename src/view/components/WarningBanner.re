@@ -8,7 +8,7 @@ module Styles = {
     style([
       fontFamily(Theme.sourceSansPro),
       fontSize(px(14)),
-      fontWeight(700),
+      fontWeight(`num(700)),
       color(Colors.white),
       textTransform(uppercase),
       padding2(~h=px(inline ? Theme.space(3) : 0), ~v=px(Theme.space(1))),
@@ -29,7 +29,7 @@ module Styles = {
 let make = children => {
   ...component,
   render: _self =>
-    <div className=(Styles.warning(~inline=true) ++ " " ++ Styles.warningBg)>
+    <div className={Styles.warning(~inline=true) ++ " " ++ Styles.warningBg}>
       children
     </div>,
 };

@@ -49,18 +49,18 @@ var gap = String(Theme.space(8)) + "px";
 var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        BreakPoints.sm(/* :: */[
-              Css.height(Css.vh(100.0)),
+        BreakPoints.xs(/* :: */[
+              Css.height(Css.auto),
               /* :: */[
-                Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
+                Css.unsafe("gridTemplateRows", "[begin] min-content 1fr [end]"),
                 /* [] */0
               ]
             ]),
         /* :: */[
-          BreakPoints.xs(/* :: */[
-                Css.height(Css.auto),
+          BreakPoints.sm(/* :: */[
+                Css.height(Css.vh(100.0)),
                 /* :: */[
-                  Css.unsafe("gridTemplateRows", "[begin] min-content 1fr [end]"),
+                  Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
                   /* [] */0
                 ]
               ]),

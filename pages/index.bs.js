@@ -6,9 +6,9 @@ var Footer = require("../src/view/Footer.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
 var Session = require("../src/web/Session.bs.js");
 var MisthosIs = require("../src/view/components/MisthosIs.bs.js");
+var PageLayout = require("../src/view/PageLayout.bs.js");
 var PublicHome = require("../src/view/PublicHome.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var WithRoot = require("../src/web/withRoot");
 
 var component = ReasonReact.statelessComponent("index");
 
@@ -24,28 +24,28 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return ReasonReact.element(undefined, undefined, Layout.make(undefined, undefined, undefined, /* array */[
-                              ReasonReact.element(undefined, undefined, PublicHome.make((function (_e) {
-                                          Session.signIn(/* () */0);
-                                          return /* () */0;
-                                        }), /* array */[])),
-                              ReasonReact.element(undefined, undefined, MisthosIs.make("Collaborative", "Join a Venture or start your own. Propose and endorse decisions based on team consensus.", React.createElement("img", {
-                                            height: "480px",
-                                            src: "/static/img/misthos-gif-01-v03.gif",
-                                            width: "350px"
-                                          }), undefined, /* array */[])),
-                              ReasonReact.element(undefined, undefined, MisthosIs.make("Intuitive", "Focus on simplicity. Complete tasks quickly with an easy-to-use interface.", React.createElement("img", {
-                                            height: "480px",
-                                            src: "/static/img/misthos-gif-02-v01.gif",
-                                            width: "350px"
-                                          }), undefined, /* array */[])),
-                              ReasonReact.element(undefined, undefined, MisthosIs.make("Dynamic", "See all Venture activity instantaneously. Manage Partners and create payouts with ease.", React.createElement("img", {
-                                            height: "480px",
-                                            src: "/static/img/misthos-gif-03-v01.gif",
-                                            width: "350px"
-                                          }), true, /* array */[])),
-                              ReasonReact.element(undefined, undefined, Footer.make(/* array */[]))
-                            ]));
+              return ReasonReact.element(undefined, undefined, PageLayout.make(/* array */[ReasonReact.element(undefined, undefined, Layout.make(undefined, undefined, undefined, /* array */[
+                                        ReasonReact.element(undefined, undefined, PublicHome.make((function (_e) {
+                                                    Session.signIn(/* () */0);
+                                                    return /* () */0;
+                                                  }), /* array */[])),
+                                        ReasonReact.element(undefined, undefined, MisthosIs.make("Collaborative", "Join a Venture or start your own. Propose and endorse decisions based on team consensus.", React.createElement("img", {
+                                                      height: "480px",
+                                                      src: "/static/img/misthos-gif-01-v03.gif",
+                                                      width: "350px"
+                                                    }), undefined, /* array */[])),
+                                        ReasonReact.element(undefined, undefined, MisthosIs.make("Intuitive", "Focus on simplicity. Complete tasks quickly with an easy-to-use interface.", React.createElement("img", {
+                                                      height: "480px",
+                                                      src: "/static/img/misthos-gif-02-v01.gif",
+                                                      width: "350px"
+                                                    }), undefined, /* array */[])),
+                                        ReasonReact.element(undefined, undefined, MisthosIs.make("Dynamic", "See all Venture activity instantaneously. Manage Partners and create payouts with ease.", React.createElement("img", {
+                                                      height: "480px",
+                                                      src: "/static/img/misthos-gif-03-v01.gif",
+                                                      width: "350px"
+                                                    }), true, /* array */[])),
+                                        ReasonReact.element(undefined, undefined, Footer.make(/* array */[]))
+                                      ]))]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -54,9 +54,9 @@ function make(_children) {
         ];
 }
 
-var $$default = WithRoot.default(ReasonReact.wrapReasonForJs(component, (function (_jsProps) {
-            return make(/* array */[]);
-          })));
+var $$default = ReasonReact.wrapReasonForJs(component, (function (_jsProps) {
+        return make(/* array */[]);
+      }));
 
 exports.component = component;
 exports.make = make;

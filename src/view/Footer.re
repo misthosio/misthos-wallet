@@ -9,40 +9,6 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      md([
-        unsafe(
-          "gridTemplateAreas",
-          {|
-           ". . . . ."
-           ". footer1 footer2 footer3 ."
-           ". notice . . ."
-           ". . . . ."
-           |},
-        ),
-        unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 1fr 0px [end]"),
-        unsafe(
-          "gridTemplateRows",
-          "[begin] 0px min-content min-content 0px [end]",
-        ),
-      ]),
-      sm([
-        unsafe(
-          "gridTemplateAreas",
-          {|
-           ". . . ."
-           ". footer1 . ."
-           ". footer2 footer3 ."
-           ". notice notice ."
-           ". . . ."
-           |},
-        ),
-        unsafe(
-          "gridTemplateRows",
-          "[begin] 0px min-content min-content min-content 0px [end]",
-        ),
-        unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 0px [end]"),
-        gridGap(px(Theme.space(3))),
-      ]),
       xs([
         unsafe(
           "gridTemplateAreas",
@@ -55,6 +21,40 @@ module Styles = {
            ". . ."
            |},
         ),
+        sm([
+          unsafe(
+            "gridTemplateAreas",
+            {|
+           ". . . ."
+           ". footer1 . ."
+           ". footer2 footer3 ."
+           ". notice notice ."
+           ". . . ."
+           |},
+          ),
+          unsafe(
+            "gridTemplateRows",
+            "[begin] 0px min-content min-content min-content 0px [end]",
+          ),
+          unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 0px [end]"),
+          gridGap(px(Theme.space(3))),
+        ]),
+        md([
+          unsafe(
+            "gridTemplateAreas",
+            {|
+           ". . . . ."
+           ". footer1 footer2 footer3 ."
+           ". notice . . ."
+           ". . . . ."
+           |},
+          ),
+          unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 1fr 0px [end]"),
+          unsafe(
+            "gridTemplateRows",
+            "[begin] 0px min-content min-content 0px [end]",
+          ),
+        ]),
         unsafe(
           "gridTemplateRows",
           "[begin] 0px min-content min-content min-content min-content 0px [end]",
@@ -89,7 +89,7 @@ module Styles = {
       height(px(Theme.space(3))),
       marginBottom(px(12)),
       fontFamily(Theme.oswald),
-      fontWeight(600),
+      fontWeight(`num(600)),
       fontSize(px(14)),
       color(Colors.white),
       textDecoration(underline),
@@ -105,42 +105,42 @@ let make = _children => {
   render: _self => {
     let environment = Environment.get();
     <MaterialUi.MuiThemeProvider
-      theme=(`ObjectGeneric(Theme.theme(~dark=true, ()) |> Theme.toJsUnsafe))>
+      theme={`ObjectGeneric(Theme.theme(~dark=true, ()) |> Theme.toJsUnsafe)}>
       <div className=Styles.grid>
         <div className=Styles.bg />
-        <div className=(Styles.area("footer1"))>
-          <a className=Styles.logo href=(environment.webDomain ++ "/")>
+        <div className={Styles.area("footer1")}>
+          <a className=Styles.logo href={environment.webDomain ++ "/"}>
             Icons.misthosWordMark
           </a>
         </div>
-        <div className=(Styles.area("footer2"))>
+        <div className={Styles.area("footer2")}>
           <MTypography
             gutterTop=true gutterBottom=true color=`Primary variant=`Title>
-            ("Company" |> text)
+            {"Company" |> text}
           </MTypography>
-          <a className=Styles.link href=(environment.webDomain ++ "/faq")>
-            ("Frequently Asked Questions" |> text)
+          <a className=Styles.link href={environment.webDomain ++ "/faq"}>
+            {"Frequently Asked Questions" |> text}
           </a>
           <a className=Styles.link href="mailto:contact@misthos.io">
-            ("Contact us" |> text)
+            {"Contact us" |> text}
           </a>
           <a className=Styles.link href="mailto:jobs@misthos.io">
-            ("Jobs" |> text)
+            {"Jobs" |> text}
           </a>
           <a
             className=Styles.link
-            href=(environment.webDomain ++ "/datenschutzerklarung")>
-            ({js|Datenschutzerklärung|js} |> text)
+            href={environment.webDomain ++ "/datenschutzerklarung"}>
+            {{js|Datenschutzerklärung|js} |> text}
           </a>
           <a
-            className=Styles.link href=(environment.webDomain ++ "/impressum")>
-            ("Impressum" |> text)
+            className=Styles.link href={environment.webDomain ++ "/impressum"}>
+            {"Impressum" |> text}
           </a>
         </div>
-        <div className=(Styles.area("footer3"))>
+        <div className={Styles.area("footer3")}>
           <MTypography
             gutterTop=true gutterBottom=true color=`Primary variant=`Title>
-            ("Stay Connected" |> text)
+            {"Stay Connected" |> text}
           </MTypography>
           MaterialUi.(
             <form
@@ -148,7 +148,7 @@ let make = _children => {
               method="post"
               target="_blank">
               <Input type_="email" placeholder="Email Address" name="EMAIL" />
-              <Button type_="submit"> ("Sign Up" |> text) </Button>
+              <Button type_="submit"> {"Sign Up" |> text} </Button>
               <div className=Styles.social>
                 <a
                   className=Styles.socialIcon
@@ -170,7 +170,7 @@ let make = _children => {
           )
         </div>
         <div className=Styles.notice>
-          ({js|© Misthos 2018. All rights reserved.|js} |> text)
+          {{js|© Misthos 2018. All rights reserved.|js} |> text}
         </div>
       </div>
     </MaterialUi.MuiThemeProvider>;

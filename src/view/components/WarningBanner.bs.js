@@ -16,7 +16,10 @@ function warning(inline) {
               /* :: */[
                 Css.fontSize(Css.px(14)),
                 /* :: */[
-                  Css.fontWeight(700),
+                  Css.fontWeight(/* `num */[
+                        5496390,
+                        700
+                      ]),
                   /* :: */[
                     Css.color(Colors.white),
                     /* :: */[

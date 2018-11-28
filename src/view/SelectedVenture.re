@@ -21,17 +21,17 @@ module Styles = {
   open BreakPoints;
   let fabSpace =
     style([
-      sm([display(block)]),
       xs([display(none)]),
+      sm([display(block)]),
       width(px(Theme.space(8))),
     ]);
   let fabContainer =
     style([
-      sm([justifyContent(`flexStart), marginBottom(zero)]),
       xs([
         justifyContent(`spaceAround),
         marginBottom(px(Theme.space(2))),
       ]),
+      sm([justifyContent(`flexStart), marginBottom(zero)]),
       display(`flex),
     ]);
 
@@ -66,14 +66,16 @@ module Styles = {
 
 let updateLoggedInStatus = (partners, send) =>
   partners
-  |. List.keep((p: ViewData.partner) => p.joinedWallet == false)
-  |. List.forEach((p: ViewData.partner) =>
-       Js.Promise.(
-         p.hasLoggedIn
-         |> then_(known => send(SetHasLoggedIn(p.userId, known)) |> resolve)
-       )
-       |> ignore
-     );
+  ->(List.keep((p: ViewData.partner) => p.joinedWallet == false))
+  ->(
+      List.forEach((p: ViewData.partner) =>
+        Js.Promise.(
+          p.hasLoggedIn
+          |> then_(known => send(SetHasLoggedIn(p.userId, known)) |> resolve)
+        )
+        |> ignore
+      )
+    );
 
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
@@ -87,7 +89,7 @@ let make = (~viewData: ViewData.t, _children) => {
     | SetHasLoggedIn(userId, known) =>
       ReasonReact.Update({
         ...state,
-        loggedInStatus: state.loggedInStatus |. Map.set(userId, known),
+        loggedInStatus: state.loggedInStatus->(Map.set(userId, known)),
       })
     },
   didMount: ({send}) => updateLoggedInStatus(viewData.partners, send),
@@ -112,118 +114,126 @@ let make = (~viewData: ViewData.t, _children) => {
         <StatusChip status=Pending label="SYNC REQUIRED" />
       | (_, _, _, true) =>
         <MTypography variant=`Body2 className=Styles.ledgerBacked>
-          ("LEDGER BACKED" |> text)
+          {"LEDGER BACKED" |> text}
         </MTypography>
       | _ => ReasonReact.null
       };
     let alerts =
       List.concat(viewData.proposedAdditions, viewData.proposedRemovals)
-      |. List.keepMap((prospect: ViewData.partnerProcess) =>
-           prospect.canVote ?
-             Some(
-               <AlertListItem
-                 icon=(
-                   switch (prospect.data.processType) {
-                   | Removal => Minus
-                   | Addition => Plus
-                   }
-                 )
-                 onClick=(
-                   Router.clickToRoute(
-                     Venture(
-                       viewData.ventureId,
-                       Partner(prospect.processId),
-                     ),
-                   )
-                 )
-                 key=(prospect.processId |> ProcessId.toString)
-                 primary=(
-                   text(
-                     (
-                       switch (prospect.data.processType) {
-                       | Removal => "Removal"
-                       | Addition => "Addition"
-                       }
-                     )
-                     ++ " of '"
-                     ++ UserId.toString(prospect.data.userId)
-                     ++ "'",
-                   )
-                 )
-                 secondary=(
-                   text(
-                     "proposed by " ++ UserId.toString(prospect.proposedBy),
-                   )
-                 )
-               />,
-             ) :
-             None
-         );
+      ->(
+          List.keepMap((prospect: ViewData.partnerProcess) =>
+            prospect.canVote ?
+              Some(
+                <AlertListItem
+                  icon={
+                    switch (prospect.data.processType) {
+                    | Removal => Minus
+                    | Addition => Plus
+                    }
+                  }
+                  onClick={
+                    Router.clickToRoute(
+                      Venture(
+                        viewData.ventureId,
+                        Partner(prospect.processId),
+                      ),
+                    )
+                  }
+                  key={prospect.processId |> ProcessId.toString}
+                  primary={
+                    text(
+                      (
+                        switch (prospect.data.processType) {
+                        | Removal => "Removal"
+                        | Addition => "Addition"
+                        }
+                      )
+                      ++ " of '"
+                      ++ UserId.toString(prospect.data.userId)
+                      ++ "'",
+                    )
+                  }
+                  secondary={
+                    text(
+                      "proposed by " ++ UserId.toString(prospect.proposedBy),
+                    )
+                  }
+                />,
+              ) :
+              None
+          )
+        );
     let additions =
       viewData.proposedAdditions
-      |. List.map((partner: ViewData.partnerProcess) =>
-           <Partner
-             key=(ProcessId.toString(partner.processId) ++ "-prospect")
-             partnerId=partner.data.userId
-             onClick=(
-               Router.clickToRoute(
-                 Venture(viewData.ventureId, Partner(partner.processId)),
-               )
-             )
-             status=(
-               getPartnerStatusChip(
-                 ~endorsed=false,
-                 ~joinedWallet=false,
-                 ~hasLoggedIn=Some(false),
-               )
-             )
-           />
-         );
+      ->(
+          List.map((partner: ViewData.partnerProcess) =>
+            <Partner
+              key={ProcessId.toString(partner.processId) ++ "-prospect"}
+              partnerId={partner.data.userId}
+              onClick={
+                Router.clickToRoute(
+                  Venture(viewData.ventureId, Partner(partner.processId)),
+                )
+              }
+              status={
+                getPartnerStatusChip(
+                  ~endorsed=false,
+                  ~joinedWallet=false,
+                  ~hasLoggedIn=Some(false),
+                )
+              }
+            />
+          )
+        );
     let removals =
       viewData.proposedRemovals
-      |. List.map((partner: ViewData.partnerProcess) =>
-           <Partner
-             key=(UserId.toString(partner.data.userId) ++ "-prospect")
-             partnerId=partner.data.userId
-             onClick=(
-               Router.clickToRoute(
-                 Venture(viewData.ventureId, Partner(partner.processId)),
-               )
-             )
-             status=(
-               getPartnerStatusChip(
-                 ~endorsed=false,
-                 ~joinedWallet=false,
-                 ~hasLoggedIn=Some(false),
-               )
-             )
-           />
-         );
+      ->(
+          List.map((partner: ViewData.partnerProcess) =>
+            <Partner
+              key={UserId.toString(partner.data.userId) ++ "-prospect"}
+              partnerId={partner.data.userId}
+              onClick={
+                Router.clickToRoute(
+                  Venture(viewData.ventureId, Partner(partner.processId)),
+                )
+              }
+              status={
+                getPartnerStatusChip(
+                  ~endorsed=false,
+                  ~joinedWallet=false,
+                  ~hasLoggedIn=Some(false),
+                )
+              }
+            />
+          )
+        );
     let currentPartners =
       viewData.partners
-      |. List.map((partner: ViewData.partner) =>
-           <Partner
-             key=(partner.userId |> UserId.toString)
-             partnerId=partner.userId
-             name=?partner.name
-             onClick=(
-               Router.clickToRoute(
-                 Venture(viewData.ventureId, Partner(partner.processId)),
-               )
-             )
-             status=(
-               getPartnerStatusChip(
-                 ~ledgerBacked=
-                   viewData.ledgerBacked |. Set.has(partner.userId),
-                 ~endorsed=true,
-                 ~joinedWallet=partner.joinedWallet,
-                 ~hasLoggedIn=loggedInStatus |. Map.get(partner.userId),
-               )
-             )
-           />
-         );
+      ->(
+          List.map((partner: ViewData.partner) =>
+            <Partner
+              key={partner.userId |> UserId.toString}
+              partnerId={partner.userId}
+              name=?{partner.name}
+              onClick={
+                Router.clickToRoute(
+                  Venture(viewData.ventureId, Partner(partner.processId)),
+                )
+              }
+              status={
+                getPartnerStatusChip(
+                  ~ledgerBacked=
+                    viewData.ledgerBacked->(Set.has(partner.userId)),
+                  ~endorsed=true,
+                  ~joinedWallet=partner.joinedWallet,
+                  ~hasLoggedIn=loggedInStatus->(Map.get(partner.userId)),
+                )
+              }
+            />
+          )
+        );
     let stickyHeader = (~first=false, header) => [
-      <MListSubheader first> (header |> text) </MListSubheader>,
+      <MListSubheader first> {header |> text} </MListSubheader>,
     ];
     let partners = {
       let showAdditionsHeader = List.length(additions) != 0;
@@ -236,7 +246,7 @@ let make = (~viewData: ViewData.t, _children) => {
               stickyHeader(~first=true, "Proposed Addition") : [],
             additions,
             showRemovalsHeader ?
-              stickyHeader(~first=! showAdditionsHeader, "Proposed Removal") :
+              stickyHeader(~first=!showAdditionsHeader, "Proposed Removal") :
               [],
             removals,
             showAdditionsHeader || showRemovalsHeader ?
@@ -250,30 +260,32 @@ let make = (~viewData: ViewData.t, _children) => {
       ReasonReact.array(
         List.toArray(
           viewData.payoutsPendingBroadcast
-          |. List.map(
-               (
-                 {proposedBy, processId, data: {summary}}: ViewData.payoutProcess,
-               ) =>
-               <AlertListItem
-                 icon=ArrowUp
-                 onClick=(
-                   Router.clickToRoute(
-                     Venture(viewData.ventureId, Payout(processId)),
-                   )
-                 )
-                 key=(processId |> ProcessId.toString)
-                 primary=(
-                   text(
-                     "Payout of "
-                     ++ BTC.format(summary.spentWithFees)
-                     ++ " BTC",
-                   )
-                 )
-                 secondary=(
-                   text("proposed by " ++ UserId.toString(proposedBy))
-                 )
-               />
-             ),
+          ->(
+              List.map(
+                (
+                  {proposedBy, processId, data: {summary}}: ViewData.payoutProcess,
+                ) =>
+                <AlertListItem
+                  icon=ArrowUp
+                  onClick={
+                    Router.clickToRoute(
+                      Venture(viewData.ventureId, Payout(processId)),
+                    )
+                  }
+                  key={processId |> ProcessId.toString}
+                  primary={
+                    text(
+                      "Payout of "
+                      ++ BTC.format(summary.spentWithFees)
+                      ++ " BTC",
+                    )
+                  }
+                  secondary={
+                    text("proposed by " ++ UserId.toString(proposedBy))
+                  }
+                />
+              )
+            ),
         ),
       );
     let transactions =
@@ -284,115 +296,119 @@ let make = (~viewData: ViewData.t, _children) => {
             let confirmed = viewData.confirmedTxs;
             List.concatMany([|
               unconfirmed
-              |. List.mapWithIndex((iter, tx: ViewData.txData) => {
-                   let (txType, primary) =
-                     switch (tx.txType) {
-                     | Payout => (Transaction.Payout, "unconfirmed payout")
-                     | Income => (Transaction.Income, "unconfirmed income")
-                     };
-                   <Transaction
-                     txType
-                     primary
-                     amount=tx.amount
-                     date=tx.date
-                     onClick=(Router.clickToRoute(tx.detailsLink))
-                     key=(iter |> string_of_int)
-                   />;
-                 }),
+              ->(
+                  List.mapWithIndex((iter, tx: ViewData.txData) => {
+                    let (txType, primary) =
+                      switch (tx.txType) {
+                      | Payout => (Transaction.Payout, "unconfirmed payout")
+                      | Income => (Transaction.Income, "unconfirmed income")
+                      };
+                    <Transaction
+                      txType
+                      primary
+                      amount={tx.amount}
+                      date={tx.date}
+                      onClick={Router.clickToRoute(tx.detailsLink)}
+                      key={iter |> string_of_int}
+                    />;
+                  })
+                ),
               confirmed
-              |. List.mapWithIndex((iter, tx: ViewData.txData) => {
-                   let (txType, primary) =
-                     switch (tx.txType) {
-                     | Payout => (Transaction.Payout, "payout")
-                     | Income => (Transaction.Income, "income")
-                     };
-                   <Transaction
-                     txType
-                     primary
-                     amount=tx.amount
-                     date=tx.date
-                     onClick=(Router.clickToRoute(tx.detailsLink))
-                     key=(string_of_int(iter + List.length(unconfirmed)))
-                   />;
-                 }),
+              ->(
+                  List.mapWithIndex((iter, tx: ViewData.txData) => {
+                    let (txType, primary) =
+                      switch (tx.txType) {
+                      | Payout => (Transaction.Payout, "payout")
+                      | Income => (Transaction.Income, "income")
+                      };
+                    <Transaction
+                      txType
+                      primary
+                      amount={tx.amount}
+                      date={tx.date}
+                      onClick={Router.clickToRoute(tx.detailsLink)}
+                      key={string_of_int(iter + List.length(unconfirmed))}
+                    />;
+                  })
+                ),
             |]);
           },
         ),
       );
     <Grid
       ?warning
-      title1=("Partners" |> text)
-      title2=("Transactions" |> text)
+      title1={"Partners" |> text}
+      title2={"Transactions" |> text}
       area1={
         <div>
           <MTypography variant=`Title>
-            (viewData.ventureName |> text)
+            {viewData.ventureName |> text}
             <MaterialUi.IconButton
-              className=(
+              className={
                 viewData.atRiskWarning ?
                   Styles.atRiskAddressButtonIcon : Styles.addressesButtonIcon
-              )
-              onClick=(
+              }
+              onClick={
                 Router.clickToRoute(Venture(viewData.ventureId, Addresses))
-              )>
+              }>
               Icons.clock
             </MaterialUi.IconButton>
             <MaterialUi.IconButton
-              className=(
+              className={
                 viewData.keyRotationWarning ?
                   Styles.atRiskSettingsButtonIcon : Styles.settingsButtonIcon
-              )
-              onClick=(
+              }
+              onClick={
                 Router.clickToRoute(Venture(viewData.ventureId, Settings))
-              )>
+              }>
               Icons.settings
             </MaterialUi.IconButton>
           </MTypography>
           <Balance
-            currentSpendable=viewData.balance.currentSpendable
-            reserved=viewData.balance.reserved
+            currentSpendable={viewData.balance.currentSpendable}
+            reserved={viewData.balance.reserved}
           />
         </div>
       }
       area2={
         <div className=Styles.fabContainer>
           <MFabButton
-            variant=Aqua route=(Venture(viewData.ventureId, Receive))>
-            ("RECEIVE" |> text)
+            variant=Aqua route={Venture(viewData.ventureId, Receive)}>
+            {"RECEIVE" |> text}
           </MFabButton>
           <div className=Styles.fabSpace />
           <MFabButton
-            variant=Orange route=(Venture(viewData.ventureId, CreatePayout))>
-            ("PAY OUT" |> text)
+            variant=Orange route={Venture(viewData.ventureId, CreatePayout)}>
+            {"PAY OUT" |> text}
           </MFabButton>
         </div>
       }
       area3={
         <div className=ScrollList.containerStyles>
-          (
+          {
             switch (viewData.readOnly) {
             | true =>
               <b>
-                (
+                {
                   text(
                     "YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY",
                   )
-                )
+                }
               </b>
             | _ => ReasonReact.null
             }
-          )
+          }
           <ScrollList>
             <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
           </ScrollList>
           <MButton
             fullWidth=true
-            onClick=(
+            onClick={
               Router.clickToRoute(
                 Venture(viewData.ventureId, ManagePartners),
               )
-            )>
-            ("Add or Remove Partners" |> text)
+            }>
+            {"Add or Remove Partners" |> text}
           </MButton>
         </div>
       }

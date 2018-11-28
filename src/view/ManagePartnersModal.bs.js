@@ -63,7 +63,10 @@ var autoCompleteContianerOverflow = Css.style(/* :: */[
 var stepIconText = Css.style(/* :: */[
       Css.fontFamily(Theme.sourceSansPro),
       /* :: */[
-        Css.fontWeight(600),
+        Css.fontWeight(/* `num */[
+              5496390,
+              600
+            ]),
         /* :: */[
           Css.fontSize(Css.px(18)),
           /* :: */[
@@ -180,7 +183,10 @@ function renderSuggestion(suggestion, vals) {
                                 return React.createElement("span", {
                                             key: String(index),
                                             className: Css.style(/* :: */[
-                                                  Css.fontWeight(600),
+                                                  Css.fontWeight(/* `num */[
+                                                        5496390,
+                                                        600
+                                                      ]),
                                                   /* [] */0
                                                 ])
                                           }, ViewCommon.text(part.text));
@@ -188,7 +194,10 @@ function renderSuggestion(suggestion, vals) {
                                 return React.createElement("strong", {
                                             key: String(index),
                                             className: Css.style(/* :: */[
-                                                  Css.fontWeight(300),
+                                                  Css.fontWeight(/* `num */[
+                                                        5496390,
+                                                        300
+                                                      ]),
                                                   /* [] */0
                                                 ])
                                           }, ViewCommon.text(part.text));

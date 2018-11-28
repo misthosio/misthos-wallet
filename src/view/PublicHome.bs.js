@@ -18,18 +18,18 @@ var component = ReasonReact.statelessComponent("PublicHome");
 var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        BreakPoints.md(/* :: */[
-              Css.height(/* `vh */[
-                    26418,
-                    90.0
-                  ]),
+        BreakPoints.xs(/* :: */[
+              Css.height(/* auto */-1065951377),
               /* :: */[
-                Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". title title .\"\n           \". sub button .\"\n           \". . . .\"\n           "),
+                Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
                 /* :: */[
-                  Css.unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
+                  Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". title .\"\n           \". sub .\"\n           \". button .\"\n           \". . .\"\n           "),
                   /* :: */[
-                    Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content auto"),
-                    /* [] */0
+                    Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content min-content auto"),
+                    /* :: */[
+                      Css.gridGap(Css.px(Theme.space(2))),
+                      /* [] */0
+                    ]
                   ]
                 ]
               ]
@@ -49,18 +49,18 @@ var grid = Css.style(/* :: */[
                 ]
               ]),
           /* :: */[
-            BreakPoints.xs(/* :: */[
-                  Css.height(/* auto */-1065951377),
+            BreakPoints.md(/* :: */[
+                  Css.height(/* `vh */[
+                        26418,
+                        90.0
+                      ]),
                   /* :: */[
-                    Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
+                    Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". title title .\"\n           \". sub button .\"\n           \". . . .\"\n           "),
                     /* :: */[
-                      Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". title .\"\n           \". sub .\"\n           \". button .\"\n           \". . .\"\n           "),
+                      Css.unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
                       /* :: */[
-                        Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content min-content auto"),
-                        /* :: */[
-                          Css.gridGap(Css.px(Theme.space(2))),
-                          /* [] */0
-                        ]
+                        Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content auto"),
+                        /* [] */0
                       ]
                     ]
                   ]
@@ -87,13 +87,13 @@ var logo = Css.style(/* :: */[
         /* :: */[
           Css.alignSelf(/* stretch */-162316795),
           /* :: */[
-            BreakPoints.sm(/* :: */[
-                  Css.unsafe("backgroundSize", "auto 100%"),
+            BreakPoints.xs(/* :: */[
+                  Css.unsafe("backgroundSize", "auto 50%"),
                   /* [] */0
                 ]),
             /* :: */[
-              BreakPoints.xs(/* :: */[
-                    Css.unsafe("backgroundSize", "auto 50%"),
+              BreakPoints.sm(/* :: */[
+                    Css.unsafe("backgroundSize", "auto 100%"),
                     /* [] */0
                   ]),
               /* :: */[
@@ -125,8 +125,8 @@ var title = Css.style(/* :: */[
             0.92
           ]),
       /* :: */[
-        BreakPoints.lg(/* :: */[
-              Css.fontSize(Css.px(124)),
+        BreakPoints.xs(/* :: */[
+              Css.fontSize(Css.px(60)),
               /* [] */0
             ]),
         /* :: */[
@@ -135,8 +135,8 @@ var title = Css.style(/* :: */[
                 /* [] */0
               ]),
           /* :: */[
-            BreakPoints.xs(/* :: */[
-                  Css.fontSize(Css.px(60)),
+            BreakPoints.lg(/* :: */[
+                  Css.fontSize(Css.px(124)),
                   /* [] */0
                 ]),
             /* [] */0

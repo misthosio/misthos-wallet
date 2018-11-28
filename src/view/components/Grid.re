@@ -25,67 +25,6 @@ module Styles = {
     let warning = warning == None ? false : true;
     style([
       display(grid),
-      sm([
-        unsafe("gridGap", gapSM),
-        unsafe(
-          "gridTemplateAreas",
-          switch (variant) {
-          | V4 =>
-            (warning ? {|" . warning warning warning ."|} : "")
-            ++ {|
-              ". area1 . area2 ."
-              ". title1 . title2 ."
-              ". area3 . area4 ."
-              |}
-          | V2t
-          | V2 =>
-            {|
-              ". title1 . title2 ."
-              ". area3 . area4 ."
-           |}
-            ++ (warning ? {|" . warning warning warning ."|} : "")
-          | V3 =>
-            {|
-           ". title1 . title2 ."
-           ". area3 . area4 ."
-           ". area5 area5 area5 ."
-           |}
-            ++ (warning ? {|" . warning warning warning ."|} : "")
-          | V1 =>
-            {|
-              ". title1 ."
-              ". area3 ."
-              |}
-            ++ (warning ? {|". warning ."|} : "")
-          },
-        ),
-        unsafe(
-          "gridTemplateColumns",
-          switch (variant) {
-          | V4
-          | V3
-          | V2t
-          | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
-          | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"
-          },
-        ),
-        unsafe(
-          "gridTemplateRows",
-          switch (variant) {
-          | V4 =>
-            (warning ? "[wBegin] min-content [wEnd] " : "")
-            ++ "min-content [tBegin] min-content [tEnd] auto"
-          | V3 =>
-            "[tBegin] min-content [tEnd] auto min-content"
-            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
-          | V2t
-          | V2
-          | V1 =>
-            "[tBegin] min-content [tEnd] auto"
-            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
-          },
-        ),
-      ]),
       xs([
         unsafe("gridGap", gapXS),
         unsafe(
@@ -160,6 +99,67 @@ module Styles = {
           },
         ),
       ]),
+      sm([
+        unsafe("gridGap", gapSM),
+        unsafe(
+          "gridTemplateAreas",
+          switch (variant) {
+          | V4 =>
+            (warning ? {|" . warning warning warning ."|} : "")
+            ++ {|
+              ". area1 . area2 ."
+              ". title1 . title2 ."
+              ". area3 . area4 ."
+              |}
+          | V2t
+          | V2 =>
+            {|
+              ". title1 . title2 ."
+              ". area3 . area4 ."
+           |}
+            ++ (warning ? {|" . warning warning warning ."|} : "")
+          | V3 =>
+            {|
+           ". title1 . title2 ."
+           ". area3 . area4 ."
+           ". area5 area5 area5 ."
+           |}
+            ++ (warning ? {|" . warning warning warning ."|} : "")
+          | V1 =>
+            {|
+              ". title1 ."
+              ". area3 ."
+              |}
+            ++ (warning ? {|". warning ."|} : "")
+          },
+        ),
+        unsafe(
+          "gridTemplateColumns",
+          switch (variant) {
+          | V4
+          | V3
+          | V2t
+          | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
+          | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"
+          },
+        ),
+        unsafe(
+          "gridTemplateRows",
+          switch (variant) {
+          | V4 =>
+            (warning ? "[wBegin] min-content [wEnd] " : "")
+            ++ "min-content [tBegin] min-content [tEnd] auto"
+          | V3 =>
+            "[tBegin] min-content [tEnd] auto min-content"
+            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          | V2t
+          | V2
+          | V1 =>
+            "[tBegin] min-content [tEnd] auto"
+            ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+          },
+        ),
+      ]),
       width(`percent(100.0)),
       height(`percent(100.0)),
     ]);
@@ -167,20 +167,20 @@ module Styles = {
   let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
 
   let mobileHidden = hidden =>
-    style([sm([display(block)]), xs([display(hidden ? none : block)])]);
+    style([xs([display(hidden ? none : block)]), sm([display(block)])]);
   let title = variant =>
     style([
       fontFamily(Theme.oswald),
       height(px(45)),
       fontSize(px(30)),
-      fontWeight(600),
+      fontWeight(`num(600)),
       color(Colors.white),
       textTransform(uppercase),
       marginBottom(px(4)),
-      sm([display(inline)]),
       xs([
         display(List.some([V4, V2t], v => v == variant) ? none : inline),
       ]),
+      sm([display(inline)]),
     ]);
   let tabs =
     style([
@@ -189,7 +189,7 @@ module Styles = {
       fontFamily(Theme.oswald),
       height(px(45)),
       fontSize(px(30)),
-      fontWeight(600),
+      fontWeight(`num(600)),
       color(Colors.white),
       textTransform(uppercase),
       sm([display(none)]),
@@ -236,13 +236,13 @@ let make =
     let tabs =
       MaterialUi.(
         <Tabs
-          onChange=((_, i) => ActiveTab(i) |> send)
-          value=state.activeTab
+          onChange={(_, i) => ActiveTab(i) |> send}
+          value={state.activeTab}
           className=Styles.tabs
           fullWidth=true
           scrollable=true>
-          <Tab label=(title1 |> Js.Option.getWithDefault(ReasonReact.null)) />
-          <Tab label=(title2 |> Js.Option.getWithDefault(ReasonReact.null)) />
+          <Tab label={title1 |> Js.Option.getWithDefault(ReasonReact.null)} />
+          <Tab label={title2 |> Js.Option.getWithDefault(ReasonReact.null)} />
         </Tabs>
       );
     let variant =
@@ -254,21 +254,21 @@ let make =
       | (_, None, Some(_), None, None) => V1
       | (_, _, _, _, _) => V4
       };
-    <div className=(Styles.grid(variant, warning))>
-      (
+    <div className={Styles.grid(variant, warning)}>
+      {
         switch (warning) {
         | Some(_) =>
           <div
-            className=(
+            className={
               WarningBanner.Styles.warningBg ++ " " ++ Styles.warningBg
-            )
+            }
             key="warningBg"
           />
         | None => ReasonReact.null
         }
-      )
+      }
       <div className=Styles.titleBg key="titleBg" />
-      (
+      {
         [|
           [|
             (warning, "warning", WarningBanner.Styles.warning(~inline=false)),
@@ -294,23 +294,26 @@ let make =
             ),
             (area5, "area5", ""),
           |]
-          |. Array.map(((item, area, className)) =>
-               switch (item) {
-               | Some(item) =>
-                 <div
-                   className=(Styles.area(area) ++ " " ++ className) key=area>
-                   item
-                 </div>
-               | None => ReasonReact.null
-               }
-             ),
+          ->(
+              Array.map(((item, area, className)) =>
+                switch (item) {
+                | Some(item) =>
+                  <div
+                    className={Styles.area(area) ++ " " ++ className}
+                    key=area>
+                    item
+                  </div>
+                | None => ReasonReact.null
+                }
+              )
+            ),
           [|
             List.some([V4, V2t], v => v == variant) ? tabs : ReasonReact.null,
           |],
         |]
         |> Array.concatMany
         |> ReasonReact.array
-      )
+      }
     </div>;
   },
 };

@@ -20,33 +20,33 @@ var component = ReasonReact.statelessComponent("Footer");
 var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        BreakPoints.md(/* :: */[
-              Css.unsafe("gridTemplateAreas", "\n           \". . . . .\"\n           \". footer1 footer2 footer3 .\"\n           \". notice . . .\"\n           \". . . . .\"\n           "),
+        BreakPoints.xs(/* :: */[
+              Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". footer1 . \"\n           \". footer2 .\"\n           \". footer3 .\"\n           \". notice .\"\n           \". . .\"\n           "),
               /* :: */[
-                Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 1fr 0px [end]"),
+                BreakPoints.sm(/* :: */[
+                      Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". footer1 . .\"\n           \". footer2 footer3 .\"\n           \". notice notice .\"\n           \". . . .\"\n           "),
+                      /* :: */[
+                        Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content min-content 0px [end]"),
+                        /* :: */[
+                          Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 0px [end]"),
+                          /* :: */[
+                            Css.gridGap(Css.px(Theme.space(3))),
+                            /* [] */0
+                          ]
+                        ]
+                      ]
+                    ]),
                 /* :: */[
-                  Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content 0px [end]"),
-                  /* [] */0
-                ]
-              ]
-            ]),
-        /* :: */[
-          BreakPoints.sm(/* :: */[
-                Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". footer1 . .\"\n           \". footer2 footer3 .\"\n           \". notice notice .\"\n           \". . . .\"\n           "),
-                /* :: */[
-                  Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content min-content 0px [end]"),
-                  /* :: */[
-                    Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 0px [end]"),
-                    /* :: */[
-                      Css.gridGap(Css.px(Theme.space(3))),
-                      /* [] */0
-                    ]
-                  ]
-                ]
-              ]),
-          /* :: */[
-            BreakPoints.xs(/* :: */[
-                  Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". footer1 . \"\n           \". footer2 .\"\n           \". footer3 .\"\n           \". notice .\"\n           \". . .\"\n           "),
+                  BreakPoints.md(/* :: */[
+                        Css.unsafe("gridTemplateAreas", "\n           \". . . . .\"\n           \". footer1 footer2 footer3 .\"\n           \". notice . . .\"\n           \". . . . .\"\n           "),
+                        /* :: */[
+                          Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 1fr 0px [end]"),
+                          /* :: */[
+                            Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content 0px [end]"),
+                            /* [] */0
+                          ]
+                        ]
+                      ]),
                   /* :: */[
                     Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content min-content min-content 0px [end]"),
                     /* :: */[
@@ -57,10 +57,10 @@ var grid = Css.style(/* :: */[
                       ]
                     ]
                   ]
-                ]),
-            /* [] */0
-          ]
-        ]
+                ]
+              ]
+            ]),
+        /* [] */0
       ]
     ]);
 
@@ -113,7 +113,10 @@ var link = Css.style(/* :: */[
           /* :: */[
             Css.fontFamily(Theme.oswald),
             /* :: */[
-              Css.fontWeight(600),
+              Css.fontWeight(/* `num */[
+                    5496390,
+                    600
+                  ]),
               /* :: */[
                 Css.fontSize(Css.px(14)),
                 /* :: */[

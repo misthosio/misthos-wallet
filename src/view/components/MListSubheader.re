@@ -13,7 +13,7 @@ module Styles = {
         ~left=px(0),
       ),
     ]);
-  let text = style([fontWeight(400), textTransform(uppercase)]);
+  let text = style([fontWeight(`num(400)), textTransform(uppercase)]);
   let hr =
     style([
       width(`percent(50.0)),
@@ -32,7 +32,7 @@ module Styles = {
 let make = (~first=false, children) => {
   ...statelessComponent,
   render: _self =>
-    <MaterialUi.ListSubheader className=(Styles.root(first))>
+    <MaterialUi.ListSubheader className={Styles.root(first)}>
       <span className=Styles.text> ...children </span>
       <hr className=Styles.hr />
     </MaterialUi.ListSubheader>,

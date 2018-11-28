@@ -44,7 +44,10 @@ var avatar = Css.style(/* :: */[
                       1.0
                     ]),
                 /* :: */[
-                  Css.fontWeight(600),
+                  Css.fontWeight(/* `num */[
+                        5496390,
+                        600
+                      ]),
                   /* [] */0
                 ]
               ]
@@ -60,7 +63,10 @@ function primary(ex) {
               /* :: */[
                 Css.fontSize(Css.px(16)),
                 /* :: */[
-                  Css.fontWeight(600),
+                  Css.fontWeight(/* `num */[
+                        5496390,
+                        600
+                      ]),
                   /* :: */[
                     Css.unsafe("letterSpacing", "0.7px"),
                     /* :: */[
@@ -91,7 +97,10 @@ function secondary(ex) {
               /* :: */[
                 Css.fontSize(Css.px(16)),
                 /* :: */[
-                  Css.fontWeight(300),
+                  Css.fontWeight(/* `num */[
+                        5496390,
+                        300
+                      ]),
                   /* :: */[
                     Css.unsafe("letterSpacing", "0.5px"),
                     /* :: */[

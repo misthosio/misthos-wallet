@@ -2,7 +2,7 @@ include ViewCommon;
 
 open WalletTypes;
 
-[@bs.module] external copy : string = "../assets/img/copy.svg";
+[@bs.module] external copy: string = "../assets/img/copy.svg";
 
 type state = {address: option(string)};
 
@@ -18,11 +18,11 @@ module Styles = {
   let alignCenter =
     style([display(`flex), flexDirection(column), alignItems(`center)]);
   let addressImage =
-    style([sm([height(px(250))]), xs([height(px(200))])]);
+    style([xs([height(px(200))]), sm([height(px(250))])]);
   let spinner =
     style([
-      sm([height(px(297))]),
       xs([height(px(259))]),
+      sm([height(px(297))]),
       display(`flex),
       flexDirection(`column),
       alignItems(center),
@@ -74,7 +74,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
              );
            <MaterialUi.Tooltip
              id="address-copy-btn"
-             title=("Copy to Clipboard" |> text)
+             title={"Copy to Clipboard" |> text}
              placement=`Bottom>
              button
            </MaterialUi.Tooltip>;
@@ -85,7 +85,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
       |> Utils.mapOption(address =>
            ReasonReact.cloneElement(
              <MaterialUi.Button className="copy-btn">
-               (text("Copy Address"))
+               {text("Copy Address")}
              </MaterialUi.Button>,
              ~props={"data-clipboard-text": address},
              [||],
@@ -95,21 +95,21 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
 
     <Grid
       ?warning
-      title1=("Receive BTC" |> text)
+      title1={"Receive BTC" |> text}
       area3={
         <div
-          className=(ScrollList.containerStyles ++ " " ++ Styles.alignCenter)>
+          className={ScrollList.containerStyles ++ " " ++ Styles.alignCenter}>
           <ScrollList>
             <div className=Styles.alignCenter>
-              (
+              {
                 switch (state.address) {
                 | Some(address) =>
                   <img
                     className=Styles.addressImage
-                    src=(
+                    src={
                       "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl="
                       ++ address
-                    )
+                    }
                   />
                 | None =>
                   <Spinner
@@ -117,27 +117,27 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
                     text="Generating new address"
                   />
                 }
-              )
+              }
               <WithWidth
                 breakPoint=`SM
                 beforeBreak={
                   <MTypography variant=`Body2>
-                    (state.address |> Js.Option.getWithDefault("") |> text)
+                    {state.address |> Js.Option.getWithDefault("") |> text}
                     copyButtonSM
                   </MTypography>
                 }
-                afterBreak=(
+                afterBreak={
                   [|
                     <MTypography variant=`Body2>
-                      (state.address |> Js.Option.getWithDefault("") |> text)
+                      {state.address |> Js.Option.getWithDefault("") |> text}
                     </MTypography>,
                     copyButtonXS,
                   |]
                   |> ReasonReact.array
-                )
+                }
               />
-              <MButton onClick=(_e => send(GetIncomeAddress))>
-                (text("Generate new address"))
+              <MButton onClick={_e => send(GetIncomeAddress)}>
+                {text("Generate new address")}
               </MButton>
             </div>
           </ScrollList>

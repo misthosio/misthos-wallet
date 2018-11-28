@@ -1,6 +1,6 @@
 include ViewCommon;
 
-[@bs.val] external encodeURI : string => string = "";
+[@bs.val] external encodeURI: string => string = "";
 
 open PrimitiveTypes;
 
@@ -44,7 +44,7 @@ module Styles = {
   let stepIconText =
     style([
       fontFamily(Theme.sourceSansPro),
-      fontWeight(600),
+      fontWeight(`num(600)),
       fontSize(px(18)),
       fontStyle(normal),
       lineHeight(`abs(1.0)),
@@ -76,7 +76,7 @@ module Styles = {
 let renderInputComponent = props =>
   <MInput
     placeholder="Enter a Blockstack ID"
-    value=(`String(props##value))
+    value={`String(props##value)}
     onChange=props##onChange
     autoFocus=true
     fullWidth=true
@@ -106,25 +106,27 @@ let renderSuggestion = (suggestion, vals) => {
   <MaterialUi.MenuItem
     className=Styles.suggestionItem
     selected=isHighlighted
-    component=(`String("div"))>
+    component={`String("div")}>
     <div>
-      (
+      {
         parts
-        |. Belt.Array.mapWithIndexU((. index, part) =>
-             part##highlight ?
-               <span
-                 className=Css.(style([fontWeight(600)]))
-                 key=(string_of_int(index))>
-                 (part##text |> text)
-               </span> :
-               <strong
-                 className=Css.(style([fontWeight(300)]))
-                 key=(string_of_int(index))>
-                 (part##text |> text)
-               </strong>
-           )
+        ->(
+            Belt.Array.mapWithIndexU((. index, part) =>
+              part##highlight ?
+                <span
+                  className=Css.(style([fontWeight(`num(600))]))
+                  key={string_of_int(index)}>
+                  {part##text |> text}
+                </span> :
+                <strong
+                  className=Css.(style([fontWeight(`num(300))]))
+                  key={string_of_int(index)}>
+                  {part##text |> text}
+                </strong>
+            )
+          )
         |> ReasonReact.array
-      )
+      }
     </div>
   </MaterialUi.MenuItem>;
 };
@@ -134,19 +136,21 @@ let filterSuggestions = (prospectId, suggestions) => {
   inputLength < 3 ?
     [||] :
     suggestions
-    |. Belt.Array.keepU((. s) =>
-         s |> Js.String.slice(~from=0, ~to_=inputLength) == prospectId
-       );
+    ->(
+        Belt.Array.keepU((. s) =>
+          s |> Js.String.slice(~from=0, ~to_=inputLength) == prospectId
+        )
+      );
 };
 
 let addSuggestions = (suggestionsMap, query, suggestions) =>
   switch (suggestions) {
   | [||] => suggestionsMap
-  | suggestions => Belt.(suggestionsMap |. Map.String.set(query, suggestions))
+  | suggestions => Belt.(suggestionsMap->(Map.String.set(query, suggestions)))
   };
 let rec getSuggestions = (suggestions, query) =>
   Belt.(
-    switch (query, suggestions |. Map.String.get(query)) {
+    switch (query, suggestions->(Map.String.get(query))) {
     | (query, _) when query |> Js.String.length < 3 => [||]
     | (_, Some(suggestions)) => suggestions
     | (query, None) =>
@@ -256,8 +260,8 @@ let make =
               removePartnerId: Some(partner),
             },
             alertText:
-              viewData.alertPartners |. Belt.Set.has(partner) ?
-                WarningsText.partnerRemovalRisk |. Some : None,
+              viewData.alertPartners->(Belt.Set.has(partner)) ?
+                WarningsText.partnerRemovalRisk->Some : None,
           },
           (_ => removePartnerCmds.reset()),
         )
@@ -293,35 +297,37 @@ let make =
       ReasonReact.array(
         Array.of_list(
           viewData.partners
-          |. Belt.List.keepMapU((. partner: ViewData.partner) =>
-               partner.canProposeRemoval ?
-                 Some(
-                   <Partner
-                     key=(partner.userId |> UserId.toString)
-                     partnerId=partner.userId
-                     name=?partner.name
-                     onClick=(
-                       _e => send(SelectRemovePartner(partner.userId))
-                     )
-                     button=MaterialUi.(
-                              <Radio
-                                color=`Primary
-                                onChange=(
-                                  (_e, _b) =>
-                                    send(SelectRemovePartner(partner.userId))
-                                )
-                                checked=(
-                                          `Bool(
-                                            inputs.removePartnerId
-                                            == Some(partner.userId),
-                                          )
-                                        )
-                              />
-                            )
-                   />,
-                 ) :
-                 None
-             ),
+          ->(
+              Belt.List.keepMapU((. partner: ViewData.partner) =>
+                partner.canProposeRemoval ?
+                  Some(
+                    <Partner
+                      key={partner.userId |> UserId.toString}
+                      partnerId={partner.userId}
+                      name=?{partner.name}
+                      onClick={
+                        _e => send(SelectRemovePartner(partner.userId))
+                      }
+                      button=MaterialUi.(
+                        <Radio
+                          color=`Primary
+                          onChange={
+                            (_e, _b) =>
+                              send(SelectRemovePartner(partner.userId))
+                          }
+                          checked={
+                                    `Bool(
+                                      inputs.removePartnerId
+                                      == Some(partner.userId),
+                                    )
+                                  }
+                        />
+                      )
+                    />,
+                  ) :
+                  None
+              )
+            ),
         ),
       );
 
@@ -329,21 +335,21 @@ let make =
       title1={
         <WithWidth
           breakPoint=`SM
-          beforeBreak=("Addition Proposal" |> text)
-          afterBreak=("Add" |> text)
+          beforeBreak={"Addition Proposal" |> text}
+          afterBreak={"Add" |> text}
         />
       }
       title2={
         <WithWidth
           breakPoint=`SM
-          beforeBreak=("Removal Proposal" |> text)
-          afterBreak=("Remove" |> text)
+          beforeBreak={"Removal Proposal" |> text}
+          afterBreak={"Remove" |> text}
         />
       }
       area3={
-        <form onSubmit=(ignoreEvent(onSubmit))>
+        <form onSubmit={ignoreEvent(onSubmit)}>
           <MTypography variant=`Body2>
-            ("Add a Blockstack ID" |> text)
+            {"Add a Blockstack ID" |> text}
           </MTypography>
           <Autosuggest
             theme={
@@ -352,15 +358,15 @@ let make =
               "suggestion": Styles.suggestion,
               "suggestionsList": Styles.suggestionsList,
             }
-            suggestions=state.displayedSuggestions
-            getSuggestionValue=(s => s)
-            onSuggestionsFetchRequested=(
+            suggestions={state.displayedSuggestions}
+            getSuggestionValue={s => s}
+            onSuggestionsFetchRequested={
               onSuggestionsFetchRequested(send, state.suggestions)
-            )
-            shouldRenderSuggestions=(
+            }
+            shouldRenderSuggestions={
               value => Js.String.trim(value) |> Js.String.length > 2
-            )
-            onSuggestionsClearRequested=(() => send(ClearSuggestions))
+            }
+            onSuggestionsClearRequested={() => send(ClearSuggestions)}
             renderSuggestion
             renderInputComponent
             renderSuggestionsContainer
@@ -382,23 +388,23 @@ let make =
       area4={
         <div className=ScrollList.containerStyles>
           <MTypography variant=`Body2>
-            (
+            {
               {js|
                To propose the removal of a Partner from this Venture,
                select his or her name below and submit your proposal.
                When enough Partners endorse this proposal, the Partner will be removed.
                |js}
               |> text
-            )
+            }
           </MTypography>
           <ScrollList>
             <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
           </ScrollList>
           <SingleActionButton
-            onPropose=(() => send(FreezeRemoval))
-            onSubmit=(() => send(RemovePartner))
-            onCancel=(() => send(ResetRemoval))
-            canSubmitAction=(inputs.removePartnerId |> Js.Option.isSome)
+            onPropose={() => send(FreezeRemoval)}
+            onSubmit={() => send(RemovePartner)}
+            onCancel={() => send(ResetRemoval)}
+            canSubmitAction={inputs.removePartnerId |> Js.Option.isSome}
             buttonText="Propose Partner Removal"
             ?alertText
             cmdStatus=removeCmdStatus

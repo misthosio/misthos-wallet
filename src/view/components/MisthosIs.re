@@ -11,20 +11,6 @@ module Styles = {
   let grid =
     style([
       height(vh(95.0)),
-      md([
-        unsafe(
-          "gridTemplateAreas",
-          {|
-           ". .    line .   ."
-           ". text line img ."
-           ". .    line .   ."
-           |},
-        ),
-        unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
-        unsafe("gridTemplateRows", "auto min-content auto"),
-        gridGap(px(Theme.space(5))),
-        display(grid),
-      ]),
       xs([
         unsafe(
           "gridTemplateAreas",
@@ -39,6 +25,20 @@ module Styles = {
         unsafe("gridTemplateRows", "auto min-content min-content auto"),
         gridGap(px(Theme.space(1))),
         display(none),
+      ]),
+      md([
+        unsafe(
+          "gridTemplateAreas",
+          {|
+           ". .    line .   ."
+           ". text line img ."
+           ". .    line .   ."
+           |},
+        ),
+        unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
+        unsafe("gridTemplateRows", "auto min-content auto"),
+        gridGap(px(Theme.space(5))),
+        display(grid),
       ]),
       backgroundImage(url(arrowIcon)),
       backgroundRepeat(noRepeat),
@@ -73,8 +73,8 @@ module Styles = {
   let display2 = style([fontSize(px(62)), textTransform(uppercase)]);
   let display4 =
     style([
-      lg([fontSize(px(80))]),
       xs([fontSize(px(65))]),
+      lg([fontSize(px(80))]),
       unsafe("backgroundImage", Colors.uGradientAquaLight),
       unsafe("padding", "0px 16px"),
       unsafe("margin", "-34px 0px 26px -16px"),
@@ -95,19 +95,19 @@ let make = (~primary, ~secondary, ~img, ~last=false, _children) => {
   ...component,
   render: _self =>
     MaterialUi.(
-      <div className=(Styles.grid ++ " " ++ (last ? Styles.last : ""))>
+      <div className={Styles.grid ++ " " ++ (last ? Styles.last : "")}>
         <div className=Styles.text>
           <Typography className=Styles.display2 variant=`Display2>
-            ("Misthos is" |> text)
+            {"Misthos is" |> text}
           </Typography>
           <Typography className=Styles.display4 variant=`Display4>
-            (primary |> text)
+            {primary |> text}
           </Typography>
           <Typography className=Styles.display1 variant=`Display1>
-            (secondary |> text)
+            {secondary |> text}
           </Typography>
         </div>
-        <div className=(Styles.line(last)) />
+        <div className={Styles.line(last)} />
         <div className=Styles.img> img </div>
       </div>
     ),

@@ -18,13 +18,13 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      sm([
-        height(vh(100.0)),
-        unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
-      ]),
       xs([
         height(auto),
         unsafe("gridTemplateRows", {j|[begin] min-content 1fr [end]|j}),
+      ]),
+      sm([
+        height(vh(100.0)),
+        unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
       ]),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
       unsafe("gridTemplateAreas", {|"header" "body" "."|}),
@@ -97,7 +97,7 @@ let make =
                  <Paper className=Styles.modal>
                    <Toolbar className=Styles.modalToolbar>
                      <div className=Styles.flex_ />
-                     (
+                     {
                        switch (onClick) {
                        | Some(onClick) =>
                          <IconButton color=`Inherit onClick>
@@ -106,7 +106,7 @@ let make =
 
                        | None => ReasonReact.null
                        }
-                     )
+                     }
                    </Toolbar>
                    <div className=Styles.modalContent> modal </div>
                  </Paper>,
@@ -136,7 +136,7 @@ let make =
         MaterialUi.(
           <div className=Styles.header>
             <Header
-              onClickLogo=(Router.clickToRoute(Home))
+              onClickLogo={Router.clickToRoute(Home)}
               onClickMenu=(_e => send(OpenDrawer))
             />
           </div>,
@@ -146,7 +146,7 @@ let make =
             variant=`Temporary
             anchor=`Right
             onClose=(_ => send(CloseDrawer))
-            open_=state.drawerOpen>
+            open_={state.drawerOpen}>
             <div
               className=Styles.drawer
               tabIndex=0
@@ -167,7 +167,7 @@ let make =
           <div className=Styles.body> ...children </div>
         </div>
       }
-      afterBreak=(
+      afterBreak={
         switch (modal) {
         | None =>
           <div className=Styles.grid>
@@ -177,7 +177,7 @@ let make =
           </div>
         | Some(_) => modalContainer
         }
-      )
+      }
     />;
   },
 };
