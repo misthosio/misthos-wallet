@@ -18,8 +18,8 @@ let () =
       expect(
         Bitcoin.(
           Network.incomeAddress(Testnet)
-          |. Address.toOutputScript(Network.bitcoinNetwork(Testnet))
-          |. Address.fromOutputScript(Network.bitcoinNetwork(Testnet))
+          ->(Address.toOutputScript(Network.bitcoinNetwork(Testnet)))
+          ->(Address.fromOutputScript(Network.bitcoinNetwork(Testnet)))
         ),
       )
       |> toEqual(Network.incomeAddress(Testnet))
@@ -28,8 +28,8 @@ let () =
       expect(
         Bitcoin.(
           Network.incomeAddress(Regtest)
-          |. Address.toOutputScript(Network.bitcoinNetwork(Regtest))
-          |. Address.fromOutputScript(Network.bitcoinNetwork(Regtest))
+          ->(Address.toOutputScript(Network.bitcoinNetwork(Regtest)))
+          ->(Address.fromOutputScript(Network.bitcoinNetwork(Regtest)))
         ),
       )
       |> toEqual(Network.incomeAddress(Regtest))

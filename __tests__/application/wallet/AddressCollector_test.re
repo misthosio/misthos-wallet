@@ -38,7 +38,7 @@ let () =
       test("has the address", () =>
         expect(
           constructState(log).exposedAddresses
-          |. Map.String.getExn("2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ"),
+          ->(Map.String.getExn("2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ")),
         )
         |> toEqual(
              {

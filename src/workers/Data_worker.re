@@ -6,10 +6,10 @@
 
 type self;
 
-[@bs.val] external self : self = "";
+[@bs.val] external self: self = "";
 
 [@bs.set]
-external onMessage :
+external onMessage:
   (self, [@bs.uncurry] ({. "data": WebWorker.message} => unit)) => unit =
   "onmessage";
 
@@ -44,42 +44,50 @@ let handleMsg = (venturesPromise, doWork, msg) =>
            items |> WorkerLocalStorage.setBlockstackItems;
            Venture.Index.load()
            |> then_(({ventures}: Venture.Index.t) =>
-                ventures
-                |. List.reduce(
-                     resolve(VentureId.makeMap()),
-                     (p, {id}: Venture.Index.item) =>
-                     p
-                     |> then_(ventures =>
-                          WorkerUtils.loadVenture(id)
-                          |> then_(venture => {
-                               doWork(
-                                 storagePrefix,
-                                 [|(id, venture)|]
-                                 |> Map.mergeMany(VentureId.makeMap()),
-                               );
-                               ventures |. Map.set(id, venture) |> resolve;
-                             })
-                          |> catch(err => {
-                               logError(err);
-                               resolve(ventures);
-                             })
-                        )
-                   )
+                ventures->(
+                            List.reduce(
+                              resolve(VentureId.makeMap()),
+                              (p, {id}: Venture.Index.item) =>
+                              p
+                              |> then_(ventures =>
+                                   WorkerUtils.loadVenture(id)
+                                   |> then_(venture => {
+                                        doWork(
+                                          storagePrefix,
+                                          [|(id, venture)|]
+                                          |> Map.mergeMany(
+                                               VentureId.makeMap(),
+                                             ),
+                                        );
+                                        ventures->(Map.set(id, venture))
+                                        |> resolve;
+                                      })
+                                   |> catch(err => {
+                                        logError(err);
+                                        resolve(ventures);
+                                      })
+                                 )
+                            )
+                          )
                 |> then_(ventures => (storagePrefix, ventures) |> resolve)
               );
          | VentureLoaded(ventureId, log, _) =>
            logMessage("Handling 'VentureLoaded'");
-           (storagePrefix, ventures |. Map.set(ventureId, log)) |> resolve;
+           (storagePrefix, ventures->(Map.set(ventureId, log))) |> resolve;
          | VentureCreated(ventureId, log) =>
            logMessage("Handling 'VentureCreated'");
-           (storagePrefix, ventures |. Map.set(ventureId, log)) |> resolve;
+           (storagePrefix, ventures->(Map.set(ventureId, log))) |> resolve;
          | NewItems(ventureId, items) =>
            logMessage("Handling 'NewItems'");
-           let venture = ventures |. Map.getExn(ventureId);
+           let venture = ventures->(Map.getExn(ventureId));
            (
              storagePrefix,
-             ventures
-             |. Map.set(ventureId, venture |> EventLog.appendItems(items)),
+             ventures->(
+                         Map.set(
+                           ventureId,
+                           venture |> EventLog.appendItems(items),
+                         )
+                       ),
            )
            |> resolve;
          | NewIncomeAddress(_, _)

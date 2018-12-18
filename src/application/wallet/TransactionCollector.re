@@ -28,30 +28,30 @@ let apply = (event, state) =>
   | IncomeDetected({txId}) => {
       ...state,
       transactionsOfInterest:
-        state.transactionsOfInterest |. Set.String.add(txId),
-      knownIncomeTxs: state.knownIncomeTxs |. Set.String.add(txId),
+        state.transactionsOfInterest->(Set.String.add(txId)),
+      knownIncomeTxs: state.knownIncomeTxs->(Set.String.add(txId)),
     }
   | PayoutFinalized({processId} as finalizedTx) => {
       ...state,
       notYetBroadcastPayouts:
-        state.notYetBroadcastPayouts |. Map.set(processId, finalizedTx),
+        state.notYetBroadcastPayouts->(Map.set(processId, finalizedTx)),
     }
   | PayoutBroadcast({processId, txId}) => {
       ...state,
       notYetBroadcastPayouts:
-        state.notYetBroadcastPayouts |. Map.remove(processId),
+        state.notYetBroadcastPayouts->(Map.remove(processId)),
       transactionsOfInterest:
-        state.transactionsOfInterest |. Set.String.add(txId),
+        state.transactionsOfInterest->(Set.String.add(txId)),
     }
   | PayoutBroadcastFailed({processId}) => {
       ...state,
       notYetBroadcastPayouts:
-        state.notYetBroadcastPayouts |. Map.remove(processId),
+        state.notYetBroadcastPayouts->(Map.remove(processId)),
     }
   | TransactionConfirmed({txId, blockHeight}) => {
       ...state,
       confirmedTransactions:
-        state.confirmedTransactions |. Map.String.set(txId, blockHeight),
+        state.confirmedTransactions->(Map.String.set(txId, blockHeight)),
     }
   | _ => state
   };

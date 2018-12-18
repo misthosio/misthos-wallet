@@ -9,10 +9,8 @@ let () =
         EstimateFeeClient.fetchFees()
         |> then_(({high, economy}: EstimateFeeClient.result) =>
              expect(
-               high
-               |. BTC.gt(economy)
-               || high
-               |. BTC.comparedTo(BTC.fromSatoshis(1L)) == 0,
+               high->(BTC.gt(economy))
+               || high->(BTC.comparedTo(BTC.fromSatoshis(1L))) == 0,
              )
              |> toBe(true)
              |> resolve

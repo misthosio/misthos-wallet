@@ -18,11 +18,11 @@ let apply = (event, state) =>
   switch (event) {
   | PartnerAccepted({data: {id}}) => {
       ...state,
-      currentPartners: state.currentPartners |. Set.add(id),
+      currentPartners: state.currentPartners->(Set.add(id)),
     }
   | PartnerRemovalAccepted({data: {id}}) => {
       ...state,
-      currentPartners: state.currentPartners |. Set.remove(id),
+      currentPartners: state.currentPartners->(Set.remove(id)),
     }
   | _ => state
   };

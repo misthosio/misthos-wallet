@@ -27,7 +27,7 @@ let make =
     <MaterialUi.Typography
       ?component
       ?color
-      className=(style ++ " " ++ className)
+      className={style ++ " " ++ className}
       variant
       gutterBottom>
       ...children

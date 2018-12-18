@@ -6,101 +6,144 @@ module Config = {
   include VentureWorkerMessage;
   type t;
   [@bs.module] [@bs.new]
-  external instance : unit => t = "./Venture_worker.bs.js";
+  external instance: unit => t = "./Venture_worker.bs.js";
 };
 
 include WebWorker.MakeClient(Config);
 
 let updateSession = worker =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.UpdateSession(
-         WorkerLocalStorage.readBlockstackItemsFromStorage(),
-       ),
-     )
+  worker->(
+            postMessage(
+              VentureWorkerMessage.UpdateSession(
+                WorkerLocalStorage.readBlockstackItemsFromStorage(),
+              ),
+            )
+          )
   |> ignore;
 
 let create = (~name, ~accountSettings, ~initialPolicies, worker) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.Create(name, accountSettings, initialPolicies),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.Create(
+                name,
+                accountSettings,
+                initialPolicies,
+              ),
+            )
+          );
 
 let load = (~ventureId, worker) =>
-  worker |. postMessage(VentureWorkerMessage.Load(ventureId));
+  worker->(postMessage(VentureWorkerMessage.Load(ventureId)));
 
 let joinVia = (~ventureId, ~userId, worker) =>
-  worker |. postMessage(VentureWorkerMessage.JoinVia(ventureId, userId));
+  worker->(postMessage(VentureWorkerMessage.JoinVia(ventureId, userId)));
 
 let proposePartner = (worker, ventureId, ~prospectId) =>
-  worker
-  |. postMessage(VentureWorkerMessage.ProposePartner(ventureId, prospectId));
+  worker->(
+            postMessage(
+              VentureWorkerMessage.ProposePartner(ventureId, prospectId),
+            )
+          );
 
 let rejectPartner = (worker, ventureId, ~processId: processId) =>
-  worker
-  |. postMessage(VentureWorkerMessage.RejectPartner(ventureId, processId));
+  worker->(
+            postMessage(
+              VentureWorkerMessage.RejectPartner(ventureId, processId),
+            )
+          );
 
 let endorsePartner = (worker, ventureId, ~processId: processId) =>
-  worker
-  |. postMessage(VentureWorkerMessage.EndorsePartner(ventureId, processId));
+  worker->(
+            postMessage(
+              VentureWorkerMessage.EndorsePartner(ventureId, processId),
+            )
+          );
 
 let proposePartnerRemoval = (worker, ventureId, ~partnerId: userId) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.ProposePartnerRemoval(ventureId, partnerId),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.ProposePartnerRemoval(
+                ventureId,
+                partnerId,
+              ),
+            )
+          );
 
 let rejectPartnerRemoval = (worker, ventureId, ~processId: processId) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.RejectPartnerRemoval(ventureId, processId),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.RejectPartnerRemoval(ventureId, processId),
+            )
+          );
 
 let endorsePartnerRemoval = (worker, ventureId, ~processId: processId) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.EndorsePartnerRemoval(ventureId, processId),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.EndorsePartnerRemoval(
+                ventureId,
+                processId,
+              ),
+            )
+          );
 
 let submitCustodianKeyChain = (worker, ventureId, ~keyChain) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.SubmitCustodianKeyChain(ventureId, keyChain),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.SubmitCustodianKeyChain(
+                ventureId,
+                keyChain,
+              ),
+            )
+          );
 
 let proposePayout =
     (worker, ventureId, ~accountIdx: accountIdx, ~payoutTx, ~signatures) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.ProposePayout(
-         ventureId,
-         accountIdx,
-         payoutTx,
-         signatures,
-       ),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.ProposePayout(
+                ventureId,
+                accountIdx,
+                payoutTx,
+                signatures,
+              ),
+            )
+          );
 
 let rejectPayout = (worker, ventureId, ~processId: processId) =>
-  worker
-  |. postMessage(VentureWorkerMessage.RejectPayout(ventureId, processId));
+  worker->(
+            postMessage(
+              VentureWorkerMessage.RejectPayout(ventureId, processId),
+            )
+          );
 
 let endorsePayout = (worker, ventureId, ~signatures, ~processId: processId) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.EndorsePayout(ventureId, signatures, processId),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.EndorsePayout(
+                ventureId,
+                signatures,
+                processId,
+              ),
+            )
+          );
 
 let signPayout = (worker, ventureId, ~signatures, ~processId: processId) =>
-  worker
-  |. postMessage(
-       VentureWorkerMessage.SignPayout(ventureId, signatures, processId),
-     );
+  worker->(
+            postMessage(
+              VentureWorkerMessage.SignPayout(
+                ventureId,
+                signatures,
+                processId,
+              ),
+            )
+          );
 
 let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
-  worker
-  |. postMessageSync(
-       VentureWorkerMessage.ExposeIncomeAddress(ventureId, accountIdx),
-     )
+  worker->(
+            postMessageSync(
+              VentureWorkerMessage.ExposeIncomeAddress(ventureId, accountIdx),
+            )
+          )
   |> Js.Promise.(
        then_(
          fun

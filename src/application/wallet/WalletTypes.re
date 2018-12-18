@@ -51,8 +51,8 @@ module type NetworkClientInterface = {
 
 module Base = {
   type t = int;
-  external toInt : int => 'a = "%identity";
-  external fromInt : 'a => int = "%identity";
+  external toInt: int => 'a = "%identity";
+  external fromInt: 'a => int = "%identity";
   let first = 0 |> toInt;
   let next = idx => toInt(idx) + 1 |> fromInt;
   let encode = id => toInt(id) |> Json.Encode.int;

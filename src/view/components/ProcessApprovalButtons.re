@@ -76,64 +76,64 @@ let make =
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
     <div>
-      (
+      {
         ReasonReact.array(
           Array.concatMany([|
             switch (cmdStatus, state, canVote) {
             | (_, NoDecision, false) => [|ReasonReact.null|]
             | (_, ConfirmReject, _) => [|
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
-                  (rejectText |> text)
+                  {rejectText |> text}
                   <MButton
                     gutterTop=false
                     variant=Flat
                     onClick=(_e => send(ConfirmReject))>
-                    (text("yes"))
+                    {text("yes")}
                   </MButton>
                   <MButton
                     gutterTop=false variant=Flat onClick=(_e => send(Cancel))>
-                    (text("No"))
+                    {text("No")}
                   </MButton>
                 </MTypography>,
               |]
             | (_, ConfirmEndorse, _) => [|
                 <MTypography className=Styles.warning variant=`Body2>
-                  (alertText |> Js.Option.getWithDefault("") |> text)
+                  {alertText |> Js.Option.getWithDefault("") |> text}
                 </MTypography>,
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
-                  (endorseText |> text)
+                  {endorseText |> text}
                   <MButton variant=Flat onClick=(_e => send(ConfirmEndorse))>
-                    (text("yes"))
+                    {text("yes")}
                   </MButton>
                   <MButton variant=Flat onClick=(_e => send(Cancel))>
-                    (text("No"))
+                    {text("No")}
                   </MButton>
                 </MTypography>,
               |]
             | (Idle, _, true)
             | (_, NoDecision, true) => [|
                 <MButton fullWidth=true onClick=(_e => send(Endorse))>
-                  (text(endorseText))
+                  {text(endorseText)}
                 </MButton>,
                 <MButton
                   className=Styles.gray
                   variant=Flat
                   onClick=(_e => send(Reject))>
-                  (text(rejectText))
+                  {text(rejectText)}
                 </MButton>,
               |]
             | (PreSubmitError(_) | Error(_), RejectionSubmited, _) => [|
                 <CommandExecutor.Status cmdStatus action=Endorsement />,
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
                   <MButton variant=Flat onClick=(_e => send(Cancel))>
-                    (text("Try Again"))
+                    {text("Try Again")}
                   </MButton>
                 </MTypography>,
               |]
             | (PreSubmitError(_) | Error(_), EndorsementSubmited, _) => [|
                 <CommandExecutor.Status cmdStatus action=Rejection />,
                 <MButton variant=Flat onClick=(_e => send(Cancel))>
-                  (text("Try Again"))
+                  {text("Try Again")}
                 </MButton>,
               |]
             | (_, EndorsementSubmited, _) => [|
@@ -145,6 +145,6 @@ let make =
             },
           |]),
         )
-      )
+      }
     </div>,
 };

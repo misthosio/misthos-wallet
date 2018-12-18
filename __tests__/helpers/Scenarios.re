@@ -8,7 +8,7 @@ exception CouldNotLoadScenario;
 
 let basePath = "__tests__/scenarios/";
 
-let scenarioSession = Fixtures.threeUserSessionsArray |. Array.getExn(0);
+let scenarioSession = Fixtures.threeUserSessionsArray->(Array.getExn(0));
 
 let loadScenario = scenarioName =>
   try (
@@ -25,8 +25,8 @@ let findCurrentUsers =
   EventLog.reduce(
     (users, item) =>
       switch (item.event) {
-      | PartnerAccepted({data: {id}}) => users |. Set.add(id)
-      | PartnerRemovalAccepted({data: {id}}) => users |. Set.remove(id)
+      | PartnerAccepted({data: {id}}) => users->(Set.add(id))
+      | PartnerRemovalAccepted({data: {id}}) => users->(Set.remove(id))
       | _ => users
       },
     UserId.emptySet,

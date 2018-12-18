@@ -1,4 +1,4 @@
-let bufToHex = buf => buf |. BufferExt.toStringWithEncoding("hex");
+let bufToHex = buf => buf->(BufferExt.toStringWithEncoding("hex"));
 
 let bufFromHex = BufferExt.fromStringWithEncoding(~encoding="hex");
 
@@ -11,21 +11,23 @@ let publicKeyFromKeyPair = pair =>
   Bitcoin.(pair |> ECPair.getPublicKey |> bufToHex);
 
 let keyFromPublicKey = (network, key) =>
-  key |> bufFromHex |. Bitcoin.ECPair.fromPublicKey({"network": network});
+  (key |> bufFromHex)->(Bitcoin.ECPair.fromPublicKey({"network": network}));
 
 let signatureToDER = ecSignature =>
   Bitcoin.(Script.Signature.encode(ecSignature, Transaction.sighashAll))
-  |. BufferExt.slice(0, -1)
+  ->(BufferExt.slice(0, -1))
   |> bufToHex;
 
 let signatureFromDER = ecSignature => {
   let sigHash = BufferExt.makeWithSize(1);
-  sigHash
-  |. BufferExt.writeUInt8(Bitcoin.Transaction.sighashAll |> Obj.magic, 0);
-  (
-    BufferExt.concat([|ecSignature |> bufFromHex, sigHash|])
-    |. Bitcoin.Script.Signature.decode
-  )##signature;
+  sigHash->(
+             BufferExt.writeUInt8(
+               Bitcoin.Transaction.sighashAll |> Obj.magic,
+               0,
+             )
+           );
+  BufferExt.concat([|ecSignature |> bufFromHex, sigHash|])
+  ->Bitcoin.Script.Signature.decode##signature;
 };
 
 let hash = s => s |> Bitcoin.Crypto.sha256 |> bufToHex;

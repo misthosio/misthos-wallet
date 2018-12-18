@@ -44,21 +44,26 @@ let mapConfirmation =
     ) => {
   let txDate = Js.Date.fromFloat(unixTime *. 1000.);
   let newTxs =
-    unconfirmedTxs
-    |. List.keepMap(({txId: dataId} as data) =>
-         if (dataId == txId) {
-           Some({...data, date: Some(txDate), status: Confirmed});
-         } else {
-           None;
-         }
-       );
+    unconfirmedTxs->(
+                      List.keepMap(({txId: dataId} as data) =>
+                        if (dataId == txId) {
+                          Some({
+                            ...data,
+                            date: Some(txDate),
+                            status: Confirmed,
+                          });
+                        } else {
+                          None;
+                        }
+                      )
+                    );
   let newUnconf =
-    unconfirmedTxs |. List.keep(({txId: dataId}) => dataId != txId);
+    unconfirmedTxs->(List.keep(({txId: dataId}) => dataId != txId));
   {
     ...state,
-    txDates: state.txDates |. Map.String.set(txId, txDate),
+    txDates: state.txDates->(Map.String.set(txId, txDate)),
     unconfirmedTxs: newUnconf,
-    confirmedTxs: newTxs |. List.concat(confirmedTxs),
+    confirmedTxs: newTxs->(List.concat(confirmedTxs)),
   };
 };
 
@@ -66,7 +71,7 @@ let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({network, ventureId}) => {...state, network, ventureId}
   | IncomeDetected({txId, amount}) =>
-    switch (state.txDates |. Map.String.get(txId)) {
+    switch (state.txDates->(Map.String.get(txId))) {
     | None => {
         ...state,
         unconfirmedTxs: [
@@ -98,12 +103,12 @@ let apply = (event: Event.t, state) =>
     }
   | PayoutProposed({data: {payoutTx}, processId}) => {
       ...state,
-      payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
+      payoutProcesses: state.payoutProcesses->(Map.set(processId, payoutTx)),
     }
   | PayoutBroadcast({txId, processId}) =>
     let payoutTx: PayoutTransaction.t =
-      state.payoutProcesses |. Map.getExn(processId);
-    let txDate = state.txDates |. Map.String.get(txId);
+      state.payoutProcesses->(Map.getExn(processId));
+    let txDate = state.txDates->(Map.String.get(txId));
     let payout = {
       txId,
       txType: Payout,

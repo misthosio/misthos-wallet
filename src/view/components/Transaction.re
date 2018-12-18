@@ -46,34 +46,34 @@ let make =
         classes=[Divider(Styles.divider)]
         dense=true
         disableGutters=true
-        button=(onClick != None)
+        button={onClick != None}
         ?onClick
         divider=true>
         <ListItemText
           classes=[Root(Styles.root)]
           primary={
             <MTypography variant=`Body2>
-              (primary |> String.uppercase |> text)
-              <span className=(Styles.amount(txType))>
-                (BTC.format(amount) ++ " BTC" |> text)
+              {primary |> String.uppercase |> text}
+              <span className={Styles.amount(txType)}>
+                {BTC.format(amount) ++ " BTC" |> text}
               </span>
             </MTypography>
           }
-          secondary=(
+          secondary={
             switch (date) {
             | Some(date) =>
               <MTypography variant=`Body1>
-                (Js.Date.toDateString(date) |> text)
-                (
+                {Js.Date.toDateString(date) |> text}
+                {
                   switch (label) {
                   | Some(label) => label
                   | None => ReasonReact.null
                   }
-                )
+                }
               </MTypography>
             | None => ReasonReact.null
             }
-          )
+          }
         />
       </ListItem>
     ),

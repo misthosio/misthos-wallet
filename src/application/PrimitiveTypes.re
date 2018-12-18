@@ -1,7 +1,7 @@
 module Base = {
   type t = string;
-  external toString : 'a => string = "%identity";
-  external _fromString : string => 'a = "%identity";
+  external toString: 'a => string = "%identity";
+  external _fromString: string => 'a = "%identity";
   let fromString = id => id |> Js.String.toLowerCase |> _fromString;
   let encode = id => toString(id) |> Json.Encode.string;
   let decode = id => id |> Json.Decode.string |> fromString;

@@ -935,188 +935,215 @@ let decode = raw => {
 let getIncomeAddressExposedExn = event =>
   switch (event) {
   | IncomeAddressExposed(unwrapped) => unwrapped
-  | _ => %assert
-         "getIncomeAddressExposedExn"
+  | _ =>
+    %assert
+    "getIncomeAddressExposedExn"
   };
 
 let getAccountKeyChainIdentifiedExn = event =>
   switch (event) {
   | AccountKeyChainIdentified(unwrapped) => unwrapped
-  | _ => %assert
-         "getAccountKeyChainIdentifiedExn"
+  | _ =>
+    %assert
+    "getAccountKeyChainIdentifiedExn"
   };
 
 let getAccountKeyChainActivatedExn = event =>
   switch (event) {
   | AccountKeyChainActivated(unwrapped) => unwrapped
-  | _ => %assert
-         "getAccountKeyChainActivatedExn"
+  | _ =>
+    %assert
+    "getAccountKeyChainActivatedExn"
   };
 
 let getCustodianKeyChainUpdatedExn = event =>
   switch (event) {
   | CustodianKeyChainUpdated(unwrapped) => unwrapped
-  | _ => %assert
-         "getCustodianKeyChainUpdatedExn"
+  | _ =>
+    %assert
+    "getCustodianKeyChainUpdatedExn"
   };
 
 let getPayoutBroadcastFailedExn = event =>
   switch (event) {
   | PayoutBroadcastFailed(unwrapped) => unwrapped
-  | _ => %assert
-         "getPayoutBroadcastFailedExn"
+  | _ =>
+    %assert
+    "getPayoutBroadcastFailedExn"
   };
 
 let getPayoutBroadcastExn = event =>
   switch (event) {
   | PayoutBroadcast(unwrapped) => unwrapped
-  | _ => %assert
-         "getPayoutBroadcastExn"
+  | _ =>
+    %assert
+    "getPayoutBroadcastExn"
   };
 
 let getPayoutSignedExn = event =>
   switch (event) {
   | PayoutSigned(unwrapped) => unwrapped
-  | _ => %assert
-         "getPayoutSignedExn"
+  | _ =>
+    %assert
+    "getPayoutSignedExn"
   };
 
 let getPayoutAcceptedExn = event =>
   switch (event) {
   | PayoutAccepted(unwrapped) => unwrapped
-  | _ => %assert
-         "getPayoutAcceptedExn"
+  | _ =>
+    %assert
+    "getPayoutAcceptedExn"
   };
 
 let getPayoutEndorsedExn = event =>
   switch (event) {
   | PayoutEndorsed(unwrapped) => unwrapped
-  | _ => %assert
-         "getPayoutEndorsedExn"
+  | _ =>
+    %assert
+    "getPayoutEndorsedExn"
   };
 
 let getPayoutProposedExn = event =>
   switch (event) {
   | PayoutProposed(unwrapped) => unwrapped
-  | _ => %assert
-         "getPayoutProposedExn"
+  | _ =>
+    %assert
+    "getPayoutProposedExn"
   };
 
 let getCustodianAcceptedExn = event =>
   switch (event) {
   | CustodianAccepted(unwrapped) => unwrapped
-  | _ => %assert
-         "getCustodianAcceptedExn"
+  | _ =>
+    %assert
+    "getCustodianAcceptedExn"
   };
 
 let getCustodianEndorsedExn = event =>
   switch (event) {
   | CustodianEndorsed(unwrapped) => unwrapped
-  | _ => %assert
-         "getCustodianEndorsedExn"
+  | _ =>
+    %assert
+    "getCustodianEndorsedExn"
   };
 
 let getCustodianRejectedExn = event =>
   switch (event) {
   | CustodianRejected(unwrapped) => unwrapped
-  | _ => %assert
-         "getCustodianRejectedExn"
+  | _ =>
+    %assert
+    "getCustodianRejectedExn"
   };
 
 let getCustodianProposedExn = event =>
   switch (event) {
   | CustodianProposed(unwrapped) => unwrapped
-  | _ => %assert
-         "getCustodianProposedExn"
+  | _ =>
+    %assert
+    "getCustodianProposedExn"
   };
 
 let getAccountCreationAcceptedExn = event =>
   switch (event) {
   | AccountCreationAccepted(unwrapped) => unwrapped
-  | _ => %assert
-         "getAccountCreationAcceptedExn"
+  | _ =>
+    %assert
+    "getAccountCreationAcceptedExn"
   };
 
 let getAccountCreationEndorsedExn = event =>
   switch (event) {
   | AccountCreationEndorsed(unwrapped) => unwrapped
-  | _ => %assert
-         "getAccountCreationEndorsedExn"
+  | _ =>
+    %assert
+    "getAccountCreationEndorsedExn"
   };
 
 let getAccountCreationProposedExn = event =>
   switch (event) {
   | AccountCreationProposed(unwrapped) => unwrapped
-  | _ => %assert
-         "getAccountCreationProposedExn"
+  | _ =>
+    %assert
+    "getAccountCreationProposedExn"
   };
 
 let getPartnerAcceptedExn = event =>
   switch (event) {
   | PartnerAccepted(unwrapped) => unwrapped
-  | _ => %assert
-         "getPartnerAcceptedExn"
+  | _ =>
+    %assert
+    "getPartnerAcceptedExn"
   };
 
 let getPartnerRejectedExn = event =>
   switch (event) {
   | PartnerRejected(unwrapped) => unwrapped
-  | _ => %assert
-         "getPartnerRejectedExn"
+  | _ =>
+    %assert
+    "getPartnerRejectedExn"
   };
 
 let getPartnerEndorsedExn = event =>
   switch (event) {
   | PartnerEndorsed(unwrapped) => unwrapped
-  | _ => %assert
-         "getPartnerEndorsedExn"
+  | _ =>
+    %assert
+    "getPartnerEndorsedExn"
   };
 
 let getPartnerProposedExn = event =>
   switch (event) {
   | PartnerProposed(unwrapped) => unwrapped
-  | _ => %assert
-         "getPartnerProposedExn"
+  | _ =>
+    %assert
+    "getPartnerProposedExn"
   };
 
 let getPartnerRemovalAcceptedExn = event =>
   switch (event) {
   | PartnerRemovalAccepted(unwrapped) => unwrapped
-  | _ => %assert
-         "getPartnerRemovalAcceptedExn"
+  | _ =>
+    %assert
+    "getPartnerRemovalAcceptedExn"
   };
 
 let getPartnerRemovalEndorsedExn = event =>
   switch (event) {
   | PartnerRemovalEndorsed(unwrapped) => unwrapped
-  | _ => %assert
-         "getPartnerRemovalEndorsedExn"
+  | _ =>
+    %assert
+    "getPartnerRemovalEndorsedExn"
   };
 
 let getPartnerRemovalProposedExn = event =>
   switch (event) {
   | PartnerRemovalProposed(unwrapped) => unwrapped
-  | _ => %assert
-         "getPartnerRemovalProposedExn"
+  | _ =>
+    %assert
+    "getPartnerRemovalProposedExn"
   };
 
 let getCustodianRemovalProposedExn = event =>
   switch (event) {
   | CustodianRemovalProposed(unwrapped) => unwrapped
-  | _ => %assert
-         "getCustodianRemovalProposedExn"
+  | _ =>
+    %assert
+    "getCustodianRemovalProposedExn"
   };
 
 let getCustodianRemovalEndorsedExn = event =>
   switch (event) {
   | CustodianRemovalEndorsed(unwrapped) => unwrapped
-  | _ => %assert
-         "getCustodianRemovalEndorsedExn"
+  | _ =>
+    %assert
+    "getCustodianRemovalEndorsedExn"
   };
 
 let getVentureCreatedExn = event =>
   switch (event) {
   | VentureCreated(unwrapped) => unwrapped
-  | _ => %assert
-         "getVentureCreatedExn"
+  | _ =>
+    %assert
+    "getVentureCreatedExn"
   };

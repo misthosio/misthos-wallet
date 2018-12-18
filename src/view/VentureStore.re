@@ -65,7 +65,7 @@ let updateOtherTabs = msg => {
   L.localStorage |> L.setItem("tab-sync", encodedMsg |> Json.stringify);
 };
 
-external toStorageEvent : Dom.event => StorageEventRe.t = "%identity";
+external toStorageEvent: Dom.event => StorageEventRe.t = "%identity";
 
 let handler = (send, msg) => {
   let storageEvent = msg |> toStorageEvent;
@@ -143,8 +143,9 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           selectedVenture: CreatingVenture(Pending(createCmdId)),
         });
       | VentureWorkerMessage(msg) =>
-        state.persistWorker^ |. PersistWorkerClient.postMessage(msg) |> ignore;
-        state.dataWorker^ |. DataWorkerClient.postMessage(msg) |> ignore;
+        (state.persistWorker^)->(PersistWorkerClient.postMessage(msg))
+        |> ignore;
+        (state.dataWorker^)->(DataWorkerClient.postMessage(msg)) |> ignore;
         switch (msg, state.selectedVenture) {
         | (
             CmdCompleted(_, correlationId, response),
@@ -276,13 +277,14 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         | _ => ReasonReact.NoUpdate
         };
       | DataWorkerMessage(msg) =>
-        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg) |> ignore;
+        (state.ventureWorker^)->(VentureWorkerClient.postMessage(msg))
+        |> ignore;
         ReasonReact.NoUpdate;
       | TabSync(msg) =>
         switch (msg) {
         | NewItems(ventureId, newItems) =>
-          state.ventureWorker^
-          |. VentureWorkerClient.postMessage(SyncTabs(ventureId, newItems))
+          (state.ventureWorker^)
+          ->(VentureWorkerClient.postMessage(SyncTabs(ventureId, newItems)))
           |> ignore;
           switch (state.selectedVenture) {
           | VentureLoaded(loadedId, viewModel, cmd)
@@ -306,8 +308,9 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     | _ =>
       switch (action) {
       | VentureWorkerMessage(msg) =>
-        state.persistWorker^ |. PersistWorkerClient.postMessage(msg) |> ignore;
-        state.dataWorker^ |. DataWorkerClient.postMessage(msg) |> ignore;
+        (state.persistWorker^)->(PersistWorkerClient.postMessage(msg))
+        |> ignore;
+        (state.dataWorker^)->(DataWorkerClient.postMessage(msg)) |> ignore;
       | _ => ()
       };
       ReasonReact.NoUpdate;

@@ -145,8 +145,8 @@ module Status = {
       | Error => Colors.error
       | Success => Colors.success
       };
-    <MTypography variant=`Body2 className=(Css.style([Css.color(color)]))>
-      (message |> text)
+    <MTypography variant=`Body2 className={Css.style([Css.color(color)])}>
+      {message |> text}
     </MTypography>;
   };
   let component = ReasonReact.statelessComponent("CommandStatus");
@@ -158,7 +158,7 @@ module Status = {
       | PreSubmit(message) =>
         ReasonReact.array([|
           <MTypography variant=`Body2 gutterTop=true>
-            (message |> text)
+            {message |> text}
           </MTypography>,
           <MaterialUi.LinearProgress
             className=Css.(style([marginTop(px(Theme.space(1)))]))
@@ -167,7 +167,7 @@ module Status = {
       | Pending(_) =>
         ReasonReact.array([|
           <MTypography variant=`Body2 gutterTop=true>
-            (
+            {
               (
                 switch (action) {
                 | CreateVenture => "Venture is being created"
@@ -181,7 +181,7 @@ module Status = {
                 }
               )
               |> text
-            )
+            }
           </MTypography>,
           <MaterialUi.LinearProgress
             className=Css.(style([marginTop(px(Theme.space(1)))]))

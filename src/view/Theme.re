@@ -1,9 +1,9 @@
 type t;
 
 [@bs.module "@material-ui/core"]
-external createMuiTheme : Js.t({..}) => t = "";
+external createMuiTheme: Js.t({..}) => t = "";
 
-external toJsUnsafe : t => Js.t({..}) = "%identity";
+external toJsUnsafe: t => Js.t({..}) = "%identity";
 
 let sourceSansPro = {|"Source Sans Pro", sans-serif|};
 

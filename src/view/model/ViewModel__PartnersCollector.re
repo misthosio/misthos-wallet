@@ -33,30 +33,33 @@ type t = {
 };
 
 let currentPartners = ({partners}) =>
-  partners
-  |. List.reduceU(UserId.emptySet, (. set, {userId}: partner) =>
-       set |. Set.add(userId)
-     );
+  partners->(
+              List.reduceU(UserId.emptySet, (. set, {userId}: partner) =>
+                set->(Set.add(userId))
+              )
+            );
 
 let getPartnerProcess = (processId, {partnerProcesses}) =>
-  partnerProcesses |. Map.get(processId);
+  partnerProcesses->(Map.get(processId));
 
 let processesPendingApproval = ({partnerProcesses}) =>
-  partnerProcesses
-  |. Map.valuesToArray
-  |> List.fromArray
-  |. List.keepU((. prospect: partnerProcess) =>
-       switch (prospect.status) {
-       | PendingApproval => true
-       | _ => false
-       }
-     )
-  |. List.reduceReverseU(
-       ([], []), (. (additions, removals), process: partnerProcess) =>
-       process.data.processType == Addition ?
-         ([process, ...additions], removals) :
-         (additions, [process, ...removals])
-     );
+  (partnerProcesses->Map.valuesToArray |> List.fromArray)
+  ->(
+      List.keepU((. prospect: partnerProcess) =>
+        switch (prospect.status) {
+        | PendingApproval => true
+        | _ => false
+        }
+      )
+    )
+  ->(
+      List.reduceReverseU(
+        ([], []), (. (additions, removals), process: partnerProcess) =>
+        process.data.processType == Addition ?
+          ([process, ...additions], removals) :
+          (additions, [process, ...removals])
+      )
+    );
 
 let hasUserLoggedIn = (pubKey, userId) =>
   Js.Promise.(
@@ -94,28 +97,32 @@ let apply = (event: Event.t, state) =>
   | CustodianKeyChainUpdated({custodianId}) =>
     let partner =
       state.partners
-      |. List.getByU((. partner: partner) =>
-           UserId.eq(partner.userId, custodianId)
-         )
+      ->(
+          List.getByU((. partner: partner) =>
+            UserId.eq(partner.userId, custodianId)
+          )
+        )
       |> Js.Option.getExn;
     {
       ...state,
       partners:
         state.partners
-        |. List.mapU((. partner: partner) =>
-             {
-               ...partner,
-               joinedWallet:
-                 partner.joinedWallet
-                 || UserId.eq(partner.userId, custodianId),
-             }
-           ),
+        ->(
+            List.mapU((. partner: partner) =>
+              {
+                ...partner,
+                joinedWallet:
+                  partner.joinedWallet
+                  || UserId.eq(partner.userId, custodianId),
+              }
+            )
+          ),
       partnerProcesses:
         state.partnerProcesses
         |> ProcessCollector.updateData(partner.processId, data =>
              {...data, joinedWallet: true}
            ),
-      everJoinedWallet: state.everJoinedWallet |. Set.add(custodianId),
+      everJoinedWallet: state.everJoinedWallet->(Set.add(custodianId)),
     };
   | PartnerProposed(proposal) => {
       ...state,
@@ -124,7 +131,7 @@ let apply = (event: Event.t, state) =>
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
              {
                userId: data.id,
-               joinedWallet: state.everJoinedWallet |. Set.has(data.id),
+               joinedWallet: state.everJoinedWallet->(Set.has(data.id)),
                processType: Addition,
                hasLoggedIn:
                  hasUserLoggedIn(proposal.data.pubKey, proposal.data.id),
@@ -152,12 +159,14 @@ let apply = (event: Event.t, state) =>
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
           hasLoggedIn: hasUserLoggedIn(data.pubKey, data.id),
-          joinedWallet: state.everJoinedWallet |. Set.has(data.id),
+          joinedWallet: state.everJoinedWallet->(Set.has(data.id)),
         },
         ...state.partners
-           |. List.keepU((. {userId}: partner) =>
-                UserId.neq(userId, data.id)
-              ),
+           ->(
+               List.keepU((. {userId}: partner) =>
+                 UserId.neq(userId, data.id)
+               )
+             ),
       ],
       partnerProcesses:
         state.partnerProcesses |> ProcessCollector.addAcceptance(acceptance),
@@ -166,20 +175,22 @@ let apply = (event: Event.t, state) =>
       ...state,
       partners:
         state.partners
-        |. List.mapU((. partner: partner) =>
-             {
-               ...partner,
-               hasLoggedIn:
-                 Js.Promise.(
-                   partner.hasLoggedIn
-                   |> then_(known =>
-                        resolve(
-                          known || UserId.eq(partner.userId, partnerId),
-                        )
-                      )
-                 ),
-             }
-           ),
+        ->(
+            List.mapU((. partner: partner) =>
+              {
+                ...partner,
+                hasLoggedIn:
+                  Js.Promise.(
+                    partner.hasLoggedIn
+                    |> then_(known =>
+                         resolve(
+                           known || UserId.eq(partner.userId, partnerId),
+                         )
+                       )
+                  ),
+              }
+            )
+          ),
     }
   | PartnerDenied(denial) => {
       ...state,
@@ -189,18 +200,20 @@ let apply = (event: Event.t, state) =>
   | PartnerRemovalProposed(proposal) =>
     let partner =
       state.partners
-      |. List.getByU((. p: partner) =>
-           UserId.eq(p.userId, proposal.data.id)
-         )
+      ->(
+          List.getByU((. p: partner) => UserId.eq(p.userId, proposal.data.id))
+        )
       |> Js.Option.getExn;
     {
       ...state,
       partners:
         state.partners
-        |. List.map((p: partner) =>
-             UserId.eq(p.userId, proposal.data.id) ?
-               {...p, canProposeRemoval: false} : p
-           ),
+        ->(
+            List.map((p: partner) =>
+              UserId.eq(p.userId, proposal.data.id) ?
+                {...p, canProposeRemoval: false} : p
+            )
+          ),
       partnerProcesses:
         state.partnerProcesses
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
@@ -227,7 +240,8 @@ let apply = (event: Event.t, state) =>
   | PartnerRemovalAccepted({data: {id}} as acceptance) => {
       ...state,
       partners:
-        state.partners |. List.keep((p: partner) => UserId.neq(p.userId, id)),
+        state.partners
+        ->(List.keep((p: partner) => UserId.neq(p.userId, id))),
       partnerProcesses:
         state.partnerProcesses |> ProcessCollector.addAcceptance(acceptance),
     }
@@ -240,4 +254,4 @@ let apply = (event: Event.t, state) =>
   };
 
 let isPartner = (id, {partners}) =>
-  partners |. List.some(({userId}: partner) => UserId.eq(userId, id));
+  partners->(List.some(({userId}: partner) => UserId.eq(userId, id)));

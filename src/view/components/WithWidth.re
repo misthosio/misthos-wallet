@@ -1,5 +1,5 @@
 [@bs.module "./WithWidthNative"]
-external withWidthNative : ReasonReact.reactClass = "default";
+external withWidthNative: ReasonReact.reactClass = "default";
 
 [@bs.deriving jsConverter]
 type breakPoint = [

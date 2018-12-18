@@ -17,16 +17,16 @@ let make = (~resource, _children) => {
       | Income => "income transaction"
       };
     <Grid
-      title1=(resourceText ++ " not found" |> text)
+      title1={resourceText ++ " not found" |> text}
       area3={
         <div>
-          (
+          {
             text(
               "The "
               ++ resourceText
               ++ " was not found. Perhaps the data hasn't been synced yet.",
             )
-          )
+          }
         </div>
       }
     />;

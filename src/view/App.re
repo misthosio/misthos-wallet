@@ -25,7 +25,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
       ) =>
       Some((
         <ViewAddressesModal
-          viewData=(venture |> ViewModel.viewAddressesModal)
+          viewData={venture |> ViewModel.viewAddressesModal}
         />,
         Some(onCloseModal(selected)),
       ))
@@ -39,7 +39,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
         Some((
           <CommandExecutor
             commands
-            lastResponse=(venture |> ViewModel.lastResponse)
+            lastResponse={venture |> ViewModel.lastResponse}
             onProcessStarted=(
               processId =>
                 Router.goTo(Venture(ventureId, Partner(processId)))
@@ -51,26 +51,26 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
                  ) =>
                    <CommandExecutor
                      commands
-                     lastResponse=(venture |> ViewModel.lastResponse)
-                     onProcessStarted=(
+                     lastResponse={venture |> ViewModel.lastResponse}
+                     onProcessStarted={
                        processId =>
                          Router.goTo(Venture(ventureId, Partner(processId)))
-                     )>
-                     ...(
+                     }>
+                     ...{
                           (
                             ~commands as removePartnerCmds,
                             ~cmdStatus as removeCmdStatus,
                           ) =>
                             <ManagePartnersModal
-                              viewData=(
+                              viewData={
                                 venture |> ViewModel.managePartnersModal
-                              )
+                              }
                               proposePartnerCmds
                               proposeCmdStatus
                               removePartnerCmds
                               removeCmdStatus
                             />
-                        )
+                        }
                    </CommandExecutor>
                )
           </CommandExecutor>,
@@ -87,7 +87,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
           switch (venture |> ViewModel.viewPartnerModal(processId)) {
           | Some(viewData) =>
             <CommandExecutor
-              commands lastResponse=(venture |> ViewModel.lastResponse)>
+              commands lastResponse={venture |> ViewModel.lastResponse}>
               ...(
                    (~commands, ~cmdStatus) =>
                      <ViewPartnerModal commands cmdStatus viewData />
@@ -114,7 +114,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
         Some((
           <CommandExecutor
             commands
-            lastResponse=(venture |> ViewModel.lastResponse)
+            lastResponse={venture |> ViewModel.lastResponse}
             onProcessStarted=(
               processId =>
                 Router.goTo(Venture(ventureId, Payout(processId)))
@@ -122,7 +122,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
             ...(
                  (~commands, ~cmdStatus) =>
                    <CreatePayoutModal
-                     viewData=(venture |> ViewModel.createPayoutModal)
+                     viewData={venture |> ViewModel.createPayoutModal}
                      commands
                      cmdStatus
                    />
@@ -141,7 +141,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
           switch (venture |> ViewModel.viewPayoutModal(processId)) {
           | Some(viewData) =>
             <CommandExecutor
-              commands lastResponse=(venture |> ViewModel.lastResponse)>
+              commands lastResponse={venture |> ViewModel.lastResponse}>
               ...(
                    (~commands, ~cmdStatus) =>
                      <ViewPayoutModal viewData commands cmdStatus />
@@ -174,11 +174,11 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
         None :
         Some((
           <CommandExecutor
-            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            commands lastResponse={venture |> ViewModel.lastResponse}>
             ...(
                  (~commands, ~cmdStatus) =>
                    <VentureSettingsModal
-                     viewData=(venture |> ViewModel.ventureSettingsView)
+                     viewData={venture |> ViewModel.ventureSettingsView}
                      commands
                      cmdStatus
                    />
@@ -229,7 +229,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
         Venture(_, _) | Home | JoinVenture(_),
         VentureLoaded(_ventureId, venture, _),
       ) =>
-      <SelectedVenture viewData=(venture |> ViewModel.selectedVenture) />
+      <SelectedVenture viewData={venture |> ViewModel.selectedVenture} />
     | (LoggedIn(_), CreateVenture, _)
     | (LoggedIn(_), _, CreatingVenture(_)) =>
       let cmdStatus =
@@ -248,23 +248,23 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
     ...component,
     render: _self =>
       <Router.Container>
-        ...(
+        ...{
              (~currentRoute) =>
                <VentureStore currentRoute session>
-                 ...(
+                 ...{
                       (~index, ~selectedVenture, ~createVenture) => {
                         let drawer = currentRoute |> drawer(index);
                         let modal = currentRoute |> modal(selectedVenture);
                         <Layout ?drawer ?modal>
-                          (
+                          {
                             currentRoute
                             |> body(index, selectedVenture, createVenture)
-                          )
+                          }
                         </Layout>;
                       }
-                    )
+                    }
                </VentureStore>
-           )
+           }
       </Router.Container>,
   };
 };

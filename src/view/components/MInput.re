@@ -39,7 +39,7 @@ let make =
     MaterialUi.(
       <FormControl
         ?fullWidth
-        className=(Styles.margin(~tf=ensuring ? 4 : 3, ~bf=0))
+        className={Styles.margin(~tf=ensuring ? 4 : 3, ~bf=0)}
         error>
         <Input
           ?inputProps
@@ -52,11 +52,11 @@ let make =
           ?type_
           classes=[Root(Styles.inputRoot)]
         />
-        (
+        {
           error ?
-            <FormHelperText> (message |> text) </FormHelperText> :
+            <FormHelperText> {message |> text} </FormHelperText> :
             ReasonReact.null
-        )
+        }
       </FormControl>
     );
   },

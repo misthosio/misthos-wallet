@@ -11,7 +11,7 @@ type config = {
 let makeAuthHeaders = ({rpcUser, rpcPassword}) => {
   let authString =
     Node_buffer.fromString({j|$(rpcUser):$(rpcPassword)|j})
-    |. BufferExt.toStringWithEncoding("base64");
+    ->(BufferExt.toStringWithEncoding("base64"));
   Fetch.HeadersInit.make({"Authorization": {j|Basic $(authString)|j}});
 };
 
@@ -66,7 +66,7 @@ let importAllAs = (config, addresses, label) =>
     );
   };
 
-let getUTXOs = (config, addresses) : Js.Promise.t(WalletTypes.utxoSet) =>
+let getUTXOs = (config, addresses): Js.Promise.t(WalletTypes.utxoSet) =>
   Js.Promise.(
     importAllAs(config, addresses, "")
     |> then_(_ => {
@@ -144,7 +144,7 @@ let broadcastTransaction = (config, transaction) => {
   );
 };
 
-let make = (config, network) : (module WalletTypes.NetworkClientInterface) =>
+let make = (config, network): (module WalletTypes.NetworkClientInterface) =>
   (module
    {
      let network = network;

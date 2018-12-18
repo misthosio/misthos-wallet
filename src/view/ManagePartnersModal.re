@@ -109,22 +109,21 @@ let renderSuggestion = (suggestion, vals) => {
     component={`String("div")}>
     <div>
       {
-        parts
-        ->(
-            Belt.Array.mapWithIndexU((. index, part) =>
-              part##highlight ?
-                <span
-                  className=Css.(style([fontWeight(`num(600))]))
-                  key={string_of_int(index)}>
-                  {part##text |> text}
-                </span> :
-                <strong
-                  className=Css.(style([fontWeight(`num(300))]))
-                  key={string_of_int(index)}>
-                  {part##text |> text}
-                </strong>
-            )
-          )
+        parts->(
+                 Belt.Array.mapWithIndexU((. index, part) =>
+                   part##highlight ?
+                     <span
+                       className=Css.(style([fontWeight(`num(600))]))
+                       key={string_of_int(index)}>
+                       {part##text |> text}
+                     </span> :
+                     <strong
+                       className=Css.(style([fontWeight(`num(300))]))
+                       key={string_of_int(index)}>
+                       {part##text |> text}
+                     </strong>
+                 )
+               )
         |> ReasonReact.array
       }
     </div>
@@ -135,12 +134,13 @@ let filterSuggestions = (prospectId, suggestions) => {
   let inputLength = prospectId |> Js.String.length;
   inputLength < 3 ?
     [||] :
-    suggestions
-    ->(
-        Belt.Array.keepU((. s) =>
-          s |> Js.String.slice(~from=0, ~to_=inputLength) == prospectId
-        )
-      );
+    suggestions->(
+                   Belt.Array.keepU((. s) =>
+                     s
+                     |> Js.String.slice(~from=0, ~to_=inputLength)
+                     == prospectId
+                   )
+                 );
 };
 
 let addSuggestions = (suggestionsMap, query, suggestions) =>

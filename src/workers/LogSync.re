@@ -1,4 +1,4 @@
-[@bs.val] external _postMessage : WebWorker.message => unit = "postMessage";
+[@bs.val] external _postMessage: WebWorker.message => unit = "postMessage";
 
 let postMessage = msg =>
   {"payload": msg |> VentureWorkerMessage.encodeIncoming, "correlationId": ""}
@@ -26,7 +26,7 @@ let determinPartnerIds =
       switch (event) {
       | PartnerAccepted({data}) => [data.id, ...ids]
       | PartnerRemovalAccepted({data}) =>
-        ids |. List.keep(id => UserId.neq(id, data.id))
+        ids->(List.keep(id => UserId.neq(id, data.id)))
       | _ => ids
       },
     [],
@@ -87,8 +87,8 @@ let syncEventsFromPartner =
     getSummaryFromUser(ventureId, userId, storagePrefix)
     |> then_((otherSummary: EventLog.summary) =>
          (
-           if (otherSummary.knownItems
-               |. Belt.Set.String.subset(knownItems) == false) {
+           if (otherSummary.knownItems->(Belt.Set.String.subset(knownItems))
+               == false) {
              findNewItemsFromPartner(
                ventureId,
                userId,
@@ -108,20 +108,22 @@ let syncEventsFromVenture = (storagePrefix, ventureId, eventLog) => {
     "Finding new events for venture '" ++ VentureId.toString(ventureId) ++ "'",
   );
   let summary = eventLog |> EventLog.getSummary;
-  eventLog
-  |> determinPartnerIds
-  |. List.forEach(
-       syncEventsFromPartner(
-         storagePrefix,
-         ventureId,
-         summary.knownItems,
-         eventLog,
-       ),
-     );
+  (eventLog |> determinPartnerIds)
+  ->(
+      List.forEach(
+        syncEventsFromPartner(
+          storagePrefix,
+          ventureId,
+          summary.knownItems,
+          eventLog,
+        ),
+      )
+    );
 };
 
 let syncLogs = (storagePrefix, ventures: VentureId.map(EventLog.t)) =>
-  ventures
-  |. Map.forEachU((. id, log) =>
-       log |> syncEventsFromVenture(storagePrefix, id)
-     );
+  ventures->(
+              Map.forEachU((. id, log) =>
+                log |> syncEventsFromVenture(storagePrefix, id)
+              )
+            );

@@ -151,16 +151,17 @@ let terms = [|
 |];
 
 let hash =
-  terms
-  |. Array.mapU((. section) =>
-       Array.concat(
-         [|section.heading|],
-         switch (section.body) {
-         | P(a) => a
-         | L(a) => a
-         },
-       )
-     )
+  terms->(
+           Array.mapU((. section) =>
+             Array.concat(
+               [|section.heading|],
+               switch (section.body) {
+               | P(a) => a
+               | L(a) => a
+               },
+             )
+           )
+         )
   |> Array.concatMany
   |> Js.Array.joinWith(" ")
   |> Utils.hash;

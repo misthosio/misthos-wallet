@@ -39,15 +39,17 @@ let ventureName = ({ventureName}) => ventureName;
 let currentPartners = ({currentPartners}) => currentPartners;
 
 let isPartner = (userId, {currentPartners}) =>
-  currentPartners |. Belt.Set.has(userId);
+  currentPartners->(Belt.Set.has(userId));
 
 let isPartnerProposalUnique =
     (proposal: Partner.Proposed.t, {activePartnerProcesses}) =>
-  activePartnerProcesses
-  |.
-  Belt.Map.someU((. _, {data: {id}}: Partner.Proposed.t) =>
-    UserId.eq(id, proposal.data.id)
-  ) == false;
+  activePartnerProcesses->(
+                            Belt.Map.someU(
+                              (. _, {data: {id}}: Partner.Proposed.t) =>
+                              UserId.eq(id, proposal.data.id)
+                            )
+                          )
+  == false;
 
 let currentPolicy = (processName, {policies}) =>
   policies |> List.assoc(processName);
@@ -113,19 +115,19 @@ let apply = (event, state) =>
       ...state,
       activePartnerProcesses:
         state.activePartnerProcesses
-        |. Belt.Map.set(proposal.processId, proposal),
+        ->(Belt.Map.set(proposal.processId, proposal)),
     }
   | PartnerAccepted({data: {id}} as event) => {
       ...state,
       activePartnerProcesses:
-        state.activePartnerProcesses |. Belt.Map.remove(event.processId),
-      currentPartners: state.currentPartners |. Belt.Set.add(id),
+        state.activePartnerProcesses->(Belt.Map.remove(event.processId)),
+      currentPartners: state.currentPartners->(Belt.Set.add(id)),
       partnerAccepted: [(id, event), ...state.partnerAccepted],
     }
   | PartnerDenied({processId}) => {
       ...state,
       activePartnerProcesses:
-        state.activePartnerProcesses |. Belt.Map.remove(processId),
+        state.activePartnerProcesses->(Belt.Map.remove(processId)),
     }
   | CustodianProposed({processId, data: {partnerApprovalProcess}}) => {
       ...state,
@@ -165,7 +167,7 @@ let apply = (event, state) =>
     }
   | PartnerRemovalAccepted({data: {id}} as event) => {
       ...state,
-      currentPartners: state.currentPartners |. Belt.Set.remove(id),
+      currentPartners: state.currentPartners->(Belt.Set.remove(id)),
       partnerRemovals: [(id, event), ...state.partnerRemovals],
     }
   | _ => state

@@ -295,42 +295,50 @@ let make = (~viewData: ViewData.t, _children) => {
             let unconfirmed = viewData.unconfirmedTxs;
             let confirmed = viewData.confirmedTxs;
             List.concatMany([|
-              unconfirmed
-              ->(
-                  List.mapWithIndex((iter, tx: ViewData.txData) => {
-                    let (txType, primary) =
-                      switch (tx.txType) {
-                      | Payout => (Transaction.Payout, "unconfirmed payout")
-                      | Income => (Transaction.Income, "unconfirmed income")
-                      };
-                    <Transaction
-                      txType
-                      primary
-                      amount={tx.amount}
-                      date={tx.date}
-                      onClick={Router.clickToRoute(tx.detailsLink)}
-                      key={iter |> string_of_int}
-                    />;
-                  })
-                ),
-              confirmed
-              ->(
-                  List.mapWithIndex((iter, tx: ViewData.txData) => {
-                    let (txType, primary) =
-                      switch (tx.txType) {
-                      | Payout => (Transaction.Payout, "payout")
-                      | Income => (Transaction.Income, "income")
-                      };
-                    <Transaction
-                      txType
-                      primary
-                      amount={tx.amount}
-                      date={tx.date}
-                      onClick={Router.clickToRoute(tx.detailsLink)}
-                      key={string_of_int(iter + List.length(unconfirmed))}
-                    />;
-                  })
-                ),
+              unconfirmed->(
+                             List.mapWithIndex((iter, tx: ViewData.txData) => {
+                               let (txType, primary) =
+                                 switch (tx.txType) {
+                                 | Payout => (
+                                     Transaction.Payout,
+                                     "unconfirmed payout",
+                                   )
+                                 | Income => (
+                                     Transaction.Income,
+                                     "unconfirmed income",
+                                   )
+                                 };
+                               <Transaction
+                                 txType
+                                 primary
+                                 amount={tx.amount}
+                                 date={tx.date}
+                                 onClick={Router.clickToRoute(tx.detailsLink)}
+                                 key={iter |> string_of_int}
+                               />;
+                             })
+                           ),
+              confirmed->(
+                           List.mapWithIndex((iter, tx: ViewData.txData) => {
+                             let (txType, primary) =
+                               switch (tx.txType) {
+                               | Payout => (Transaction.Payout, "payout")
+                               | Income => (Transaction.Income, "income")
+                               };
+                             <Transaction
+                               txType
+                               primary
+                               amount={tx.amount}
+                               date={tx.date}
+                               onClick={Router.clickToRoute(tx.detailsLink)}
+                               key={
+                                 string_of_int(
+                                   iter + List.length(unconfirmed),
+                                 )
+                               }
+                             />;
+                           })
+                         ),
             |]);
           },
         ),

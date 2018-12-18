@@ -1,4 +1,4 @@
-[@bs.val] external encodeURI : string => string = "";
+[@bs.val] external encodeURI: string => string = "";
 
 module AlertBox = {
   let signInRequired = {| has not yet signed into Misthos and therefore

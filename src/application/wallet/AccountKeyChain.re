@@ -65,9 +65,9 @@ module Collection = {
   type nonrec t = Map.String.t(t);
   let empty = Map.String.empty;
   let add = ({identifier} as keyChain, collection) =>
-    collection |. Map.String.set(identifier, keyChain);
+    collection->(Map.String.set(identifier, keyChain));
   let lookup = (_accountIdx, identifier, keyChains: t) =>
-    keyChains |. Map.String.getExn(identifier);
+    keyChains->(Map.String.getExn(identifier));
 };
 
 let encode = keyChain =>

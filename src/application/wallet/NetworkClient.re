@@ -63,28 +63,31 @@ module Make = (Client: NetworkClientInterface) => {
         |> List.fromArray
         |> Client.getUTXOs
         |> then_(utxos =>
-             utxos
-             |. Set.reduceU(
-                  Network.inputSet(),
-                  (. res, {txId, txOutputN, address, amount}: utxo) => {
-                    let a: Address.t =
-                      addresses |. Map.String.get(address) |> Js.Option.getExn;
-                    res
-                    |. Set.add(
-                         {
-                           txId,
-                           txOutputN,
-                           address,
-                           nCoSigners: a.nCoSigners,
-                           nPubKeys: a.nPubKeys,
-                           value: amount,
-                           coordinates: a.coordinates,
-                           sequence: a.sequence,
-                           unlocked: false,
-                         }: Network.txInput,
-                       );
-                  },
-                )
+             utxos->(
+                      Set.reduceU(
+                        Network.inputSet(),
+                        (. res, {txId, txOutputN, address, amount}: utxo) => {
+                          let a: Address.t =
+                            addresses->(Map.String.get(address))
+                            |> Js.Option.getExn;
+                          res->(
+                                 Set.add(
+                                   {
+                                     txId,
+                                     txOutputN,
+                                     address,
+                                     nCoSigners: a.nCoSigners,
+                                     nPubKeys: a.nPubKeys,
+                                     value: amount,
+                                     coordinates: a.coordinates,
+                                     sequence: a.sequence,
+                                     unlocked: false,
+                                   }: Network.txInput,
+                                 )
+                               );
+                        },
+                      )
+                    )
              |> resolve
            )
       )

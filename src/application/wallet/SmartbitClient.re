@@ -8,7 +8,7 @@ let mainnetConfig = {subdomain: "api"};
 
 let float_ = Json.Decode.float;
 
-let decodeUTXO = raw : WalletTypes.utxo =>
+let decodeUTXO = raw: WalletTypes.utxo =>
   Json.Decode.{
     txId: raw |> field("txid", string),
     txOutputN: raw |> field("n", int),
@@ -93,8 +93,7 @@ let getUTXOs = (config, addresses) =>
       [],
     )
     |> Js.Promise.then_(utxos =>
-         utxos
-         |. Belt.List.toArray
+         utxos->Belt.List.toArray
          |> Belt.Set.mergeMany(WalletTypes.emptyUtxoSet)
          |> Js.Promise.resolve
        )
@@ -185,18 +184,20 @@ let getCurrentBlockHeight = (config, ()) =>
     |> then_(res => {
          let height =
            Json.Decode.(
-             res
-             |> field(
-                  "blocks",
-                  array(block => block |> field("height", int)),
-                )
-             |. Belt.Array.getExn(0)
+             (
+               res
+               |> field(
+                    "blocks",
+                    array(block => block |> field("height", int)),
+                  )
+             )
+             ->(Belt.Array.getExn(0))
            );
          height |> resolve;
        })
   );
 
-let make = (config, network) : (module WalletTypes.NetworkClientInterface) =>
+let make = (config, network): (module WalletTypes.NetworkClientInterface) =>
   (module
    {
      let network = network;

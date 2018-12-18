@@ -40,86 +40,100 @@ let addProposal =
       makeData: 'a => 'data,
       map,
     ) =>
-  map
-  |. Map.set(
-       processId,
-       {
-         processId,
-         status: PendingApproval,
-         proposedBy: proposerId,
-         canVote: eligibleWhenProposing |. Set.has(localUser),
-         voters:
-           eligibleWhenProposing
-           |> Set.toList
-           |. List.mapU((. userId) => {userId, voteStatus: Pending}),
-         data: makeData(data),
-       },
-     );
+  map->(
+         Map.set(
+           processId,
+           {
+             processId,
+             status: PendingApproval,
+             proposedBy: proposerId,
+             canVote: eligibleWhenProposing->(Set.has(localUser)),
+             voters:
+               (eligibleWhenProposing |> Set.toList)
+               ->(List.mapU((. userId) => {userId, voteStatus: Pending})),
+             data: makeData(data),
+           },
+         )
+       );
 
 let addRejection = (localUser, {processId, rejectorId}: rejection, map) =>
-  map
-  |. Map.update(
-       processId,
-       Utils.mapOption(process =>
-         {
-           ...process,
-           canVote: process.canVote && UserId.neq(rejectorId, localUser),
-           voters:
-             process.voters
-             |. List.mapU((. {userId, voteStatus}) =>
-                  UserId.eq(userId, rejectorId) ?
-                    {userId, voteStatus: Rejected} : {userId, voteStatus}
-                ),
-         }
-       ),
-     );
+  map->(
+         Map.update(
+           processId,
+           Utils.mapOption(process =>
+             {
+               ...process,
+               canVote: process.canVote && UserId.neq(rejectorId, localUser),
+               voters:
+                 process.voters
+                 ->(
+                     List.mapU((. {userId, voteStatus}) =>
+                       UserId.eq(userId, rejectorId) ?
+                         {userId, voteStatus: Rejected} :
+                         {userId, voteStatus}
+                     )
+                   ),
+             }
+           ),
+         )
+       );
 
 let addEndorsement = (localUser, {processId, supporterId}: endorsement, map) =>
-  map
-  |. Map.update(
-       processId,
-       Utils.mapOption(process =>
-         {
-           ...process,
-           canVote: process.canVote && UserId.neq(supporterId, localUser),
-           voters:
-             process.voters
-             |. List.mapU((. {userId, voteStatus}) =>
-                  UserId.eq(userId, supporterId) ?
-                    {userId, voteStatus: Endorsed} : {userId, voteStatus}
-                ),
-         }
-       ),
-     );
+  map->(
+         Map.update(
+           processId,
+           Utils.mapOption(process =>
+             {
+               ...process,
+               canVote: process.canVote && UserId.neq(supporterId, localUser),
+               voters:
+                 process.voters
+                 ->(
+                     List.mapU((. {userId, voteStatus}) =>
+                       UserId.eq(userId, supporterId) ?
+                         {userId, voteStatus: Endorsed} :
+                         {userId, voteStatus}
+                     )
+                   ),
+             }
+           ),
+         )
+       );
 
 let addAcceptance = ({processId}: acceptance('a), map) =>
-  map
-  |. Map.update(
-       processId,
-       Utils.mapOption(payout =>
-         {...payout, canVote: false, status: Accepted}
-       ),
-     );
+  map->(
+         Map.update(
+           processId,
+           Utils.mapOption(payout =>
+             {...payout, canVote: false, status: Accepted}
+           ),
+         )
+       );
 
 let addDenial = ({processId}: denial, map) =>
-  map
-  |. Map.update(
-       processId,
-       Utils.mapOption(payout => {...payout, canVote: false, status: Denied}),
-     );
+  map->(
+         Map.update(
+           processId,
+           Utils.mapOption(payout =>
+             {...payout, canVote: false, status: Denied}
+           ),
+         )
+       );
 
 let addAbort = ({processId}: abort, map) =>
-  map
-  |. Map.update(
-       processId,
-       Utils.mapOption(payout =>
-         {...payout, canVote: false, status: Aborted}
-       ),
-     );
+  map->(
+         Map.update(
+           processId,
+           Utils.mapOption(payout =>
+             {...payout, canVote: false, status: Aborted}
+           ),
+         )
+       );
 
 let updateData = (processId, fn, map) =>
-  map
-  |. Map.update(
-       processId,
-       Utils.mapOption(process => {...process, data: fn(process.data)}),
-     );
+  map->(
+         Map.update(
+           processId,
+           Utils.mapOption(process => {...process, data: fn(process.data)}),
+         )
+       );

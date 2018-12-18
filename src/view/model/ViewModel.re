@@ -130,14 +130,15 @@ module AddressesView = {
       infos,
       ventureId,
       atRiskWarning:
-        infos
-        |. List.reduceU(
-             false, (. res, {addressStatus, balance}: addressInfo) =>
-             switch (addressStatus) {
-             | AtRisk => res || balance |. BTC.gt(BTC.zero)
-             | _ => res
-             }
-           ),
+        infos->(
+                 List.reduceU(
+                   false, (. res, {addressStatus, balance}: addressInfo) =>
+                   switch (addressStatus) {
+                   | AtRisk => res || balance->(BTC.gt(BTC.zero))
+                   | _ => res
+                   }
+                 )
+               ),
       addressDetails: addressInfo => {
         isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
         custodians: addressInfo.custodians,
@@ -152,45 +153,51 @@ module AddressesView = {
             addressInfo,
             walletInfoCollector,
           )
-          |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-               let (date, status) =
-                 txDetailsCollector
-                 |> TxDetailsCollector.getDateAndStatus(txId);
-               let detailsLink: Router.Config.route =
-                 switch (addressInfo.addressType) {
-                 | Income(_) => Venture(ventureId, Income(txId))
-                 | Change =>
-                   Venture(
-                     ventureId,
-                     Payout(
-                       txDetailsCollector
-                       |> TxDetailsCollector.getProcessIdForTx(txId),
-                     ),
-                   )
-                 };
-               {txId, amount: value, status, date, unlocked, detailsLink};
-             }),
+          ->(
+              Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+                let (date, status) =
+                  txDetailsCollector
+                  |> TxDetailsCollector.getDateAndStatus(txId);
+                let detailsLink: Router.Config.route =
+                  switch (addressInfo.addressType) {
+                  | Income(_) => Venture(ventureId, Income(txId))
+                  | Change =>
+                    Venture(
+                      ventureId,
+                      Payout(
+                        txDetailsCollector
+                        |> TxDetailsCollector.getProcessIdForTx(txId),
+                      ),
+                    )
+                  };
+                {txId, amount: value, status, date, unlocked, detailsLink};
+              })
+            ),
         spentIncome:
-          oldInputCollector
-          |> OldInputCollector.inputsFor(addressInfo.address)
-          |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-               let (date, status) =
-                 txDetailsCollector
-                 |> TxDetailsCollector.getDateAndStatus(txId);
-               let detailsLink: Router.Config.route =
-                 switch (addressInfo.addressType) {
-                 | Income(_) => Venture(ventureId, Income(txId))
-                 | Change =>
-                   Venture(
-                     ventureId,
-                     Payout(
-                       txDetailsCollector
-                       |> TxDetailsCollector.getProcessIdForTx(txId),
-                     ),
-                   )
-                 };
-               {txId, amount: value, status, date, unlocked, detailsLink};
-             }),
+          (
+            oldInputCollector
+            |> OldInputCollector.inputsFor(addressInfo.address)
+          )
+          ->(
+              Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+                let (date, status) =
+                  txDetailsCollector
+                  |> TxDetailsCollector.getDateAndStatus(txId);
+                let detailsLink: Router.Config.route =
+                  switch (addressInfo.addressType) {
+                  | Income(_) => Venture(ventureId, Income(txId))
+                  | Change =>
+                    Venture(
+                      ventureId,
+                      Payout(
+                        txDetailsCollector
+                        |> TxDetailsCollector.getProcessIdForTx(txId),
+                      ),
+                    )
+                  };
+                {txId, amount: value, status, date, unlocked, detailsLink};
+              })
+            ),
       },
     };
   };
@@ -213,29 +220,31 @@ module ManagePartnersView = {
 
     {
       alertPartners:
-        infos
-        |. Belt.List.reduceU(
-             UserId.emptySet,
-             (.
-               res,
-               {addressStatus, custodians, balance, nCoSigners}: WalletInfoCollector.addressInfo,
-             ) =>
-             switch (addressStatus, balance) {
-             | (AtRisk, balance)
-             | (TemporarilyInaccessible, balance)
-                 when balance |. BTC.gt(BTC.zero) =>
-               res |. Set.union(custodians)
-             | _ when balance |. BTC.gt(BTC.zero) =>
-               let activeCustodians =
-                 custodians
-                 |. Set.intersect(
-                      partnersCollector |. PartnersCollector.currentPartners,
-                    );
-               activeCustodians |. Set.size == nCoSigners ?
-                 res |. Set.union(custodians) : res;
-             | _ => res
-             }
-           ),
+        infos->(
+                 Belt.List.reduceU(
+                   UserId.emptySet,
+                   (.
+                     res,
+                     {addressStatus, custodians, balance, nCoSigners}: WalletInfoCollector.addressInfo,
+                   ) =>
+                   switch (addressStatus, balance) {
+                   | (AtRisk, balance)
+                   | (TemporarilyInaccessible, balance)
+                       when balance->(BTC.gt(BTC.zero)) =>
+                     res->(Set.union(custodians))
+                   | _ when balance->(BTC.gt(BTC.zero)) =>
+                     let activeCustodians =
+                       custodians->(
+                                     Set.intersect(
+                                       partnersCollector->PartnersCollector.currentPartners,
+                                     )
+                                   );
+                     activeCustodians->Set.size == nCoSigners ?
+                       res->(Set.union(custodians)) : res;
+                   | _ => res
+                   }
+                 )
+               ),
       ventureName,
       partners: partnersCollector.partners,
     };
@@ -286,32 +295,39 @@ module ViewPartnerView = {
            atRiskWarning:
              switch (partnerProcess.data.processType) {
              | Removal =>
-               walletInfoCollector
-               |> WalletInfoCollector.addressInfos(AccountIndex.default)
-               |. Belt.List.reduceU(
-                    false,
-                    (.
-                      res,
-                      {addressStatus, custodians, balance, nCoSigners}: WalletInfoCollector.addressInfo,
-                    ) =>
-                    switch (addressStatus) {
-                    | TemporarilyInaccessible
-                    | AtRisk when balance |. BTC.gt(BTC.zero) =>
-                      res || custodians |. Set.has(partnerProcess.data.userId)
-                    | _ when balance |. BTC.gt(BTC.zero) =>
-                      let activeCustodians =
-                        custodians
-                        |. Set.intersect(
-                             partnersCollector
-                             |. PartnersCollector.currentPartners,
-                           );
-                      activeCustodians
-                      |. Set.size == nCoSigners
-                      && activeCustodians
-                      |. Set.has(partnerProcess.data.userId);
-                    | _ => res
-                    }
-                  )
+               (
+                 walletInfoCollector
+                 |> WalletInfoCollector.addressInfos(AccountIndex.default)
+               )
+               ->(
+                   Belt.List.reduceU(
+                     false,
+                     (.
+                       res,
+                       {addressStatus, custodians, balance, nCoSigners}: WalletInfoCollector.addressInfo,
+                     ) =>
+                     switch (addressStatus) {
+                     | TemporarilyInaccessible
+                     | AtRisk when balance->(BTC.gt(BTC.zero)) =>
+                       res
+                       || custodians->(Set.has(partnerProcess.data.userId))
+                     | _ when balance->(BTC.gt(BTC.zero)) =>
+                       let activeCustodians =
+                         custodians->(
+                                       Set.intersect(
+                                         partnersCollector->PartnersCollector.currentPartners,
+                                       )
+                                     );
+                       activeCustodians->Set.size == nCoSigners
+                       && activeCustodians->(
+                                              Set.has(
+                                                partnerProcess.data.userId,
+                                              )
+                                            );
+                     | _ => res
+                     }
+                   )
+                 )
              | Addition => false
              },
          }
@@ -359,9 +375,11 @@ module CreatePayoutView = {
     let balance = {
       reserved,
       currentSpendable:
-        walletInfoCollector
-        |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
-        |. BTC.minus(reserved),
+        (
+          walletInfoCollector
+          |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
+        )
+        ->(BTC.minus(reserved)),
     };
     let network = walletInfoCollector |> WalletInfoCollector.network;
     let optionalInputs =
@@ -375,8 +393,8 @@ module CreatePayoutView = {
       |> WalletInfoCollector.unlockedInputs(AccountIndex.default);
     let allInputs =
       optionalInputs
-      |. Belt.Set.union(mandatoryInputs)
-      |. Belt.Set.union(unlockedInputs);
+      ->(Belt.Set.union(mandatoryInputs))
+      ->(Belt.Set.union(unlockedInputs));
     let changeAddress =
       walletInfoCollector
       |> WalletInfoCollector.nextChangeAddress(
@@ -386,7 +404,7 @@ module CreatePayoutView = {
     {
       ventureId,
       balance,
-      allowCreation: balance.currentSpendable |. BTC.gt(BTC.zero),
+      allowCreation: balance.currentSpendable->(BTC.gt(BTC.zero)),
       ventureName,
       initialSummary: {
         reserved: BTC.zero,
@@ -433,25 +451,28 @@ module CreatePayoutView = {
         |> Js.Option.isSome,
       collectInputHexs: (knownHexs, {usedInputs}) => {
         let inputs =
-          usedInputs
-          |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
+          usedInputs->(
+                        Array.mapU((. {txId}: PayoutTransaction.input) =>
+                          txId
+                        )
+                      )
           |> Set.String.fromArray;
         let knownIds =
-          knownHexs |. Map.String.keysToArray |> Set.String.fromArray;
+          knownHexs->Map.String.keysToArray |> Set.String.fromArray;
         Js.Promise.(
           Set.String.diff(inputs, knownIds)
           |> Set.String.toArray
           |> NetworkClient.transactionHex(network)
           |> then_(txs => {
-               let knownHexs = knownHexs |. Map.String.mergeMany(txs);
+               let knownHexs = knownHexs->(Map.String.mergeMany(txs));
                (
                  knownHexs,
-                 usedInputs
-                 |. Array.mapU((. {txId}: PayoutTransaction.input) =>
-                      knownHexs
-                      |. Map.String.get(txId)
-                      |> Js.Option.getWithDefault("")
-                    ),
+                 usedInputs->(
+                               Array.mapU((. {txId}: PayoutTransaction.input) =>
+                                 knownHexs->(Map.String.get(txId))
+                                 |> Js.Option.getWithDefault("")
+                               )
+                             ),
                )
                |> resolve;
              })
@@ -521,8 +542,11 @@ module ViewPayoutView = {
              missingSignatures.additional,
            );
          let txHexPromise =
-           usedInputs
-           |. Array.mapU((. {txId}: PayoutTransaction.input) => txId)
+           usedInputs->(
+                         Array.mapU((. {txId}: PayoutTransaction.input) =>
+                           txId
+                         )
+                       )
            |> NetworkClient.transactionHex(
                 walletInfoCollector |> WalletInfoCollector.network,
               );
@@ -540,7 +564,7 @@ module ViewPayoutView = {
                       |> LedgerInfoCollector.ledgerId(AccountIndex.default)
                       |> Js.Option.getWithDefault(""),
                       payoutTx,
-                      txHexs |. Array.map(snd),
+                      txHexs->(Array.map(snd)),
                       walletInfoCollector
                       |> WalletInfoCollector.accountKeyChains,
                     )
@@ -618,9 +642,11 @@ module SelectedVentureView = {
     let balance = {
       reserved,
       currentSpendable:
-        walletInfoCollector
-        |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
-        |. BTC.minus(reserved),
+        (
+          walletInfoCollector
+          |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
+        )
+        ->(BTC.minus(reserved)),
     };
     let (proposedAdditions, proposedRemovals) =
       partnersCollector |> PartnersCollector.processesPendingApproval;
@@ -631,7 +657,7 @@ module SelectedVentureView = {
         ledgerInfoCollector
         |> LedgerInfoCollector.ledgerId(AccountIndex.default)
         |> Js.Option.isSome
-        && ! (
+        && !(
              ledgerInfoCollector
              |> LedgerInfoCollector.ledgerUpToDate(AccountIndex.default)
            ),
@@ -641,19 +667,23 @@ module SelectedVentureView = {
       readOnly:
         partnersCollector |> PartnersCollector.isPartner(localUser) == false,
       atRiskWarning:
-        walletInfoCollector
-        |> WalletInfoCollector.addressInfos(AccountIndex.default)
-        |. Belt.List.reduceU(
-             false,
-             (.
-               res,
-               {addressStatus, balance}: WalletInfoCollector.addressInfo,
-             ) =>
-             switch (addressStatus) {
-             | AtRisk => res || balance |. BTC.gt(BTC.zero)
-             | _ => res
-             }
-           ),
+        (
+          walletInfoCollector
+          |> WalletInfoCollector.addressInfos(AccountIndex.default)
+        )
+        ->(
+            Belt.List.reduceU(
+              false,
+              (.
+                res,
+                {addressStatus, balance}: WalletInfoCollector.addressInfo,
+              ) =>
+              switch (addressStatus) {
+              | AtRisk => res || balance->(BTC.gt(BTC.zero))
+              | _ => res
+              }
+            )
+          ),
       partners: partnersCollector.partners,
       proposedAdditions,
       proposedRemovals,
@@ -685,7 +715,7 @@ let make = localUser => {
 };
 
 let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
-  if (processedItems |. ItemsSet.has(hash)) {
+  if (processedItems->(ItemsSet.has(hash))) {
     state;
   } else {
     let state = {
@@ -702,7 +732,7 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.oldInputCollector |> OldInputCollector.apply(event),
       ledgerInfoCollector:
         state.ledgerInfoCollector |> LedgerInfoCollector.apply(event),
-      processedItems: processedItems |. ItemsSet.add(hash),
+      processedItems: processedItems->(ItemsSet.add(hash)),
     };
     switch (event) {
     | VentureCreated({

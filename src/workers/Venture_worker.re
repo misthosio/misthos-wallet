@@ -10,17 +10,17 @@ module Message = VentureWorkerMessage;
 
 type self;
 
-[@bs.val] external self : self = "";
+[@bs.val] external self: self = "";
 
 [@bs.set]
-external onMessage :
+external onMessage:
   (self, [@bs.uncurry] ({. "data": WebWorker.message} => unit)) => unit =
   "onmessage";
 
 [@bs.set]
-external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
+external onError: (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
 
-[@bs.val] external _postMessage : WebWorker.message => unit = "postMessage";
+[@bs.val] external _postMessage: WebWorker.message => unit = "postMessage";
 
 open PrimitiveTypes;
 

@@ -26,11 +26,11 @@ let make = (~selected=?, ~index, _children) => {
         <MTypography
           variant=`Body2
           gutterBottom=true
-          className=(Css.style([Css.color(Colors.error)]))>
-          (
+          className={Css.style([Css.color(Colors.error)])}>
+          {
             {js|In preparation for our mainnet launch it has been necessary to make a breaking change. As a result your testnet ventures are no longer accessible. We will garuantee backwards compatibility following our public release on mainnet.|js}
             |> text
-          )
+          }
         </MTypography>
       | _ => ReasonReact.null
       };
@@ -39,10 +39,10 @@ let make = (~selected=?, ~index, _children) => {
       | None => <Spinner text="loading index" />
       | Some([]) =>
         <MTypography variant=`Body2>
-          (
+          {
             {js|You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.|js}
             |> text
-          )
+          }
         </MTypography>
       | Some(ventures) =>
         ReasonReact.array(
@@ -57,22 +57,22 @@ let make = (~selected=?, ~index, _children) => {
                        key=ids
                        dense=true
                        button=true
-                       value=(`String(ids))
-                       onClick=(Router.clickToRoute(Venture(id, None)))
-                       component=(`String("li"))>
+                       value={`String(ids)}
+                       onClick={Router.clickToRoute(Venture(id, None))}
+                       component={`String("li")}>
                        <ListItemText
                          primary={
                            <MTypography
                              variant=`Title
-                             className=(
+                             className={
                                Styles.link
                                ++ " "
                                ++ (
                                  Some(id) == selected ?
                                    Styles.linkSelected : ""
                                )
-                             )>
-                             (name |> text)
+                             }>
+                             {name |> text}
                            </MTypography>
                          }
                        />

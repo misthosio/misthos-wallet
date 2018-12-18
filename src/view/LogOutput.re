@@ -14,11 +14,11 @@ let make = (~ventureId, _children) => {
   reducer: (log: EventLog.t, _) => ReasonReact.Update(Some(log)),
   render: ({state}) =>
     <div>
-      (
+      {
         switch (state) {
         | None => ReasonReact.null
         | Some(log) => log |> EventLog.encode |> Json.stringify |> text
         }
-      )
+      }
     </div>,
 };

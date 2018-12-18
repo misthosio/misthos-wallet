@@ -20,7 +20,7 @@ let constructState = (~originId as partnerId=?, log) =>
   log
   |> L.reduce(
        (s, item) =>
-         switch (s |. Validation.validate(~partnerId?, item)) {
+         switch (s->(Validation.validate(~partnerId?, item))) {
          | Ok => s |> Validation.apply(item)
          | bad =>
            raise(TestingInvalidSequence(bad |> Validation.resultToString))

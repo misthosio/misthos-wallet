@@ -40,7 +40,7 @@ module type EventData = {
 
 module type ProposedEvent =
   (Data: EventData) =>
-  {
+   {
     type t = proposal(Data.t);
     let make:
       (
@@ -56,7 +56,7 @@ module type ProposedEvent =
     let decode: Js.Json.t => t;
   };
 
-let makeProposal = (name: string) : (module ProposedEvent) =>
+let makeProposal = (name: string): (module ProposedEvent) =>
   (module
    (Data: EventData) => {
      type t = proposal(Data.t);
@@ -130,7 +130,7 @@ module type RejectedEvent = {
   let decode: Js.Json.t => t;
 };
 
-let makeRejection = (name: string) : (module RejectedEvent) =>
+let makeRejection = (name: string): (module RejectedEvent) =>
   (module
    {
      type t = rejection;
@@ -157,7 +157,7 @@ module type EndorsedEvent = {
   let decode: Js.Json.t => t;
 };
 
-let makeEndorsement = (name: string) : (module EndorsedEvent) =>
+let makeEndorsement = (name: string): (module EndorsedEvent) =>
   (module
    {
      type t = endorsement;
@@ -179,14 +179,14 @@ let makeEndorsement = (name: string) : (module EndorsedEvent) =>
 
 module type AcceptedEvent =
   (Data: EventData) =>
-  {
+   {
     type t = acceptance(Data.t);
     let fromProposal: proposal(Data.t) => t;
     let encode: t => Js.Json.t;
     let decode: Js.Json.t => t;
   };
 
-let makeAcceptance = (name: string) : (module AcceptedEvent) =>
+let makeAcceptance = (name: string): (module AcceptedEvent) =>
   (module
    (Data: EventData) => {
      type t = acceptance(Data.t);
@@ -233,11 +233,11 @@ module type DeniedEvent = {
   let decode: Js.Json.t => t;
 };
 
-let makeDenial = (name: string) : (module DeniedEvent) =>
+let makeDenial = (name: string): (module DeniedEvent) =>
   (module
    {
      type t = denial;
-     let fromProposal = ({processId}: proposal('a)) : t => {
+     let fromProposal = ({processId}: proposal('a)): t => {
        processId: processId,
      };
      let encode = (event: t) =>
@@ -247,7 +247,7 @@ let makeDenial = (name: string) : (module DeniedEvent) =>
            ("processId", ProcessId.encode(event.processId)),
          ])
        );
-     let decode = raw : t =>
+     let decode = raw: t =>
        Json.Decode.{processId: raw |> field("processId", ProcessId.decode)};
    });
 
@@ -258,7 +258,7 @@ module type AbortedEvent = {
   let decode: Js.Json.t => t;
 };
 
-let makeAbort = (name: string) : (module AbortedEvent) =>
+let makeAbort = (name: string): (module AbortedEvent) =>
   (module
    {
      type t = abort;
@@ -278,7 +278,7 @@ let makeAbort = (name: string) : (module AbortedEvent) =>
 
 module type Process =
   (Data: EventData) =>
-  {
+   {
     let processName: string;
     let dataEq: (Data.t, Data.t) => bool;
     module Proposed: {
@@ -328,7 +328,7 @@ module type Process =
     };
   };
 
-let makeProcess = (name: string) : (module Process) =>
+let makeProcess = (name: string): (module Process) =>
   (module
    (Data: EventData) => {
      let processName = name ++ "ApprovalProcess";

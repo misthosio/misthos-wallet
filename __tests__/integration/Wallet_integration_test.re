@@ -62,11 +62,13 @@ let () =
       let oneKeyChainSpendAmount = BTC.fromSatoshis(6100L);
       let oneKeyChainExpectedFee = BTC.fromSatoshis(1892L);
       let twoKeyChainWalletTotal =
-        oneKeyChainWalletTotal
-        |> BTC.plus(address3Satoshis)
-        |> BTC.plus(address4Satoshis)
-        |. BTC.minus(oneKeyChainSpendAmount)
-        |. BTC.minus(oneKeyChainExpectedFee);
+        (
+          oneKeyChainWalletTotal
+          |> BTC.plus(address3Satoshis)
+          |> BTC.plus(address4Satoshis)
+        )
+        ->(BTC.minus(oneKeyChainSpendAmount))
+        ->(BTC.minus(oneKeyChainExpectedFee));
       let twoKeyChainSpendAmount = BTC.fromSatoshis(25000L);
 
       beforeAllPromise(~timeout=40000, () =>
@@ -78,7 +80,7 @@ let () =
             (address4.address.displayAddress, address4Satoshis),
           ])
           |> then_(utxos => {
-               let utxos = utxos |. Belt.Set.toList;
+               let utxos = utxos->Belt.Set.toList;
                let walletOneAddresses = [
                  (address1.address.displayAddress, address1),
                  (address2.address.displayAddress, address2),
@@ -224,8 +226,7 @@ let () =
           |> WalletHelpers.getExposedAddresses
           |> Helpers.getUTXOs
           |> then_(utxos =>
-               utxos
-               |. Belt.Set.toList
+               utxos->Belt.Set.toList
                |> List.fold_left(
                     (total, utxo: WalletTypes.utxo) =>
                       total |> BTC.plus(utxo.amount),
@@ -234,8 +235,8 @@ let () =
                |> expect
                |> toEqual(
                     oneKeyChainWalletTotal
-                    |. BTC.minus(oneKeyChainSpendAmount)
-                    |. BTC.minus(oneKeyChainExpectedFee),
+                    ->(BTC.minus(oneKeyChainSpendAmount))
+                    ->(BTC.minus(oneKeyChainExpectedFee)),
                   )
                |> resolve
              )
@@ -319,8 +320,7 @@ let () =
                  |> WalletHelpers.getExposedAddresses
                  |> Helpers.getUTXOs
                  |> then_(utxos =>
-                      utxos
-                      |. Belt.Set.toList
+                      utxos->Belt.Set.toList
                       |> List.fold_left(
                            (total, utxo: WalletTypes.utxo) =>
                              total |> BTC.plus(utxo.amount),
@@ -329,8 +329,8 @@ let () =
                       |> expect
                       |> toEqual(
                            twoKeyChainWalletTotal
-                           |. BTC.minus(twoKeyChainSpendAmount)
-                           |. BTC.minus(expectedFee),
+                           ->(BTC.minus(twoKeyChainSpendAmount))
+                           ->(BTC.minus(expectedFee)),
                          )
                       |> resolve
                     );

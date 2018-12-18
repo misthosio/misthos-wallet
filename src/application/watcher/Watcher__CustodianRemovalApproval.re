@@ -50,12 +50,12 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
           | CustodianRemovalEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: state^.endorsements |. Set.add(event.supporterId),
+              endorsements: state^.endorsements->(Set.add(event.supporterId)),
             }
           | CustodianRemovalRejected(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              rejections: state^.rejections |. Set.add(event.rejectorId),
+              rejections: state^.rejections->(Set.add(event.rejectorId)),
             }
           | CustodianRemovalAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>

@@ -6,22 +6,22 @@ let section2Heading = {js|Verantwortlicher|js};
 let section3Heading = {js|Arten der verarbeiteten Daten:|js};
 let section3 =
   <ul>
-    <li> ({js|Bestandsdaten (z.B., Namen, Adressen).|js} |> text) </li>
-    <li> ({js|Kontaktdaten (z.B., E-Mail, Telefonnummern).|js} |> text) </li>
+    <li> {{js|Bestandsdaten (z.B., Namen, Adressen).|js} |> text} </li>
+    <li> {{js|Kontaktdaten (z.B., E-Mail, Telefonnummern).|js} |> text} </li>
     <li>
-      ({js|Inhaltsdaten (z.B., Texteingaben, Fotografien, Videos).|js} |> text)
+      {{js|Inhaltsdaten (z.B., Texteingaben, Fotografien, Videos).|js} |> text}
     </li>
     <li>
-      (
+      {
         {js|Nutzungsdaten (z.B., besuchte Webseiten, Interesse an Inhalten, Zugriffszeiten).|js}
         |> text
-      )
+      }
     </li>
     <li>
-      (
+      {
         {js|Meta-/Kommunikationsdaten (z.B., Geräte-Informationen, IP-Adressen).|js}
         |> text
-      )
+      }
     </li>
   </ul>;
 let section4Heading = {js|Kategorien betroffener Personen|js};
@@ -30,19 +30,19 @@ let section5Heading = {js|Zweck der Verarbeitung|js};
 let section5 =
   <ul>
     <li>
-      (
+      {
         {js|Zurverfügungstellung des Onlineangebotes, seiner Funktionen und Inhalte.|js}
         |> text
-      )
+      }
     </li>
     <li>
-      (
+      {
         {js|Beantwortung von Kontaktanfragen und Kommunikation mit Nutzern.|js}
         |> text
-      )
+      }
     </li>
-    <li> ({js|Sicherheitsmaßnahmen.|js} |> text) </li>
-    <li> ({js|Reichweitenmessung/Marketing|js} |> text) </li>
+    <li> {{js|Sicherheitsmaßnahmen.|js} |> text} </li>
+    <li> {{js|Reichweitenmessung/Marketing|js} |> text} </li>
   </ul>;
 let section6Heading = {js|Verwendete Begrifflichkeiten|js};
 let section6P1 = {js| „Personenbezogene Daten“ sind alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person (im Folgenden „betroffene Person“) beziehen; als identifizierbar wird eine natürliche Person angesehen, die direkt oder indirekt, insbesondere mittels Zuordnung zu einer Kennung wie einem Namen, zu einer Kennnummer, zu Standortdaten, zu einer Online-Kennung (z.B. Cookie) oder zu einem oder mehreren besonderen Merkmalen identifiziert werden kann, die Ausdruck der physischen, physiologischen, genetischen, psychischen, wirtschaftlichen, kulturellen oder sozialen Identität dieser natürlichen Person sind.
@@ -87,21 +87,21 @@ let section14P2 = {js|Wir können temporäre und permanente Cookies einsetzen un
 let section14P3 = {js|Falls die Nutzer nicht möchten, dass Cookies auf ihrem Rechner gespeichert werden, werden sie gebeten die entsprechende Option in den Systemeinstellungen ihres Browsers zu deaktivieren. Gespeicherte Cookies können in den Systemeinstellungen des Browsers gelöscht werden. Der Ausschluss von Cookies kann zu Funktionseinschränkungen dieses Onlineangebotes führen.|js};
 let section14P4 =
   <p>
-    (
+    {
       {js|Ein genereller Widerspruch gegen den Einsatz der zu Zwecken des Onlinemarketing eingesetzten Cookies kann bei einer Vielzahl der Dienste, vor allem im Fall des Trackings, über die US-amerikanische Seite |js}
       |> text
-    )
+    }
     <a href="http://www.aboutads.info/choices/" target="_blank">
-      ("http://www.aboutads.info/choices/" |> text)
+      {"http://www.aboutads.info/choices/" |> text}
     </a>
-    ("oder die EU-Seite " |> text)
+    {"oder die EU-Seite " |> text}
     <a href="http://www.youronlinechoices.com/" target="_blank">
-      ("http://www.youronlinechoices.com/" |> text)
+      {"http://www.youronlinechoices.com/" |> text}
     </a>
-    (
+    {
       {js| erklärt werden. Des Weiteren kann die Speicherung von Cookies mittels deren Abschaltung in den Einstellungen des Browsers erreicht werden. Bitte beachten Sie, dass dann gegebenenfalls nicht alle Funktionen dieses Onlineangebotes genutzt werden können.|js}
       |> text
-    )
+    }
   </p>;
 
 let section15Heading = {js|Löschung von Daten|js};
@@ -117,21 +117,21 @@ let section16P2 = {js|Wir löschen die Anfragen, sofern diese nicht mehr erforde
 let section17Heading = {js|Google Analytics|js};
 let section17P1 =
   <p>
-    (
+    {
       {js|Wir setzen auf Grundlage unserer berechtigten Interessen (d.h. Interesse an der Analyse, Optimierung und wirtschaftlichem Betrieb unseres Onlineangebotes im Sinne des Art. 6 Abs. 1 lit. f. DSGVO) Google Analytics, einen Webanalysedienst der Google LLC („Google“) ein. Google verwendet Cookies. Die durch das Cookie erzeugten Informationen über Benutzung des Onlineangebotes durch die Nutzer werden in der Regel an einen Server von Google in den USA übertragen und dort gespeichert.|js}
       |> text
-    )
-    (
+    }
+    {
       {js|. Google ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäisches Datenschutzniveau einzuhalten (|js}
       |> text
-    )
+    }
     <a
       href="https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
       target="_blank">
-      (
+      {
         "https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
         |> text
-      )
+      }
     </a>
   </p>;
 let section17P2 = {js|Google wird diese Informationen in unserem Auftrag benutzen, um die Nutzung unseres Onlineangebotes durch die Nutzer auszuwerten, um Reports über die Aktivitäten innerhalb dieses Onlineangebotes zusammenzustellen und um weitere, mit der Nutzung dieses Onlineangebotes und der Internetnutzung verbundene Dienstleistungen, uns gegenüber zu erbringen. Dabei können aus den verarbeiteten Daten pseudonyme Nutzungsprofile der Nutzer erstellt werden.|js};
@@ -139,30 +139,30 @@ let section17P3 = {js|Wir setzen Google Analytics nur mit aktivierter IP-Anonymi
 |js};
 let section17P4 =
   <p>
-    (
+    {
       {js|Die von dem Browser des Nutzers übermittelte IP-Adresse wird nicht mit anderen Daten von Google zusammengeführt. Die Nutzer können die Speicherung der Cookies durch eine entsprechende Einstellung ihrer Browser-Software verhindern; die Nutzer können darüber hinaus die Erfassung der durch das Cookie erzeugten und auf ihre Nutzung des Onlineangebotes bezogenen Daten an Google sowie die Verarbeitung dieser Daten durch Google verhindern, indem sie das unter folgendem Link verfügbare Browser-Plugin herunterladen und installieren:|js}
       |> text
-    )
+    }
     <a href=" http://tools.google.com/dlpage/gaoptout?hl=de" target="_blank">
-      (" http://tools.google.com/dlpage/gaoptout?hl=de" |> text)
+      {" http://tools.google.com/dlpage/gaoptout?hl=de" |> text}
     </a>
   </p>;
 
 let section17P5 =
   <p>
-    (
+    {
       {js|Weitere Informationen zur Datennutzung durch Google, Einstellungs- und Widerspruchsmöglichkeiten, erfahren Sie in der Datenschutzerklärung von Google |js}
       |> text
-    )
+    }
     <a href=" https://policies.google.com/technologies/ads" target="_blank">
-      ("https://policies.google.com/technologies/ads" |> text)
+      {"https://policies.google.com/technologies/ads" |> text}
     </a>
-    (
+    {
       {js|sowie in den Einstellungen für die Darstellung von Werbeeinblendungen durch Google|js}
       |> text
-    )
+    }
     <a href=" https://adssettings.google.com/authenticated" target="_blank">
-      ("https://adssettings.google.com/authenticated" |> text)
+      {"https://adssettings.google.com/authenticated" |> text}
     </a>
   </p>;
 
@@ -180,29 +180,29 @@ let section18P7 = {js|Kündigung/Widerruf - Sie können den Empfang unseres News
 let section19Heading = {js|Newsletter - Mailchimp|js};
 let section19P1 =
   <p>
-    (
+    {
       {js|Der Versand der Newsletter erfolgt mittels des Versanddienstleisters „MailChimp“, einer Newsletterversandplattform des US-Anbieters Rocket Science Group, LLC, 675 Ponce De Leon Ave NE #5000, Atlanta, GA 30308, USA. Die Datenschutzbestimmungen des Versanddienstleisters können Sie hier einsehen: |js}
       |> text
-    )
+    }
     <a href="https://mailchimp.com/legal/privacy/" target="_blank">
-      ("https://mailchimp.com/legal/privacy/" |> text)
+      {"https://mailchimp.com/legal/privacy/" |> text}
     </a>
-    (
+    {
       {js|. The Rocket Science Group LLC d/b/a MailChimp ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäisches Datenschutzniveau einzuhalten (|js}
       |> text
-    )
+    }
     <a
       href="https://www.privacyshield.gov/participant?id=a2zt0000000TO6hAAG&status=Active"
       target="_blank">
-      (
+      {
         "https://www.privacyshield.gov/participant?id=a2zt0000000TO6hAAG&status=Active"
         |> text
-      )
+      }
     </a>
-    (
+    {
       {js|). Der Versanddienstleister wird auf Grundlage unserer berechtigten Interessen gem. Art. 6 Abs. 1 lit. f DSGVO und eines Auftragsverarbeitungsvertrages gem. Art. 28 Abs. 3 S. 1 DSGVO eingesetzt.|js}
       |> text
-    )
+    }
   </p>;
 let section19P2 = {js|Der Versanddienstleister kann die Daten der Empfänger in pseudonymer Form, d.h. ohne Zuordnung zu einem Nutzer, zur Optimierung oder Verbesserung der eigenen Services nutzen, z.B. zur technischen Optimierung des Versandes und der Darstellung der Newsletter oder für statistische Zwecke verwenden. Der Versanddienstleister nutzt die Daten unserer Newsletterempfänger jedoch nicht, um diese selbst anzuschreiben oder um die Daten an Dritte weiterzugeben.|js};
 
@@ -219,73 +219,73 @@ let section20P6 = {js|- Google/ YouTube (Google LLC, 1600 Amphitheatre Parkway, 
 
 let section20P7 =
   <p>
-    ({js|Datenschutzerklärung: |js} |> text)
+    {{js|Datenschutzerklärung: |js} |> text}
     <a href="https://www.google.com/policies/privacy/" target="_blank">
-      ("https://www.google.com/policies/privacy/" |> text)
+      {"https://www.google.com/policies/privacy/" |> text}
     </a>
-    ({js|, Opt-Out: |js} |> text)
+    {{js|, Opt-Out: |js} |> text}
     <a href="https://adssettings.google.com/authenticated" target="_blank">
-      ("https://adssettings.google.com/authenticated" |> text)
+      {"https://adssettings.google.com/authenticated" |> text}
     </a>
-    ("." |> text)
-    ({js|, Privacy Shield:  |js} |> text)
+    {"." |> text}
+    {{js|, Privacy Shield:  |js} |> text}
     <a
       href="https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
       target="_blank">
-      (
+      {
         "https://www.privacyshield.gov/participant?id=a2zt000000001L5AAI&status=Active"
         |> text
-      )
+      }
     </a>
-    ("." |> text)
+    {"." |> text}
   </p>;
 
 let section20P8 = {js|- Twitter (Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA)|js};
 let section20P9 =
   <p>
-    ({js|Datenschutzerklärung: |js} |> text)
+    {{js|Datenschutzerklärung: |js} |> text}
     <a href="https://twitter.com/de/privacy" target="_blank">
-      ("https://twitter.com/de/privacy" |> text)
+      {"https://twitter.com/de/privacy" |> text}
     </a>
-    (", Opt-Out: " |> text)
+    {", Opt-Out: " |> text}
     <a href="https://twitter.com/personalization" target="_blank">
-      ("https://twitter.com/personalization" |> text)
+      {"https://twitter.com/personalization" |> text}
     </a>
-    (". Privacy Shield" |> text)
+    {". Privacy Shield" |> text}
     <a
       href="https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active"
       target="_blank">
-      (
+      {
         "https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active"
         |> text
-      )
+      }
     </a>
   </p>;
 
 let section20P10 = {js|- LinkedIn (LinkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland) |js};
 let section20P11 =
   <p>
-    ({js|Datenschutzerklärung: |js} |> text)
+    {{js|Datenschutzerklärung: |js} |> text}
     <a href="https://www.linkedin.com/legal/privacy-policy" target="_blank">
-      ("https://www.linkedin.com/legal/privacy-policy" |> text)
+      {"https://www.linkedin.com/legal/privacy-policy" |> text}
     </a>
-    (", Opt-Out: " |> text)
+    {", Opt-Out: " |> text}
     <a
       href="https://www.linkedin.com/psettings/guest-controls/retargeting-opt-out"
       target="_blank">
-      (
+      {
         "https://www.linkedin.com/psettings/guest-controls/retargeting-opt-out"
         |> text
-      )
+      }
     </a>
-    (". Privacy Shield" |> text)
+    {". Privacy Shield" |> text}
     <a
       href="https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active"
       target="_blank">
-      (
+      {
         "https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active"
         |> text
-      )
+      }
     </a>
   </p>;
 
@@ -293,17 +293,17 @@ let section21Heading = {js|Sentry - Open Source Error Tracking|js};
 let section21P1 = {js|Mit Hilfe des Error-Trackings stellen wir die Verfügbarkeit und Integrität unseres Onlineangebotes sicher und verwenden die dabei verarbeiteten Daten, um unser Onlineangebot technisch zu optimieren.|js};
 let section21P2 =
   <p>
-    (
+    {
       {js|Zu diesen Zwecken setzen wir den Dienst Sentry von der Firma Functional Software, Inc. dba Sentry, 132 Hawthorne Street, San Francisco, CA 94107. Die Firma Functional Software ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten |js}
       |> text
-    )
+    }
     <a
       href="https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO"
       target="_blank">
-      (
+      {
         "https://www.privacyshield.gov/participant?id=a2zt0000000TNDzAAO"
         |> text
-      )
+      }
     </a>
   </p>;
 let section21P3 = {js|Sentry ist eine Open-Source Echtzeit-Fehlerverfolgungsplattform für Web-Apps, mobilen Apps und Spiele und bietet die Entwicklern den nötigen Einblick, um Fehler und Abstürze zu reproduzieren und zu beheben.|js};
@@ -311,21 +311,21 @@ let section21P4 = {js|Wir setzen Sentry auf Grundlage unserer berechtigten Inter
 |js};
 let section21P6 =
   <p>
-    (
+    {
       {js|Weitere Informationen zur Verarbeitung personenbezogener Daten durch Sentry, erhalten Sie in der Datenschutzerklärung des Dienstes:|js}
       |> text
-    )
+    }
     <a href="https://sentry.io/privacy/" target="_blank">
-      ("https://sentry.io/privacy/" |> text)
+      {"https://sentry.io/privacy/" |> text}
     </a>
   </p>;
 
 let section22 =
   <p>
     <a href="https://datenschutz-generator.de/" target="_blank">
-      (
+      {
         {js|Erstellt mit Datenschutz-Generator.de von RA Dr. Thomas Schwenke|js}
         |> text
-      )
+      }
     </a>
   </p>;

@@ -8,10 +8,10 @@ open VentureWorkerMessage;
 
 type self;
 
-[@bs.val] external self : self = "";
+[@bs.val] external self: self = "";
 
 [@bs.set]
-external onMessage :
+external onMessage:
   (self, [@bs.uncurry] ({. "data": WebWorker.message} => unit)) => unit =
   "onmessage";
 
@@ -212,48 +212,52 @@ let missingKeys = ref(Belt.Map.String.empty);
 let addToMissingKeys = (ventureId, userId, f) => {
   open Belt;
   let key = VentureId.toString(ventureId) ++ UserId.toString(userId);
-  missingKeys := missingKeys^ |. Map.String.set(key, f);
+  missingKeys := (missingKeys^)->(Map.String.set(key, f));
 };
 let removeVentureFromMissingKeys = ventureId => {
   open Belt;
   let ventureStr = VentureId.toString(ventureId);
   missingKeys :=
-    missingKeys^
-    |. Map.String.keepU((. key, _) =>
-         Js.String.startsWith(ventureStr, key) == false
-       );
+    (missingKeys^)
+    ->(
+        Map.String.keepU((. key, _) =>
+          Js.String.startsWith(ventureStr, key) == false
+        )
+      );
 };
 
 Js.Global.setInterval(
   () =>
     Belt.(
       Js.Promise.(
-        missingKeys^
-        |. Map.String.reduceU(resolve(), (. promise, key, (id, f)) =>
-             UserInfo.Public.(
-               read(~blockstackId=id)
-               |> then_(
-                    fun
-                    | UserInfo.Public.Ok({appPubKey}) =>
-                      if (missingKeys^ |. Map.String.has(key)) {
-                        logMessage("Missing key has been found");
-                        promise
-                        |> f(appPubKey)
-                        |> then_(() => {
-                             missingKeys :=
-                               missingKeys^ |. Map.String.remove(key);
-                             resolve();
-                           });
-                      } else {
-                        promise;
-                      }
-                    | NotFound => {
-                        logMessage("Could not find UserInfo");
-                        promise;
-                      },
-                  )
-             )
-           )
+        (missingKeys^)
+        ->(
+            Map.String.reduceU(resolve(), (. promise, key, (id, f)) =>
+              UserInfo.Public.(
+                read(~blockstackId=id)
+                |> then_(
+                     fun
+                     | UserInfo.Public.Ok({appPubKey}) =>
+                       if ((missingKeys^)->(Map.String.has(key))) {
+                         logMessage("Missing key has been found");
+                         promise
+                         |> f(appPubKey)
+                         |> then_(() => {
+                              missingKeys :=
+                                (missingKeys^)->(Map.String.remove(key));
+                              resolve();
+                            });
+                       } else {
+                         promise;
+                       }
+                     | NotFound => {
+                         logMessage("Could not find UserInfo");
+                         promise;
+                       },
+                   )
+              )
+            )
+          )
         |> ignore
       )
     ),
@@ -329,10 +333,12 @@ let handleMessage =
       Js.Promise.(
         Venture.Index.load()
         |> then_(({ventures}: Venture.Index.t) =>
-             ventures
-             |. Belt.List.reduce(resolve(), (p, {id}: Venture.Index.item) =>
-                  p |> then_(() => persistVenture(id))
-                )
+             ventures->(
+                         Belt.List.reduce(
+                           resolve(), (p, {id}: Venture.Index.item) =>
+                           p |> then_(() => persistVenture(id))
+                         )
+                       )
            )
       );
     }

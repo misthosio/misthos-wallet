@@ -59,16 +59,17 @@ let summary =
     |> Js.Option.getWithDefault("");
   let destinations =
     Belt.(
-      outs
-      |. List.keepMapU((. (address, value)) =>
-           if (address != misthosFeeAddress && address != cAddress) {
-             Some((address, value));
-           } else {
-             None;
-           }
-         )
+      outs->(
+              List.keepMapU((. (address, value)) =>
+                if (address != misthosFeeAddress && address != cAddress) {
+                  Some((address, value));
+                } else {
+                  None;
+                }
+              )
+            )
     );
-  let networkFee = totalIn |. BTC.minus(totalOut);
+  let networkFee = totalIn->(BTC.minus(totalOut));
   let changeOut =
     changeAddress
     |> Utils.mapOption((changeAddress: Address.t) =>
@@ -84,7 +85,8 @@ let summary =
   {
     reserved: totalIn,
     destinations,
-    spentWithFees: totalOut |> BTC.plus(networkFee) |. BTC.minus(changeOut),
+    spentWithFees:
+      (totalOut |> BTC.plus(networkFee))->(BTC.minus(changeOut)),
     misthosFee,
     networkFee,
   };
@@ -145,8 +147,9 @@ type signResult =
 let getSignedExn = result =>
   switch (result) {
   | Signed(unwrapped) => unwrapped
-  | _ => %assert
-         "signResult"
+  | _ =>
+    %assert
+    "signResult"
   };
 
 let signPayout =
@@ -209,8 +212,7 @@ let signPayout =
                       ~witnessValue=input.value,
                       ~witnessScript=address.witnessScript,
                       ~signature=
-                        signatures
-                        |. Belt.Array.get(idx)
+                        signatures->(Belt.Array.get(idx))
                         |> Js.Option.getWithDefault(None),
                     );
                true;
@@ -232,18 +234,20 @@ let rec findInput = (inputs, ammountMissing, fee) =>
   | [i] => Some(i)
   | [(i: input), ...rest] =>
     i.value
-    |. BTC.gte(
-         ammountMissing
-         |> BTC.plus(
-              Fee.inputCost(
-                ~withDms=i.sequence |> Js.Option.isSome,
-                ~unlocked=i.unlocked,
-                i.nCoSigners,
-                i.nPubKeys,
-                fee,
-              ),
-            ),
-       ) ?
+    ->(
+        BTC.gte(
+          ammountMissing
+          |> BTC.plus(
+               Fee.inputCost(
+                 ~withDms=i.sequence |> Js.Option.isSome,
+                 ~unlocked=i.unlocked,
+                 i.nCoSigners,
+                 i.nPubKeys,
+                 fee,
+               ),
+             ),
+        )
+      ) ?
       Some(i) : findInput(rest, ammountMissing, fee)
   };
 
@@ -252,18 +256,20 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
   | Some(i) =>
     let addedInputs = [i, ...addedInputs];
     let ammountMissing =
-      ammountMissing
-      |> BTC.plus(
-           Fee.inputCost(
-             ~withDms=i.sequence |> Js.Option.isSome,
-             ~unlocked=i.unlocked,
-             i.nCoSigners,
-             i.nPubKeys,
-             fee,
-           ),
-         )
-      |. BTC.minus(i.value);
-    if (BTC.zero |. BTC.gte(ammountMissing)) {
+      (
+        ammountMissing
+        |> BTC.plus(
+             Fee.inputCost(
+               ~withDms=i.sequence |> Js.Option.isSome,
+               ~unlocked=i.unlocked,
+               i.nCoSigners,
+               i.nPubKeys,
+               fee,
+             ),
+           )
+      )
+      ->(BTC.minus(i.value));
+    if (BTC.zero->(BTC.gte(ammountMissing))) {
       (addedInputs, true);
     } else {
       findInputs(
@@ -286,27 +292,29 @@ let addChangeOutput =
       ~network,
       ~txBuilder,
     ) =>
-  if (totalInputs
-      |. BTC.gte(
-           outTotal
-           |> BTC.plus(currentFee)
-           |> BTC.plus(
-                Fee.outputCost(
-                  changeAddress.displayAddress,
-                  fee,
-                  network |> Network.bitcoinNetwork,
-                ),
-              )
-           |> BTC.plus(
-                Fee.minChange(
-                  ~withDms=changeAddress.sequence |> Js.Option.isSome,
-                  ~unlocked=false,
-                  changeAddress.nCoSigners,
-                  changeAddress.nPubKeys,
-                  fee,
-                ),
-              ),
-         )) {
+  if (totalInputs->(
+                     BTC.gte(
+                       outTotal
+                       |> BTC.plus(currentFee)
+                       |> BTC.plus(
+                            Fee.outputCost(
+                              changeAddress.displayAddress,
+                              fee,
+                              network |> Network.bitcoinNetwork,
+                            ),
+                          )
+                       |> BTC.plus(
+                            Fee.minChange(
+                              ~withDms=
+                                changeAddress.sequence |> Js.Option.isSome,
+                              ~unlocked=false,
+                              changeAddress.nCoSigners,
+                              changeAddress.nPubKeys,
+                              fee,
+                            ),
+                          ),
+                     )
+                   )) {
     let currentFee =
       currentFee
       |> BTC.plus(
@@ -316,14 +324,15 @@ let addChangeOutput =
              network |> Network.bitcoinNetwork,
            ),
          );
-    txBuilder
-    |. B.TxBuilder.addOutput(
-         changeAddress.displayAddress,
-         totalInputs
-         |. BTC.minus(outTotal)
-         |. BTC.minus(currentFee)
-         |> BTC.toSatoshisFloat,
-       )
+    txBuilder->(
+                 B.TxBuilder.addOutput(
+                   changeAddress.displayAddress,
+                   totalInputs
+                   ->(BTC.minus(outTotal))
+                   ->(BTC.minus(currentFee))
+                   |> BTC.toSatoshisFloat,
+                 )
+               )
     |> ignore;
     true;
   } else {
@@ -341,18 +350,18 @@ let build =
       ~network,
     ) => {
   let unlockedInputs =
-    unlockedInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
+    unlockedInputs->(Belt.Set.keep(Fee.canPayForItself(satsPerByte)));
   let mandatoryInputs =
     mandatoryInputs
-    |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
-    |. Belt.Set.union(unlockedInputs);
+    ->(Belt.Set.keep(Fee.canPayForItself(satsPerByte)))
+    ->(Belt.Set.union(unlockedInputs));
   let optionalInputs =
     optionalInputs
-    |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
-    |. Belt.Set.diff(unlockedInputs)
+    ->(Belt.Set.keep(Fee.canPayForItself(satsPerByte)))
+    ->(Belt.Set.diff(unlockedInputs))
     |> Belt.Set.toList
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
-         i1.value |. BTC.comparedTo(i2.value)
+         i1.value->(BTC.comparedTo(i2.value))
        );
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
@@ -361,13 +370,14 @@ let build =
     |> List.map((i: input) =>
          (
            i.unlocked ?
-             txB
-             |. B.TxBuilder.addInputWithSequence(
-                  i.txId,
-                  i.txOutputN,
-                  i.sequence |> Js.Option.getExn,
-                ) :
-             txB |. B.TxBuilder.addInput(i.txId, i.txOutputN),
+             txB->(
+                    B.TxBuilder.addInputWithSequence(
+                      i.txId,
+                      i.txOutputN,
+                      i.sequence |> Js.Option.getExn,
+                    )
+                  ) :
+             txB->(B.TxBuilder.addInput(i.txId, i.txOutputN)),
            i,
          )
        );
@@ -375,8 +385,7 @@ let build =
     destinations
     |> List.fold_left(
          (total, (address, value)) => {
-           txB
-           |. B.TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat)
+           txB->(B.TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat))
            |> ignore;
            total |> BTC.plus(value);
          },
@@ -395,7 +404,7 @@ let build =
       satsPerByte,
       network |> Network.bitcoinNetwork,
     );
-  if (currentInputValue |. BTC.gte(outTotal |> BTC.plus(currentFee))) {
+  if (currentInputValue->(BTC.gte(outTotal |> BTC.plus(currentFee)))) {
     let withChange =
       addChangeOutput(
         ~totalInputs=currentInputValue,
@@ -422,7 +431,7 @@ let build =
     let (inputs, success) =
       findInputs(
         optionalInputs,
-        outTotal |> BTC.plus(currentFee) |. BTC.minus(currentInputValue),
+        (outTotal |> BTC.plus(currentFee))->(BTC.minus(currentInputValue)),
         satsPerByte,
         [],
       );
@@ -443,7 +452,7 @@ let build =
                     ),
                   ),
                [
-                 (txB |. B.TxBuilder.addInput(i.txId, i.txOutputN), i),
+                 (txB->(B.TxBuilder.addInput(i.txId, i.txOutputN)), i),
                  ...usedInputs,
                ],
              ),
@@ -481,12 +490,13 @@ let max =
     (~allInputs, ~targetDestination, ~destinations, ~satsPerByte, ~network) => {
   open Belt;
   let inputs =
-    allInputs
-    |> Set.toList
-    |. List.keepMapU((. input) =>
-         TransactionFee.canPayForItself(satsPerByte, input) ?
-           Some(input) : None
-       );
+    (allInputs |> Set.toList)
+    ->(
+        List.keepMapU((. input) =>
+          TransactionFee.canPayForItself(satsPerByte, input) ?
+            Some(input) : None
+        )
+      );
   let outputs =
     if (targetDestination != "") {
       [
@@ -499,35 +509,45 @@ let max =
     };
   let fee =
     Fee.estimate(
-      outputs |. List.map(fst),
+      outputs->(List.map(fst)),
       inputs,
       satsPerByte,
       network |> Network.bitcoinNetwork,
     );
   let totalInputValue =
-    inputs
-    |. List.reduce(BTC.zero, (res, input) => res |> BTC.plus(input.value));
+    inputs->(
+              List.reduce(BTC.zero, (res, input) =>
+                res |> BTC.plus(input.value)
+              )
+            );
   let totalOutValue =
-    destinations
-    |. List.reduce(BTC.zero, (res, (_, outVal)) => res |> BTC.plus(outVal));
-  totalInputValue |. BTC.minus(totalOutValue |> BTC.plus(fee));
+    destinations->(
+                    List.reduce(BTC.zero, (res, (_, outVal)) =>
+                      res |> BTC.plus(outVal)
+                    )
+                  );
+  totalInputValue->(BTC.minus(totalOutValue |> BTC.plus(fee)));
 };
 
 let finalize = signedTransactions => {
   open Belt;
   let signedTransactions =
-    signedTransactions
-    |. List.sortU((. {txHex: hexA}, {txHex: hexB}) => compare(hexA, hexB));
+    signedTransactions->(
+                          List.sortU((. {txHex: hexA}, {txHex: hexB}) =>
+                            compare(hexA, hexB)
+                          )
+                        );
   let wrappers =
-    signedTransactions |. List.mapU((. {txHex}) => txHex |> TxWrapper.make);
+    signedTransactions->(List.mapU((. {txHex}) => txHex |> TxWrapper.make));
   let res =
     (
       switch (wrappers |> List.head, wrappers |> List.tail) {
       | (Some(head), Some(rest)) =>
-        rest |. List.reduce(head, TxWrapper.merge)
+        rest->(List.reduce(head, TxWrapper.merge))
       | (Some(head), _) => head
-      | _ => %assert
-             "finalize"
+      | _ =>
+        %assert
+        "finalize"
       }
     )
     |> TxWrapper.finalize((signedTransactions |> List.headExn).usedInputs);
@@ -555,52 +575,60 @@ let missingSignatures =
   open Belt;
   let txWrapper = TxWrapper.make(txHex);
   let missingSigs =
-    usedInputs
-    |. Array.mapWithIndexU((. idx, input: Network.txInput) => {
-         let keyChain =
-           keyChains
-           |> AccountKeyChain.Collection.lookup(
-                input.coordinates |> Address.Coordinates.accountIdx,
-                input.coordinates |> Address.Coordinates.keyChainIdent,
-              );
-         let allCustodians =
-           keyChain.custodianKeyChains
-           |. List.map(fst)
-           |> List.toArray
-           |> Set.mergeMany(UserId.emptySet);
-         let notSigned = allCustodians |. Set.diff(custodiansThatSigned);
-         {
-           custodians: notSigned |. Set.intersect(currentCustodians),
-           sigs:
-             (
-               (txWrapper.inputs |. Array.getExn(idx)).sequence
-               != Bitcoin.Transaction.defaultSequence ?
-                 1 : keyChain.nCoSigners
-             )
-             - (Set.size(allCustodians) - Set.size(notSigned)),
-         };
-       });
+    usedInputs->(
+                  Array.mapWithIndexU((. idx, input: Network.txInput) => {
+                    let keyChain =
+                      keyChains
+                      |> AccountKeyChain.Collection.lookup(
+                           input.coordinates |> Address.Coordinates.accountIdx,
+                           input.coordinates
+                           |> Address.Coordinates.keyChainIdent,
+                         );
+                    let allCustodians =
+                      keyChain.custodianKeyChains->(List.map(fst))
+                      |> List.toArray
+                      |> Set.mergeMany(UserId.emptySet);
+                    let notSigned =
+                      allCustodians->(Set.diff(custodiansThatSigned));
+                    {
+                      custodians:
+                        notSigned->(Set.intersect(currentCustodians)),
+                      sigs:
+                        (
+                          txWrapper.inputs->(Array.getExn(idx)).sequence
+                          != Bitcoin.Transaction.defaultSequence ?
+                            1 : keyChain.nCoSigners
+                        )
+                        - (Set.size(allCustodians) - Set.size(notSigned)),
+                    };
+                  })
+                );
   let mandatory =
-    missingSigs
-    |. Array.reduceU(UserId.emptySet, (. required, {custodians, sigs}) =>
-         sigs > 0 && Set.size(custodians) == sigs ?
-           required |. Set.union(custodians) : required
-       );
+    missingSigs->(
+                   Array.reduceU(
+                     UserId.emptySet, (. required, {custodians, sigs}) =>
+                     sigs > 0 && Set.size(custodians) == sigs ?
+                       required->(Set.union(custodians)) : required
+                   )
+                 );
   {
     mandatory,
     additional:
-      missingSigs
-      |. Array.reduceU(UserId.emptySet, (. additional, {custodians, sigs}) =>
-           if (sigs > 0) {
-             let definetlySigned = custodians |. Set.intersect(mandatory);
-             Set.size(definetlySigned) >= sigs ?
-               additional :
-               custodians
-               |. Set.diff(definetlySigned)
-               |. Set.union(additional);
-           } else {
-             additional;
-           }
-         ),
+      missingSigs->(
+                     Array.reduceU(
+                       UserId.emptySet, (. additional, {custodians, sigs}) =>
+                       if (sigs > 0) {
+                         let definetlySigned =
+                           custodians->(Set.intersect(mandatory));
+                         Set.size(definetlySigned) >= sigs ?
+                           additional :
+                           custodians
+                           ->(Set.diff(definetlySigned))
+                           ->(Set.union(additional));
+                       } else {
+                         additional;
+                       }
+                     )
+                   ),
   };
 };

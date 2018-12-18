@@ -76,8 +76,11 @@ let () = {
                 |> Set.eq(
                      Set.mergeMany(
                        UserId.emptySet,
-                       custodians
-                       |. Array.mapU((. u: SessionData.t) => u.userId),
+                       custodians->(
+                                     Array.mapU((. u: SessionData.t) =>
+                                       u.userId
+                                     )
+                                   ),
                      ),
                    ),
               )
@@ -119,8 +122,9 @@ let () = {
            );
         info5 |> testInfo([|user1, user2|], Income(user1.userId), AtRisk);
         info6 |> testInfo([|user1|], Income(user1.userId), Inaccessible);
-      | _ => %assert
-             "WalletInfoCollector_test"
+      | _ =>
+        %assert
+        "WalletInfoCollector_test"
       };
     })
   );
@@ -169,11 +173,17 @@ let () = {
       );
       test("1 current input is unlocked", () =>
         expect(
-          info
-          |> WalletInfoCollector.currentSpendableInputs(AccountIndex.default)
-          |. Set.reduceU(0, (. res, {unlocked}: Network.txInput) =>
-               res + (unlocked ? 1 : 0)
-             ),
+          (
+            info
+            |> WalletInfoCollector.currentSpendableInputs(
+                 AccountIndex.default,
+               )
+          )
+          ->(
+              Set.reduceU(0, (. res, {unlocked}: Network.txInput) =>
+                res + (unlocked ? 1 : 0)
+              )
+            ),
         )
         |> toEqual(1)
       );

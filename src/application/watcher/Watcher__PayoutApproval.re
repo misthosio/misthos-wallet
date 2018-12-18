@@ -43,12 +43,12 @@ let make = (proposal: Payout.Proposed.t, log) => {
           | PayoutEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: state^.endorsements |. Set.add(event.supporterId),
+              endorsements: state^.endorsements->(Set.add(event.supporterId)),
             }
           | PayoutRejected(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              rejections: state^.rejections |. Set.add(event.rejectorId),
+              rejections: state^.rejections->(Set.add(event.rejectorId)),
             }
           | PayoutAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>

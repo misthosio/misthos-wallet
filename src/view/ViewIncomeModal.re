@@ -26,17 +26,20 @@ let make = (~viewData: ViewData.t, _children) => {
         <StatusChip label status />;
       };
       let addresses =
-        addresses
-        |. Set.String.reduce("", (res, address) => res ++ address ++ ", ");
+        addresses->(
+                     Set.String.reduce("", (res, address) =>
+                       res ++ address ++ ", "
+                     )
+                   );
       let addresses =
         addresses
         |> Js.String.slice(~from=0, ~to_=Js.String.length(addresses) - 2);
       <Grid
-        title1=("Income Transaction Details" |> text)
+        title1={"Income Transaction Details" |> text}
         area3={
           <div>
             <MTypography variant=`Body2 gutterBottom=true>
-              (
+              {
                 switch (date) {
                 | Some(date) =>
                   "Transaction confirmed on "
@@ -45,28 +48,28 @@ let make = (~viewData: ViewData.t, _children) => {
                   |> text
                 | None => ReasonReact.null
                 }
-              )
+              }
             </MTypography>
             <MTypography variant=`Body2>
-              ("Status: " |> text)
+              {"Status: " |> text}
               txStatus
             </MTypography>
             <MTypography variant=`Title gutterTop=true>
-              ("Income Amount" |> text)
+              {"Income Amount" |> text}
             </MTypography>
             <MTypography variant=`Subheading>
-              (BTC.format(amount) ++ " BTC" |> text)
+              {BTC.format(amount) ++ " BTC" |> text}
             </MTypography>
             <MTypography variant=`Title gutterTop=true>
-              ("Income Address" |> text)
+              {"Income Address" |> text}
             </MTypography>
-            <MTypography variant=`Body2> (addresses |> text) </MTypography>
+            <MTypography variant=`Body2> {addresses |> text} </MTypography>
             <MTypography variant=`Title gutterTop=true>
-              ("Transaction ID" |> text)
+              {"Transaction ID" |> text}
             </MTypography>
             <MTypography className=Styles.ellipsis variant=`Body2>
               <a className=Styles.link href=explorerLink target="_blank">
-                (txId |> text)
+                {txId |> text}
               </a>
             </MTypography>
           </div>

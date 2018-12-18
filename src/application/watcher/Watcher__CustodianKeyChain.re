@@ -186,7 +186,7 @@ let make =
     pub processCompleted = () =>
       UserId.neq(userId, custodianId) || state^.selfRemoved;
     pub pendingEvent = () =>
-      ! state^.hardwareIdPresent && state^.pubKeyPresent ?
+      !state^.hardwareIdPresent && state^.pubKeyPresent ?
         state^.pendingEvent |> Utils.mapOption(f => f()) : None
   };
   if (process#processCompleted() == false) {

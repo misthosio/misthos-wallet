@@ -1,2 +1,1 @@
-[@bs.module]
-external stringify : Js.Json.t => string = "json-stable-stringify";
+[@bs.module] external stringify: Js.Json.t => string = "json-stable-stringify";

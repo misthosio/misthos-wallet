@@ -24,7 +24,7 @@ let apply = (event, state) =>
   | IncomeAddressExposed({address: {displayAddress} as address}) => {
       ...state,
       exposedAddresses:
-        state.exposedAddresses |. Map.String.set(displayAddress, address),
+        state.exposedAddresses->(Map.String.set(displayAddress, address)),
     }
   | _ => state
   };

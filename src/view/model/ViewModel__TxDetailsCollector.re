@@ -62,28 +62,28 @@ let make = localUser => {
   income: Map.String.empty,
 };
 
-let getPayout = (processId, {payouts}) => payouts |. Map.get(processId);
-let getIncome = (txId, {income}) => income |. Map.String.get(txId);
+let getPayout = (processId, {payouts}) => payouts->(Map.get(processId));
+let getIncome = (txId, {income}) => income->(Map.String.get(txId));
 
 let getDateAndStatus = (txId, {txDates}) =>
-  switch (txDates |. Map.String.get(txId)) {
+  switch (txDates->(Map.String.get(txId))) {
   | Some(date) => (Some(date), Confirmed)
   | _ => (None, Unconfirmed)
   };
 
 let getProcessIdForTx = (txId, {txIdToProcessIdMap}) =>
-  txIdToProcessIdMap |. Map.String.getExn(txId);
+  txIdToProcessIdMap->(Map.String.getExn(txId));
 let payoutsPendingBroadcast = ({payouts}) =>
-  payouts
-  |. Map.valuesToArray
-  |> List.fromArray
-  |. List.keepU((. payout: payoutProcess) =>
-       switch (payout.data.payoutStatus) {
-       | Accepted
-       | PendingApproval => true
-       | _ => false
-       }
-     );
+  (payouts->Map.valuesToArray |> List.fromArray)
+  ->(
+      List.keepU((. payout: payoutProcess) =>
+        switch (payout.data.payoutStatus) {
+        | Accepted
+        | PendingApproval => true
+        | _ => false
+        }
+      )
+    );
 
 let apply = (event, state) =>
   switch (event) {
@@ -99,7 +99,7 @@ let apply = (event, state) =>
                date: None,
                payoutStatus: PendingApproval,
                payoutTx: data.payoutTx,
-               signatures: UserId.emptySet |. Set.add(proposal.proposerId),
+               signatures: UserId.emptySet->(Set.add(proposal.proposerId)),
                summary:
                  data.payoutTx |> PayoutTransaction.summary(state.network),
              }
@@ -116,7 +116,7 @@ let apply = (event, state) =>
       payouts:
         state.payouts
         |> ProcessCollector.updateData(processId, data =>
-             {...data, signatures: data.signatures |. Set.add(custodianId)}
+             {...data, signatures: data.signatures->(Set.add(custodianId))}
            ),
     }
   | PayoutEndorsed(endorsement) => {
@@ -153,11 +153,11 @@ let apply = (event, state) =>
            ),
     }
   | PayoutBroadcast({processId, txId}) =>
-    let txDate = state.txDates |. Map.String.get(txId);
+    let txDate = state.txDates->(Map.String.get(txId));
     {
       ...state,
       txIdToProcessIdMap:
-        state.txIdToProcessIdMap |. Map.String.set(txId, processId),
+        state.txIdToProcessIdMap->(Map.String.set(txId, processId)),
       payouts:
         state.payouts
         |> ProcessCollector.updateData(processId, data =>
@@ -172,19 +172,21 @@ let apply = (event, state) =>
            ),
     };
   | TransactionConfirmed({txId, unixTime}) =>
-    let processId = state.txIdToProcessIdMap |. Map.String.get(txId);
+    let processId = state.txIdToProcessIdMap->(Map.String.get(txId));
     let txDate = Js.Date.fromFloat(unixTime *. 1000.);
     {
       ...state,
-      txDates: state.txDates |. Map.String.set(txId, txDate),
+      txDates: state.txDates->(Map.String.set(txId, txDate)),
       income:
         state.income
-        |. Map.String.update(
-             txId,
-             Utils.mapOption(income =>
-               {...income, date: Some(txDate), status: Confirmed}
-             ),
-           ),
+        ->(
+            Map.String.update(
+              txId,
+              Utils.mapOption(income =>
+                {...income, date: Some(txDate), status: Confirmed}
+              ),
+            )
+          ),
       payouts:
         switch (processId) {
         | None => state.payouts
@@ -210,30 +212,32 @@ let apply = (event, state) =>
            ),
     }
   | IncomeDetected({address, txId, amount}) =>
-    let txDate = state.txDates |. Map.String.get(txId);
+    let txDate = state.txDates->(Map.String.get(txId));
     {
       ...state,
       income:
         state.income
-        |. Map.String.update(
-             txId,
-             fun
-             | Some(income) =>
-               Some({
-                 ...income,
-                 amount: income.amount |> BTC.plus(amount),
-                 addresses: income.addresses |. Set.String.add(address),
-               })
-             | None =>
-               Some({
-                 explorerLink: getExplorerLink(state.network, txId),
-                 date: txDate,
-                 status: txDate |> Js.Option.isSome ? Confirmed : Unconfirmed,
-                 txId,
-                 amount,
-                 addresses: Set.String.empty |. Set.String.add(address),
-               }),
-           ),
+        ->(
+            Map.String.update(
+              txId,
+              fun
+              | Some(income) =>
+                Some({
+                  ...income,
+                  amount: income.amount |> BTC.plus(amount),
+                  addresses: income.addresses->(Set.String.add(address)),
+                })
+              | None =>
+                Some({
+                  explorerLink: getExplorerLink(state.network, txId),
+                  date: txDate,
+                  status: txDate |> Js.Option.isSome ? Confirmed : Unconfirmed,
+                  txId,
+                  amount,
+                  addresses: Set.String.empty->(Set.String.add(address)),
+                }),
+            )
+          ),
     };
   | _ => state
   };

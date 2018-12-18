@@ -22,10 +22,9 @@ module MakeClient = (Config: Config) => {
   let syncListeners: ref(Map.String.t(listener)) = ref(Map.String.empty);
   type t = Config.t;
   [@bs.set]
-  external _onMessage : (t, {. "data": message} => unit) => unit =
-    "onmessage";
-  [@bs.send] external terminate : t => unit = "terminate";
-  [@bs.send] external _postMessage : (t, message) => unit = "postMessage";
+  external _onMessage: (t, {. "data": message} => unit) => unit = "onmessage";
+  [@bs.send] external terminate: t => unit = "terminate";
+  [@bs.send] external _postMessage: (t, message) => unit = "postMessage";
   let postMessage = (worker, msg) => {
     let msgId = Uuid.v4();
     _postMessage(
@@ -38,7 +37,7 @@ module MakeClient = (Config: Config) => {
     let msgId = Uuid.v4();
     let ret =
       Js.Promise.make((~resolve, ~reject as _) =>
-        syncListeners := syncListeners^ |. Map.String.set(msgId, resolve)
+        syncListeners := (syncListeners^)->(Map.String.set(msgId, resolve))
       );
     _postMessage(
       worker,
@@ -49,9 +48,9 @@ module MakeClient = (Config: Config) => {
   let handleMessage = (onMessage, msg) => {
     let decodedMsg = msg##payload |> Config.decodeOutgoing;
     let msgId = msg##correlationId;
-    switch (syncListeners^ |. Map.String.get(msgId)) {
+    switch ((syncListeners^)->(Map.String.get(msgId))) {
     | Some(listener) =>
-      syncListeners := syncListeners^ |. Map.String.remove(msgId);
+      syncListeners := (syncListeners^)->(Map.String.remove(msgId));
       listener(. decodedMsg);
     | _ => ()
     };
@@ -59,7 +58,7 @@ module MakeClient = (Config: Config) => {
   };
   let make = (~onMessage) => {
     let worker = Config.instance();
-    worker |. _onMessage(msg => handleMessage(onMessage, msg##data));
+    worker->(_onMessage(msg => handleMessage(onMessage, msg##data)));
     worker;
   };
 };

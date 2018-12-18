@@ -128,86 +128,86 @@ let make =
       | SignInRequired =>
         <AlertBox>
           <MTypography variant=`Body1>
-            (
+            {
               (userId |> UserId.toString)
               ++ Text.AlertBox.signInRequired
               |> text
-            )
+            }
           </MTypography>
           <MButton
             className=Styles.sendButton
             gutterTop=false
             variant=Flat
-            href=(
+            href={
               Text.Email.signInRequired(
                 ~localUser=viewData.localUser,
                 ~userId,
                 ~venture=viewData.ventureName,
                 ~webDomain=viewData.webDomain,
               )
-            )>
-            ("SEND A SIGN IN REMINDER" |> text)
+            }>
+            {"SEND A SIGN IN REMINDER" |> text}
             sendIcon
           </MButton>
         </AlertBox>
       | PendingApproval =>
         <AlertBox>
           <MTypography variant=`Body1>
-            (
+            {
               Text.AlertBox.pendingApproval(
                 ~userId=viewData.partnerProcess.data.userId |> UserId.toString,
               )
               |> text
-            )
+            }
           </MTypography>
         </AlertBox>
       | SyncRequired =>
         <AlertBox>
           <MTypography variant=`Body1>
-            (
+            {
               (viewData.partnerProcess.data.userId |> UserId.toString)
               ++ Text.AlertBox.syncRequiredPart1
               |> text
-            )
+            }
             <MaterialUi.Tooltip
               id="venter-url-label"
-              title=("Copy to Clipboard" |> text)
+              title={"Copy to Clipboard" |> text}
               placement=`Bottom>
               {
                 let element =
                   <a
-                    href=viewData.joinVentureUrl
+                    href={viewData.joinVentureUrl}
                     onClick=ReactEvent.Synthetic.preventDefault>
-                    (Text.AlertBox.syncRequiredVentureUrl |> text)
+                    {Text.AlertBox.syncRequiredVentureUrl |> text}
                   </a>;
                 copyButton(~element, ~className=Styles.ventureLink, ());
               }
             </MaterialUi.Tooltip>
-            (Text.AlertBox.syncRequiredPart2 |> text)
+            {Text.AlertBox.syncRequiredPart2 |> text}
           </MTypography>
           <MButton
             className=Styles.sendButton
             gutterTop=false
             variant=Flat
-            href=(
+            href={
               Text.Email.syncRequired(
                 ~localUser=viewData.localUser,
                 ~userId,
                 ~venture=viewData.ventureName,
                 ~joinUrl=viewData.joinVentureUrl,
               )
-            )>
-            ("SHARE THE SYNC URL" |> text)
+            }>
+            {"SHARE THE SYNC URL" |> text}
             sendIcon
           </MButton>
         </AlertBox>
       | FullyOnboarded =>
         <MTypography variant=`Body1>
-          (
+          {
             (viewData.partnerProcess.data.userId |> UserId.toString)
             ++ Text.AlertBox.fullyOnboarded
             |> text
-          )
+          }
         </MTypography>
       | None => ReasonReact.null
       };
@@ -217,10 +217,10 @@ let make =
       | _ =>
         [|
           <MTypography gutterTop=true gutterBottom=true variant=`Title>
-            ("Partner Onboarding" |> text)
+            {"Partner Onboarding" |> text}
           </MTypography>,
           <MTypography gutterBottom=true variant=`Body2>
-            ("Status: " |> text)
+            {"Status: " |> text}
             onboardingStatusChip
           </MTypography>,
           onboardingBody,
@@ -243,20 +243,20 @@ let make =
       <StatusChip status label />;
     };
     let alertText =
-      viewData.atRiskWarning ? WarningsText.partnerRemovalRisk |. Some : None;
+      viewData.atRiskWarning ? WarningsText.partnerRemovalRisk->Some : None;
     <Grid
-      title1=("Proposed Partner " ++ processTypeString |> text)
+      title1={"Proposed Partner " ++ processTypeString |> text}
       area3={
         <div>
           <MTypography variant=`Title>
-            ("Proposed Partner " ++ processTypeString |> text)
+            {"Proposed Partner " ++ processTypeString |> text}
           </MTypography>
-          <Partner key=(userId |> UserId.toString) partnerId=userId />
+          <Partner key={userId |> UserId.toString} partnerId=userId />
           <MTypography variant=`Body2 gutterBottom=true>
-            ("Proposed by " ++ UserId.toString(proposedBy) |> text)
+            {"Proposed by " ++ UserId.toString(proposedBy) |> text}
           </MTypography>
           <MTypography variant=`Body2>
-            ("Status: " |> text)
+            {"Status: " |> text}
             statusChip
           </MTypography>
           onboarding
@@ -266,17 +266,17 @@ let make =
         <div>
           <Voters
             voters
-            currentPartners=viewData.currentPartners
+            currentPartners={viewData.currentPartners}
             processStatus=status
           />
           <ProcessApprovalButtons
-            endorseText=("Endorse Partner " ++ processTypeString)
-            rejectText=("Reject Partner " ++ processTypeString)
+            endorseText={"Endorse Partner " ++ processTypeString}
+            rejectText={"Reject Partner " ++ processTypeString}
             ?alertText
             canVote
             onEndorse
             onReject
-            onCancel=(() => commands.reset())
+            onCancel={() => commands.reset()}
             cmdStatus
           />
         </div>

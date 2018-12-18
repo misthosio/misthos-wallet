@@ -12,9 +12,7 @@ let () =
         Networks.testnet,
       );
     let pubKey =
-      keyPair
-      |> Utils.publicKeyFromKeyPair
-      |. String.sub(0, 64)
+      (keyPair |> Utils.publicKeyFromKeyPair)->(String.sub(0, 64))
       |> Utils.bufFromHex;
     let wordList = Bip39.entropyToMnemonic(pubKey, Bip39.Wordlist.english);
     expect(wordList)

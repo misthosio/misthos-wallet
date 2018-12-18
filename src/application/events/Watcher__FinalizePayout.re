@@ -58,7 +58,7 @@ let make =
                broadcast,
                [payoutTx, ...txs],
                currentCustodians,
-               custodiansThatSigned |. Set.add(proposerId),
+               custodiansThatSigned->(Set.add(proposerId)),
                keyChains,
                systemIssuer,
              )
@@ -67,7 +67,7 @@ let make =
                broadcast,
                [payoutTx, ...txs],
                currentCustodians,
-               custodiansThatSigned |. Set.add(custodianId),
+               custodiansThatSigned->(Set.add(custodianId)),
                keyChains,
                systemIssuer,
              )
@@ -83,7 +83,7 @@ let make =
            | CustodianAccepted({data: {partnerId}}) => (
                broadcast,
                txs,
-               currentCustodians |. Set.add(partnerId),
+               currentCustodians->(Set.add(partnerId)),
                custodiansThatSigned,
                keyChains,
                systemIssuer,
@@ -91,7 +91,7 @@ let make =
            | CustodianRemovalAccepted({data: {custodianId}}) => (
                broadcast,
                txs,
-               currentCustodians |. Set.remove(custodianId),
+               currentCustodians->(Set.remove(custodianId)),
                custodiansThatSigned,
                keyChains,
                systemIssuer,
@@ -123,7 +123,7 @@ let make =
     );
   let sigsReady =
       ({mandatory, additional}: PayoutTransaction.missingSignatures) =>
-    mandatory |. Set.union(additional) |. Set.size == 0;
+    mandatory->(Set.union(additional))->Set.size == 0;
   let process = {
     val finalTransaction =
       ref(
@@ -142,13 +142,13 @@ let make =
           when ProcessId.eq(processId, payoutProcess) =>
         delivered := true
       | CustodianAccepted({data: {partnerId}}) =>
-        custodians := custodians^ |. Set.add(partnerId)
+        custodians := (custodians^)->(Set.add(partnerId))
       | CustodianRemovalAccepted({data: {custodianId}}) =>
-        custodians := custodians^ |. Set.remove(custodianId)
+        custodians := (custodians^)->(Set.remove(custodianId))
       | PayoutSigned({processId, custodianId, payoutTx})
           when ProcessId.eq(processId, payoutProcess) =>
         signedTxs := [payoutTx, ...signedTxs^];
-        signatures := signatures^ |. Set.add(custodianId);
+        signatures := (signatures^)->(Set.add(custodianId));
         missingSigs :=
           PayoutTransaction.missingSignatures(
             ~currentCustodians=custodians^,

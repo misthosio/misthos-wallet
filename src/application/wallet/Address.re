@@ -142,15 +142,21 @@ let make =
     |> List.map(chain => chain |> snd |> CustodianKeyChain.hdNode)
     |> List.map(node =>
          node
-         |. HDNode.derive(
-              Coordinates.coSignerIdx(coordinates) |> CoSignerIndex.toInt,
-            )
-         |. HDNode.derive(
-              Coordinates.chainIdx(coordinates) |> ChainIndex.toInt,
-            )
-         |. HDNode.derive(
-              Coordinates.addressIdx(coordinates) |> AddressIndex.toInt,
-            )
+         ->(
+             HDNode.derive(
+               Coordinates.coSignerIdx(coordinates) |> CoSignerIndex.toInt,
+             )
+           )
+         ->(
+             HDNode.derive(
+               Coordinates.chainIdx(coordinates) |> ChainIndex.toInt,
+             )
+           )
+         ->(
+             HDNode.derive(
+               Coordinates.addressIdx(coordinates) |> AddressIndex.toInt,
+             )
+           )
        )
     |> List.map(node => node |> HDNode.getPublicKey)
     |> List.sort((pubKeyA, pubKeyB) =>
@@ -168,24 +174,27 @@ let make =
     switch (sequence) {
     | Some(sequence) =>
       MultisigWithSequence.encode(nCoSigners, pubKeys, sequence)
-    | None => Payments.multisig({
-                "m": nCoSigners,
-                "pubkeys": pubKeys,
-                "network": network,
-              })##output
+    | None =>
+      Payments.multisig({
+        "m": nCoSigners,
+        "pubkeys": pubKeys,
+        "network": network,
+      })##output
     };
-  let redeemScript = Payments.witnessScriptHash({
-                       "redeem": {
-                         "output": witnessScript,
-                       },
-                       "network": network,
-                     })##output;
-  let displayAddress = Payments.scriptHash({
-                         "redeem": {
-                           "output": redeemScript,
-                         },
-                         "network": network,
-                       })##address;
+  let redeemScript =
+    Payments.witnessScriptHash({
+      "redeem": {
+        "output": witnessScript,
+      },
+      "network": network,
+    })##output;
+  let displayAddress =
+    Payments.scriptHash({
+      "redeem": {
+        "output": redeemScript,
+      },
+      "network": network,
+    })##address;
   {
     nCoSigners,
     coordinates,

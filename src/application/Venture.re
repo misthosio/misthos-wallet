@@ -464,7 +464,7 @@ module Cmd = {
               ~keyChain,
             ),
           )
-          |. apply(venture)
+          ->(apply(venture))
           |> persist
           |> then_(
                fun

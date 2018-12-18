@@ -47,20 +47,20 @@ let faq = [|
           "Using Misthos, a team can:" |> text,
           <ul>
             <li>
-              ("Aggregate income in a multisig Bitcoin wallet" |> text)
+              {"Aggregate income in a multisig Bitcoin wallet" |> text}
             </li>
             <li>
-              (
+              {
                 "Dynamically add / remove Partners as they participate in the venture"
                 |> text
-              )
+              }
             </li>
-            <li> ("Collectively approve payouts" |> text) </li>
+            <li> {"Collectively approve payouts" |> text} </li>
             <li>
-              (
+              {
                 "Have full visibility of the transaction and approval history"
                 |> text
-              )
+              }
             </li>
           </ul>,
         |]
@@ -78,18 +78,18 @@ let faq = [|
         [|
           "Misthos is unique for its:" |> text,
           <ol>
-            <li> ("Quick wallet set-up" |> text) </li>
+            <li> {"Quick wallet set-up" |> text} </li>
             <li>
-              (
+              {
                 "Scalability: dynamically adding / removing wallet custodians (Partners)"
                 |> text
-              )
+              }
             </li>
             <li>
-              (
+              {
                 "Streamlined user-experience for collaborative approval processes"
                 |> text
-              )
+              }
             </li>
           </ol>,
         |]
@@ -107,7 +107,7 @@ let faq = [|
           <a
             href="https://medium.com/@misthosio/ushering-in-the-decentralization-of-work-c32c14e7625c"
             target="_blank">
-            ("blog post" |> text)
+            {"blog post" |> text}
           </a>,
           " dives into the guiding principles behind Misthos." |> text,
         |]
@@ -129,7 +129,7 @@ let faq = [|
           about Blockstack|}
           |> text,
           <a href="https://blockstack.org/" target="_blank">
-            ("here" |> text)
+            {"here" |> text}
           </a>,
           "." |> text,
         |]
@@ -160,49 +160,49 @@ let faq = [|
         [|
           <ol>
             <li>
-              ("Go to " |> text)
+              {"Go to " |> text}
               <a href="https://www.misthos.io/" target="_blank">
-                ("https://www.misthos.io/" |> text)
+                {"https://www.misthos.io/" |> text}
               </a>
-              ("." |> text)
+              {"." |> text}
             </li>
             <li>
-              ("Click on the \"Sign in with Blockstack\" button. " |> text)
+              {"Click on the \"Sign in with Blockstack\" button. " |> text}
             </li>
             <li>
-              (
+              {
                 "At this point you will be redirected and prompted to install the "
                 |> text
-              )
+              }
               <a href="https://blockstack.org/install" target="_blank">
-                ("Blockstack browser" |> text)
+                {"Blockstack browser" |> text}
               </a>
-              (
+              {
                 " and asked to set up a Blockstack ID. You are now ready to sign-in to Misthos."
                 |> text
-              )
+              }
             </li>
             <li>
-              (
+              {
                 "Start the Blockstack browser on your PC or Laptop. This step is important as the Misthos app calls the Blockstack browser."
                 |> text
-              )
+              }
             </li>
             <li>
-              ("Re-open the " |> text)
+              {"Re-open the " |> text}
               <a href="https://www.misthos.io/" target="_blank">
-                ("https://www.misthos.io/" |> text)
+                {"https://www.misthos.io/" |> text}
               </a>
-              (
+              {
                 " page and click on the \"Sign-in with Blockstack\" button. You will see a \"Sign-In Request\" pop up. "
                 |> text
-              )
+              }
             </li>
             <li>
-              (
+              {
                 "Choose the Blockstack ID you want to sign in with and click on \"Approve\" to give Misthos the required permissions."
                 |> text
-              )
+              }
             </li>
           </ol>,
           "Once you are successfully signed in, you can either create a new Venture or join an existing one (by invitation)."
@@ -220,8 +220,8 @@ let faq = [|
         [|
           "Every Venture within Misthos has:" |> text,
           <ul>
-            <li> ("One or more Partners" |> text) </li>
-            <li> ("A multisig BTC wallet at its core" |> text) </li>
+            <li> {"One or more Partners" |> text} </li>
+            <li> {"A multisig BTC wallet at its core" |> text} </li>
           </ul>,
         |]
         |> ReasonReact.array,
@@ -237,19 +237,19 @@ let faq = [|
           |> text,
           <ol>
             <li>
-              ("Go to " |> text)
+              {"Go to " |> text}
               <a href="https://www.misthos.io/" target="_blank">
-                ("https://www.misthos.io/" |> text)
+                {"https://www.misthos.io/" |> text}
               </a>
             </li>
             <li>
-              ("Click on the \"Sign in with Blockstack\" button. " |> text)
+              {"Click on the \"Sign in with Blockstack\" button. " |> text}
             </li>
             <li>
-              (
+              {
                 "You will see a \"Sign-In Request\" pop up. Choose the blockstack Id you want to sign in with and click on \"Approve\" to give Misthos the required permissions. "
                 |> text
-              )
+              }
             </li>
           </ol>,
         |]
@@ -279,11 +279,11 @@ let faq = [|
         {|If the endorsement process is not yet complete i.e if all existing partners have not yet endorsed a proposed partner, then you will see the following error:|},
       ),
       E(
-        <span className=(Css.style([Css.color(Colors.error)]))>
-          (
+        <span className={Css.style([Css.color(Colors.error)])}>
+          {
             "Error joining Venture. Perhaps you have not been accepted yet, or if this was your first time logging in to Misthos, the Venture will become available after the inviting partner has logged in again."
             |> text
-          )
+          }
         </span>,
       ),
     |],
@@ -296,9 +296,9 @@ let faq = [|
         [|
           "Here are the three types of proposals currently available:" |> text,
           <ol>
-            <li> ("Propose a Payout" |> text) </li>
-            <li> ("Propose adding a Partner" |> text) </li>
-            <li> ("Propose removing a Partner" |> text) </li>
+            <li> {"Propose a Payout" |> text} </li>
+            <li> {"Propose adding a Partner" |> text} </li>
+            <li> {"Propose removing a Partner" |> text} </li>
           </ol>,
         |]
         |> ReasonReact.array,
@@ -326,26 +326,26 @@ let faq = [|
           "In order to add a Partner to a Venture:" |> text,
           <ol>
             <li>
-              (
+              {
                 "Go to the main Venture view and click on \"Add or Remove Partners\"."
                 |> text
-              )
+              }
             </li>
             <li>
-              (
+              {
                 "A pop-up will appear. Here enter the Blockstack ID of the new Partner and click on \"Propose Partner\".
             "
                 |> text
-              )
+              }
             </li>
             <li>
-              ("Share the Venture URL with the added Partner." |> text)
+              {"Share the Venture URL with the added Partner." |> text}
             </li>
             <li>
-              (
+              {
                 "Access will be granted once all other Partners have endorsed the proposal."
                 |> text
-              )
+              }
             </li>
           </ol>,
         |]
@@ -366,23 +366,23 @@ let faq = [|
           "In order to receive funds:" |> text,
           <ol>
             <li>
-              (
+              {
                 "Click on the \"Receive\" button on the main home screen."
                 |> text
-              )
+              }
             </li>
             <li>
-              (
+              {
                 "A pop-up will appear and create your with your \"Income Address\"."
                 |> text
-              )
+              }
             </li>
             <li>
-              (
+              {
                 {|Use this address (either by copying the address or scanning
                  the QR code) to receive funds.|}
                 |> text
-              )
+              }
             </li>
           </ol>,
         |]
@@ -403,12 +403,12 @@ let faq = [|
           "The payout process goes through the following steps within Misthos:"
           |> text,
           <ol>
-            <li> ("Payout Proposal" |> text) </li>
-            <li> ("Payout Endorsement or Rejection" |> text) </li>
+            <li> {"Payout Proposal" |> text} </li>
+            <li> {"Payout Endorsement or Rejection" |> text} </li>
             <li>
-              (
+              {
                 "Payout transaction is submitted to the Bitcoin network" |> text
-              )
+              }
             </li>
           </ol>,
         |]
@@ -429,29 +429,29 @@ let faq = [|
           "In order to propose a payout:" |> text,
           <ol>
             <li>
-              (
+              {
                 {|Click on the "Payout" button within the main Venture view.
                    This will open up a "Create a Payout" page.|}
                 |> text
-              )
+              }
             </li>
             <li>
-              ("Enter the receiving address and the BTC amount." |> text)
+              {"Enter the receiving address and the BTC amount." |> text}
             </li>
             <li>
-              (
+              {
                 {|On the right side of this page, you can see the summary of
                    the payout which includes a breakdown of the BTC amount, the
                    Network fee and Misthos fee.|}
                 |> text
-              )
+              }
             </li>
             <li>
-              (
+              {
                 {|You can now either proceed with this payout by clicking on
                    "Propose Payout" or choose to add another recipient.|}
                 |> text
-              )
+              }
             </li>
           </ol>,
         |]
@@ -619,24 +619,24 @@ let faq = [|
           |> text,
           <ul>
             <li>
-              <b> ("Pending: " |> text) </b>
-              (
+              <b> {"Pending: " |> text} </b>
+              {
                 {|These are payouts that are proposed but are still pending some
                  endorsements.|}
                 |> text
-              )
+              }
             </li>
             <li>
-              <b> ("Submitted(Unconfirmed): " |> text) </b>
-              (
+              <b> {"Submitted(Unconfirmed): " |> text} </b>
+              {
                 {|These are payouts that have received all endorsements and
                  submitted to the Bitcoin network.|}
                 |> text
-              )
+              }
             </li>
             <li>
-              <b> ("Confirmed:" |> text) </b>
-              ({|These payouts are confirmed on the Bitcoin network.|} |> text)
+              <b> {"Confirmed:" |> text} </b>
+              {{|These payouts are confirmed on the Bitcoin network.|} |> text}
             </li>
           </ul>,
         |]
@@ -664,7 +664,7 @@ let faq = [|
           "Click " |> text,
           <a
             href="https://bitcoin.org/en/faq#why-do-i-have-to-wait-10-minutes">
-            ("here" |> text)
+            {"here" |> text}
           </a>,
           " for more information" |> text,
         |]
@@ -762,18 +762,18 @@ let faq = [|
       E(
         <ul>
           <li>
-            (
+            {
               {|Misthos is an interface and you are using this interface to
                interact/collaborate with other people on the Blockchain.|}
               |> text
-            )
+            }
           </li>
           <li>
-            (
+            {
               {|Misthos does not have access to your private keys and has no
                visibility/access to your Venture and the financial transactions.|}
               |> text
-            )
+            }
           </li>
         </ul>,
       ),
@@ -791,7 +791,7 @@ let faq = [|
       E(
         [|
           "You can find out more details on the Blockstack " |> text,
-          <a href="https://blockstack.org/faq"> ("FAQ" |> text) </a>,
+          <a href="https://blockstack.org/faq"> {"FAQ" |> text} </a>,
         |]
         |> ReasonReact.array,
       ),
@@ -804,11 +804,11 @@ let faq = [|
         [|
           {|No. Misthos cannot:|} |> text,
           <ul>
-            <li> ({|Recover or change your private key.|} |> text) </li>
-            <li> ({|Recover or reset your Blockstack password.|} |> text) </li>
-            <li> ({|Access your Venture or your funds.|} |> text) </li>
-            <li> ({|Reverse, cancel, or refund transactions.|} |> text) </li>
-            <li> ({|Freeze accounts.|} |> text) </li>
+            <li> {{|Recover or change your private key.|} |> text} </li>
+            <li> {{|Recover or reset your Blockstack password.|} |> text} </li>
+            <li> {{|Access your Venture or your funds.|} |> text} </li>
+            <li> {{|Reverse, cancel, or refund transactions.|} |> text} </li>
+            <li> {{|Freeze accounts.|} |> text} </li>
           </ul>,
         |]
         |> ReasonReact.array,

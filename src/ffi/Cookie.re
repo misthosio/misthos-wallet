@@ -1,9 +1,9 @@
 type document;
 
-[@bs.set] external setCookie : (document, string) => unit = "cookie";
-[@bs.get] external getCookie : document => string = "cookie";
+[@bs.set] external setCookie: (document, string) => unit = "cookie";
+[@bs.get] external getCookie: document => string = "cookie";
 
-[@bs.val] external doc : document = "document";
+[@bs.val] external doc: document = "document";
 
 let set = (key, value, domain) =>
   setCookie(doc, key ++ "=" ++ value ++ ";domain=" ++ domain);

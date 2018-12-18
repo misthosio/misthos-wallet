@@ -2,9 +2,9 @@ open PrimitiveTypes;
 
 open Bitcoin;
 
-let userSession = (userId, keyPair) : SessionData.t => {
+let userSession = (userId, keyPair): SessionData.t => {
   let appPubKey = keyPair |> Utils.publicKeyFromKeyPair;
-  let chainCode = appPubKey |. String.sub(0, 64) |> Utils.bufFromHex;
+  let chainCode = appPubKey->(String.sub(0, 64)) |> Utils.bufFromHex;
   {
     userId,
     appPrivateKey: keyPair |> ECPair.toWIF,

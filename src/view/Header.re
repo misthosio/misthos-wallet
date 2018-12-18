@@ -37,13 +37,13 @@ let make = (~onClickLogo=?, ~hrefLogo=?, ~onClickMenu=?, _children) => {
             };
           }
           <div className=Styles.flex_ />
-          (
+          {
             switch (onClickMenu) {
             | Some(onClick) =>
               <IconButton color=`Inherit onClick> Icons.menu </IconButton>
             | None => ReasonReact.null
             }
-          )
+          }
         </Toolbar>
       </AppBar>
     ),

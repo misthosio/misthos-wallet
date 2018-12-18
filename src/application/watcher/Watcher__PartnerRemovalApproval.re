@@ -46,12 +46,12 @@ let make = (proposal: Partner.Removal.Proposed.t, log) => {
           | PartnerRemovalEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: state^.endorsements |. Set.add(event.supporterId),
+              endorsements: state^.endorsements->(Set.add(event.supporterId)),
             }
           | PartnerRemovalRejected(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              rejections: state^.rejections |. Set.add(event.rejectorId),
+              rejections: state^.rejections->(Set.add(event.rejectorId)),
             }
           | PartnerRemovalAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>

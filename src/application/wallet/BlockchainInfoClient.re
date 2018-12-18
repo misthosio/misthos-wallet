@@ -14,17 +14,15 @@ let mainnetConfig = {subdomain: "", network: Bitcoin.Networks.bitcoin};
 
 let float_ = Json.Decode.float;
 
-let decodeUTXO = (config, raw) : WalletTypes.utxo =>
+let decodeUTXO = (config, raw): WalletTypes.utxo =>
   Json.Decode.{
     txId: raw |> field("tx_hash_big_endian", string),
     txOutputN: raw |> field("tx_output_n", int),
     amount: raw |> field("value", float_) |> BTC.fromSatoshisFloat,
     confirmations: raw |> field("confirmations", int),
     address:
-      raw
-      |> field("script", string)
-      |> Utils.bufFromHex
-      |. Bitcoin.Address.fromOutputScript(config.network),
+      (raw |> field("script", string) |> Utils.bufFromHex)
+      ->(Bitcoin.Address.fromOutputScript(config.network)),
   };
 
 let getUTXOs = (config, addresses) =>
@@ -36,10 +34,11 @@ let getUTXOs = (config, addresses) =>
         "https://"
         ++ config.subdomain
         ++ "blockchain.info/unspent?format=json&active="
-        ++ (
-          addresses
-          |. List.reduceU("", (. res, address) => res ++ "|" ++ address)
-        )
+        ++ addresses->(
+                        List.reduceU("", (. res, address) =>
+                          res ++ "|" ++ address
+                        )
+                      )
         ++ "&cors=true",
       )
       |> then_(Fetch.Response.json)
@@ -57,31 +56,36 @@ let getUTXOs = (config, addresses) =>
 let getTransactionInfo = (config, transactions) =>
   Js.Promise.(
     all(
-      transactions
-      |. Set.String.reduceU([], (. res, txId) =>
-           [
-             Fetch.fetch(
-               "https://"
-               ++ config.subdomain
-               ++ "blockchain.info/rawtx/"
-               ++ txId
-               ++ "?format=json&cors=true",
-             )
-             |> then_(Fetch.Response.json)
-             |> then_(raw =>
-                  (
-                    Json.Decode.{
-                      txId,
-                      blockHeight:
-                        raw |> optional(field("block_height", float_)),
-                      unixTime: raw |> optional(field("time", float_)),
-                    }: WalletTypes.txInfo
-                  )
-                  |> resolve
-                ),
-             ...res,
-           ]
-         )
+      transactions->(
+                      Set.String.reduceU([], (. res, txId) =>
+                        [
+                          Fetch.fetch(
+                            "https://"
+                            ++ config.subdomain
+                            ++ "blockchain.info/rawtx/"
+                            ++ txId
+                            ++ "?format=json&cors=true",
+                          )
+                          |> then_(Fetch.Response.json)
+                          |> then_(raw =>
+                               (
+                                 Json.Decode.{
+                                   txId,
+                                   blockHeight:
+                                     raw
+                                     |> optional(
+                                          field("block_height", float_),
+                                        ),
+                                   unixTime:
+                                     raw |> optional(field("time", float_)),
+                                 }: WalletTypes.txInfo
+                               )
+                               |> resolve
+                             ),
+                          ...res,
+                        ]
+                      )
+                    )
       |> List.toArray,
     )
     |> then_(res => res |> List.fromArray |> resolve)
@@ -89,18 +93,19 @@ let getTransactionInfo = (config, transactions) =>
 let getTransactionHex = (config, transactions) =>
   Js.Promise.(
     all(
-      transactions
-      |. Array.mapU((. txId) =>
-           Fetch.fetch(
-             "https://"
-             ++ config.subdomain
-             ++ "blockchain.info/rawtx/"
-             ++ txId
-             ++ "?format=hex&cors=true",
-           )
-           |> then_(Fetch.Response.text)
-           |> then_(hex => (txId, hex) |> resolve)
-         ),
+      transactions->(
+                      Array.mapU((. txId) =>
+                        Fetch.fetch(
+                          "https://"
+                          ++ config.subdomain
+                          ++ "blockchain.info/rawtx/"
+                          ++ txId
+                          ++ "?format=hex&cors=true",
+                        )
+                        |> then_(Fetch.Response.text)
+                        |> then_(hex => (txId, hex) |> resolve)
+                      )
+                    ),
     )
   );
 let getCurrentBlockHeight = (config, ()) =>
@@ -117,7 +122,7 @@ let getCurrentBlockHeight = (config, ()) =>
 let broadcastTransaction = (config, transaction) => {
   let txHex = transaction |> Bitcoin.Transaction.toHex;
   let formData = FormData.make();
-  formData |. FormData.append("tx", txHex);
+  formData->(FormData.append("tx", txHex));
   Js.Promise.(
     Fetch.fetchWithInit(
       "https://" ++ config.subdomain ++ "blockchain.info/pushtx?cors=true",
@@ -142,7 +147,7 @@ let broadcastTransaction = (config, transaction) => {
   );
 };
 
-let make = (config, network) : (module WalletTypes.NetworkClientInterface) =>
+let make = (config, network): (module WalletTypes.NetworkClientInterface) =>
   (module
    {
      let network = network;

@@ -1,6 +1,6 @@
-[@bs.module "blockstack"] external isUserSignedIn : unit => bool = "";
+[@bs.module "blockstack"] external isUserSignedIn: unit => bool = "";
 
-[@bs.module "blockstack"] external isSignInPending : unit => bool = "";
+[@bs.module "blockstack"] external isSignInPending: unit => bool = "";
 
 type userData = {
   .
@@ -9,14 +9,14 @@ type userData = {
 };
 
 [@bs.module "blockstack"] [@bs.return nullable]
-external loadUserData : unit => option(userData) = "";
+external loadUserData: unit => option(userData) = "";
 
 [@bs.module "blockstack"]
-external generateAndStoreTransitKey : unit => string = "";
+external generateAndStoreTransitKey: unit => string = "";
 
 type authRequest;
 [@bs.module "blockstack"]
-external makeAuthRequest :
+external makeAuthRequest:
   (
     ~transitKey: string,
     ~redirectURI: string,
@@ -28,30 +28,30 @@ external makeAuthRequest :
   "";
 
 [@bs.module "blockstack"]
-external redirectToSignInWithAuthRequest : authRequest => unit = "";
+external redirectToSignInWithAuthRequest: authRequest => unit = "";
 
 [@bs.module "blockstack"]
-external redirectToSignIn :
+external redirectToSignIn:
   (~redirectURI: string, ~manifestURI: string, ~scopes: array(string)) => unit =
   "";
 
-[@bs.module "blockstack"] external signUserOut : unit => unit = "";
+[@bs.module "blockstack"] external signUserOut: unit => unit = "";
 
 [@bs.module "blockstack"]
-external handlePendingSignIn : unit => Js.Promise.t(userData) = "";
+external handlePendingSignIn: unit => Js.Promise.t(userData) = "";
 
 [@bs.module "blockstack"]
-external getFileDecrypted : string => Js.Promise.t(Js.nullable(string)) =
+external getFileDecrypted: string => Js.Promise.t(Js.nullable(string)) =
   "getFile";
 
 [@bs.module "blockstack"]
-external getFileNotDecrypted :
+external getFileNotDecrypted:
   (string, [@bs.as {json| {"decrypt": false} |json}] _) =>
   Js.Promise.t(Js.nullable(string)) =
   "getFile";
 
 [@bs.module "blockstack"]
-external getFileWithJsOpts :
+external getFileWithJsOpts:
   (string, Js.t({..})) => Js.Promise.t(Js.nullable(string)) =
   "getFile";
 
@@ -62,11 +62,10 @@ let getFileFromUserAndDecrypt = (file, ~username) =>
   getFileWithJsOpts(file, {"username": username, "decrypt": true});
 
 [@bs.module "blockstack"]
-external putFileEncrypted : (string, string) => Js.Promise.t(unit) =
-  "putFile";
+external putFileEncrypted: (string, string) => Js.Promise.t(unit) = "putFile";
 
 [@bs.module "blockstack"]
-external _putFileEncryptedFor :
+external _putFileEncryptedFor:
   (string, string, {. "encrypt": string}) => Js.Promise.t(unit) =
   "putFile";
 
@@ -74,23 +73,23 @@ let putFileEncryptedFor = (~path, ~content, ~pubKey) =>
   _putFileEncryptedFor(path, content, {"encrypt": pubKey});
 
 [@bs.module "blockstack"]
-external putFileNotEncrypted :
+external putFileNotEncrypted:
   (string, string, [@bs.as {json| {"encrypt": false} |json}] _) =>
   Js.Promise.t(unit) =
   "putFile";
 
 [@bs.module "blockstack"]
-external getUserAppFileUrl :
+external getUserAppFileUrl:
   (~path: string, ~username: string, ~appOrigin: string) =>
   Js.Promise.t(string) =
   "";
 
 [@bs.module "blockstack/lib/keys.js"]
-external makeECPrivateKey : unit => string = "";
+external makeECPrivateKey: unit => string = "";
 
 type profile;
 [@bs.module "blockstack"]
-external lookupProfile : string => Js.Promise.t(profile) = "";
+external lookupProfile: string => Js.Promise.t(profile) = "";
 
 let fetchIds = (~current=[||], beginning) =>
   Js.Promise.(

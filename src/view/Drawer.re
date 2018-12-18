@@ -11,14 +11,14 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
   ...component,
   render: _self =>
     <Grid
-      title1=("My Ventures" |> text)
+      title1={"My Ventures" |> text}
       area3={
               let environment = Environment.get();
               <div className=ScrollList.containerStyles>
                 <ScrollList> <VentureList ?selected index /> </ScrollList>
                 <MButton
-                  fullWidth=true onClick=(Router.clickToRoute(CreateVenture))>
-                  ("Create a Venture" |> text)
+                  fullWidth=true onClick={Router.clickToRoute(CreateVenture)}>
+                  {"Create a Venture" |> text}
                 </MButton>
                 <div className=Css.(style([flex(100)])) />
                 <MButton
@@ -27,7 +27,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
                   className=Styles.alignStart
                   variant=Flat
                   color=`Inherit
-                  href=(environment.webDomain ++ "/faq")>
+                  href={environment.webDomain ++ "/faq"}>
                   "frequently asked questions"
                 </MButton>
                 <MButton

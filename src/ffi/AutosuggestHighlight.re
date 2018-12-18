@@ -1,7 +1,7 @@
 type matches;
 
 [@bs.module]
-external match_ : (string, string) => matches = "autosuggest-highlight/match";
+external match_: (string, string) => matches = "autosuggest-highlight/match";
 type part = {
   .
   "text": string,
@@ -9,5 +9,5 @@ type part = {
 };
 
 [@bs.module]
-external parse : (string, matches) => array(part) =
+external parse: (string, matches) => array(part) =
   "autosuggest-highlight/parse";

@@ -89,23 +89,25 @@ let make =
       ReasonReact.array(
         List.toArray(
           summary.destinations
-          |. List.mapWithIndexU((. idx, (address, amount)) =>
-               MaterialUi.(
-                 <TableRow key=(idx |> string_of_int)>
-                   <TableCell className=Styles.noBorder padding=`None>
-                     <MTypography className=Styles.ellipsis variant=`Body2>
-                       (address |> text)
-                     </MTypography>
-                   </TableCell>
-                   <TableCell
-                     numeric=true className=Styles.noBorder padding=`None>
-                     <MTypography variant=`Body2>
-                       (BTC.format(amount) ++ " BTC" |> text)
-                     </MTypography>
-                   </TableCell>
-                 </TableRow>
-               )
-             ),
+          ->(
+              List.mapWithIndexU((. idx, (address, amount)) =>
+                MaterialUi.(
+                  <TableRow key={idx |> string_of_int}>
+                    <TableCell className=Styles.noBorder padding=`None>
+                      <MTypography className=Styles.ellipsis variant=`Body2>
+                        {address |> text}
+                      </MTypography>
+                    </TableCell>
+                    <TableCell
+                      numeric=true className=Styles.noBorder padding=`None>
+                      <MTypography variant=`Body2>
+                        {BTC.format(amount) ++ " BTC" |> text}
+                      </MTypography>
+                    </TableCell>
+                  </TableRow>
+                )
+              )
+            ),
         ),
       );
     let payoutStatus = {
@@ -122,7 +124,7 @@ let make =
       <StatusChip label status />;
     };
     let pendingSignatures =
-      status == Accepted && viewData.missingSignatures |. Set.size > 0;
+      status == Accepted && viewData.missingSignatures->Set.size > 0;
 
     switch (cmdStatus) {
     | CommandExecutor.PreSubmit(_) =>
@@ -130,42 +132,42 @@ let make =
         action=CommandExecutor.Status.Endorsement
         onCancel=(() => commands.reset())
         summary
-        misthosFeeAddress=(Some(payoutTx.misthosFeeAddress))
-        changeAddress=payoutTx.changeAddress
+        misthosFeeAddress={Some(payoutTx.misthosFeeAddress)}
+        changeAddress={payoutTx.changeAddress}
         cmdStatus
       />
 
     | _ =>
       <Grid
-        title1=("Payout Details" |> text)
+        title1={"Payout Details" |> text}
         area3={
           <div className=ScrollList.containerStyles>
             <MTypography variant=`Body2 gutterBottom=true>
-              (
+              {
                 switch (date) {
                 | Some(date) =>
                   "Payout completed on " ++ Js.Date.toDateString(date) |> text
                 | None =>
                   "Proposed by " ++ UserId.toString(proposedBy) |> text
                 }
-              )
+              }
             </MTypography>
             <MTypography variant=`Body2>
-              ("Status: " |> text)
+              {"Status: " |> text}
               payoutStatus
             </MTypography>
-            (
+            {
               switch (pendingSignatures) {
               | true =>
                 <MTypography variant=`Body2>
-                  ("Transaction Status: " |> text)
+                  {"Transaction Status: " |> text}
                   <StatusChip label="Pending" status=Pending />
                 </MTypography>
               | _ => ReasonReact.null
               }
-            )
+            }
             <MTypography variant=`Title gutterTop=true>
-              ("Payout" |> text)
+              {"Payout" |> text}
             </MTypography>
             <ScrollList>
               MaterialUi.(
@@ -175,22 +177,22 @@ let make =
                     <TableRow key="networkFee">
                       <TableCell className=Styles.noBorder padding=`None>
                         <MTypography variant=`Body2>
-                          ("NETWORK FEE" |> text)
+                          {"NETWORK FEE" |> text}
                         </MTypography>
                       </TableCell>
                       <TableCell
                         numeric=true className=Styles.noBorder padding=`None>
                         <MTypography variant=`Body2>
-                          (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                          {BTC.format(summary.networkFee) ++ " BTC" |> text}
                         </MTypography>
                       </TableCell>
                     </TableRow>
-                    (
+                    {
                       if (summary.misthosFee |> BTC.gt(BTC.zero)) {
                         <TableRow key="misthosFee">
                           <TableCell className=Styles.noBorder padding=`None>
                             <MTypography variant=`Body2>
-                              ("MISTHOS FEE" |> text)
+                              {"MISTHOS FEE" |> text}
                             </MTypography>
                           </TableCell>
                           <TableCell
@@ -198,41 +200,41 @@ let make =
                             className=Styles.noBorder
                             padding=`None>
                             <MTypography variant=`Body2>
-                              (
+                              {
                                 BTC.format(summary.misthosFee)
                                 ++ " BTC"
                                 |> text
-                              )
+                              }
                             </MTypography>
                           </TableCell>
                         </TableRow>;
                       } else {
                         ReasonReact.null;
                       }
-                    )
+                    }
                   </TableBody>
                 </Table>
               )
               MaterialUi.(
                 <div className=Styles.total>
                   <Typography variant=`Body2>
-                    ("TOTAL PAYOUT" |> text)
+                    {"TOTAL PAYOUT" |> text}
                   </Typography>
                   <MTypography className=Styles.total variant=`Subheading>
-                    (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
+                    {BTC.format(summary.spentWithFees) ++ " BTC" |> text}
                   </MTypography>
                 </div>
               )
             </ScrollList>
           </div>
         }
-        area4=(
+        area4={
           switch (pendingSignatures) {
           | false =>
             <div className=ScrollList.containerStyles>
               <Voters
                 voters
-                currentPartners=viewData.currentPartners
+                currentPartners={viewData.currentPartners}
                 processStatus
               />
               <ProcessApprovalButtons
@@ -244,59 +246,61 @@ let make =
                 onCancel=(() => commands.reset())
                 cmdStatus
               />
-              (
+              {
                 if (viewData.collidesWith |> Belt.Set.size > 0) {
                   <MaterialUi.SnackbarContent
-                    message=(
+                    message={
                       {|
                    This Proposal is reusing inputs reserved by another payout.
                    We recommend that you coordinate with your Partners
                    to only endorse one Proposal and reject the other one.
                    |}
                       |> text
-                    )
+                    }
                   />;
                 } else {
                   ReasonReact.null;
                 }
-              )
+              }
             </div>
           | _ =>
             <div className=ScrollList.containerStyles>
               <MTypography variant=`Title>
-                ("Pending Signatures" |> text)
+                {"Pending Signatures" |> text}
               </MTypography>
               <MTypography variant=`Body2>
-                (
+                {
                   "Additional signatures are required by the bitcoin network in order for this transaction to proceed. The following custodians have yet to sign this transaction:"
                   |> text
-                )
+                }
               </MTypography>
               <ScrollList>
                 <MaterialUi.List disablePadding=true>
-                  (
+                  {
                     ReasonReact.array(
                       viewData.missingSignatures
-                      |. Set.toArray
-                      |. Array.mapU((. userId) =>
-                           <Partner
-                             partnerId=userId
-                             status={
-                               <StatusChip label="Pending" status=Pending />
-                             }
-                           />
-                         ),
+                      ->Set.toArray
+                      ->(
+                          Array.mapU((. userId) =>
+                            <Partner
+                              partnerId=userId
+                              status={
+                                <StatusChip label="Pending" status=Pending />
+                              }
+                            />
+                          )
+                        ),
                     )
-                  )
+                  }
                 </MaterialUi.List>
               </ScrollList>
-              (
+              {
                 switch (
-                  viewData.missingSignatures |. Set.has(viewData.localUser)
+                  viewData.missingSignatures->(Set.has(viewData.localUser))
                 ) {
                 | true =>
                   <SingleActionButton
-                    onSubmit=(executeCommand(~justSign=true))
+                    onSubmit={executeCommand(~justSign=true)}
                     canSubmitAction=true
                     withConfirmation=false
                     action=CommandExecutor.Status.SignTransaction
@@ -305,42 +309,42 @@ let make =
                   />
                 | _ => ReasonReact.null
                 }
-              )
-              (
+              }
+              {
                 if (viewData.collidesWith |> Belt.Set.size > 0) {
                   <MaterialUi.SnackbarContent
-                    message=(
+                    message={
                       {|
                    This Proposal is reusing inputs reserved by another payout.
                    We recommend that you coordinate with your Partners
                    to only sign one Proposal.
                    |}
                       |> text
-                    )
+                    }
                   />;
                 } else {
                   ReasonReact.null;
                 }
-              )
+              }
             </div>
           }
-        )
-        area5=(
+        }
+        area5={
           switch (txId, explorerLink) {
           | (Some(txId), Some(explorerLink)) =>
             <div>
               <MTypography variant=`Title>
-                ("Transaction ID" |> text)
+                {"Transaction ID" |> text}
               </MTypography>
               <MTypography className=Styles.ellipsis variant=`Body2>
                 <a className=Styles.link href=explorerLink target="_blank">
-                  (txId |> text)
+                  {txId |> text}
                 </a>
               </MTypography>
             </div>
           | _ => ReasonReact.null
           }
-        )
+        }
       />
     };
   },

@@ -72,7 +72,7 @@ let make =
           ...state.accountSettings,
           coSignerList:
             state.accountSettings.coSignerList
-            |. Array.mapWithIndex((i, x) => idx == i ? nCoSigners : x),
+            ->(Array.mapWithIndex((i, x) => idx == i ? nCoSigners : x)),
         },
       })
     | (ChangeSequence(sequence), _) =>
@@ -141,227 +141,229 @@ let make =
 
     let getMenuItems = nCoSigners =>
       Array.range(1, nCoSigners)
-      |. Array.mapU((. idx) =>
-           MaterialUi.(
-             <MenuItem value=(`Int(idx))>
-               (stringOfMultiSig(nCoSigners, idx))
-             </MenuItem>
-           )
-         );
+      ->(
+          Array.mapU((. idx) =>
+            MaterialUi.(
+              <MenuItem value={`Int(idx)}>
+                {stringOfMultiSig(nCoSigners, idx)}
+              </MenuItem>
+            )
+          )
+        );
     let nSigs =
       state.accountSettings.coSignerList
-      |. Array.mapWithIndexU((. idx, nCoSigners) =>
-           MaterialUi.(
-             <TableRow>
-               <TableCell>
-                 <MTypography variant=`Body2>
-                   (string_of_int(idx) |> text)
-                 </MTypography>
-               </TableCell>
-               <TableCell numeric=true>
-                 <Select
-                   value=(`Int(nCoSigners))
-                   onChange=(
-                     (e, _) =>
-                       send(ChangeNumberOfCoSinger((idx, extractString(e))))
-                   )>
-                   (getMenuItems(idx) |> ReasonReact.array)
-                 </Select>
-               </TableCell>
-             </TableRow>
-           )
-         )
-      |. Array.slice(~offset=2, ~len=9)
+      ->(
+          Array.mapWithIndexU((. idx, nCoSigners) =>
+            MaterialUi.(
+              <TableRow>
+                <TableCell>
+                  <MTypography variant=`Body2>
+                    {string_of_int(idx) |> text}
+                  </MTypography>
+                </TableCell>
+                <TableCell numeric=true>
+                  <Select
+                    value={`Int(nCoSigners)}
+                    onChange={
+                      (e, _) =>
+                        send(
+                          ChangeNumberOfCoSinger((idx, extractString(e))),
+                        )
+                    }>
+                    {getMenuItems(idx) |> ReasonReact.array}
+                  </Select>
+                </TableCell>
+              </TableRow>
+            )
+          )
+        )
+      ->(Array.slice(~offset=2, ~len=9))
       |> ReasonReact.array;
     let degradingMultiSig = state.accountSettings.sequence != None;
     let sequence = state.accountSettings.sequence;
     <Grid
-      title1=("Create a Venture" |> text)
+      title1={"Create a Venture" |> text}
       area3=MaterialUi.(
-              <form onSubmit className=ScrollList.containerStyles>
-                <ScrollList>
-                  <MTypography variant=`Body2>
-                    (
-                      {js|
+        <form onSubmit className=ScrollList.containerStyles>
+          <ScrollList>
+            <MTypography variant=`Body2>
+              {
+                {js|
                  Set up a new Venture with yourself as the initial Partner.
                  You can add and remove Partners once the Venture is created.
                  But first, let’s start with a name.
                 |js}
-                      |> text
-                    )
-                  </MTypography>
-                  <MTypography gutterTop=true variant=`Title>
-                    ("Venture Name" |> text)
-                  </MTypography>
-                  <MInput
-                    placeholder="Enter a Venture Name"
-                    value=(`String(state.newVenture))
-                    onChange=(e => send(ChangeNewVenture(extractString(e))))
-                    autoFocus=true
-                    fullWidth=true
-                  />
-                  <br />
-                  <ExpansionPanel className=Styles.expansionPanel>
-                    <ExpansionPanelSummary
-                      className=Styles.expansionPanelSummary
-                      expandIcon=Icons.chevronDown>
-                      <MTypography variant=`Body2>
-                        ("Additional configuration options" |> text)
-                      </MTypography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails
-                      className=Styles.expansionPanelDetails>
-                      <MTypography gutterBottom=true variant=`Body2>
-                        (
-                          {js|These settings determine the governance and security
+                |> text
+              }
+            </MTypography>
+            <MTypography gutterTop=true variant=`Title>
+              {"Venture Name" |> text}
+            </MTypography>
+            <MInput
+              placeholder="Enter a Venture Name"
+              value={`String(state.newVenture)}
+              onChange={e => send(ChangeNewVenture(extractString(e)))}
+              autoFocus=true
+              fullWidth=true
+            />
+            <br />
+            <ExpansionPanel className=Styles.expansionPanel>
+              <ExpansionPanelSummary
+                className=Styles.expansionPanelSummary
+                expandIcon=Icons.chevronDown>
+                <MTypography variant=`Body2>
+                  {"Additional configuration options" |> text}
+                </MTypography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails className=Styles.expansionPanelDetails>
+                <MTypography gutterBottom=true variant=`Body2>
+                  {
+                    {js|These settings determine the governance and security
                           mechanism of your Venture. They cannot be changed later.|js}
-                          |> text
-                        )
-                      </MTypography>
-                      <MTypography
-                        gutterBottom=true gutterTop=true variant=`Title>
-                        ("Endorsement Policies" |> text)
-                      </MTypography>
-                      <MTypography gutterBottom=true variant=`Body2>
-                        (
-                          {js|Decide how many Partners need to endorse a Proposal for it to become Accepted:|js}
-                          |> text
-                        )
-                      </MTypography>
-                      <PolicySelect
-                        label="Partner addition:"
-                        initialValue=Policy.defaultInitialPolicies.addPartner
-                        onChange=(p => send(ChangeAddPartnerPolicy(p)))
-                      />
-                      <PolicySelect
-                        label="Partner removal:"
-                        initialValue=Policy.defaultInitialPolicies.
-                                       removePartner
-                        onChange=(p => send(ChangeRemovePartnerPolicy(p)))
-                      />
-                      <PolicySelect
-                        label="Payout:"
-                        initialValue=Policy.defaultInitialPolicies.payout
-                        onChange=(p => send(ChangePayoutPolicy(p)))
-                      />
-                      <MTypography
-                        gutterTop=true gutterBottom=true variant=`Title>
-                        ("Wallet Configuration" |> text)
-                      </MTypography>
-                      <MTypography variant=`Subheading>
-                        ("Degrading Multisig" |> text)
-                      </MTypography>
-                      <MTypography gutterBottom=true variant=`Body2>
-                        (
-                          {js|The degrading multisig feature adds a time-release
+                    |> text
+                  }
+                </MTypography>
+                <MTypography gutterBottom=true gutterTop=true variant=`Title>
+                  {"Endorsement Policies" |> text}
+                </MTypography>
+                <MTypography gutterBottom=true variant=`Body2>
+                  {
+                    {js|Decide how many Partners need to endorse a Proposal for it to become Accepted:|js}
+                    |> text
+                  }
+                </MTypography>
+                <PolicySelect
+                  label="Partner addition:"
+                  initialValue={Policy.defaultInitialPolicies.addPartner}
+                  onChange={p => send(ChangeAddPartnerPolicy(p))}
+                />
+                <PolicySelect
+                  label="Partner removal:"
+                  initialValue={Policy.defaultInitialPolicies.removePartner}
+                  onChange={p => send(ChangeRemovePartnerPolicy(p))}
+                />
+                <PolicySelect
+                  label="Payout:"
+                  initialValue={Policy.defaultInitialPolicies.payout}
+                  onChange={p => send(ChangePayoutPolicy(p))}
+                />
+                <MTypography gutterTop=true gutterBottom=true variant=`Title>
+                  {"Wallet Configuration" |> text}
+                </MTypography>
+                <MTypography variant=`Subheading>
+                  {"Degrading Multisig" |> text}
+                </MTypography>
+                <MTypography gutterBottom=true variant=`Body2>
+                  {
+                    {js|The degrading multisig feature adds a time-release
                            to funds that are locked due to Partners leaving.|js}
-                          |> text
-                        )
-                      </MTypography>
-                      <Grid
-                        className=Styles.switchContainer
-                        container=true
-                        direction=`Row
-                        alignItems=`Center>
-                        <Grid item=true sm=V7 xs=V12>
-                          <FormControlLabel
-                            control={
-                              <Switch
-                                color=`Primary
-                                checked=(`Bool(degradingMultiSig))
-                                onChange=((_, _) => send(ToggleSequence))
-                              />
-                            }
-                            label=("Degrading Multisig" |> text)
-                          />
-                        </Grid>
-                        <Grid item=true sm=V5 xs=V12>
-                          {
-                            let value =
-                              switch (sequence) {
-                              | Some(s) => `Int(s)
-                              | None => `String("")
-                              };
-                            <FormControl
-                              disabled=(! degradingMultiSig) fullWidth=true>
-                              <InputLabel> "Unlock after" </InputLabel>
-                              <Input
-                                value
-                                onChange=(
-                                  e =>
-                                    send(
-                                      ChangeSequence(
-                                        extractString(e) |> int_of_string,
-                                      ),
-                                    )
-                                )
-                                endAdornment={
-                                  <InputAdornment position=`End>
-                                    ("blocks" |> text)
-                                  </InputAdornment>
-                                }
-                              />
-                              <FormHelperText>
-                                (
-                                  (
-                                    switch (sequence) {
-                                    | Some(s) =>
-                                      "Approx. "
-                                      ++ (s / (6 * 24) |> string_of_int)
-                                      ++ " Days"
-                                    | None => "Disabled"
-                                    }
-                                  )
-                                  |> text
-                                )
-                              </FormHelperText>
-                            </FormControl>;
+                    |> text
+                  }
+                </MTypography>
+                <Grid
+                  className=Styles.switchContainer
+                  container=true
+                  direction=`Row
+                  alignItems=`Center>
+                  <Grid item=true sm=V7 xs=V12>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          color=`Primary
+                          checked={`Bool(degradingMultiSig)}
+                          onChange={(_, _) => send(ToggleSequence)}
+                        />
+                      }
+                      label={"Degrading Multisig" |> text}
+                    />
+                  </Grid>
+                  <Grid item=true sm=V5 xs=V12>
+                    {
+                      let value =
+                        switch (sequence) {
+                        | Some(s) => `Int(s)
+                        | None => `String("")
+                        };
+                      <FormControl
+                        disabled={!degradingMultiSig} fullWidth=true>
+                        <InputLabel> "Unlock after" </InputLabel>
+                        <Input
+                          value
+                          onChange={
+                            e =>
+                              send(
+                                ChangeSequence(
+                                  extractString(e) |> int_of_string,
+                                ),
+                              )
                           }
-                        </Grid>
-                      </Grid>
-                      <MTypography
-                        gutterTop=true gutterBottom=true variant=`Subheading>
-                        ("Required Signatures" |> text)
-                      </MTypography>
-                      <MTypography gutterBottom=true variant=`Body2>
-                        (
-                          {js|Select the number of signatures your Venture will
+                          endAdornment={
+                            <InputAdornment position=`End>
+                              {"blocks" |> text}
+                            </InputAdornment>
+                          }
+                        />
+                        <FormHelperText>
+                          {
+                            (
+                              switch (sequence) {
+                              | Some(s) =>
+                                "Approx. "
+                                ++ (s / (6 * 24) |> string_of_int)
+                                ++ " Days"
+                              | None => "Disabled"
+                              }
+                            )
+                            |> text
+                          }
+                        </FormHelperText>
+                      </FormControl>;
+                    }
+                  </Grid>
+                </Grid>
+                <MTypography
+                  gutterTop=true gutterBottom=true variant=`Subheading>
+                  {"Required Signatures" |> text}
+                </MTypography>
+                <MTypography gutterBottom=true variant=`Body2>
+                  {
+                    {js|Select the number of signatures your Venture will
                        require for transactions, depending on the number of
                        Partners:|js}
-                          |> text
-                        )
-                      </MTypography>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>
-                              <MTypography variant=`Body2>
-                                ("NUMBER OF PARTNERS" |> text)
-                              </MTypography>
-                            </TableCell>
-                            <TableCell numeric=true>
-                              <MTypography variant=`Body2>
-                                ("REQUIRED SIGNATURES" |> text)
-                              </MTypography>
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody> nSigs </TableBody>
-                      </Table>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                </ScrollList>
-                <SingleActionButton
-                  onSubmit=onClick
-                  canSubmitAction=true
-                  withConfirmation=false
-                  action=CommandExecutor.Status.CreateVenture
-                  buttonText="create venture"
-                  cmdStatus
-                />
-                <ContactUsShoutOut />
-              </form>
-            )
+                    |> text
+                  }
+                </MTypography>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <MTypography variant=`Body2>
+                          {"NUMBER OF PARTNERS" |> text}
+                        </MTypography>
+                      </TableCell>
+                      <TableCell numeric=true>
+                        <MTypography variant=`Body2>
+                          {"REQUIRED SIGNATURES" |> text}
+                        </MTypography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody> nSigs </TableBody>
+                </Table>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          </ScrollList>
+          <SingleActionButton
+            onSubmit=onClick
+            canSubmitAction=true
+            withConfirmation=false
+            action=CommandExecutor.Status.CreateVenture
+            buttonText="create venture"
+            cmdStatus
+          />
+          <ContactUsShoutOut />
+        </form>
+      )
       area4={<VentureInfoBox />}
     />;
   },

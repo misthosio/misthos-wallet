@@ -118,16 +118,18 @@ let () =
       let payoutTx =
         PayoutTransaction.build(
           ~mandatoryInputs=
-            inputs
-            |. Belt.Set.keepU((. input: Network.txInput) =>
-                 input.txOutputN == 1
-               ),
+            inputs->(
+                      Belt.Set.keepU((. input: Network.txInput) =>
+                        input.txOutputN == 1
+                      )
+                    ),
           ~unlockedInputs=Network.inputSet(),
           ~optionalInputs=
-            inputs
-            |. Belt.Set.keepU((. input: Network.txInput) =>
-                 input.txOutputN != 1
-               ),
+            inputs->(
+                      Belt.Set.keepU((. input: Network.txInput) =>
+                        input.txOutputN != 1
+                      )
+                    ),
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(6000L)),
           ],

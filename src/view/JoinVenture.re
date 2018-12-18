@@ -6,7 +6,7 @@ let make = (~cmdStatus, _children) => {
   ...component,
   render: _ =>
     <Grid
-      title1=("Joining Venture" |> text)
+      title1={"Joining Venture" |> text}
       area3={<CommandExecutor.Status action=JoinVenture cmdStatus />}
     />,
 };

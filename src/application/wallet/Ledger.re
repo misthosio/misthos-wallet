@@ -8,15 +8,16 @@ module B = Bitcoin;
 
 let getHDNode = (path, network, ledger) =>
   Js.Promise.(
-    ledger
-    |. L.getWalletPublicKey(path)
+    ledger->(L.getWalletPublicKey(path))
     |> then_(pubKey =>
          B.HDNode.fromPublicKey(
            ~publicKey=
              Utils.bufFromHex(pubKey##publicKey)
-             |. B.ECPair.fromPublicKey({
-                  "network": network |> Network.bitcoinNetwork,
-                })
+             ->(
+                 B.ECPair.fromPublicKey({
+                   "network": network |> Network.bitcoinNetwork,
+                 })
+               )
              |> B.ECPair.getPublicKey,
            ~chainCode=Utils.bufFromHex(pubKey##chainCode),
            network |> Network.bitcoinNetwork,
@@ -89,17 +90,19 @@ let getCustodianKeyChain =
          | Some(ledgerId) when ledgerId != hardwareId =>
            WrongDevice |> resolve
          | _ =>
-           hdNode
-           |> CustodianKeyChain.fromHardwareNode(
-                ~hardwareId,
-                ~accountIdx,
-                ~keyChainIdx,
-              )
-           |. Ok
+           (
+             hdNode
+             |> CustodianKeyChain.fromHardwareNode(
+                  ~hardwareId,
+                  ~accountIdx,
+                  ~keyChainIdx,
+                )
+           )
+           ->Ok
            |> resolve
          }
        )
-    |> catch(error => error |> L.decodeError |. Error |> resolve)
+    |> catch(error => (error |> L.decodeError)->Error |> resolve)
   );
 
 let dummyPath = "0'";
@@ -131,74 +134,78 @@ let signPayout =
          } else {
            let infos =
              usedInputs
-             |. Array.zip(
-                  inputTxHexs |. Array.map(L.splitTransaction(btc)),
-                )
-             |. Array.mapWithIndexU(
-                  (.
-                    idx,
-                    ({txOutputN, coordinates}: Network.txInput, txInfo),
-                  ) => {
-                  let address: Address.t =
-                    accountKeyChains |> Address.find(coordinates);
-                  let accountKeyChain =
-                    accountKeyChains
-                    |> AccountKeyChain.Collection.lookup(
-                         coordinates |> Address.Coordinates.accountIdx,
-                         coordinates |> Address.Coordinates.keyChainIdent,
-                       );
-                  let pathAndPubKey =
-                    switch (
-                      accountKeyChain.custodianKeyChains
-                      |. List.getAssoc(userId, UserId.eq)
-                    ) {
-                    | Some(keyChain)
-                        when
-                          keyChain
-                          |> CustodianKeyChain.hardwareId
-                          |> Js.Option.isSome =>
-                      getSigningPathAndPubKey(
-                        ventureId,
-                        misthosPurposeNode,
-                        keyChain,
-                        coordinates,
-                      )
-                    | _ => (dummyPath, dummyPubKey)
-                    };
-                  (
-                    (
-                      txInfo,
-                      txOutputN,
-                      address.witnessScript,
-                      (txWrapper.inputs |. Array.getExn(idx)).sequence,
-                    ),
-                    pathAndPubKey,
-                  );
-                });
+             ->(
+                 Array.zip(inputTxHexs->(Array.map(L.splitTransaction(btc))))
+               )
+             ->(
+                 Array.mapWithIndexU(
+                   (.
+                     idx,
+                     ({txOutputN, coordinates}: Network.txInput, txInfo),
+                   ) => {
+                   let address: Address.t =
+                     accountKeyChains |> Address.find(coordinates);
+                   let accountKeyChain =
+                     accountKeyChains
+                     |> AccountKeyChain.Collection.lookup(
+                          coordinates |> Address.Coordinates.accountIdx,
+                          coordinates |> Address.Coordinates.keyChainIdent,
+                        );
+                   let pathAndPubKey =
+                     switch (
+                       accountKeyChain.custodianKeyChains
+                       ->(List.getAssoc(userId, UserId.eq))
+                     ) {
+                     | Some(keyChain)
+                         when
+                           keyChain
+                           |> CustodianKeyChain.hardwareId
+                           |> Js.Option.isSome =>
+                       getSigningPathAndPubKey(
+                         ventureId,
+                         misthosPurposeNode,
+                         keyChain,
+                         coordinates,
+                       )
+                     | _ => (dummyPath, dummyPubKey)
+                     };
+                   (
+                     (
+                       txInfo,
+                       txOutputN,
+                       address.witnessScript,
+                       txWrapper.inputs->(Array.getExn(idx)).sequence,
+                     ),
+                     pathAndPubKey,
+                   );
+                 })
+               );
            let (inputInfos, pathAndPubKeys) = infos |> Array.unzip;
            let (paths, pubKeys) = pathAndPubKeys |> Array.unzip;
            let outputScriptHex =
              txHex
              |> L.splitTransaction(btc)
              |> L.serializeTransactionOutputs(btc);
-           btc
-           |. L.signP2SHTransaction(
-                inputInfos,
-                paths,
-                outputScriptHex |> Utils.bufToHex,
-              )
+           btc->(
+                  L.signP2SHTransaction(
+                    inputInfos,
+                    paths,
+                    outputScriptHex |> Utils.bufToHex,
+                  )
+                )
            |> then_(signatures =>
-                signatures
-                |> Array.zip(pubKeys)
-                |. Array.mapU((. (pubKey, signature)) =>
-                     pubKey == dummyPubKey ? None : Some((pubKey, signature))
-                   )
-                |. Signatures
+                (signatures |> Array.zip(pubKeys))
+                ->(
+                    Array.mapU((. (pubKey, signature)) =>
+                      pubKey == dummyPubKey ? None : Some((pubKey, signature))
+                    )
+                  )
+                ->Signatures
                 |> resolve
               )
-           |> catch(error => error |> L.decodeError |. Error |> resolve);
+           |> catch(error => (error |> L.decodeError)->Error |> resolve);
          };
        })
-    |> catch(error => error |> L.decodeError |. Error |> resolve)
+    |> catch(error => (error |> L.decodeError)->Error |> resolve)
   );
 };

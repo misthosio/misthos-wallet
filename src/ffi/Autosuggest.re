@@ -1,5 +1,5 @@
 [@bs.module]
-external autosuggest : ReasonReact.reactClass = "react-autosuggest";
+external autosuggest: ReasonReact.reactClass = "react-autosuggest";
 
 let make =
     (

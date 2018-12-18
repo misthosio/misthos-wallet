@@ -72,25 +72,25 @@ let make =
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
     <div>
-      (
+      {
         ReasonReact.array(
           Array.concatMany([|
             switch (state, cmdStatus) {
             | (ConfirmProposal, _) => [|
                 <MTypography className=Styles.warning variant=`Body2>
-                  (alertText |> Js.Option.getWithDefault("") |> text)
+                  {alertText |> Js.Option.getWithDefault("") |> text}
                 </MTypography>,
                 <MTypography className=Styles.inlineConfirm variant=`Body2>
-                  (buttonText |> text)
+                  {buttonText |> text}
                   <MButton
                     gutterTop=false
                     variant=Flat
                     onClick=(_e => send(ConfirmProposal))>
-                    (text("yes"))
+                    {text("yes")}
                   </MButton>
                   <MButton
                     gutterTop=false variant=Flat onClick=(_e => send(Cancel))>
-                    (text("No"))
+                    {text("No")}
                   </MButton>
                 </MTypography>,
               |]
@@ -98,7 +98,7 @@ let make =
             | (NoDecision, _) => [|
                 <MButton
                   fullWidth=true onClick=(_e => send(Propose)) submitBtn=true>
-                  (text(buttonText))
+                  {text(buttonText)}
                 </MButton>,
                 <CommandExecutor.Status cmdStatus action />,
               |]
@@ -108,6 +108,6 @@ let make =
             },
           |]),
         )
-      )
+      }
     </div>,
 };

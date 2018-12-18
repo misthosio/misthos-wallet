@@ -4,7 +4,7 @@ open WalletTypes;
 
 module AppEvent = Event;
 
-let userSession = id : SessionData.t => {
+let userSession = id: SessionData.t => {
   let appPrivateKey = Crypto.randomBytes(32) |> Utils.bufToHex;
   let issuerKeyPair =
     Utils.keyPairFromPrivateKey(
@@ -24,7 +24,7 @@ let userSession = id : SessionData.t => {
       Bitcoin.(
         HDNode.fromPrivateKey(
           ~privateKey=issuerKeyPair |> ECPair.getPrivateKey,
-          ~chainCode=appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
+          ~chainCode=appPubKey->(String.sub(0, 64)) |> Utils.bufFromHex,
           issuerKeyPair |> ECPair.getNetwork,
         )
       ),
@@ -472,8 +472,9 @@ module Log = {
            log,
          )
       |> withPartnerAccepted(proposal);
-    | _ => %assert
-           "withPartner"
+    | _ =>
+      %assert
+      "withPartner"
     };
   let withFirstPartner = user => withPartner(user, ~supporters=[user]);
   let withPartnerRemovalProposed =
@@ -532,8 +533,9 @@ module Log = {
            log,
          )
       |> withPartnerRemovalAccepted(proposal);
-    | _ => %assert
-           "withPartner"
+    | _ =>
+      %assert
+      "withPartner"
     };
   let withAccountCreationProposed = (~proposer: SessionData.t) =>
     appendEvent(
@@ -625,8 +627,9 @@ module Log = {
            log,
          )
       |> withCustodianAccepted(proposal);
-    | _ => %assert
-           "withPartner"
+    | _ =>
+      %assert
+      "withPartner"
     };
   let withCustodianRemovalProposed =
       (~proposer: SessionData.t, ~toBeRemoved: SessionData.t, {log} as l) => {
@@ -681,8 +684,9 @@ module Log = {
            log,
          )
       |> withCustodianRemovalAccepted(proposal);
-    | _ => %assert
-           "withCustodian"
+    | _ =>
+      %assert
+      "withCustodian"
     };
   let withCustodianKeyChain =
       (
@@ -807,7 +811,7 @@ module Log = {
            ([], [], []),
          );
     let keyChain =
-      activations |> List.assoc(user.userId) |. List.assoc(keyChains);
+      (activations |> List.assoc(user.userId))->(List.assoc(keyChains));
     let coordinates =
       Address.Coordinates.nextExternal(user.userId, exposed, keyChain);
     let address = keyChain |> Address.make(coordinates);

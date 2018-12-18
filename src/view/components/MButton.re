@@ -57,11 +57,11 @@ let make =
     let button =
       <MaterialUi.Button
         ?size
-        className=(
+        className={
           Styles.button(fullWidth, variant, gutterTop, gutterBottom)
           ++ " "
           ++ className
-        )
+        }
         ?color
         ?href
         ?component
@@ -69,7 +69,7 @@ let make =
         ...children
       </MaterialUi.Button>;
     submitBtn ?
-      button |. ReasonReact.cloneElement(~props={"type": "submit"}, [||]) :
+      button->(ReasonReact.cloneElement(~props={"type": "submit"}, [||])) :
       button;
   },
 };

@@ -41,7 +41,7 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
           | AccountCreationEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: state^.endorsements |. Set.add(event.supporterId),
+              endorsements: state^.endorsements->(Set.add(event.supporterId)),
             }
           | AccountCreationAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>

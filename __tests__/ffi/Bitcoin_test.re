@@ -52,7 +52,7 @@ let () = {
               "redeem":
                 Payments.multisig({
                   "m": 2,
-                  "pubkeys": keys |. Array.map(ECPair.getPublicKey),
+                  "pubkeys": keys->(Array.map(ECPair.getPublicKey)),
                   "network": network,
                 }),
               "network": network,
@@ -64,7 +64,7 @@ let () = {
   });
   describe("HDNode", () => {
     let pubkey = pair |> Utils.publicKeyFromKeyPair;
-    let chainCode = pubkey |. String.sub(0, 64) |> Utils.bufFromHex;
+    let chainCode = pubkey->(String.sub(0, 64)) |> Utils.bufFromHex;
     test("can create an HDNode", () => {
       let node =
         HDNode.fromPrivateKey(

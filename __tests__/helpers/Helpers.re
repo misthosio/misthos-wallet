@@ -28,12 +28,12 @@ let selectUTXOs = (utxos, totalAmount) => {
     |> Belt.Set.toList
     |> List.filter(({confirmations}: utxo) => confirmations > 0)
     |> List.sort((u1: utxo, u2: utxo) =>
-         u1.amount |. BTC.comparedTo(u2.amount)
+         u1.amount->(BTC.comparedTo(u2.amount))
        );
   utxos
   |> List.fold_left(
        ((result, total), utxo: utxo) =>
-         if (total |. BTC.gt(totalAmount |> BTC.plus(defaultFee))) {
+         if (total->(BTC.gt(totalAmount |> BTC.plus(defaultFee)))) {
            (result, total);
          } else {
            ([utxo, ...result], total |> BTC.plus(utxo.amount));
@@ -79,22 +79,22 @@ let fundAddress = (outputs, utxos) => {
   let txB = TxBuilder.createWithNetwork(Networks.testnet);
   inputs
   |> List.iter((utxo: utxo) =>
-       txB |. TxBuilder.addInput(utxo.txId, utxo.txOutputN) |> ignore
+       txB->(TxBuilder.addInput(utxo.txId, utxo.txOutputN)) |> ignore
      );
   outputs
   |> List.iter(((address, value)) =>
-       txB
-       |. TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat)
+       txB->(TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat))
        |> ignore
      );
-  let remainder = totalIn |. BTC.minus(totalValues) |. BTC.minus(defaultFee);
-  txB
-  |. TxBuilder.addOutput(
-       faucetKey |> Address.fromKeyPair,
-       remainder |> BTC.toSatoshisFloat,
-     )
+  let remainder = totalIn->(BTC.minus(totalValues))->(BTC.minus(defaultFee));
+  txB->(
+         TxBuilder.addOutput(
+           faucetKey |> Address.fromKeyPair,
+           remainder |> BTC.toSatoshisFloat,
+         )
+       )
   |> ignore;
-  inputs |> List.iteri((i, _utxo) => txB |. TxBuilder.sign(i, faucetKey));
+  inputs |> List.iteri((i, _utxo) => txB->(TxBuilder.sign(i, faucetKey)));
   Js.Promise.(
     broadcastTransaction(txB |> TxBuilder.build)
     |> then_(_ =>

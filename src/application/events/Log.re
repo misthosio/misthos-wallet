@@ -34,7 +34,7 @@ module Make = (Event: Encodable) => {
       event,
       hash: hashBuffer |> Utils.bufToHex,
       issuerPubKey,
-      signature: issuerKeyPair |. Bitcoin.ECPair.sign(hashBuffer),
+      signature: issuerKeyPair->(Bitcoin.ECPair.sign(hashBuffer)),
     };
   };
   let append = (issuer, event, log) => {
@@ -48,35 +48,39 @@ module Make = (Event: Encodable) => {
   let findNewItems = (~other, log) => {
     let existingHashes =
       log |> Array.map(({hash}) => hash) |> Belt.Set.String.fromArray;
-    other
-    |> Array.fold_left(
-         (found, {hash} as item) =>
-           if (found
-               |> Js.Array.find(((foundHash, _)) => foundHash == hash)
-               |> Js.Option.isSome) {
-             found;
-           } else if (existingHashes |. Belt.Set.String.has(hash)) {
-             found;
-           } else {
-             Array.append(found, [|(hash, item)|]);
-           },
-         [||],
-       )
-    |. Belt.Array.keepMapU(
-         (. (_, {issuerPubKey, event, hash, signature} as item)) => {
-         let hashCheck = makeItemHash(issuerPubKey, event);
-         if (hashCheck |> Utils.bufToHex != hash) {
-           None;
-         } else if (Utils.keyFromPublicKey(
-                      Bitcoin.Networks.bitcoin,
-                      issuerPubKey,
-                    )
-                    |. Bitcoin.ECPair.verify(hashCheck, signature)) {
-           Some(item);
-         } else {
-           None;
-         };
-       });
+    (
+      other
+      |> Array.fold_left(
+           (found, {hash} as item) =>
+             if (found
+                 |> Js.Array.find(((foundHash, _)) => foundHash == hash)
+                 |> Js.Option.isSome) {
+               found;
+             } else if (existingHashes->(Belt.Set.String.has(hash))) {
+               found;
+             } else {
+               Array.append(found, [|(hash, item)|]);
+             },
+           [||],
+         )
+    )
+    ->(
+        Belt.Array.keepMapU(
+          (. (_, {issuerPubKey, event, hash, signature} as item)) => {
+          let hashCheck = makeItemHash(issuerPubKey, event);
+          if (hashCheck |> Utils.bufToHex != hash) {
+            None;
+          } else if (Utils.keyFromPublicKey(
+                       Bitcoin.Networks.bitcoin,
+                       issuerPubKey,
+                     )
+                     ->(Bitcoin.ECPair.verify(hashCheck, signature))) {
+            Some(item);
+          } else {
+            None;
+          };
+        })
+      );
   };
   let length = Array.length;
   let getSummary = log => {

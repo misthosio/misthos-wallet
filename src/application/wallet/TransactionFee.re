@@ -67,7 +67,7 @@ let baseWeight =
 
 let weightToVSize = weight => float_of_int(weight) /. 4.;
 
-let cost = (fee, weight) => fee |. BTC.timesFloat(weight |> weightToVSize);
+let cost = (fee, weight) => fee->(BTC.timesFloat(weight |> weightToVSize));
 
 let outputCost = (address, fee, network) =>
   outputWeight(address, network) |> cost(fee);
@@ -79,40 +79,44 @@ let minChange = inputCost;
 
 let canPayForItself = (fee, input: Network.txInput) =>
   input.value
-  |. BTC.gte(
-       fee
-       |. BTC.timesFloat(
-            estimateInputWeight(
-              ~withDms=input.sequence |> Js.Option.isSome,
-              ~unlocked=input.unlocked,
-              input.nCoSigners,
-              input.nPubKeys,
-            )
-            |> weightToVSize,
-          ),
-     );
+  ->(
+      BTC.gte(
+        fee->(
+               BTC.timesFloat(
+                 estimateInputWeight(
+                   ~withDms=input.sequence |> Js.Option.isSome,
+                   ~unlocked=input.unlocked,
+                   input.nCoSigners,
+                   input.nPubKeys,
+                 )
+                 |> weightToVSize,
+               )
+             ),
+      )
+    );
 
 let estimate = (outputs, inputs, fee, network) =>
-  fee
-  |. BTC.timesFloat(
-       baseWeight
-       + (
-         outputs
-         |> List.fold_left((t, o) => t + outputWeight(o, network), 0)
-       )
-       + (
-         inputs
-         |> List.fold_left(
-              (t, i: Network.txInput) =>
-                t
-                + estimateInputWeight(
-                    ~withDms=i.sequence |> Js.Option.isSome,
-                    ~unlocked=i.unlocked,
-                    i.nCoSigners,
-                    i.nPubKeys,
-                  ),
-              0,
-            )
-       )
-       |> weightToVSize,
-     );
+  fee->(
+         BTC.timesFloat(
+           baseWeight
+           + (
+             outputs
+             |> List.fold_left((t, o) => t + outputWeight(o, network), 0)
+           )
+           + (
+             inputs
+             |> List.fold_left(
+                  (t, i: Network.txInput) =>
+                    t
+                    + estimateInputWeight(
+                        ~withDms=i.sequence |> Js.Option.isSome,
+                        ~unlocked=i.unlocked,
+                        i.nCoSigners,
+                        i.nPubKeys,
+                      ),
+                  0,
+                )
+           )
+           |> weightToVSize,
+         )
+       );

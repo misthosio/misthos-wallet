@@ -102,45 +102,47 @@ let make =
   render: ({state, send}) => {
     open MaterialUi;
     let policyMenuItems =
-      policyOptions
-      |. Array.mapU((. p) =>
-           <MaterialUi.MenuItem value=(`String(p |> policyTypeToString))>
-             (p |> policyTypeToString |> text)
-           </MaterialUi.MenuItem>
-         );
+      policyOptions->(
+                       Array.mapU((. p) =>
+                         <MaterialUi.MenuItem
+                           value={`String(p |> policyTypeToString)}>
+                           {p |> policyTypeToString |> text}
+                         </MaterialUi.MenuItem>
+                       )
+                     );
     <Grid container=true className=Styles.container>
       <FormControl className=Styles.flex>
-        <InputLabel> (label |> text) </InputLabel>
+        <InputLabel> {label |> text} </InputLabel>
         <Select
-          value=(`String(state.selectedPolicy |> policyTypeToString))
-          onChange=(
+          value={`String(state.selectedPolicy |> policyTypeToString)}
+          onChange={
             (e, _) =>
-              extractString(e) |> stringToPolicy |. SelectPolicyType |> send
-          )>
-          (policyMenuItems |> ReasonReact.array)
+              (extractString(e) |> stringToPolicy)->SelectPolicyType |> send
+          }>
+          {policyMenuItems |> ReasonReact.array}
         </Select>
       </FormControl>
-      (
+      {
         switch (state.selectedPolicy) {
         | Policy.Percentage(_) =>
-          <FormControl error=(state.inputNumber == "")>
+          <FormControl error={state.inputNumber == ""}>
             <InputLabel> "% =" </InputLabel>
             <Input
-              value=(`String(state.inputNumber))
-              onChange=(e => extractString(e) |. SelectPolicyNumber |> send)
+              value={`String(state.inputNumber)}
+              onChange=(e => extractString(e)->SelectPolicyNumber |> send)
             />
           </FormControl>
         | AtLeast(_) =>
-          <FormControl error=(state.inputNumber == "")>
+          <FormControl error={state.inputNumber == ""}>
             <InputLabel> "N =" </InputLabel>
             <Input
-              value=(`String(state.inputNumber))
-              onChange=(e => extractString(e) |. SelectPolicyNumber |> send)
+              value={`String(state.inputNumber)}
+              onChange=(e => extractString(e)->SelectPolicyNumber |> send)
             />
           </FormControl>
         | _ => ReasonReact.null
         }
-      )
+      }
     </Grid>;
   },
 };

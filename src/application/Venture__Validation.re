@@ -65,7 +65,7 @@ let make = () => {
 let apply = ({hash, event}: EventLog.item, state) => {
   let state = {
     ...state,
-    knownItems: state.knownItems |. ItemsSet.add(hash),
+    knownItems: state.knownItems->(ItemsSet.add(hash)),
     accountValidator:
       state.accountValidator |> AccountValidator.update(event),
     processValidator:
@@ -139,7 +139,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PayoutEndorsed(_) => state
   | PartnerAccepted({processId, data}) => {
       ...state,
-      currentPartners: state.currentPartners |. Belt.Set.add(data.id),
+      currentPartners: state.currentPartners->(Belt.Set.add(data.id)),
       currentPartnerPubKeys:
         data.pubKey
         |> Utils.mapOption(pubKey =>
@@ -158,10 +158,10 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PartnerRemovalAccepted({processId, data: {id}}) =>
     let pubKey =
       state.currentPartnerPubKeys
-      |. Belt.List.getByU((. (_key, pId)) => UserId.eq(pId, id));
+      ->(Belt.List.getByU((. (_key, pId)) => UserId.eq(pId, id)));
     {
       ...state,
-      currentPartners: state.currentPartners |. Belt.Set.remove(id),
+      currentPartners: state.currentPartners->(Belt.Set.remove(id)),
       currentPartnerPubKeys:
         switch (pubKey) {
         | Some((pubKey, _)) =>
@@ -314,10 +314,8 @@ let ensureDependencies =
       ~completions=ProcessId.emptySet,
       {processValidator},
     ) =>
-  proposals
-  |. Belt.Set.every(processValidator.exists)
-  && completions
-  |. Belt.Set.every(processValidator.completed) ?
+  proposals->(Belt.Set.every(processValidator.exists))
+  && completions->(Belt.Set.every(processValidator.completed)) ?
     Ok : DependencyNotMet;
 
 let accountExists = (accountIdx, {accountValidator}) =>
@@ -432,7 +430,7 @@ let validatePartnerData =
       {id, lastPartnerRemovalProcess}: Partner.Data.t,
       {partnerRemovals, currentPartners},
     ) =>
-  if (currentPartners |. Belt.Set.has(id)) {
+  if (currentPartners->(Belt.Set.has(id))) {
     BadData("Partner already exists");
   } else {
     let partnerRemovalProcess =
@@ -451,7 +449,7 @@ let validatePartnerRemovalData =
       {id, lastPartnerProcess}: Partner.Removal.Data.t,
       {partnerAccepted, currentPartners},
     ) =>
-  if (currentPartners |. Belt.Set.has(id) == false) {
+  if (currentPartners->(Belt.Set.has(id)) == false) {
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
   } else {
     try (
@@ -479,10 +477,10 @@ let validateCustodianData =
       {custodianRemovals, accountCreationData, partnerData},
     ) =>
   if (accountCreationData
-      |>
-      List.exists(((_, (_, accountData: AccountCreation.Data.t))) =>
-        AccountIndex.eq(accountData.accountIdx, accountIdx)
-      ) == false) {
+      |> List.exists(((_, (_, accountData: AccountCreation.Data.t))) =>
+           AccountIndex.eq(accountData.accountIdx, accountIdx)
+         )
+      == false) {
     BadData("account doesn't exist");
   } else {
     try (
@@ -580,11 +578,11 @@ let validateAccountKeyChainIdentified =
   |> test(accountExists(accountIdx))
   |> andThen(state =>
        keyChain
-       |>
-       AccountKeyChain.isConsistent(
-         ~accountSettings=
-           state.accountValidator.settings(accountIdx) |> Js.Option.getExn,
-       ) == false ?
+       |> AccountKeyChain.isConsistent(
+            ~accountSettings=
+              state.accountValidator.settings(accountIdx) |> Js.Option.getExn,
+          )
+       == false ?
          BadData("Inconsistent AccountKeyChain") : Ok
      )
   |> andThen(
@@ -781,7 +779,7 @@ let validate =
       {knownItems} as state,
       {hash, event, issuerPubKey}: EventLog.item,
     ) =>
-  if (knownItems |. ItemsSet.has(hash)) {
+  if (knownItems->(ItemsSet.has(hash))) {
     Ignore;
   } else {
     switch (
@@ -808,8 +806,7 @@ let validate =
     | (PartnerPubKeyAdded({partnerId}), _, false) =>
       switch (originId) {
       | Some(originId) =>
-        state.currentPartners
-        |. Belt.Set.has(originId)
+        state.currentPartners->(Belt.Set.has(originId))
         && UserId.eq(originId, partnerId) ?
           Ok : InvalidIssuer
       | _ => InvalidIssuer

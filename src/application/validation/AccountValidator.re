@@ -15,12 +15,14 @@ let update = (event, {accounts}) => {
   let accounts =
     switch (event) {
     | AccountCreationAccepted({data: {accountIdx, settings}}) =>
-      accounts
-      |. Map.set(
-           accountIdx,
-           settings |> Js.Option.getWithDefault(AccountSettings.default),
-         )
+      accounts->(
+                  Map.set(
+                    accountIdx,
+                    settings
+                    |> Js.Option.getWithDefault(AccountSettings.default),
+                  )
+                )
     | _ => accounts
     };
-  {accounts, settings: accountIdx => accounts |. Map.get(accountIdx)};
+  {accounts, settings: accountIdx => accounts->(Map.get(accountIdx))};
 };

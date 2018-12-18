@@ -14,8 +14,8 @@ module Public = {
         (
           "termsAndConditions",
           data.termsAndConditions
-          |. Map.String.toArray
-          |. Array.mapU((. (k, v)) => (k, v |> string))
+          ->Map.String.toArray
+          ->(Array.mapU((. (k, v)) => (k, v |> string)))
           |> Js.Dict.fromArray
           |> dict,
         ),
@@ -66,11 +66,11 @@ module Public = {
 };
 
 let hasSignedTAC = (tacHash, userInfo: Public.t) =>
-  switch (userInfo.termsAndConditions |. Map.String.get(tacHash)) {
+  switch (userInfo.termsAndConditions->(Map.String.get(tacHash))) {
   | Some(signature) =>
     let signature = signature |> Utils.signatureFromDER;
     Utils.keyFromPublicKey(Bitcoin.Networks.bitcoin, userInfo.appPubKey)
-    |. Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature);
+    ->(Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature));
   | _ => false
   };
 
@@ -81,13 +81,12 @@ let signTAC = (tacHash, privateKey, network, userInfo: Public.t) => {
       privateKey,
     );
   let signature =
-    keyPair
-    |. Bitcoin.ECPair.sign(tacHash |> Utils.bufFromHex)
+    keyPair->(Bitcoin.ECPair.sign(tacHash |> Utils.bufFromHex))
     |> Utils.signatureToDER;
   {
     ...userInfo,
     termsAndConditions:
-      userInfo.termsAndConditions |. Map.String.set(tacHash, signature),
+      userInfo.termsAndConditions->(Map.String.set(tacHash, signature)),
   }
   |> Public.persist;
 };
@@ -145,7 +144,7 @@ let getOrInit = (~appPubKey, userId) =>
            |> then_(pub_ =>
                 Private.persist(
                   ~chainCode=
-                    appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
+                    appPubKey->(String.sub(0, 64)) |> Utils.bufFromHex,
                 )
                 |> then_(priv => (priv, pub_) |> resolve)
               ),
@@ -153,7 +152,6 @@ let getOrInit = (~appPubKey, userId) =>
   );
 
 let storagePrefix = (~appPubKey) =>
-  appPubKey
-  |> Utils.bufFromHex
-  |. Bitcoin.ECPair.fromPublicKey({"network": Bitcoin.Networks.bitcoin})
+  (appPubKey |> Utils.bufFromHex)
+  ->(Bitcoin.ECPair.fromPublicKey({"network": Bitcoin.Networks.bitcoin}))
   |> Bitcoin.Address.fromKeyPair;
