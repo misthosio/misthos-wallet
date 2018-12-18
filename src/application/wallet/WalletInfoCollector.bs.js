@@ -1086,114 +1086,148 @@ function apply($$event, state) {
         var input$1 = $$event[0][/* input */0];
         var accountIdx$10 = Address.Coordinates[/* accountIdx */3](input$1[/* coordinates */6]);
         var addressStatus$2 = addressInfoFor(accountIdx$10, input$1[/* address */2], state)[/* addressStatus */5];
-        var updateInput = function (input, utxoMap) {
-          return Belt_Map.updateU(utxoMap, accountIdx$10, (function (inputs) {
-                        return Js_primitive.some(Belt_MapString.updateU(Js_option.getWithDefault(Belt_MapString.empty, inputs), input[/* address */2], (function (inputs) {
-                                          return Belt_List.mapU(Js_option.getWithDefault(/* [] */0, inputs), (function (in_) {
-                                                        var match = Network.TxInputCmp[/* compareInputs */0](in_, input) === 0;
-                                                        if (match) {
-                                                          return input;
-                                                        } else {
-                                                          return in_;
-                                                        }
-                                                      }));
-                                        })));
-                      }));
+        var doesInputExist = function (utxoMap) {
+          var match = Utils.andThen((function (inputs) {
+                  return Belt_MapString.get(inputs, input$1[/* address */2]);
+                }), Belt_Map.get(utxoMap, accountIdx$10));
+          if (match !== undefined) {
+            return Belt_List.has(match, input$1, (function (in_, input) {
+                          return Network.TxInputCmp[/* compareInputs */0](in_, input) === 0;
+                        }));
+          } else {
+            return false;
+          }
         };
-        var init$1;
-        var exit = 0;
+        var tmp;
         switch (addressStatus$2) {
           case 0 : 
-              init$1 = /* record */[
-                /* network */state[/* network */0],
-                /* spendable */updateInput(input$1, state[/* spendable */1]),
-                /* oldSpendable */state[/* oldSpendable */2],
-                /* unlocked */state[/* unlocked */3],
-                /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
-                /* inaccessible */state[/* inaccessible */5],
-                /* reserved */state[/* reserved */6],
-                /* keyChains */state[/* keyChains */7],
-                /* payoutProcesses */state[/* payoutProcesses */8],
-                /* activatedKeyChain */state[/* activatedKeyChain */9],
-                /* exposedCoordinates */state[/* exposedCoordinates */10],
-                /* addressInfos */state[/* addressInfos */11],
-                /* currentCustodians */state[/* currentCustodians */12]
-              ];
+              tmp = doesInputExist(state[/* spendable */1]);
               break;
           case 1 : 
           case 2 : 
-              exit = 1;
+              tmp = doesInputExist(state[/* oldSpendable */2]);
               break;
           case 3 : 
-              init$1 = /* record */[
-                /* network */state[/* network */0],
-                /* spendable */state[/* spendable */1],
-                /* oldSpendable */state[/* oldSpendable */2],
-                /* unlocked */state[/* unlocked */3],
-                /* temporarilyInaccessible */updateInput(input$1, state[/* temporarilyInaccessible */4]),
-                /* inaccessible */state[/* inaccessible */5],
-                /* reserved */state[/* reserved */6],
-                /* keyChains */state[/* keyChains */7],
-                /* payoutProcesses */state[/* payoutProcesses */8],
-                /* activatedKeyChain */state[/* activatedKeyChain */9],
-                /* exposedCoordinates */state[/* exposedCoordinates */10],
-                /* addressInfos */state[/* addressInfos */11],
-                /* currentCustodians */state[/* currentCustodians */12]
-              ];
+              tmp = doesInputExist(state[/* temporarilyInaccessible */4]);
               break;
           case 4 : 
-              init$1 = /* record */[
-                /* network */state[/* network */0],
-                /* spendable */state[/* spendable */1],
-                /* oldSpendable */state[/* oldSpendable */2],
-                /* unlocked */state[/* unlocked */3],
-                /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
-                /* inaccessible */updateInput(input$1, state[/* inaccessible */5]),
-                /* reserved */state[/* reserved */6],
-                /* keyChains */state[/* keyChains */7],
-                /* payoutProcesses */state[/* payoutProcesses */8],
-                /* activatedKeyChain */state[/* activatedKeyChain */9],
-                /* exposedCoordinates */state[/* exposedCoordinates */10],
-                /* addressInfos */state[/* addressInfos */11],
-                /* currentCustodians */state[/* currentCustodians */12]
-              ];
+              tmp = doesInputExist(state[/* inaccessible */5]);
               break;
           
         }
-        if (exit === 1) {
-          init$1 = /* record */[
-            /* network */state[/* network */0],
-            /* spendable */state[/* spendable */1],
-            /* oldSpendable */updateInput(input$1, state[/* oldSpendable */2]),
-            /* unlocked */state[/* unlocked */3],
-            /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
-            /* inaccessible */state[/* inaccessible */5],
-            /* reserved */state[/* reserved */6],
-            /* keyChains */state[/* keyChains */7],
-            /* payoutProcesses */state[/* payoutProcesses */8],
-            /* activatedKeyChain */state[/* activatedKeyChain */9],
-            /* exposedCoordinates */state[/* exposedCoordinates */10],
-            /* addressInfos */state[/* addressInfos */11],
-            /* currentCustodians */state[/* currentCustodians */12]
-          ];
+        if (tmp) {
+          var updateInput = function (input, utxoMap) {
+            return Belt_Map.updateU(utxoMap, accountIdx$10, (function (inputs) {
+                          return Js_primitive.some(Belt_MapString.updateU(Js_option.getWithDefault(Belt_MapString.empty, inputs), input[/* address */2], (function (inputs) {
+                                            return Belt_List.mapU(Js_option.getWithDefault(/* [] */0, inputs), (function (in_) {
+                                                          var match = Network.TxInputCmp[/* compareInputs */0](in_, input) === 0;
+                                                          if (match) {
+                                                            return input;
+                                                          } else {
+                                                            return in_;
+                                                          }
+                                                        }));
+                                          })));
+                        }));
+          };
+          var init$1;
+          var exit = 0;
+          switch (addressStatus$2) {
+            case 0 : 
+                init$1 = /* record */[
+                  /* network */state[/* network */0],
+                  /* spendable */updateInput(input$1, state[/* spendable */1]),
+                  /* oldSpendable */state[/* oldSpendable */2],
+                  /* unlocked */state[/* unlocked */3],
+                  /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+                  /* inaccessible */state[/* inaccessible */5],
+                  /* reserved */state[/* reserved */6],
+                  /* keyChains */state[/* keyChains */7],
+                  /* payoutProcesses */state[/* payoutProcesses */8],
+                  /* activatedKeyChain */state[/* activatedKeyChain */9],
+                  /* exposedCoordinates */state[/* exposedCoordinates */10],
+                  /* addressInfos */state[/* addressInfos */11],
+                  /* currentCustodians */state[/* currentCustodians */12]
+                ];
+                break;
+            case 1 : 
+            case 2 : 
+                exit = 1;
+                break;
+            case 3 : 
+                init$1 = /* record */[
+                  /* network */state[/* network */0],
+                  /* spendable */state[/* spendable */1],
+                  /* oldSpendable */state[/* oldSpendable */2],
+                  /* unlocked */state[/* unlocked */3],
+                  /* temporarilyInaccessible */updateInput(input$1, state[/* temporarilyInaccessible */4]),
+                  /* inaccessible */state[/* inaccessible */5],
+                  /* reserved */state[/* reserved */6],
+                  /* keyChains */state[/* keyChains */7],
+                  /* payoutProcesses */state[/* payoutProcesses */8],
+                  /* activatedKeyChain */state[/* activatedKeyChain */9],
+                  /* exposedCoordinates */state[/* exposedCoordinates */10],
+                  /* addressInfos */state[/* addressInfos */11],
+                  /* currentCustodians */state[/* currentCustodians */12]
+                ];
+                break;
+            case 4 : 
+                init$1 = /* record */[
+                  /* network */state[/* network */0],
+                  /* spendable */state[/* spendable */1],
+                  /* oldSpendable */state[/* oldSpendable */2],
+                  /* unlocked */state[/* unlocked */3],
+                  /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+                  /* inaccessible */updateInput(input$1, state[/* inaccessible */5]),
+                  /* reserved */state[/* reserved */6],
+                  /* keyChains */state[/* keyChains */7],
+                  /* payoutProcesses */state[/* payoutProcesses */8],
+                  /* activatedKeyChain */state[/* activatedKeyChain */9],
+                  /* exposedCoordinates */state[/* exposedCoordinates */10],
+                  /* addressInfos */state[/* addressInfos */11],
+                  /* currentCustodians */state[/* currentCustodians */12]
+                ];
+                break;
+            
+          }
+          if (exit === 1) {
+            init$1 = /* record */[
+              /* network */state[/* network */0],
+              /* spendable */state[/* spendable */1],
+              /* oldSpendable */updateInput(input$1, state[/* oldSpendable */2]),
+              /* unlocked */state[/* unlocked */3],
+              /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+              /* inaccessible */state[/* inaccessible */5],
+              /* reserved */state[/* reserved */6],
+              /* keyChains */state[/* keyChains */7],
+              /* payoutProcesses */state[/* payoutProcesses */8],
+              /* activatedKeyChain */state[/* activatedKeyChain */9],
+              /* exposedCoordinates */state[/* exposedCoordinates */10],
+              /* addressInfos */state[/* addressInfos */11],
+              /* currentCustodians */state[/* currentCustodians */12]
+            ];
+          }
+          return /* record */[
+                  /* network */init$1[/* network */0],
+                  /* spendable */init$1[/* spendable */1],
+                  /* oldSpendable */init$1[/* oldSpendable */2],
+                  /* unlocked */Belt_Map.updateU(state[/* unlocked */3], accountIdx$10, (function (inputs) {
+                          return Js_primitive.some(Belt_Set.add(Js_option.getWithDefault(Network.inputSet(/* () */0), inputs), input$1));
+                        })),
+                  /* temporarilyInaccessible */init$1[/* temporarilyInaccessible */4],
+                  /* inaccessible */init$1[/* inaccessible */5],
+                  /* reserved */init$1[/* reserved */6],
+                  /* keyChains */init$1[/* keyChains */7],
+                  /* payoutProcesses */init$1[/* payoutProcesses */8],
+                  /* activatedKeyChain */init$1[/* activatedKeyChain */9],
+                  /* exposedCoordinates */init$1[/* exposedCoordinates */10],
+                  /* addressInfos */init$1[/* addressInfos */11],
+                  /* currentCustodians */init$1[/* currentCustodians */12]
+                ];
+        } else {
+          return state;
         }
-        return /* record */[
-                /* network */init$1[/* network */0],
-                /* spendable */init$1[/* spendable */1],
-                /* oldSpendable */init$1[/* oldSpendable */2],
-                /* unlocked */Belt_Map.updateU(state[/* unlocked */3], accountIdx$10, (function (inputs) {
-                        return Js_primitive.some(Belt_Set.add(Js_option.getWithDefault(Network.inputSet(/* () */0), inputs), input$1));
-                      })),
-                /* temporarilyInaccessible */init$1[/* temporarilyInaccessible */4],
-                /* inaccessible */init$1[/* inaccessible */5],
-                /* reserved */init$1[/* reserved */6],
-                /* keyChains */init$1[/* keyChains */7],
-                /* payoutProcesses */init$1[/* payoutProcesses */8],
-                /* activatedKeyChain */init$1[/* activatedKeyChain */9],
-                /* exposedCoordinates */init$1[/* exposedCoordinates */10],
-                /* addressInfos */init$1[/* addressInfos */11],
-                /* currentCustodians */init$1[/* currentCustodians */12]
-              ];
+        break;
     default:
       return state;
   }
