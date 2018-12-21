@@ -761,10 +761,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
   integrity sha512-rLu3wcBWH4P5q1CGoSSH/i9hrXs7SlbRLkoq9IGuoPYNGQvDJ3pt/wmOM+XgYjIDRMVIdkUWt0RsfzF50JfnCw==
 
-"@glennsl/bs-jest@0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@glennsl/bs-jest/-/bs-jest-0.4.5.tgz#f6259f8457cc9f09b3c07f97073c6b00c81a048d"
-  integrity sha512-iDhVxPdZf5yMBJlMY+b9BR4G8/DQICbWvxYwI71VpEOKxhZW9h8Sx+pm4Y6xpVZOenT7sVJ5O62Q+UW6Rmducw==
+"@glennsl/bs-jest@0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@glennsl/bs-jest/-/bs-jest-0.4.6.tgz#2a249a46c10caaa9756b5e30dcf60a2c1dde57ea"
+  integrity sha512-TJLx1ti1Cp7e53bCndV7DpMAcZL9+pqA4L9YD4kCrDQuYdA8boRnPh1l862w8AJHWTxEki/xtDu0FVPCq2HVrA==
   dependencies:
     jest "^23.5.0"
 
