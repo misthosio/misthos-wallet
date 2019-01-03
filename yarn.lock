@@ -780,12 +780,12 @@
   dependencies:
     object-hash "^1.2.0"
 
-"@ledgerhq/hw-app-btc@4.24.0":
-  version "4.24.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.24.0.tgz#8889b2bc9b9583209ed24f832c96ea8d23e1dc74"
-  integrity sha512-OEc8UCcdAWp10PPM9Keoh8imuusmNVe2o/89ujMT5UIWOGCu7duezpsnCY11jGNxf2hyos6lezUMlUAOHBuISQ==
+"@ledgerhq/hw-app-btc@4.33.5":
+  version "4.33.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.33.5.tgz#9e3ae08357c7681d84d6ff7beb313fb576a5950b"
+  integrity sha512-vvDVhu1+cFwEwzyL75akjChH0uxej3mwNG6vWyOZ0wI/yWhVf9gFxT8oOrNiFQLXULZGbv31nnI2amLDt1Dv7w==
   dependencies:
-    "@ledgerhq/hw-transport" "^4.24.0"
+    "@ledgerhq/hw-transport" "^4.32.0"
     create-hash "^1.1.3"
 
 "@ledgerhq/hw-transport-u2f@4.24.0":
@@ -800,6 +800,13 @@
   version "4.24.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.24.0.tgz#8def925d8c2e1f73d15128d9e27ead729870be58"
   integrity sha512-L34TG1Ss7goRB+5BxtvBwUuu0CmDSIxS33oUqkpEy6rCs31k7XicV48iUGAnRnt8hNY2DvJ9WFyaOroUE9h6wQ==
+  dependencies:
+    events "^3.0.0"
+
+"@ledgerhq/hw-transport@^4.32.0":
+  version "4.32.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.32.0.tgz#592b9dc51459cb1cd31ce9444cf943f627bc4beb"
+  integrity sha512-Wgsk9UHC4RShqYoDeIEeKgHZOvNCtB0WWIG0xqlVPzS+IcKDkIxtXQw7hTA7GQSuDuGeauVtlbTQ5yat6+2/BA==
   dependencies:
     events "^3.0.0"
 
