@@ -761,10 +761,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
   integrity sha512-rLu3wcBWH4P5q1CGoSSH/i9hrXs7SlbRLkoq9IGuoPYNGQvDJ3pt/wmOM+XgYjIDRMVIdkUWt0RsfzF50JfnCw==
 
-"@glennsl/bs-jest@0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@glennsl/bs-jest/-/bs-jest-0.4.5.tgz#f6259f8457cc9f09b3c07f97073c6b00c81a048d"
-  integrity sha512-iDhVxPdZf5yMBJlMY+b9BR4G8/DQICbWvxYwI71VpEOKxhZW9h8Sx+pm4Y6xpVZOenT7sVJ5O62Q+UW6Rmducw==
+"@glennsl/bs-jest@0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@glennsl/bs-jest/-/bs-jest-0.4.6.tgz#2a249a46c10caaa9756b5e30dcf60a2c1dde57ea"
+  integrity sha512-TJLx1ti1Cp7e53bCndV7DpMAcZL9+pqA4L9YD4kCrDQuYdA8boRnPh1l862w8AJHWTxEki/xtDu0FVPCq2HVrA==
   dependencies:
     jest "^23.5.0"
 
@@ -9403,10 +9403,10 @@ webpack-dev-middleware@3.4.0:
     range-parser "^1.0.3"
     webpack-log "^2.0.0"
 
-webpack-dev-server@3.1.11:
-  version "3.1.11"
-  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-3.1.11.tgz#3b698b5b32476f1f0d3d4014952fcf42ab118205"
-  integrity sha512-E/uGbO9ndXrXgNUzw+O2UrrvYY/eIw10fpJnbvJf8VOH/NWZuY3nUG7arbgB/kbkORlF/sPHxnv10tKFtKf3aA==
+webpack-dev-server@3.1.14:
+  version "3.1.14"
+  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-3.1.14.tgz#60fb229b997fc5a0a1fc6237421030180959d469"
+  integrity sha512-mGXDgz5SlTxcF3hUpfC8hrQ11yhAttuUQWf1Wmb+6zo3x6rb7b9mIfuQvAPLdfDRCGRGvakBWHdHOa0I9p/EVQ==
   dependencies:
     ansi-html "0.0.7"
     bonjour "^3.5.0"
@@ -9510,10 +9510,10 @@ webpack@4.20.2:
     watchpack "^1.5.0"
     webpack-sources "^1.3.0"
 
-webpack@4.26.1:
-  version "4.26.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.26.1.tgz#ff3a9283d363c07b3494dfa702d08f4f2ef6cb39"
-  integrity sha512-i2oOvEvuvLLSuSCkdVrknaxAhtUZ9g+nLSoHCWV0gDzqGX2DXaCrMmMUpbRsTSSLrUqAI56PoEiyMUZIZ1msug==
+webpack@4.28.3:
+  version "4.28.3"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.28.3.tgz#8acef6e77fad8a01bfd0c2b25aa3636d46511874"
+  integrity sha512-vLZN9k5I7Nr/XB1IDG9GbZB4yQd1sPuvufMFgJkx0b31fi2LD97KQIjwjxE7xytdruAYfu5S0FLBLjdxmwGJCg==
   dependencies:
     "@webassemblyjs/ast" "1.7.11"
     "@webassemblyjs/helper-module-context" "1.7.11"
