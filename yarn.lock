@@ -4184,10 +4184,10 @@ form-data@^2.3.2, form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-formdata-polyfill@3.0.12:
-  version "3.0.12"
-  resolved "https://registry.yarnpkg.com/formdata-polyfill/-/formdata-polyfill-3.0.12.tgz#43f8d9bad5408a57c4f801784526e8230b6e9f7a"
-  integrity sha512-y5V1Y4e2VSJ29+CAHozJwN9BqvsigYicZp/MqeYP00X/UMah3cLb2ix7/58fLcaAjwr8HfztD7Ih/IQCW1BGfw==
+formdata-polyfill@3.0.15:
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/formdata-polyfill/-/formdata-polyfill-3.0.15.tgz#77b38e7fff59181a81215ecc22ed0072f55b8ea6"
+  integrity sha512-nnsIjNta4jSkBhQpxeIL5u+4fasC091qS2k9+SQbQnITGmR1/PzbLI8gex+T/bJCqwHQTfh/gqfHsZi+L3p+UA==
 
 forwarded@~0.1.2:
   version "0.1.2"
