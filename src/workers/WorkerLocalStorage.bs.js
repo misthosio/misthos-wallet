@@ -9,10 +9,10 @@ var LocalStorage = require("../ffi/LocalStorage.bs.js");
 function encodeItems(items) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "blockstack",
+                "blockstackSession",
                 Json_encode.nullable((function (prim) {
                         return prim;
-                      }), items[/* blockstack */0])
+                      }), items[/* blockstackSession */0])
               ],
               /* :: */[
                 /* tuple */[
@@ -36,7 +36,7 @@ function encodeItems(items) {
 
 function decodeItems(raw) {
   return /* record */[
-          /* blockstack */Json_decode.field("blockstack", (function (param) {
+          /* blockstackSession */Json_decode.field("blockstackSession", (function (param) {
                   return Json_decode.optional(Json_decode.string, param);
                 }), raw),
           /* blockstackGaiaHubConfig */Json_decode.field("blockstackGaiaHubConfig", (function (param) {
@@ -48,7 +48,7 @@ function decodeItems(raw) {
         ];
 }
 
-var blockstackKey = "blockstack";
+var blockstackSessionKey = "blockstack-session";
 
 var gaiaHubKey = "blockstack-gaia-hub-config";
 
@@ -56,7 +56,7 @@ var transitPrivKey = "blockstack-transit-private-key";
 
 function readBlockstackItemsFromStorage(param) {
   return /* record */[
-          /* blockstack */Caml_option.null_to_opt(localStorage.getItem(blockstackKey)),
+          /* blockstackSession */Caml_option.null_to_opt(localStorage.getItem(blockstackSessionKey)),
           /* blockstackGaiaHubConfig */Caml_option.null_to_opt(localStorage.getItem(gaiaHubKey)),
           /* blockstackTransitPrivateKey */Caml_option.null_to_opt(localStorage.getItem(transitPrivKey))
         ];
@@ -65,11 +65,11 @@ function readBlockstackItemsFromStorage(param) {
 function setBlockstackItems(param) {
   var blockstackTransitPrivateKey = param[/* blockstackTransitPrivateKey */2];
   var blockstackGaiaHubConfig = param[/* blockstackGaiaHubConfig */1];
-  var blockstack = param[/* blockstack */0];
-  if (blockstack !== undefined) {
-    LocalStorage.setItem(blockstackKey, blockstack);
+  var blockstackSession = param[/* blockstackSession */0];
+  if (blockstackSession !== undefined) {
+    LocalStorage.setItem(blockstackSessionKey, blockstackSession);
   } else {
-    LocalStorage.removeItem(blockstackKey);
+    LocalStorage.removeItem(blockstackSessionKey);
   }
   if (blockstackGaiaHubConfig !== undefined) {
     LocalStorage.setItem(gaiaHubKey, blockstackGaiaHubConfig);
@@ -88,7 +88,7 @@ var L = 0;
 exports.encodeItems = encodeItems;
 exports.decodeItems = decodeItems;
 exports.L = L;
-exports.blockstackKey = blockstackKey;
+exports.blockstackSessionKey = blockstackSessionKey;
 exports.gaiaHubKey = gaiaHubKey;
 exports.transitPrivKey = transitPrivKey;
 exports.readBlockstackItemsFromStorage = readBlockstackItemsFromStorage;

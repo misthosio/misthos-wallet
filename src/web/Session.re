@@ -32,15 +32,16 @@ let initMasterKey = (sessionData: SessionData.t) => {
 };
 
 let completeLogIn = () => {
+  let userSession = Blockstack.makeUserSession();
   let environment = Environment.get();
   Cookie.get("transitKey")
   |> Utils.mapOption(key => {
-       LocalStorage.setItem("blockstack-transit-private-key", key);
+       userSession |. Blockstack.setTransitKey(key);
        Cookie.delete("transitKey", environment.cookieDomain);
      })
   |> ignore;
   Js.Promise.(
-    Blockstack.handlePendingSignIn()
+    userSession |> Blockstack.handlePendingSignIn
     |> then_(userData =>
          switch (SessionData.fromUserData(userData, environment.network)) {
          | None => resolve(NamelessLogin)
@@ -88,7 +89,7 @@ let signOut = () => {
 
 let signIn = () => {
   signOut() |> ignore;
-  let transitKey = Blockstack.makeECPrivateKey();
+  let transitKey = Blockstack.generateTransitKey();
   let environment = Environment.get();
   Cookie.set("transitKey", transitKey, environment.cookieDomain);
 

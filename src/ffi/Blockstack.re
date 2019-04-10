@@ -27,6 +27,32 @@ external makeAuthRequest:
   authRequest =
   "";
 
+type appConfig;
+[@bs.module "blockstack"]
+[@bs.new]
+external makeAppConfig: (
+    ~scopes: array(string),
+    ~appDomain: string,
+    ~redirectURI: string,
+    ~manifestURI: string) => appConfig = "AppConfig";
+
+type userSession;
+[@bs.module "blockstack"]
+[@bs.new]
+external makeUserSession: unit => userSession = "UserSession";
+
+[@bs.send] external handlePendingSignIn: userSession  => Js.Promise.t(userData) = "";
+
+let setTransitKey = (_userSession, _transitKey) => {
+  [%bs.raw {|
+    (() => { const sessionData = _userSession.store.getSessionData()
+    sessionData.transitKey = _transitKey
+    _userSession.store.setSessionData(sessionData)
+    })()
+    |}];
+    ()
+};
+
 [@bs.module "blockstack"]
 external redirectToSignInWithAuthRequest: authRequest => unit = "";
 
@@ -36,9 +62,6 @@ external redirectToSignIn:
   "";
 
 [@bs.module "blockstack"] external signUserOut: unit => unit = "";
-
-[@bs.module "blockstack"]
-external handlePendingSignIn: unit => Js.Promise.t(userData) = "";
 
 [@bs.module "blockstack"]
 external getFileDecrypted: string => Js.Promise.t(Js.nullable(string)) =
@@ -84,8 +107,8 @@ external getUserAppFileUrl:
   Js.Promise.t(string) =
   "";
 
-[@bs.module "blockstack/lib/keys.js"]
-external makeECPrivateKey: unit => string = "";
+[@bs.module "blockstack/lib/auth/authMessages.js"]
+external generateTransitKey: unit => string = "";
 
 type profile;
 [@bs.module "blockstack"]

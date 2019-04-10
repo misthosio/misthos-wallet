@@ -4,6 +4,16 @@
 var Blockstack = require("blockstack");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 
+function setTransitKey(_userSession, _transitKey) {
+  ((
+    (() => { const sessionData = _userSession.store.getSessionData()
+    sessionData.transitKey = _transitKey
+    _userSession.store.setSessionData(sessionData)
+    })()
+    ));
+  return /* () */0;
+}
+
 function getFileFromUser(file, username) {
   return Blockstack.getFile(file, {
               username: username,
@@ -52,6 +62,7 @@ function fetchIds($staropt$star, beginning) {
   }
 }
 
+exports.setTransitKey = setTransitKey;
 exports.getFileFromUser = getFileFromUser;
 exports.getFileFromUserAndDecrypt = getFileFromUserAndDecrypt;
 exports.putFileEncryptedFor = putFileEncryptedFor;

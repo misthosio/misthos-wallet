@@ -6,12 +6,12 @@ var Utils = require("../utils/Utils.bs.js");
 var Cookie = require("../ffi/Cookie.bs.js");
 var TACText = require("../view/text/TACText.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
-var Blockstack = require("blockstack");
+var Blockstack = require("../ffi/Blockstack.bs.js");
+var Blockstack$1 = require("blockstack");
 var Environment = require("./Environment.bs.js");
 var SessionData = require("../application/SessionData.bs.js");
-var LocalStorage = require("../ffi/LocalStorage.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
-var KeysJs = require("blockstack/lib/keys.js");
+var AuthMessagesJs = require("blockstack/lib/auth/authMessages.js");
 
 function initMasterKey(sessionData) {
   var appPubKey = Utils.publicKeyFromKeyPair(sessionData[/* issuerKeyPair */2]);
@@ -31,12 +31,13 @@ function initMasterKey(sessionData) {
 }
 
 function completeLogIn(param) {
+  var userSession = new Blockstack$1.UserSession();
   var environment = Environment.get(/* () */0);
   Utils.mapOption((function (key) {
-          LocalStorage.setItem("blockstack-transit-private-key", key);
+          Blockstack.setTransitKey(userSession, key);
           return Cookie.$$delete("transitKey", environment[/* cookieDomain */4]);
         }), Cookie.get("transitKey"));
-  return Blockstack.handlePendingSignIn().then((function (userData) {
+  return userSession.handlePendingSignIn().then((function (userData) {
                 var match = SessionData.fromUserData(userData, environment[/* network */5]);
                 if (match !== undefined) {
                   return initMasterKey(match).then((function (param) {
@@ -59,8 +60,8 @@ function completeLogIn(param) {
 }
 
 function getCurrentSession(param) {
-  if (Blockstack.isUserSignedIn()) {
-    var match = Blockstack.loadUserData();
+  if (Blockstack$1.isUserSignedIn()) {
+    var match = Blockstack$1.loadUserData();
     if (match == null) {
       return Promise.resolve(/* NotLoggedIn */2);
     } else {
@@ -83,7 +84,7 @@ function getCurrentSession(param) {
         return Promise.resolve(/* NamelessLogin */3);
       }
     }
-  } else if (Blockstack.isSignInPending()) {
+  } else if (Blockstack$1.isSignInPending()) {
     return completeLogIn(/* () */0);
   } else {
     return Promise.resolve(/* NotLoggedIn */2);
@@ -91,17 +92,17 @@ function getCurrentSession(param) {
 }
 
 function signOut(param) {
-  Blockstack.signUserOut();
+  Blockstack$1.signUserOut();
   location.replace(Environment.get(/* () */0)[/* webDomain */3]);
   return /* NotLoggedIn */2;
 }
 
 function signIn(param) {
   signOut(/* () */0);
-  var transitKey = KeysJs.makeECPrivateKey();
+  var transitKey = AuthMessagesJs.generateTransitKey();
   var environment = Environment.get(/* () */0);
   Cookie.set("transitKey", transitKey, environment[/* cookieDomain */4]);
-  Blockstack.redirectToSignInWithAuthRequest(Blockstack.makeAuthRequest(transitKey, environment[/* redirectURI */0], environment[/* manifestURI */1], /* array */[
+  Blockstack$1.redirectToSignInWithAuthRequest(Blockstack$1.makeAuthRequest(transitKey, environment[/* redirectURI */0], environment[/* manifestURI */1], /* array */[
             "store_write",
             "publish_data"
           ], environment[/* appDomain */2]));
