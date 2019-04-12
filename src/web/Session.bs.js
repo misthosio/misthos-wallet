@@ -91,14 +91,16 @@ function getCurrentSession(param) {
   }
 }
 
-function signOut(param) {
+function signOut($staropt$star, param) {
+  var redirect = $staropt$star !== undefined ? $staropt$star : true;
   Blockstack$1.signUserOut();
-  location.replace(Environment.get(/* () */0)[/* webDomain */3]);
+  if (redirect) {
+    location.replace(Environment.get(/* () */0)[/* webDomain */3]);
+  }
   return /* NotLoggedIn */2;
 }
 
 function signIn(param) {
-  Blockstack$1.signUserOut();
   var transitKey = AuthMessagesJs.generateTransitKey();
   var environment = Environment.get(/* () */0);
   Cookie.set("transitKey", transitKey, environment[/* cookieDomain */4]);

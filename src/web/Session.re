@@ -81,14 +81,16 @@ let getCurrentSession = () =>
     }
   );
 
-let signOut = () => {
+let signOut = (~redirect=true, ()) => {
   Blockstack.signUserOut();
-  Location.replace(Environment.get().webDomain);
+  if (redirect) {
+    Location.replace(Environment.get().webDomain);
+  }
   NotLoggedIn;
 };
 
 let signIn = () => {
-  Blockstack.signUserOut();
+  signOut(~redirect=false) |> ignore;
   let transitKey = Blockstack.generateTransitKey();
   let environment = Environment.get();
   Cookie.set("transitKey", transitKey, environment.cookieDomain);

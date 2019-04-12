@@ -43,7 +43,7 @@ function make(children) {
                   case 0 : 
                       return /* Update */Block.__(0, [/* record */[/* session */Session.signIn(/* () */0)]]);
                   case 1 : 
-                      return /* Update */Block.__(0, [/* record */[/* session */Session.signOut(/* () */0)]]);
+                      return /* Update */Block.__(0, [/* record */[/* session */Session.signOut(undefined, /* () */0)]]);
                   case 2 : 
                       var match = state[/* session */0];
                       if (typeof match === "number" || match.tag) {
