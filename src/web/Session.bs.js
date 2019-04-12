@@ -98,7 +98,7 @@ function signOut(param) {
 }
 
 function signIn(param) {
-  signOut(/* () */0);
+  Blockstack$1.signUserOut();
   var transitKey = AuthMessagesJs.generateTransitKey();
   var environment = Environment.get(/* () */0);
   Cookie.set("transitKey", transitKey, environment[/* cookieDomain */4]);

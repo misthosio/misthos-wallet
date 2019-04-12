@@ -88,7 +88,7 @@ let signOut = () => {
 };
 
 let signIn = () => {
-  signOut() |> ignore;
+  Blockstack.signUserOut();
   let transitKey = Blockstack.generateTransitKey();
   let environment = Environment.get();
   Cookie.set("transitKey", transitKey, environment.cookieDomain);
