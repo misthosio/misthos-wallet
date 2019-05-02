@@ -637,7 +637,7 @@ function newItemsDetected(ventureId, items, partnerId) {
                                         newItems(correlationId, ventureId, param[1]);
                                         return Promise.resolve(param[0]);
                                     case 1 : 
-                                        logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
+                                        logMessage("There were " + (String(param[2].length) + (" conflicts while syncing venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"))));
                                         newItems(correlationId, ventureId, param[1]);
                                         return Promise.resolve(param[0]);
                                     case 2 : 

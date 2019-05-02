@@ -783,7 +783,9 @@ module Handle = {
                    logMessage(
                      "There were "
                      ++ (conflicts |> Array.length |> string_of_int)
-                     ++ " conflicts while syncing",
+                     ++ " conflicts while syncing venture '"
+                     ++ VentureId.toString(ventureId)
+                     ++ "'",
                    );
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
