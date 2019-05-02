@@ -76,53 +76,6 @@ let () =
         Validation.BadData("Inconsistent AccountKeyChain"),
       );
     });
-    describe("with an old custodian", () => {
-      let (user1, user2) = G.twoUserSessions();
-      let log =
-        L.(
-          createVenture(user1)
-          |> withFirstPartner(user1)
-          |> withAccount(~supporter=user1)
-          |> withCustodian(user1, ~supporters=[user1])
-          |> withCustodianKeyChain(user1)
-          |> withPartner(user2, ~supporters=[user1])
-          |> withCustodian(user2, ~supporters=[user1, user2])
-          |> withCustodianKeyChain(user2)
-          |> withAccountKeyChainIdentified
-          |> withCustodianRemoved(user2, ~supporters=[user1])
-          |> withPartnerRemoved(user2, ~supporters=[user1])
-          |> withCustodianKeyChain(~keyChainIdx=1, user1)
-        );
-      testDataValidation(
-        Validation.validateAccountKeyChainIdentified |> withSystemIssuer,
-        log |> constructState,
-        AccountKeyChainIdentified.{
-          keyChain:
-            AccountKeyChain.make(
-              AccountIndex.default,
-              [
-                (
-                  user1.userId,
-                  G.custodianKeyChain(
-                    ~ventureId=log |> L.ventureId,
-                    ~keyChainIdx=1,
-                    user1,
-                  ),
-                ),
-                (
-                  user2.userId,
-                  G.custodianKeyChain(
-                    ~ventureId=log |> L.ventureId,
-                    ~keyChainIdx=0,
-                    user2,
-                  ),
-                ),
-              ],
-            ),
-        },
-        Validation.BadData("Custodians aren't current"),
-      );
-    });
     describe("when a CustodianKeyChain is unknown", () => {
       let (user1, _user2) = G.twoUserSessions();
       let log =

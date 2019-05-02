@@ -465,15 +465,6 @@ function isCustodian(accountIdx, custodian, param) {
   }
 }
 
-function currentCustodians(accountIdx, custodians, param) {
-  var match = Curry._2(param[/* custodianValidator */1][/* areCurrent */1], accountIdx, custodians);
-  if (match) {
-    return /* Ok */0;
-  } else {
-    return /* BadData */["Custodians aren't current"];
-  }
-}
-
 function custodianKeyChainsExist(accountIdx, keyChains, param) {
   var match = Curry._2(param[/* custodianKeyChainValidator */2][/* allExist */1], accountIdx, keyChains);
   if (match) {
@@ -776,24 +767,19 @@ function validateAccountKeyChainIdentified(param, state, _issuerId) {
   var keyChain = param[/* keyChain */0];
   var custodianKeyChains = keyChain[/* custodianKeyChains */4];
   var accountIdx = keyChain[/* accountIdx */0];
-  var partial_arg = List.map((function (prim) {
-          return prim[0];
-        }), custodianKeyChains);
   return returnResult(andThen((function (param) {
                     return custodianKeyChainsExist(accountIdx, custodianKeyChains, param);
-                  }), andThen((function (param) {
-                        return currentCustodians(accountIdx, partial_arg, param);
-                      }), andThen((function (state) {
-                            var match = AccountKeyChain.isConsistent(Js_option.getExn(Curry._1(state[/* accountValidator */0][/* settings */1], accountIdx)), keyChain) === false;
-                            if (match) {
-                              return /* BadData */["Inconsistent AccountKeyChain"];
-                            } else {
-                              return /* Ok */0;
-                            }
-                          }), /* tuple */[
-                          accountExists(accountIdx, state),
-                          state
-                        ]))));
+                  }), andThen((function (state) {
+                        var match = AccountKeyChain.isConsistent(Js_option.getExn(Curry._1(state[/* accountValidator */0][/* settings */1], accountIdx)), keyChain) === false;
+                        if (match) {
+                          return /* BadData */["Inconsistent AccountKeyChain"];
+                        } else {
+                          return /* Ok */0;
+                        }
+                      }), /* tuple */[
+                      accountExists(accountIdx, state),
+                      state
+                    ])));
 }
 
 function validateAccountKeyChainActivated(param, state, issuerId) {
@@ -1175,7 +1161,6 @@ exports.policyCanNotBeFulfilled = policyCanNotBeFulfilled;
 exports.ensureDependencies = ensureDependencies;
 exports.accountExists = accountExists;
 exports.isCustodian = isCustodian;
-exports.currentCustodians = currentCustodians;
 exports.custodianKeyChainsExist = custodianKeyChainsExist;
 exports.accountKeyChainIdentified = accountKeyChainIdentified;
 exports.activationSequenceInOrder = activationSequenceInOrder;

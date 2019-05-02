@@ -326,10 +326,6 @@ let isCustodian = (accountIdx, custodian, {custodianValidator}) =>
   custodian |> custodianValidator.isCustodian(accountIdx) ?
     Ok : BadData("Not a custodian");
 
-let currentCustodians = (accountIdx, custodians, {custodianValidator}) =>
-  custodians |> custodianValidator.areCurrent(accountIdx) ?
-    Ok : BadData("Custodians aren't current");
-
 let custodianKeyChainsExist =
     (accountIdx, keyChains, {custodianKeyChainValidator}) =>
   keyChains |> custodianKeyChainValidator.allExist(accountIdx) ?
@@ -584,9 +580,6 @@ let validateAccountKeyChainIdentified =
           )
        == false ?
          BadData("Inconsistent AccountKeyChain") : Ok
-     )
-  |> andThen(
-       custodianKeyChains |> List.map(fst) |> currentCustodians(accountIdx),
      )
   |> andThen(custodianKeyChains |> custodianKeyChainsExist(accountIdx))
   |> returnResult;
