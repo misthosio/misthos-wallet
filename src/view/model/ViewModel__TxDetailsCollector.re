@@ -6,8 +6,8 @@ open Event;
 
 let getExplorerLink = (network, txId) =>
   switch (network) {
-  | Network.Mainnet => "https://www.blockchain.com/en/btc/tx/" ++ txId
-  | _ => "https://testnet.blockchain.info/tx/" ++ txId
+  | Network.Mainnet => "https://blockstream.info/tx/" ++ txId
+  | _ => "https://blockstream.info/testnet/tx/" ++ txId
   };
 
 type payoutStatus =
