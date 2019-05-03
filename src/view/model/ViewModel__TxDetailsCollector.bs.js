@@ -15,9 +15,9 @@ var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.j
 
 function getExplorerLink(network, txId) {
   if (network >= 2) {
-    return "https://www.blockchain.com/en/btc/tx/" + txId;
+    return "https://blockstream.info/tx/" + txId;
   } else {
-    return "https://testnet.blockchain.info/tx/" + txId;
+    return "https://blockstream.info/testnet/tx/" + txId;
   }
 }
 
