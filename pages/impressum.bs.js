@@ -34,7 +34,7 @@ function make(_children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               return ReasonReact.element(undefined, undefined, PageLayout.make(/* array */[ReasonReact.element(undefined, undefined, Layout.make(Caml_option.some(ReasonReact.element(undefined, undefined, Header.make(undefined, environment[/* webDomain */3] + "/", undefined, /* array */[]))), undefined, undefined, /* array */[
-                                        ReasonReact.element(undefined, undefined, Grid.make(Caml_option.some(ViewCommon.text("impressum")), undefined, undefined, undefined, Caml_option.some(React.createElement("div", undefined, line("Misthos UG"), line("Friedrichstrasse 171"), line("D10117 Berlin"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                        ReasonReact.element(undefined, undefined, Grid.make(Caml_option.some(ViewCommon.text("impressum")), undefined, undefined, undefined, Caml_option.some(React.createElement("div", undefined, line("Misthos UG"), line("Ingeborg-Drewitz-Allee 8"), line("D79111 Freiburg"), line("Deutschland"), ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                                   ViewCommon.text("Email: "),
                                                                   React.createElement("a", {
                                                                         href: "mailto:Contact@misthos.io"

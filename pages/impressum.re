@@ -16,8 +16,8 @@ let make = _children => {
           area3={
             <div>
               {"Misthos UG" |> line}
-              {"Friedrichstrasse 171" |> line}
-              {"D10117 Berlin" |> line}
+              {"Ingeborg-Drewitz-Allee 8" |> line}
+              {"D79111 Freiburg" |> line}
               {"Deutschland" |> line}
               <MTypography variant=`Body1>
                 {"Email: " |> text}
