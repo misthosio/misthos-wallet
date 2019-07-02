@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@glennsl/bs-json": "3.0.0",
+    "@glennsl/bs-json": "4.0.0",
     "@jsiebern/bs-material-ui": "0.4.3-beta.2",
     "@ledgerhq/hw-app-btc": "4.24.0",
     "@ledgerhq/hw-transport-u2f": "4.24.0",
