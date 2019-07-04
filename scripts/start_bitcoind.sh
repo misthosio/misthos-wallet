@@ -34,7 +34,7 @@ bitcoind -daemon -rpcport=${BITCOIN_RPC_PORT} -conf=${BITCOIN_CONF}
 CMD="bitcoin-cli -regtest -datadir=${BITCOIN_DIR} -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=${BITCOIN_RPC_PORT}"
 
 echo "Testing connection"
-for i in `seq 1 10`;
+for i in `seq 1 20`;
 do
   if [[ $(${CMD} -getinfo >/dev/null 2>&1) ]] ; then
     break
@@ -45,16 +45,12 @@ do
 done
 ${CMD} -getinfo
 
-echo "Generating blocks"
-${CMD} generate 250
-${CMD} generate 432
-
 FAUCET_PRIVATE_KEY="92Qba5hnyWSn5Ffcka56yMQauaWY6ZLd91Vzxbi4a9CCetaHtYj"
 FAUCET="mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU"
 
-echo 'Importing privkey'
+echo "Generating blocks"
+${CMD} generatetoaddress 250 ${FAUCET}
+${CMD} generatetoaddress 432 ${FAUCET}
 
-echo "Setting up faucet"
-${CMD} sendtoaddress ${FAUCET} "12000"
 
-${CMD} generate 18
+${CMD} generatetoaddress 18 ${FAUCET}

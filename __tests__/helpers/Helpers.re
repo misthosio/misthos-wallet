@@ -48,8 +48,8 @@ let getUTXOs = BitcoindClient.getUTXOs(bitcoindConfig);
 
 let genBlocks = n =>
   Node.Child_process.execSync(
-    "bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate "
-    ++ string_of_int(n),
+    "bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generatetoaddress "
+    ++ string_of_int(n) ++ " " ++ faucetAddress,
     Node.Child_process.option(~encoding="utf8", ()),
   )
   |> ignore;

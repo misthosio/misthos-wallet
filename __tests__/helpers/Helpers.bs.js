@@ -69,7 +69,7 @@ function getUTXOs(param) {
 }
 
 function genBlocks(n) {
-  Child_process.execSync("bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate " + String(n), {
+  Child_process.execSync("bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generatetoaddress " + (String(n) + (" " + faucetAddress)), {
         encoding: "utf8"
       });
   return /* () */0;
