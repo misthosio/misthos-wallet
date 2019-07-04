@@ -4206,10 +4206,10 @@ form-data@^2.3.3, form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-formdata-polyfill@3.0.17:
-  version "3.0.17"
-  resolved "https://registry.yarnpkg.com/formdata-polyfill/-/formdata-polyfill-3.0.17.tgz#b82c30ee8755653927ce2b5231e9ee8a66dd448e"
-  integrity sha512-YQDARbu++HLwfbhY5a5Doo1Sk7Ib/UFct1AejQyjYyrYxVcus+Oiybest+xgSXaTnf99jNQti/hHngZwA494/Q==
+formdata-polyfill@3.0.18:
+  version "3.0.18"
+  resolved "https://registry.yarnpkg.com/formdata-polyfill/-/formdata-polyfill-3.0.18.tgz#e94916610328db1f6796860a0a78b2e7b937889e"
+  integrity sha512-qydEiPA/DWm1reRCfBJyFHs/wQhjvjoQjN8P/FatoaZJ+Efc/1kVwrHPR7Ek+BuIGINr26mHXT9KpR5WYmWZww==
 
 forwarded@~0.1.2:
   version "0.1.2"
