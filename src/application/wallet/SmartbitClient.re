@@ -158,7 +158,7 @@ let broadcastTransaction = (config, transaction) => {
          (
            switch (err) {
            | Some(err) =>
-             if (Js.Re.test(err, [%re "/transaction already in block chain/"])) {
+             if (Js.Re.test_([%re "/transaction already in block chain/"], err)) {
                WalletTypes.AlreadyInBlockchain;
              } else {
                WalletTypes.Error(err);

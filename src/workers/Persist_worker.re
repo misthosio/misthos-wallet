@@ -8,7 +8,7 @@ open VentureWorkerMessage;
 
 type self;
 
-[@bs.val] external self: self = "";
+[@bs.val] external self: self = "self";
 
 [@bs.set]
 external onMessage:

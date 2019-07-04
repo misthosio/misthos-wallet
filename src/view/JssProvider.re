@@ -5,7 +5,7 @@ external reactClass: ReasonReact.reactClass = "default";
 external jss: unit => Js.t({..}) = "default";
 
 [@bs.module "@material-ui/core"]
-external createGenerateClassName: unit => Js.t({..}) = "";
+external createGenerateClassName: unit => Js.t({..}) = "createGenerateClassName";
 
 let make = children =>
   ReasonReact.wrapJsForReason(

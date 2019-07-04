@@ -29,15 +29,15 @@ type ledgerPubKey = {
 };
 
 [@bs.send]
-external getWalletPublicKey: (btc, string) => Js.Promise.t(ledgerPubKey) = "";
+external getWalletPublicKey: (btc, string) => Js.Promise.t(ledgerPubKey) = "getWalletPublicKey";
 
 type txInfo;
 [@bs.send]
 external splitTransaction: (btc, string, [@bs.as {json|true|json}] _) => txInfo =
-  "";
+  "splitTransaction";
 
 [@bs.send]
-external serializeTransactionOutputs: (btc, txInfo) => Node.buffer = "";
+external serializeTransactionOutputs: (btc, txInfo) => Node.buffer = "serializeTransactionOutputs";
 
 type inputInfo = (txInfo, int, string, int);
 
@@ -54,4 +54,4 @@ external signP2SHTransaction:
     [@bs.as 2] _
   ) =>
   Js.Promise.t(array(string)) =
-  "";
+  "signP2SHTransaction";

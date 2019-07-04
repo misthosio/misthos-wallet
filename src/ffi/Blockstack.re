@@ -1,6 +1,6 @@
-[@bs.module "blockstack"] external isUserSignedIn: unit => bool = "";
+[@bs.module "blockstack"] external isUserSignedIn: unit => bool = "isUserSignedIn";
 
-[@bs.module "blockstack"] external isSignInPending: unit => bool = "";
+[@bs.module "blockstack"] external isSignInPending: unit => bool = "isSignInPending";
 
 type userData = {
   .
@@ -9,10 +9,10 @@ type userData = {
 };
 
 [@bs.module "blockstack"] [@bs.return nullable]
-external loadUserData: unit => option(userData) = "";
+external loadUserData: unit => option(userData) = "loadUserData";
 
 [@bs.module "blockstack"]
-external generateAndStoreTransitKey: unit => string = "";
+external generateAndStoreTransitKey: unit => string = "generateAndStoreTransitKey";
 
 type authRequest;
 [@bs.module "blockstack"]
@@ -25,7 +25,7 @@ external makeAuthRequest:
     ~appDomain: string
   ) =>
   authRequest =
-  "";
+  "makeAuthRequest";
 
 type appConfig;
 [@bs.module "blockstack"]
@@ -41,7 +41,7 @@ type userSession;
 [@bs.new]
 external makeUserSession: unit => userSession = "UserSession";
 
-[@bs.send] external handlePendingSignIn: userSession  => Js.Promise.t(userData) = "";
+[@bs.send] external handlePendingSignIn: userSession  => Js.Promise.t(userData) = "handlePendingSignIn";
 
 let setTransitKey = (_userSession, _transitKey) => {
   [%bs.raw {|
@@ -54,14 +54,14 @@ let setTransitKey = (_userSession, _transitKey) => {
 };
 
 [@bs.module "blockstack"]
-external redirectToSignInWithAuthRequest: authRequest => unit = "";
+external redirectToSignInWithAuthRequest: authRequest => unit = "redirectToSignInWithAuthRequest";
 
 [@bs.module "blockstack"]
 external redirectToSignIn:
   (~redirectURI: string, ~manifestURI: string, ~scopes: array(string)) => unit =
-  "";
+  "redirectToSignIn";
 
-[@bs.module "blockstack"] external signUserOut: unit => unit = "";
+[@bs.module "blockstack"] external signUserOut: unit => unit = "signUserOut";
 
 [@bs.module "blockstack"]
 external getFileDecrypted: string => Js.Promise.t(Js.nullable(string)) =
@@ -105,14 +105,14 @@ external putFileNotEncrypted:
 external getUserAppFileUrl:
   (~path: string, ~username: string, ~appOrigin: string) =>
   Js.Promise.t(string) =
-  "";
+  "getUserAppFileUrl";
 
 [@bs.module "blockstack/lib/auth/authMessages.js"]
-external generateTransitKey: unit => string = "";
+external generateTransitKey: unit => string = "generateTransitKey";
 
 type profile;
 [@bs.module "blockstack"]
-external lookupProfile: string => Js.Promise.t(profile) = "";
+external lookupProfile: string => Js.Promise.t(profile) = "lookupProfile";
 
 let fetchIds = (~current=[||], beginning) =>
   Js.Promise.(

@@ -1,7 +1,7 @@
 type t;
 
 [@bs.module "@material-ui/core"]
-external createMuiTheme: Js.t({..}) => t = "";
+external createMuiTheme: Js.t({..}) => t = "createMuiTheme";
 
 external toJsUnsafe: t => Js.t({..}) = "%identity";
 

@@ -6,8 +6,8 @@ type t;
 
 type extraConfig = {. "environment": string};
 
-[@bs.send] external config: (t, string, extraConfig) => t = "";
-[@bs.send] external install: t => t = "";
+[@bs.send] external config: (t, string, extraConfig) => t = "config";
+[@bs.send] external install: t => t = "install";
 
 [@bs.send] external _captureException: (t, 'a) => unit = "captureException";
 

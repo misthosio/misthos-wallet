@@ -10,7 +10,7 @@ let set = (key, value, domain) =>
 
 let get = key =>
   Js.Re.fromString("(^| )" ++ key ++ "=([^;]+)")
-  |> Js.Re.exec(getCookie(doc))
+  |. Js.Re.exec_(getCookie(doc))
   |> Utils.andThen(result =>
        Js.Re.captures(result)[2] |> Js.Nullable.toOption
      );

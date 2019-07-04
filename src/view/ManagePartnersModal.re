@@ -1,6 +1,6 @@
 include ViewCommon;
 
-[@bs.val] external encodeURI: string => string = "";
+[@bs.val] external encodeURI: string => string = "encodeURI";
 
 open PrimitiveTypes;
 
@@ -101,7 +101,7 @@ let renderSuggestion = (suggestion, vals) => {
   let query = vals##query;
   let isHighlighted = vals##isHighlighted;
   let parts =
-    AutosuggestHighlight.(match(suggestion, query) |> parse(suggestion));
+    AutosuggestHighlight.(match_(suggestion, query) |> parse(suggestion));
 
   <MaterialUi.MenuItem
     className=Styles.suggestionItem
