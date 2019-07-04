@@ -2,8 +2,6 @@ include ViewCommon;
 
 open WalletTypes;
 
-[@bs.module] external copy: string = "../assets/img/copy.svg";
-
 type state = {address: option(string)};
 
 type action =

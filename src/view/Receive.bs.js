@@ -25,9 +25,6 @@ var WarningsText = require("./text/WarningsText.bs.js");
 var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 var MaterialUi_Tooltip = require("@jsiebern/bs-material-ui/src/MaterialUi_Tooltip.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
-var CopySvg = require("../assets/img/copy.svg");
-
-var copy = CopySvg;
 
 var component = ReasonReact.reducerComponent("Receive");
 
@@ -173,8 +170,7 @@ var ignoreEvent = ViewCommon.ignoreEvent;
 exports.text = text;
 exports.extractString = extractString;
 exports.ignoreEvent = ignoreEvent;
-exports.copy = copy;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;
-/* copy Not a pure module */
+/* component Not a pure module */
