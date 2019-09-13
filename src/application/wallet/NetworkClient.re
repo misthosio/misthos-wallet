@@ -63,31 +63,33 @@ module Make = (Client: NetworkClientInterface) => {
         |> List.fromArray
         |> Client.getUTXOs
         |> then_(utxos =>
-             utxos->(
-                      Set.reduceU(
-                        Network.inputSet(),
-                        (. res, {txId, txOutputN, address, amount}: utxo) => {
-                          let a: Address.t =
-                            addresses->(Map.String.get(address))
-                            |> Js.Option.getExn;
-                          res->(
-                                 Set.add(
-                                   {
-                                     txId,
-                                     txOutputN,
-                                     address,
-                                     nCoSigners: a.nCoSigners,
-                                     nPubKeys: a.nPubKeys,
-                                     value: amount,
-                                     coordinates: a.coordinates,
-                                     sequence: a.sequence,
-                                     unlocked: false,
-                                   }: Network.txInput,
-                                 )
-                               );
-                        },
-                      )
-                    )
+             utxos
+             ->(
+                 Set.reduceU(
+                   Network.inputSet(),
+                   (. res, {txId, txOutputN, address, amount}: utxo) => {
+                     let a: Address.t =
+                       addresses->(Map.String.get(address))
+                       |> Js.Option.getExn;
+                     res
+                     ->(
+                         Set.add(
+                           {
+                             txId,
+                             txOutputN,
+                             address,
+                             nCoSigners: a.nCoSigners,
+                             nPubKeys: a.nPubKeys,
+                             value: amount,
+                             coordinates: a.coordinates,
+                             sequence: a.sequence,
+                             unlocked: false,
+                           }: Network.txInput,
+                         )
+                       );
+                   },
+                 )
+               )
              |> resolve
            )
       )
@@ -112,20 +114,10 @@ module Regtest =
 module Testnet =
   Make(
     (
-      WithFalleback(
-        (
-          val BlockchainInfoClient.make(
-                BlockchainInfoClient.testnetConfig,
-                Bitcoin.Networks.testnet,
-              )
-        ),
-        (
-          val SmartbitClient.make(
-                SmartbitClient.testnetConfig,
-                Bitcoin.Networks.testnet,
-              )
-        ),
-      )
+      val BlockstreamInfoClient.make(
+            BlockstreamInfoClient.testnetConfig,
+            Bitcoin.Networks.testnet,
+          )
     ),
   );
 
@@ -134,16 +126,26 @@ module Mainnet =
     (
       WithFalleback(
         (
-          val BlockchainInfoClient.make(
-                BlockchainInfoClient.mainnetConfig,
+          val BlockstreamInfoClient.make(
+                BlockstreamInfoClient.mainnetConfig,
                 Bitcoin.Networks.bitcoin,
               )
         ),
         (
-          val SmartbitClient.make(
-                SmartbitClient.mainnetConfig,
-                Bitcoin.Networks.bitcoin,
-              )
+          WithFalleback(
+            (
+              val BlockchainInfoClient.make(
+                    BlockchainInfoClient.mainnetConfig,
+                    Bitcoin.Networks.bitcoin,
+                  )
+            ),
+            (
+              val SmartbitClient.make(
+                    SmartbitClient.mainnetConfig,
+                    Bitcoin.Networks.bitcoin,
+                  )
+            ),
+          )
         ),
       )
     ),

@@ -13,6 +13,7 @@ var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var BitcoindClient = require("./BitcoindClient.bs.js");
 var SmartbitClient = require("./SmartbitClient.bs.js");
 var BlockchainInfoClient = require("./BlockchainInfoClient.bs.js");
+var BlockstreamInfoClient = require("./BlockstreamInfoClient.bs.js");
 
 function WithFalleback(ClientA) {
   return (function (ClientB) {
@@ -159,9 +160,52 @@ var Regtest = /* module */[
   /* broadcastTransaction */broadcastTransaction
 ];
 
-var ClientA = BlockchainInfoClient.make(BlockchainInfoClient.testnetConfig, BitcoinjsLib.networks.testnet);
+var Client$1 = BlockstreamInfoClient.make(BlockstreamInfoClient.testnetConfig, BitcoinjsLib.networks.testnet);
 
-var Client$1 = (function (ClientB) {
+var network$1 = Client$1[/* network */0];
+
+var transactionInfo$1 = Client$1[/* getTransactionInfo */2];
+
+var transactionHex$1 = Client$1[/* getTransactionHex */3];
+
+var currentBlockHeight$1 = Client$1[/* getCurrentBlockHeight */4];
+
+function transactionInputs$1(addresses) {
+  return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
+                return Promise.resolve(Belt_Set.reduceU(utxos, Network.inputSet(/* () */0), (function (res, param) {
+                                  var address = param[/* address */2];
+                                  var a = Js_option.getExn(Belt_MapString.get(addresses, address));
+                                  return Belt_Set.add(res, /* record */[
+                                              /* txId */param[/* txId */0],
+                                              /* txOutputN */param[/* txOutputN */1],
+                                              /* address */address,
+                                              /* value */param[/* amount */3],
+                                              /* nCoSigners */a[/* nCoSigners */0],
+                                              /* nPubKeys */a[/* nPubKeys */1],
+                                              /* coordinates */a[/* coordinates */2],
+                                              /* sequence */a[/* sequence */6],
+                                              /* unlocked */false
+                                            ]);
+                                })));
+              }));
+}
+
+var broadcastTransaction$1 = Client$1[/* broadcastTransaction */5];
+
+var Testnet = /* module */[
+  /* network */network$1,
+  /* transactionInfo */transactionInfo$1,
+  /* transactionHex */transactionHex$1,
+  /* currentBlockHeight */currentBlockHeight$1,
+  /* transactionInputs */transactionInputs$1,
+  /* broadcastTransaction */broadcastTransaction$1
+];
+
+var ClientA = BlockstreamInfoClient.make(BlockstreamInfoClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
+
+var ClientA$1 = BlockchainInfoClient.make(BlockchainInfoClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
+
+var Client$2 = (function (ClientB) {
       var network = ClientA[/* network */0];
       var getUTXOs = function (addresses) {
         return Curry._1(ClientA[/* getUTXOs */1], addresses).then((function (utxos) {
@@ -222,111 +266,68 @@ var Client$1 = (function (ClientB) {
               /* getCurrentBlockHeight */getCurrentBlockHeight,
               /* broadcastTransaction */broadcastTransaction
             ];
-    })(SmartbitClient.make(SmartbitClient.testnetConfig, BitcoinjsLib.networks.testnet));
-
-var network$1 = Client$1[/* network */0];
-
-var transactionInfo$1 = Client$1[/* getTransactionInfo */2];
-
-var transactionHex$1 = Client$1[/* getTransactionHex */3];
-
-var currentBlockHeight$1 = Client$1[/* getCurrentBlockHeight */4];
-
-function transactionInputs$1(addresses) {
-  return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
-                return Promise.resolve(Belt_Set.reduceU(utxos, Network.inputSet(/* () */0), (function (res, param) {
-                                  var address = param[/* address */2];
-                                  var a = Js_option.getExn(Belt_MapString.get(addresses, address));
-                                  return Belt_Set.add(res, /* record */[
-                                              /* txId */param[/* txId */0],
-                                              /* txOutputN */param[/* txOutputN */1],
-                                              /* address */address,
-                                              /* value */param[/* amount */3],
-                                              /* nCoSigners */a[/* nCoSigners */0],
-                                              /* nPubKeys */a[/* nPubKeys */1],
-                                              /* coordinates */a[/* coordinates */2],
-                                              /* sequence */a[/* sequence */6],
-                                              /* unlocked */false
-                                            ]);
-                                })));
-              }));
-}
-
-var broadcastTransaction$1 = Client$1[/* broadcastTransaction */5];
-
-var Testnet = /* module */[
-  /* network */network$1,
-  /* transactionInfo */transactionInfo$1,
-  /* transactionHex */transactionHex$1,
-  /* currentBlockHeight */currentBlockHeight$1,
-  /* transactionInputs */transactionInputs$1,
-  /* broadcastTransaction */broadcastTransaction$1
-];
-
-var ClientA$1 = BlockchainInfoClient.make(BlockchainInfoClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
-
-var Client$2 = (function (ClientB) {
-      var network = ClientA$1[/* network */0];
-      var getUTXOs = function (addresses) {
-        return Curry._1(ClientA$1[/* getUTXOs */1], addresses).then((function (utxos) {
-                        return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
-                                        return Promise.resolve(Belt_Set.union(utxos, moreUtxos));
-                                      })).catch((function (param) {
-                                      return Promise.resolve(utxos);
-                                    }));
-                      })).catch((function (param) {
-                      return Curry._1(ClientB[/* getUTXOs */1], addresses);
-                    }));
-      };
-      var getTransactionInfo = function (txIds) {
-        return Curry._1(ClientA$1[/* getTransactionInfo */2], txIds).then((function (txInfos) {
-                        var match = Belt_List.size(txInfos) !== Belt_SetString.size(txIds);
-                        if (match) {
+    })((function (ClientB) {
+          var network = ClientA$1[/* network */0];
+          var getUTXOs = function (addresses) {
+            return Curry._1(ClientA$1[/* getUTXOs */1], addresses).then((function (utxos) {
+                            return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
+                                            return Promise.resolve(Belt_Set.union(utxos, moreUtxos));
+                                          })).catch((function (param) {
+                                          return Promise.resolve(utxos);
+                                        }));
+                          })).catch((function (param) {
+                          return Curry._1(ClientB[/* getUTXOs */1], addresses);
+                        }));
+          };
+          var getTransactionInfo = function (txIds) {
+            return Curry._1(ClientA$1[/* getTransactionInfo */2], txIds).then((function (txInfos) {
+                            var match = Belt_List.size(txInfos) !== Belt_SetString.size(txIds);
+                            if (match) {
+                              return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
+                            } else {
+                              return Promise.resolve(txInfos);
+                            }
+                          })).catch((function (param) {
                           return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
-                        } else {
-                          return Promise.resolve(txInfos);
-                        }
-                      })).catch((function (param) {
-                      return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
-                    }));
-      };
-      var getTransactionHex = function (txIds) {
-        return Curry._1(ClientA$1[/* getTransactionHex */3], txIds).then((function (txHex) {
-                        var match = txHex.length !== txIds.length;
-                        if (match) {
+                        }));
+          };
+          var getTransactionHex = function (txIds) {
+            return Curry._1(ClientA$1[/* getTransactionHex */3], txIds).then((function (txHex) {
+                            var match = txHex.length !== txIds.length;
+                            if (match) {
+                              return Curry._1(ClientB[/* getTransactionHex */3], txIds);
+                            } else {
+                              return Promise.resolve(txHex);
+                            }
+                          })).catch((function (param) {
                           return Curry._1(ClientB[/* getTransactionHex */3], txIds);
-                        } else {
-                          return Promise.resolve(txHex);
-                        }
-                      })).catch((function (param) {
-                      return Curry._1(ClientB[/* getTransactionHex */3], txIds);
-                    }));
-      };
-      var getCurrentBlockHeight = function (param) {
-        return Curry._1(ClientA$1[/* getCurrentBlockHeight */4], /* () */0).catch((function (param) {
-                      return Curry._1(ClientB[/* getCurrentBlockHeight */4], /* () */0);
-                    }));
-      };
-      var broadcastTransaction = function (tx) {
-        return Curry._1(ClientA$1[/* broadcastTransaction */5], tx).then((function (param) {
-                        if (typeof param === "number" || param.tag) {
+                        }));
+          };
+          var getCurrentBlockHeight = function (param) {
+            return Curry._1(ClientA$1[/* getCurrentBlockHeight */4], /* () */0).catch((function (param) {
+                          return Curry._1(ClientB[/* getCurrentBlockHeight */4], /* () */0);
+                        }));
+          };
+          var broadcastTransaction = function (tx) {
+            return Curry._1(ClientA$1[/* broadcastTransaction */5], tx).then((function (param) {
+                            if (typeof param === "number" || param.tag) {
+                              return Curry._1(ClientB[/* broadcastTransaction */5], tx);
+                            } else {
+                              return Promise.resolve(/* Ok */Block.__(0, [param[0]]));
+                            }
+                          })).catch((function (param) {
                           return Curry._1(ClientB[/* broadcastTransaction */5], tx);
-                        } else {
-                          return Promise.resolve(/* Ok */Block.__(0, [param[0]]));
-                        }
-                      })).catch((function (param) {
-                      return Curry._1(ClientB[/* broadcastTransaction */5], tx);
-                    }));
-      };
-      return /* module */[
-              /* network */network,
-              /* getUTXOs */getUTXOs,
-              /* getTransactionInfo */getTransactionInfo,
-              /* getTransactionHex */getTransactionHex,
-              /* getCurrentBlockHeight */getCurrentBlockHeight,
-              /* broadcastTransaction */broadcastTransaction
-            ];
-    })(SmartbitClient.make(SmartbitClient.mainnetConfig, BitcoinjsLib.networks.bitcoin));
+                        }));
+          };
+          return /* module */[
+                  /* network */network,
+                  /* getUTXOs */getUTXOs,
+                  /* getTransactionInfo */getTransactionInfo,
+                  /* getTransactionHex */getTransactionHex,
+                  /* getCurrentBlockHeight */getCurrentBlockHeight,
+                  /* broadcastTransaction */broadcastTransaction
+                ];
+        })(SmartbitClient.make(SmartbitClient.mainnetConfig, BitcoinjsLib.networks.bitcoin)));
 
 var network$2 = Client$2[/* network */0];
 
