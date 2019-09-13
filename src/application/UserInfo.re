@@ -17,7 +17,7 @@ module Public = {
           ->Map.String.toArray
           ->(Array.mapU((. (k, v)) => (k, v |> string)))
           |> Js.Dict.fromArray
-          |> dict,
+          |> jsonDict,
         ),
       ])
     );
