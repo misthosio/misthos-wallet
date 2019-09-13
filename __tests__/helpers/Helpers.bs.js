@@ -36,9 +36,7 @@ var defaultFee = BTC.fromSatoshis(/* int64 */[
 function selectUTXOs(utxos, totalAmount) {
   var utxos$1 = List.sort((function (u1, u2) {
           return u1[/* amount */3].comparedTo(u2[/* amount */3]);
-        }), List.filter((function (param) {
-                return param[/* confirmations */4] > 0;
-              }))(Belt_Set.toList(utxos)));
+        }), Belt_Set.toList(utxos));
   return List.fold_left((function (param, utxo) {
                 var total = param[1];
                 var result = param[0];

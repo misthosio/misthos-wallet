@@ -13,7 +13,6 @@ let decodeUTXO = raw: WalletTypes.utxo =>
     txId: raw |> field("txid", string),
     txOutputN: raw |> field("n", int),
     amount: raw |> field("value_int", float_) |> BTC.fromSatoshisFloat,
-    confirmations: raw |> field("confirmations", int),
     address: field("addresses", array(string), raw)[0],
   };
 

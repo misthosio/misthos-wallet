@@ -137,8 +137,7 @@ function getUTXOs(config, addresses) {
                                                                               /* txId */Json_decode.field("txid", Json_decode.string, utxo),
                                                                               /* txOutputN */Json_decode.field("vout", Json_decode.$$int, utxo),
                                                                               /* address */Json_decode.field("address", Json_decode.string, utxo),
-                                                                              /* amount */BTC.fromFloat(Json_decode.field("amount", Json_decode.$$float, utxo)),
-                                                                              /* confirmations */Json_decode.field("confirmations", Json_decode.$$int, utxo)
+                                                                              /* amount */BTC.fromFloat(Json_decode.field("amount", Json_decode.$$float, utxo))
                                                                             ];
                                                                     }), param);
                                                       }), param);

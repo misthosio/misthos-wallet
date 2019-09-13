@@ -19,7 +19,6 @@ let decodeUTXO = (config, raw): WalletTypes.utxo =>
     txId: raw |> field("tx_hash_big_endian", string),
     txOutputN: raw |> field("tx_output_n", int),
     amount: raw |> field("value", float_) |> BTC.fromSatoshisFloat,
-    confirmations: raw |> field("confirmations", int),
     address:
       (raw |> field("script", string) |> Utils.bufFromHex)
       ->(Bitcoin.Address.fromOutputScript(config.network)),

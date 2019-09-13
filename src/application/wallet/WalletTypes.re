@@ -3,8 +3,8 @@ type utxo = {
   txOutputN: int,
   address: string,
   amount: BTC.t,
-  confirmations: int,
 };
+
 module UtxoCmp = {
   let compareUtxos =
     (.

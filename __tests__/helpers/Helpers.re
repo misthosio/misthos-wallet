@@ -26,7 +26,6 @@ let selectUTXOs = (utxos, totalAmount) => {
   let utxos =
     utxos
     |> Belt.Set.toList
-    |> List.filter(({confirmations}: utxo) => confirmations > 0)
     |> List.sort((u1: utxo, u2: utxo) =>
          u1.amount->(BTC.comparedTo(u2.amount))
        );
@@ -49,7 +48,9 @@ let getUTXOs = BitcoindClient.getUTXOs(bitcoindConfig);
 let genBlocks = n =>
   Node.Child_process.execSync(
     "bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generatetoaddress "
-    ++ string_of_int(n) ++ " " ++ faucetAddress,
+    ++ string_of_int(n)
+    ++ " "
+    ++ faucetAddress,
     Node.Child_process.option(~encoding="utf8", ()),
   )
   |> ignore;
@@ -87,12 +88,13 @@ let fundAddress = (outputs, utxos) => {
        |> ignore
      );
   let remainder = totalIn->(BTC.minus(totalValues))->(BTC.minus(defaultFee));
-  txB->(
-         TxBuilder.addOutput(
-           faucetKey |> Address.fromKeyPair,
-           remainder |> BTC.toSatoshisFloat,
-         )
-       )
+  txB
+  ->(
+      TxBuilder.addOutput(
+        faucetKey |> Address.fromKeyPair,
+        remainder |> BTC.toSatoshisFloat,
+      )
+    )
   |> ignore;
   inputs |> List.iteri((i, _utxo) => txB->(TxBuilder.sign(i, faucetKey)));
   Js.Promise.(

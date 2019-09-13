@@ -22,8 +22,7 @@ function decodeUTXO(raw) {
           /* address */Caml_array.caml_array_get(Json_decode.field("addresses", (function (param) {
                       return Json_decode.array(Json_decode.string, param);
                     }), raw), 0),
-          /* amount */BTC.fromSatoshisFloat(Json_decode.field("value_int", Json_decode.$$float, raw)),
-          /* confirmations */Json_decode.field("confirmations", Json_decode.$$int, raw)
+          /* amount */BTC.fromSatoshisFloat(Json_decode.field("value_int", Json_decode.$$float, raw))
         ];
 }
 

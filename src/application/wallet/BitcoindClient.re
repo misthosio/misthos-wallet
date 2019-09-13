@@ -99,7 +99,6 @@ let getUTXOs = (config, addresses): Js.Promise.t(WalletTypes.utxoSet) =>
                         address: utxo |> field("address", string),
                         amount:
                           utxo |> field("amount", float_) |> BTC.fromFloat,
-                        confirmations: utxo |> field("confirmations", int),
                       }: WalletTypes.utxo
                     )
                   ),

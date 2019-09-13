@@ -35,8 +35,7 @@ function decodeUTXO(config, raw) {
           /* txId */Json_decode.field("tx_hash_big_endian", Json_decode.string, raw),
           /* txOutputN */Json_decode.field("tx_output_n", Json_decode.$$int, raw),
           /* address */BitcoinjsLib.address.fromOutputScript(Utils.bufFromHex(Json_decode.field("script", Json_decode.string, raw)), config[/* network */1]),
-          /* amount */BTC.fromSatoshisFloat(Json_decode.field("value", Json_decode.$$float, raw)),
-          /* confirmations */Json_decode.field("confirmations", Json_decode.$$int, raw)
+          /* amount */BTC.fromSatoshisFloat(Json_decode.field("value", Json_decode.$$float, raw))
         ];
 }
 
