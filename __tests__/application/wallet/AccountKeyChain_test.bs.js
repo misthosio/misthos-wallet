@@ -8,7 +8,7 @@ var WalletTypes = require("../../../src/application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../../../src/application/PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../../../src/application/wallet/AccountKeyChain.bs.js");
 
-describe("Identifier", (function () {
+Jest.describe("Identifier", (function (param) {
         return Jest.test("Creates uniq hash of the custodianKeyChains", (function (param) {
                       var user2 = Fixtures.threeUserSessions[1];
                       var user1 = Fixtures.threeUserSessions[0];
@@ -31,7 +31,7 @@ describe("Identifier", (function () {
                     }));
       }));
 
-describe("Collection", (function () {
+Jest.describe("Collection", (function (param) {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];

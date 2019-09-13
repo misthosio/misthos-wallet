@@ -28,7 +28,7 @@ function encode(a, b) {
             ]);
 }
 
-describe("HashHelper.pruneNullFields", (function () {
+Jest.describe("HashHelper.pruneNullFields", (function (param) {
         Jest.test("Prunes null values", (function (param) {
                 return Jest.Expect[/* toEqual */12]("{\"b\":[\"bla\"]}", Jest.Expect[/* expect */0](Json.stringify(HashHelper.pruneNullFields(encode(undefined, "bla")))));
               }));

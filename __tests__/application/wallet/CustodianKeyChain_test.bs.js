@@ -4,7 +4,7 @@
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Utils = require("../../../src/utils/Utils.bs.js");
 
-describe("hashCode", (function () {
+Jest.describe("hashCode", (function (param) {
         Jest.test("hashes an empty string", (function (param) {
                 return Jest.Expect[/* toBe */2](0, Jest.Expect[/* expect */0](Utils.hashCode("")));
               }));

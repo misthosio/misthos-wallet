@@ -24,7 +24,7 @@ var TestLog = Log.Make([
 
 var keyPair = BitcoinjsLib.ECPair.makeRandom();
 
-describe("findNewItems", (function () {
+Jest.describe("findNewItems", (function (param) {
         return Jest.test("preserve order", (function (param) {
                       var log = Curry._3(TestLog[/* append */2], keyPair, " the huskies go,", Curry._3(TestLog[/* append */2], keyPair, "Watch out where", Curry._1(TestLog[/* make */0], /* () */0))[1])[1];
                       var other = Curry._3(TestLog[/* append */2], keyPair, " that yellow snow", Curry._3(TestLog[/* append */2], keyPair, " eat", Curry._3(TestLog[/* append */2], keyPair, " and don't you", log)[1])[1])[1];

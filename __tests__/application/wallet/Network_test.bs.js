@@ -5,7 +5,7 @@ var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Network = require("../../../src/application/wallet/Network.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 
-describe("Income addresses", (function () {
+Jest.describe("Income addresses", (function (param) {
         Jest.test("testnetIncomeAddress can be used", (function (param) {
                 return Jest.Expect[/* toEqual */12](Network.incomeAddress(/* Testnet */1), Jest.Expect[/* expect */0](BitcoinjsLib.address.fromOutputScript(BitcoinjsLib.address.toOutputScript(Network.incomeAddress(/* Testnet */1), Network.bitcoinNetwork(/* Testnet */1)), Network.bitcoinNetwork(/* Testnet */1))));
               }));

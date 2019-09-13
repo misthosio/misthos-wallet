@@ -8,7 +8,7 @@ var BlockstreamInfoClient = require("../../../src/application/wallet/Blockstream
 
 Helpers.enableHttpRequests(/* () */0);
 
-describe("BlockstreamInfoClient", (function () {
+Jest.describe("BlockstreamInfoClient", (function (param) {
         Jest.testPromise("getUTXOs", 50000, (function (param) {
                 return BlockstreamInfoClient.getUTXOs(BlockstreamInfoClient.mainnetConfig, /* :: */[
                               "3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r",

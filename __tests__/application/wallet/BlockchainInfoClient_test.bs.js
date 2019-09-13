@@ -9,7 +9,7 @@ var BlockchainInfoClient = require("../../../src/application/wallet/BlockchainIn
 
 Helpers.enableHttpRequests(/* () */0);
 
-describe("BlockchainInfoClient", (function () {
+Jest.describe("BlockchainInfoClient", (function (param) {
         Jest.testPromise("getUTXOs", 50000, (function (param) {
                 return BlockchainInfoClient.getUTXOs(BlockchainInfoClient.mainnetConfig, /* :: */[
                               "3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r",

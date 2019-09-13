@@ -12,7 +12,7 @@ var network = BitcoinjsLib.networks.testnet;
 
 var pair = BitcoinjsLib.ECPair.fromWIF("92Qba5hnyWSn5Ffcka56yMQauaWY6ZLd91Vzxbi4a9CCetaHtYj", network);
 
-describe("ECPair", (function () {
+Jest.describe("ECPair", (function (param) {
         Jest.test("can access public key", (function (param) {
                 return Jest.Expect[/* toEqual */12]("044289801366bcee6172b771cf5a7f13aaecd237a0b9a1ff9d769cabc2e6b70a34cec320a0565fb7caf11b1ca2f445f9b7b012dda5718b3cface369ee3a034ded6", Jest.Expect[/* expect */0](Utils.publicKeyFromKeyPair(pair)));
               }));
@@ -21,13 +21,13 @@ describe("ECPair", (function () {
                     }));
       }));
 
-describe("Address", (function () {
+Jest.describe("Address", (function (param) {
         return Jest.test("can return an address from a key pair", (function (param) {
                       return Jest.Expect[/* toEqual */12]("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", Jest.Expect[/* expect */0](Bitcoin.Address[/* fromKeyPair */2](pair)));
                     }));
       }));
 
-describe("Payments", (function () {
+Jest.describe("Payments", (function (param) {
         var keys = /* array */[
           BitcoinjsLib.ECPair.fromWIF("cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1", network),
           BitcoinjsLib.ECPair.fromWIF("cPMRPo3fXGehCmFC5QsSFcZmYivsFtLVexxWi22CFwocvndXLqP1", network),
@@ -51,7 +51,7 @@ describe("Payments", (function () {
                     }));
       }));
 
-describe("HDNode", (function () {
+Jest.describe("HDNode", (function (param) {
         var pubkey = Utils.publicKeyFromKeyPair(pair);
         var chainCode = Utils.bufFromHex($$String.sub(pubkey, 0, 64));
         return Jest.test("can create an HDNode", (function (param) {

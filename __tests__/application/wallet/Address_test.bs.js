@@ -37,8 +37,8 @@ var accountKeyChain = Generators.accountKeyChain(undefined, undefined, /* :: */[
       ]
     ]);
 
-describe("Coordinates", (function () {
-        describe("first coordinates", (function () {
+Jest.describe("Coordinates", (function (param) {
+        Jest.describe("first coordinates", (function (param) {
                 return testCoordinates(/* tuple */[
                             0,
                             "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
@@ -47,30 +47,29 @@ describe("Coordinates", (function () {
                             0
                           ], Address.Coordinates[/* nextInternal */1](user1[/* userId */0], /* [] */0, accountKeyChain));
               }));
-        describe("next coordinates", (function () {
-                var coordinates1 = Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* [] */0, accountKeyChain);
-                var coordinates2 = Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* :: */[
-                      coordinates1,
-                      /* [] */0
-                    ], accountKeyChain);
-                return testCoordinates(/* tuple */[
-                            0,
-                            "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
-                            2,
-                            0,
-                            2
-                          ], Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* :: */[
-                                coordinates2,
-                                /* :: */[
-                                  coordinates1,
-                                  /* [] */0
-                                ]
-                              ], accountKeyChain));
-              }));
-        return /* () */0;
+        return Jest.describe("next coordinates", (function (param) {
+                      var coordinates1 = Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* [] */0, accountKeyChain);
+                      var coordinates2 = Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* :: */[
+                            coordinates1,
+                            /* [] */0
+                          ], accountKeyChain);
+                      return testCoordinates(/* tuple */[
+                                  0,
+                                  "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
+                                  2,
+                                  0,
+                                  2
+                                ], Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* :: */[
+                                      coordinates2,
+                                      /* :: */[
+                                        coordinates1,
+                                        /* [] */0
+                                      ]
+                                    ], accountKeyChain));
+                    }));
       }));
 
-describe("make", (function () {
+Jest.describe("make", (function (param) {
         return Jest.test("returns an address", (function (param) {
                       var coordinates = Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* [] */0, accountKeyChain);
                       return Jest.Expect[/* toEqual */12](/* record */[
@@ -85,7 +84,7 @@ describe("make", (function () {
                     }));
       }));
 
-describe("encode / decode", (function () {
+Jest.describe("encode / decode", (function (param) {
         return Jest.test("Can handle old and new encode format", (function (param) {
                       var coordinates = Address.Coordinates[/* nextExternal */2](user1[/* userId */0], /* [] */0, accountKeyChain);
                       var address = /* record */[

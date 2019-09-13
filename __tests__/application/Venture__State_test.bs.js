@@ -16,7 +16,7 @@ function constructState(log) {
               }), Venture__State.make(/* () */0), log);
 }
 
-describe("CreateVenture", (function () {
+Jest.describe("CreateVenture", (function (param) {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
         var log = Generators.Log[/* createVenture */11](user1);
         var match = $$Event.getVentureCreatedExn(Generators.Log[/* lastEvent */5](log));
@@ -31,7 +31,7 @@ describe("CreateVenture", (function () {
                     }));
       }));
 
-describe("isPartner", (function () {
+Jest.describe("isPartner", (function (param) {
         var match = Generators.threeUserSessions(/* () */0);
         var user3 = match[2];
         var user2 = match[1];
@@ -103,7 +103,7 @@ describe("isPartner", (function () {
                     }));
       }));
 
-describe("ProcessMapping", (function () {
+Jest.describe("ProcessMapping", (function (param) {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
@@ -123,7 +123,7 @@ describe("ProcessMapping", (function () {
                     }));
       }));
 
-describe("custodianAcceptedFor", (function () {
+Jest.describe("custodianAcceptedFor", (function (param) {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
@@ -152,7 +152,7 @@ describe("custodianAcceptedFor", (function () {
                     }));
       }));
 
-describe("RemovalProcessMapping", (function () {
+Jest.describe("RemovalProcessMapping", (function (param) {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];

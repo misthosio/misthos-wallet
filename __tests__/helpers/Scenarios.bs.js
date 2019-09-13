@@ -45,25 +45,23 @@ var findCurrentUsers = Curry._2(EventLog.reduce, (function (users, item) {
       }), PrimitiveTypes.UserId[/* emptySet */9]);
 
 function run(scenarioName, scenarioTest) {
-  describe(scenarioName, (function () {
-          var loadedLog = loadScenario(scenarioName);
-          Jest.test("Integrity of " + (String(Curry._1(EventLog.length, loadedLog)) + " items is intact"), (function (param) {
-                  var newItems = Curry._2(EventLog.findNewItems, loadedLog, Curry._1(EventLog.make, /* () */0));
-                  return Jest.Expect[/* toEqual */12](Curry._1(EventLog.length, loadedLog), Jest.Expect[/* expect */0](newItems.length));
-                }));
-          var match = Venture.reconstruct(scenarioSession, loadedLog);
-          return Curry._2(scenarioTest, match[0], match[1]);
-        }));
-  return /* () */0;
+  return Jest.describe(scenarioName, (function (param) {
+                var loadedLog = loadScenario(scenarioName);
+                Jest.test("Integrity of " + (String(Curry._1(EventLog.length, loadedLog)) + " items is intact"), (function (param) {
+                        var newItems = Curry._2(EventLog.findNewItems, loadedLog, Curry._1(EventLog.make, /* () */0));
+                        return Jest.Expect[/* toEqual */12](Curry._1(EventLog.length, loadedLog), Jest.Expect[/* expect */0](newItems.length));
+                      }));
+                var match = Venture.reconstruct(scenarioSession, loadedLog);
+                return Curry._2(scenarioTest, match[0], match[1]);
+              }));
 }
 
 function runWithView(scenarioName, scenarioTest) {
-  describe(scenarioName, (function () {
-          var loadedLog = loadScenario(scenarioName);
-          var match = Venture.reconstruct(scenarioSession, loadedLog);
-          return Curry._1(scenarioTest, Curry._1(ViewModel.init(PrimitiveTypes.UserId[/* fromString */1]("misthosio.id")), Venture.getEventLog(match[0])));
-        }));
-  return /* () */0;
+  return Jest.describe(scenarioName, (function (param) {
+                var loadedLog = loadScenario(scenarioName);
+                var match = Venture.reconstruct(scenarioSession, loadedLog);
+                return Curry._1(scenarioTest, Curry._1(ViewModel.init(PrimitiveTypes.UserId[/* fromString */1]("misthosio.id")), Venture.getEventLog(match[0])));
+              }));
 }
 
 exports.CouldNotLoadScenario = CouldNotLoadScenario;

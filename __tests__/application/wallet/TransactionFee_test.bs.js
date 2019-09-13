@@ -11,7 +11,7 @@ var oneSatPerByte = BTC.fromSatoshis(/* int64 */[
       /* lo */1
     ]);
 
-describe("inputCost", (function () {
+Jest.describe("inputCost", (function (param) {
         Jest.test("1 cosigner", (function (param) {
                 return Jest.Expect[/* toEqual */12](113, Jest.Expect[/* expect */0](BTC.toSatoshisFloat(TransactionFee.inputCost(false, false, 1, 2, oneSatPerByte))));
               }));
@@ -26,7 +26,7 @@ describe("inputCost", (function () {
                     }));
       }));
 
-describe("outputCost", (function () {
+Jest.describe("outputCost", (function (param) {
         Jest.test("p2pkh output", (function (param) {
                 return Jest.Expect[/* toEqual */12](BTC.fromSatoshis(/* int64 */[
                                 /* hi */0,

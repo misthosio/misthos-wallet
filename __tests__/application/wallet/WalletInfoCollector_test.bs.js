@@ -16,136 +16,144 @@ function constructState(log) {
               }), WalletInfoCollector.make(/* () */0), log);
 }
 
-describe("WalletInfoCollector-addressInfo", (function () {
-        describe("classifies addresses", (function () {
-                var match = Generators.fiveUserSessions(/* () */0);
-                var user5 = match[4];
-                var user4 = match[3];
-                var user3 = match[2];
-                var user2 = match[1];
-                var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
-                          user1,
-                          /* [] */0
-                        ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
-                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
-                          user1,
-                          /* :: */[
-                            user2,
-                            /* [] */0
-                          ]
-                        ], Generators.Log[/* withPartner */17](undefined, user2, /* :: */[
-                              user1,
-                              /* [] */0
-                            ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta))))));
-                var eta$2 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
-                          user1,
-                          /* :: */[
-                            user2,
-                            /* :: */[
-                              user3,
-                              /* [] */0
-                            ]
-                          ]
-                        ], Generators.Log[/* withPartner */17](undefined, user3, /* :: */[
-                              user1,
-                              /* :: */[
+Jest.describe("WalletInfoCollector-addressInfo", (function (param) {
+        return Jest.describe("classifies addresses", (function (param) {
+                      var match = Generators.fiveUserSessions(/* () */0);
+                      var user5 = match[4];
+                      var user4 = match[3];
+                      var user3 = match[2];
+                      var user2 = match[1];
+                      var user1 = match[0];
+                      var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                                user1,
+                                /* [] */0
+                              ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
+                      var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                                user1,
+                                /* :: */[
+                                  user2,
+                                  /* [] */0
+                                ]
+                              ], Generators.Log[/* withPartner */17](undefined, user2, /* :: */[
+                                    user1,
+                                    /* [] */0
+                                  ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta))))));
+                      var eta$2 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
+                                user1,
+                                /* :: */[
+                                  user2,
+                                  /* :: */[
+                                    user3,
+                                    /* [] */0
+                                  ]
+                                ]
+                              ], Generators.Log[/* withPartner */17](undefined, user3, /* :: */[
+                                    user1,
+                                    /* :: */[
+                                      user2,
+                                      /* [] */0
+                                    ]
+                                  ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$1))))));
+                      var eta$3 = Generators.Log[/* withCustodianKeyChain */38](1, undefined, undefined, user2, Generators.Log[/* withCustodianRemoved */37](user1, /* :: */[
+                                user2,
+                                /* :: */[
+                                  user3,
+                                  /* [] */0
+                                ]
+                              ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$2)))));
+                      var eta$4 = Generators.Log[/* withCustodianKeyChain */38](2, undefined, undefined, user2, Generators.Log[/* withCustodianRemoved */37](user3, /* :: */[
                                 user2,
                                 /* [] */0
-                              ]
-                            ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$1))))));
-                var eta$3 = Generators.Log[/* withCustodianKeyChain */38](1, undefined, undefined, user2, Generators.Log[/* withCustodianRemoved */37](user1, /* :: */[
-                          user2,
-                          /* :: */[
-                            user3,
-                            /* [] */0
-                          ]
-                        ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$2)))));
-                var eta$4 = Generators.Log[/* withCustodianKeyChain */38](2, undefined, undefined, user2, Generators.Log[/* withCustodianRemoved */37](user3, /* :: */[
-                          user2,
-                          /* [] */0
-                        ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$3)))));
-                var eta$5 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user4, Generators.Log[/* withCustodian */33](user4, /* :: */[
-                          user2,
-                          /* :: */[
-                            user4,
-                            /* [] */0
-                          ]
-                        ], Generators.Log[/* withPartner */17](undefined, user4, /* :: */[
-                              user2,
-                              /* [] */0
-                            ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$4))))));
-                var eta$6 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user5, Generators.Log[/* withCustodian */33](user5, /* :: */[
-                          user2,
-                          /* :: */[
-                            user4,
-                            /* :: */[
-                              user4,
-                              /* [] */0
-                            ]
-                          ]
-                        ], Generators.Log[/* withPartner */17](undefined, user5, /* :: */[
-                              user2,
-                              /* [] */0
-                            ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$5))))));
-                var log = Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$6)));
-                var testInfo = function (custodians, type_, status, info) {
-                  describe("AddressInfo of address " + info[/* address */3], (function () {
-                          Jest.test("Custodians are correct", (function (param) {
-                                  return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](Belt_Set.eq(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_Array.mapU(custodians, (function (u) {
-                                                                return u[/* userId */0];
-                                                              }))), info[/* custodians */1])));
-                                }));
-                          return Jest.test("addressType, addressStatus are correct", (function (param) {
-                                        return Jest.Expect[/* toEqual */12](/* tuple */[
-                                                    type_,
-                                                    status
-                                                  ], Jest.Expect[/* expect */0](/* tuple */[
-                                                        info[/* addressType */0],
-                                                        info[/* addressStatus */5]
-                                                      ]));
-                                      }));
-                        }));
-                  return /* () */0;
-                };
-                var info = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], constructState(log));
-                if (info) {
-                  var match$1 = info[1];
-                  if (match$1) {
-                    var match$2 = match$1[1];
-                    if (match$2) {
-                      var match$3 = match$2[1];
-                      if (match$3) {
-                        var match$4 = match$3[1];
-                        if (match$4) {
-                          var match$5 = match$4[1];
-                          if (match$5) {
-                            var match$6 = match$5[1];
-                            if (match$6 && !match$6[1]) {
-                              testInfo(/* array */[
+                              ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$3)))));
+                      var eta$5 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user4, Generators.Log[/* withCustodian */33](user4, /* :: */[
+                                user2,
+                                /* :: */[
+                                  user4,
+                                  /* [] */0
+                                ]
+                              ], Generators.Log[/* withPartner */17](undefined, user4, /* :: */[
                                     user2,
+                                    /* [] */0
+                                  ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$4))))));
+                      var eta$6 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user5, Generators.Log[/* withCustodian */33](user5, /* :: */[
+                                user2,
+                                /* :: */[
+                                  user4,
+                                  /* :: */[
                                     user4,
-                                    user5
-                                  ], /* Income */[user2[/* userId */0]], /* Accessible */0, info[0]);
-                              testInfo(/* array */[
+                                    /* [] */0
+                                  ]
+                                ]
+                              ], Generators.Log[/* withPartner */17](undefined, user5, /* :: */[
                                     user2,
-                                    user4
-                                  ], /* Income */[user2[/* userId */0]], /* OutdatedCustodians */2, match$1[0]);
-                              testInfo(/* array */[user2], /* Income */[user2[/* userId */0]], /* AtRisk */1, match$2[0]);
-                              testInfo(/* array */[
-                                    user2,
-                                    user3
-                                  ], /* Income */[user2[/* userId */0]], /* AtRisk */1, match$3[0]);
-                              testInfo(/* array */[
-                                    user1,
-                                    user2,
-                                    user3
-                                  ], /* Income */[user1[/* userId */0]], /* TemporarilyInaccessible */3, match$4[0]);
-                              testInfo(/* array */[
-                                    user1,
-                                    user2
-                                  ], /* Income */[user1[/* userId */0]], /* AtRisk */1, match$5[0]);
-                              return testInfo(/* array */[user1], /* Income */[user1[/* userId */0]], /* Inaccessible */4, match$6[0]);
+                                    /* [] */0
+                                  ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$5))))));
+                      var log = Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user2, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$6)));
+                      var testInfo = function (custodians, type_, status, info) {
+                        return Jest.describe("AddressInfo of address " + info[/* address */3], (function (param) {
+                                      Jest.test("Custodians are correct", (function (param) {
+                                              return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](Belt_Set.eq(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_Array.mapU(custodians, (function (u) {
+                                                                            return u[/* userId */0];
+                                                                          }))), info[/* custodians */1])));
+                                            }));
+                                      return Jest.test("addressType, addressStatus are correct", (function (param) {
+                                                    return Jest.Expect[/* toEqual */12](/* tuple */[
+                                                                type_,
+                                                                status
+                                                              ], Jest.Expect[/* expect */0](/* tuple */[
+                                                                    info[/* addressType */0],
+                                                                    info[/* addressStatus */5]
+                                                                  ]));
+                                                  }));
+                                    }));
+                      };
+                      var info = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], constructState(log));
+                      if (info) {
+                        var match$1 = info[1];
+                        if (match$1) {
+                          var match$2 = match$1[1];
+                          if (match$2) {
+                            var match$3 = match$2[1];
+                            if (match$3) {
+                              var match$4 = match$3[1];
+                              if (match$4) {
+                                var match$5 = match$4[1];
+                                if (match$5) {
+                                  var match$6 = match$5[1];
+                                  if (match$6 && !match$6[1]) {
+                                    testInfo(/* array */[
+                                          user2,
+                                          user4,
+                                          user5
+                                        ], /* Income */[user2[/* userId */0]], /* Accessible */0, info[0]);
+                                    testInfo(/* array */[
+                                          user2,
+                                          user4
+                                        ], /* Income */[user2[/* userId */0]], /* OutdatedCustodians */2, match$1[0]);
+                                    testInfo(/* array */[user2], /* Income */[user2[/* userId */0]], /* AtRisk */1, match$2[0]);
+                                    testInfo(/* array */[
+                                          user2,
+                                          user3
+                                        ], /* Income */[user2[/* userId */0]], /* AtRisk */1, match$3[0]);
+                                    testInfo(/* array */[
+                                          user1,
+                                          user2,
+                                          user3
+                                        ], /* Income */[user1[/* userId */0]], /* TemporarilyInaccessible */3, match$4[0]);
+                                    testInfo(/* array */[
+                                          user1,
+                                          user2
+                                        ], /* Income */[user1[/* userId */0]], /* AtRisk */1, match$5[0]);
+                                    return testInfo(/* array */[user1], /* Income */[user1[/* userId */0]], /* Inaccessible */4, match$6[0]);
+                                  } else {
+                                    return Js_exn.raiseError("WalletInfoCollector_test");
+                                  }
+                                } else {
+                                  return Js_exn.raiseError("WalletInfoCollector_test");
+                                }
+                              } else {
+                                return Js_exn.raiseError("WalletInfoCollector_test");
+                              }
                             } else {
                               return Js_exn.raiseError("WalletInfoCollector_test");
                             }
@@ -158,65 +166,54 @@ describe("WalletInfoCollector-addressInfo", (function () {
                       } else {
                         return Js_exn.raiseError("WalletInfoCollector_test");
                       }
-                    } else {
-                      return Js_exn.raiseError("WalletInfoCollector_test");
-                    }
-                  } else {
-                    return Js_exn.raiseError("WalletInfoCollector_test");
-                  }
-                } else {
-                  return Js_exn.raiseError("WalletInfoCollector_test");
-                }
-              }));
-        return /* () */0;
+                    }));
       }));
 
-describe("WalletInfoCollector", (function () {
-        describe("oldInputs", (function () {
-                var match = Generators.twoUserSessions(/* () */0);
-                var user2 = match[1];
-                var user1 = match[0];
-                var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
-                          user1,
-                          /* [] */0
-                        ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
-                var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
-                          user1,
-                          /* :: */[
-                            user2,
-                            /* [] */0
-                          ]
-                        ], Generators.Log[/* withPartner */17](undefined, user2, /* :: */[
-                              user1,
-                              /* [] */0
-                            ], Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta))))))));
-                var eta$2 = Generators.Log[/* withCustodianKeyChain */38](1, undefined, undefined, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
-                          user1,
-                          /* [] */0
-                        ], Generators.Log[/* withCustodianRemoved */37](user2, /* :: */[
-                              user1,
-                              /* [] */0
-                            ], Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$1))))))))));
-                var log = Generators.Log[/* withIncomeUnlocked */43](0, Generators.Log[/* withIncomeDetected */42](2, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$2)))));
-                var info = constructState(log);
-                Jest.test("1 input is unlocked", (function (param) {
-                        return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], info))));
-                      }));
-                Jest.test("1 current input is unlocked", (function (param) {
-                        return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.reduceU(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info), 0, (function (res, param) {
-                                              return res + (
-                                                      param[/* unlocked */8] ? 1 : 0
-                                                    ) | 0;
-                                            }))));
-                      }));
-                Jest.test("4 inputs are old", (function (param) {
-                        return Jest.Expect[/* toEqual */12](4, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
-                      }));
-                return Jest.test("3 inputs are current", (function (param) {
-                              return Jest.Expect[/* toEqual */12](3, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
+Jest.describe("WalletInfoCollector", (function (param) {
+        return Jest.describe("oldInputs", (function (param) {
+                      var match = Generators.twoUserSessions(/* () */0);
+                      var user2 = match[1];
+                      var user1 = match[0];
+                      var eta = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                                user1,
+                                /* [] */0
+                              ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
+                      var eta$1 = Generators.Log[/* withCustodianKeyChain */38](undefined, undefined, undefined, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                                user1,
+                                /* :: */[
+                                  user2,
+                                  /* [] */0
+                                ]
+                              ], Generators.Log[/* withPartner */17](undefined, user2, /* :: */[
+                                    user1,
+                                    /* [] */0
+                                  ], Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta))))))));
+                      var eta$2 = Generators.Log[/* withCustodianKeyChain */38](1, undefined, undefined, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
+                                user1,
+                                /* [] */0
+                              ], Generators.Log[/* withCustodianRemoved */37](user2, /* :: */[
+                                    user1,
+                                    /* [] */0
+                                  ], Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$1))))))))));
+                      var log = Generators.Log[/* withIncomeUnlocked */43](0, Generators.Log[/* withIncomeDetected */42](2, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](undefined, user1, Generators.Log[/* withAccountKeyChainIdentified */39](undefined, eta$2)))));
+                      var info = constructState(log);
+                      Jest.test("1 input is unlocked", (function (param) {
+                              return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], info))));
                             }));
-              }));
-        return /* () */0;
+                      Jest.test("1 current input is unlocked", (function (param) {
+                              return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.reduceU(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info), 0, (function (res, param) {
+                                                    return res + (
+                                                            param[/* unlocked */8] ? 1 : 0
+                                                          ) | 0;
+                                                  }))));
+                            }));
+                      Jest.test("4 inputs are old", (function (param) {
+                              return Jest.Expect[/* toEqual */12](4, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
+                            }));
+                      return Jest.test("3 inputs are current", (function (param) {
+                                    return Jest.Expect[/* toEqual */12](3, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
+                                  }));
+                    }));
       }));
 
 exports.constructState = constructState;

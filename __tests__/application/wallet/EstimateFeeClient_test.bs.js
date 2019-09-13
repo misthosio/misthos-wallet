@@ -8,7 +8,7 @@ var EstimateFeeClient = require("../../../src/application/wallet/EstimateFeeClie
 
 Helpers.enableHttpRequests(/* () */0);
 
-describe("fees", (function () {
+Jest.describe("fees", (function (param) {
         return Jest.testPromise("will fetch", undefined, (function (param) {
                       return EstimateFeeClient.fetchFees(/* () */0).then((function (param) {
                                     var high = param[/* high */0];
