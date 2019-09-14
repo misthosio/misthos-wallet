@@ -35,7 +35,6 @@ function getUTXOs(config, addresses) {
                             return fetch(config[/* url */0] + ("/address/" + (address + "/utxo"))).then((function (prim) {
                                             return prim.json();
                                           })).then((function (raw) {
-                                          console.log(raw);
                                           return Promise.resolve(decodeUTXOs(address, raw));
                                         }));
                           })))).then((function (results) {

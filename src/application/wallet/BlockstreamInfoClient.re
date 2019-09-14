@@ -27,10 +27,7 @@ let getUTXOs = (config, addresses) =>
           List.map(address =>
             Fetch.fetch(config.url ++ "/address/" ++ address ++ "/utxo")
             |> then_(Fetch.Response.json)
-            |> then_(raw => {
-                 Js.log(raw);
-                 raw |> decodeUTXOs(address) |> resolve;
-               })
+            |> then_(raw => raw |> decodeUTXOs(address) |> resolve)
           )
         )
       |> List.toArray
