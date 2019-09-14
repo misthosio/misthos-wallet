@@ -15,7 +15,7 @@ var SmartbitClient = require("./SmartbitClient.bs.js");
 var BlockchainInfoClient = require("./BlockchainInfoClient.bs.js");
 var BlockstreamInfoClient = require("./BlockstreamInfoClient.bs.js");
 
-function WithFalleback(ClientA) {
+function WithFallback(ClientA) {
   return (function (ClientB) {
       var network = ClientA[/* network */0];
       var getUTXOs = function (addresses) {
@@ -428,7 +428,7 @@ function broadcastTransaction$3(param) {
   }
 }
 
-exports.WithFalleback = WithFalleback;
+exports.WithFallback = WithFallback;
 exports.Make = Make;
 exports.Regtest = Regtest;
 exports.Testnet = Testnet;

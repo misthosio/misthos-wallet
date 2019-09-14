@@ -1,6 +1,6 @@
 open WalletTypes;
 
-module WithFalleback =
+module WithFallback =
        (ClientA: NetworkClientInterface, ClientB: NetworkClientInterface) => {
   let network = ClientA.network;
   let getUTXOs = addresses =>
@@ -124,7 +124,7 @@ module Testnet =
 module Mainnet =
   Make(
     (
-      WithFalleback(
+      WithFallback(
         (
           val BlockstreamInfoClient.make(
                 BlockstreamInfoClient.mainnetConfig,
@@ -132,7 +132,7 @@ module Mainnet =
               )
         ),
         (
-          WithFalleback(
+          WithFallback(
             (
               val BlockchainInfoClient.make(
                     BlockchainInfoClient.mainnetConfig,

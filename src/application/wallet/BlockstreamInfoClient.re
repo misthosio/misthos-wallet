@@ -81,6 +81,7 @@ let getTransactionInfo = (config, transactions) =>
     )
     |> then_(res => res |> List.fromArray |> resolve)
   );
+
 let getCurrentBlockHeight = (config, ()) =>
   Js.Promise.(
     Fetch.fetch(config.url ++ "/blocks/tip/height")
