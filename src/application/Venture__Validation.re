@@ -252,6 +252,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
     }
   | IncomeDetected(_)
   | TransactionConfirmed(_)
+  | TransactionNoLongerDetected(_)
   | IncomeAddressExposed(_)
   | PayoutSigned(_)
   | PayoutAborted(_)

@@ -44,19 +44,16 @@ let mapConfirmation =
     ) => {
   let txDate = Js.Date.fromFloat(unixTime *. 1000.);
   let newTxs =
-    unconfirmedTxs->(
-                      List.keepMap(({txId: dataId} as data) =>
-                        if (dataId == txId) {
-                          Some({
-                            ...data,
-                            date: Some(txDate),
-                            status: Confirmed,
-                          });
-                        } else {
-                          None;
-                        }
-                      )
-                    );
+    unconfirmedTxs
+    ->(
+        List.keepMap(({txId: dataId} as data) =>
+          if (dataId == txId) {
+            Some({...data, date: Some(txDate), status: Confirmed});
+          } else {
+            None;
+          }
+        )
+      );
   let newUnconf =
     unconfirmedTxs->(List.keep(({txId: dataId}) => dataId != txId));
   {
@@ -100,6 +97,13 @@ let apply = (event: Event.t, state) =>
           ...state.confirmedTxs,
         ],
       }
+    }
+  | TransactionNoLongerDetected({txId: missingTxId}) => {
+      ...state,
+      unconfirmedTxs:
+        state.unconfirmedTxs->(List.keep(({txId}) => txId != missingTxId)),
+      confirmedTxs:
+        state.confirmedTxs->(List.keep(({txId}) => txId != missingTxId)),
     }
   | PayoutProposed({data: {payoutTx}, processId}) => {
       ...state,

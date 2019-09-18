@@ -316,6 +316,15 @@ function apply($$event, state) {
                                     }), param);
                       }))
               ];
+    case 44 : 
+        return /* record */[
+                /* network */state[/* network */0],
+                /* localUser */state[/* localUser */1],
+                /* payouts */state[/* payouts */2],
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txDates */state[/* txDates */4],
+                /* income */Belt_MapString.remove(state[/* income */5], $$event[0][/* txId */0])
+              ];
     default:
       return state;
   }

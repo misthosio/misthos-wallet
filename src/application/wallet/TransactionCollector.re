@@ -31,6 +31,12 @@ let apply = (event, state) =>
         state.transactionsOfInterest->(Set.String.add(txId)),
       knownIncomeTxs: state.knownIncomeTxs->(Set.String.add(txId)),
     }
+  | TransactionNoLongerDetected({txId}) => {
+      ...state,
+      transactionsOfInterest:
+        state.transactionsOfInterest->(Set.String.remove(txId)),
+      knownIncomeTxs: state.knownIncomeTxs->(Set.String.remove(txId)),
+    }
   | PayoutFinalized({processId} as finalizedTx) => {
       ...state,
       notYetBroadcastPayouts:

@@ -239,5 +239,9 @@ let apply = (event, state) =>
             )
           ),
     };
+  | TransactionNoLongerDetected({txId}) => {
+      ...state,
+      income: state.income->(Map.String.remove(txId)),
+    }
   | _ => state
   };

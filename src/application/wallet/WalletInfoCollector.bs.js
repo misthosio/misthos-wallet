@@ -1228,6 +1228,95 @@ function apply($$event, state) {
           return state;
         }
         break;
+    case 44 : 
+        var missingTxId = $$event[0][/* txId */0];
+        var scanAndRemove = function (removed, orig) {
+          return Belt_Map.reduce(orig, /* tuple */[
+                      removed,
+                      WalletTypes.AccountIndex[/* makeMap */10](/* () */0)
+                    ], (function (param, accountIdx, addressMap) {
+                        var match = Belt_MapString.reduce(addressMap, /* tuple */[
+                              param[0],
+                              Belt_MapString.empty
+                            ], (function (param, address, txInputs) {
+                                var res = param[1];
+                                var match = Belt_List.reduce(txInputs, /* tuple */[
+                                      param[0],
+                                      /* [] */0
+                                    ], (function (param, input) {
+                                        var value = input[/* value */3];
+                                        var res = param[1];
+                                        var removed = param[0];
+                                        var match = input[/* txId */0] === missingTxId;
+                                        if (match) {
+                                          return /* tuple */[
+                                                  Belt_MapString.update(removed, input[/* address */2], (function (amount) {
+                                                          return Caml_option.some(amount !== undefined ? value.plus(Caml_option.valFromOption(amount)) : value);
+                                                        })),
+                                                  res
+                                                ];
+                                        } else {
+                                          return /* tuple */[
+                                                  removed,
+                                                  /* :: */[
+                                                    input,
+                                                    res
+                                                  ]
+                                                ];
+                                        }
+                                      }));
+                                var newTxInputs = match[1];
+                                var match$1 = Belt_List.length(newTxInputs) !== 0;
+                                return /* tuple */[
+                                        match[0],
+                                        match$1 ? Belt_MapString.set(res, address, newTxInputs) : res
+                                      ];
+                              }));
+                        return /* tuple */[
+                                match[0],
+                                Belt_Map.set(param[1], accountIdx, match[1])
+                              ];
+                      }));
+        };
+        var match$11 = scanAndRemove(Belt_MapString.empty, state[/* spendable */1]);
+        var match$12 = scanAndRemove(match$11[0], state[/* oldSpendable */2]);
+        var unlocked$1 = Belt_Map.map(state[/* unlocked */3], (function (inputSet) {
+                return Belt_Set.keep(inputSet, (function (param) {
+                              return param[/* txId */0] !== missingTxId;
+                            }));
+              }));
+        var match$13 = scanAndRemove(match$12[0], state[/* temporarilyInaccessible */4]);
+        var match$14 = scanAndRemove(match$13[0], state[/* inaccessible */5]);
+        var removed = match$14[0];
+        var addressInfos = Belt_Map.map(state[/* addressInfos */11], (function (addressInfos) {
+                return Belt_List.map(addressInfos, (function (info) {
+                              var removedBalance = Belt_MapString.getWithDefault(removed, info[/* address */3], BTC.zero);
+                              return /* record */[
+                                      /* addressType */info[/* addressType */0],
+                                      /* custodians */info[/* custodians */1],
+                                      /* usingHardwareKey */info[/* usingHardwareKey */2],
+                                      /* address */info[/* address */3],
+                                      /* nCoSigners */info[/* nCoSigners */4],
+                                      /* addressStatus */info[/* addressStatus */5],
+                                      /* balance */info[/* balance */6].minus(removedBalance)
+                                    ];
+                            }));
+              }));
+        return /* record */[
+                /* network */state[/* network */0],
+                /* spendable */match$11[1],
+                /* oldSpendable */match$12[1],
+                /* unlocked */unlocked$1,
+                /* temporarilyInaccessible */match$13[1],
+                /* inaccessible */match$14[1],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */addressInfos,
+                /* currentCustodians */state[/* currentCustodians */12]
+              ];
     default:
       return state;
   }

@@ -78,6 +78,16 @@ function apply($$event, state) {
                 /* confirmedTransactions */Belt_MapString.set(state[/* confirmedTransactions */4], match$2[/* txId */0], match$2[/* blockHeight */1]),
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
+    case 44 : 
+        var txId$1 = $$event[0][/* txId */0];
+        return /* record */[
+                /* network */state[/* network */0],
+                /* ventureId */state[/* ventureId */1],
+                /* transactionsOfInterest */Belt_SetString.remove(state[/* transactionsOfInterest */2], txId$1),
+                /* knownIncomeTxs */Belt_SetString.remove(state[/* knownIncomeTxs */3], txId$1),
+                /* confirmedTransactions */state[/* confirmedTransactions */4],
+                /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
+              ];
     default:
       return state;
   }

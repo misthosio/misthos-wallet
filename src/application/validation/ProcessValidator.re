@@ -44,54 +44,59 @@ let addProposal =
       {processId, policy, eligibleWhenProposing}: EventTypes.proposal('a),
       map,
     ) =>
-  map->(
-         Map.set(
-           processId,
-           {
-             status: InProgress,
-             supporterIds: UserId.emptySet,
-             rejectorIds: UserId.emptySet,
-             eligibleWhenProposing,
-             policy,
-           },
-         )
-       );
+  map
+  ->(
+      Map.set(
+        processId,
+        {
+          status: InProgress,
+          supporterIds: UserId.emptySet,
+          rejectorIds: UserId.emptySet,
+          eligibleWhenProposing,
+          policy,
+        },
+      )
+    );
 
 let addEndorsement = ({processId, supporterId}: EventTypes.endorsement, map) =>
-  map->(
-         Map.update(
-           processId,
-           Utils.mapOption(({supporterIds} as process) =>
-             {...process, supporterIds: supporterIds->(Set.add(supporterId))}
-           ),
-         )
-       );
+  map
+  ->(
+      Map.update(
+        processId,
+        Utils.mapOption(({supporterIds} as process) =>
+          {...process, supporterIds: supporterIds->(Set.add(supporterId))}
+        ),
+      )
+    );
 
 let addRejection = ({processId, rejectorId}: EventTypes.rejection, map) =>
-  map->(
-         Map.update(
-           processId,
-           Utils.mapOption(({rejectorIds} as process) =>
-             {...process, rejectorIds: rejectorIds->(Set.add(rejectorId))}
-           ),
-         )
-       );
+  map
+  ->(
+      Map.update(
+        processId,
+        Utils.mapOption(({rejectorIds} as process) =>
+          {...process, rejectorIds: rejectorIds->(Set.add(rejectorId))}
+        ),
+      )
+    );
 
 let addAcceptance = ({processId}: EventTypes.acceptance('a), map) =>
-  map->(
-         Map.update(
-           processId,
-           Utils.mapOption(process => {...process, status: Accepted}),
-         )
-       );
+  map
+  ->(
+      Map.update(
+        processId,
+        Utils.mapOption(process => {...process, status: Accepted}),
+      )
+    );
 
 let addDenial = ({processId}: EventTypes.denial, map) =>
-  map->(
-         Map.update(
-           processId,
-           Utils.mapOption(process => {...process, status: Denied}),
-         )
-       );
+  map
+  ->(
+      Map.update(
+        processId,
+        Utils.mapOption(process => {...process, status: Denied}),
+      )
+    );
 
 let update = (event, {currentPartners, processes} as state) => {
   let {currentPartners, processes} =
@@ -228,7 +233,8 @@ let update = (event, {currentPartners, processes} as state) => {
     | IncomeAddressExposed(_)
     | IncomeDetected(_)
     | IncomeUnlocked(_)
-    | TransactionConfirmed(_) => state
+    | TransactionConfirmed(_)
+    | TransactionNoLongerDetected(_) => state
     };
   {
     processes,

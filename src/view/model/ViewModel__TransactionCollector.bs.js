@@ -172,6 +172,20 @@ function apply($$event, state) {
         }
     case 43 : 
         return mapConfirmation($$event[0], state);
+    case 44 : 
+        var missingTxId = $$event[0][/* txId */0];
+        return /* record */[
+                /* ventureId */state[/* ventureId */0],
+                /* payoutProcesses */state[/* payoutProcesses */1],
+                /* unconfirmedTxs */Belt_List.keep(state[/* unconfirmedTxs */2], (function (param) {
+                        return param[/* txId */2] !== missingTxId;
+                      })),
+                /* confirmedTxs */Belt_List.keep(state[/* confirmedTxs */3], (function (param) {
+                        return param[/* txId */2] !== missingTxId;
+                      })),
+                /* network */state[/* network */4],
+                /* txDates */state[/* txDates */5]
+              ];
     default:
       return state;
   }
