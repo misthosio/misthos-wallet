@@ -844,7 +844,9 @@ let encode =
   | IncomeAddressExposed(event) => Income.AddressExposed.encode(event)
   | IncomeDetected(event) => Income.Detected.encode(event)
   | IncomeUnlocked(event) => Income.Unlocked.encode(event)
-  | TransactionConfirmed(event) => Transaction.Confirmed.encode(event);
+  | TransactionConfirmed(event) => Transaction.Confirmed.encode(event)
+  | TransactionNoLongerDetected(event) =>
+    Transaction.NoLongerDetected.encode(event);
 
 let isSystemEvent =
   fun

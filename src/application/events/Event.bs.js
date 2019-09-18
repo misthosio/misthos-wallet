@@ -23,7 +23,6 @@ var AccountSettings = require("../wallet/AccountSettings.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var CustodianKeyChain = require("../wallet/CustodianKeyChain.bs.js");
 var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function make(ventureName, creatorId, creatorPubKey, defaultAccountSettings, metaPolicy, initialPolicies, network) {
   return /* record */[
@@ -1344,14 +1343,7 @@ function encode$21(param) {
     case 43 : 
         return encode$19(param[0]);
     case 44 : 
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              /* tuple */[
-                "Event.re",
-                797,
-                2
-              ]
-            ];
+        return encode$20(param[0]);
     
   }
 }

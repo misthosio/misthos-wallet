@@ -839,10 +839,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal, state, param);
               });
           });
-    case 3 : 
+    case 2 : 
         var partial_arg = param[0];
         return (function (param, param$1) {
-            return validateEndorsement(partial_arg, param, param$1);
+            return validateRejection(partial_arg, param, param$1);
           });
     case 4 : 
         var acceptance = param[0];
@@ -872,10 +872,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$1, state, param);
               });
           });
-    case 9 : 
+    case 8 : 
         var partial_arg$2 = param[0];
         return (function (param, param$1) {
-            return validateEndorsement(partial_arg$2, param, param$1);
+            return validateRejection(partial_arg$2, param, param$1);
           });
     case 10 : 
         var acceptance$1 = param[0];
@@ -901,10 +901,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$2, state, param);
               });
           });
-    case 14 : 
+    case 13 : 
         var partial_arg$4 = param[0];
         return (function (param, param$1) {
-            return validateEndorsement(partial_arg$4, param, param$1);
+            return validateRejection(partial_arg$4, param, param$1);
           });
     case 15 : 
         var acceptance$2 = param[0];
@@ -925,10 +925,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$3, state, param);
               });
           });
-    case 18 : 
+    case 17 : 
         var partial_arg$5 = param[0];
         return (function (param, param$1) {
-            return validateEndorsement(partial_arg$5, param, param$1);
+            return validateRejection(partial_arg$5, param, param$1);
           });
     case 19 : 
         var acceptance$3 = param[0];
@@ -954,10 +954,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$4, state, param);
               });
           });
-    case 23 : 
+    case 22 : 
         var partial_arg$7 = param[0];
         return (function (param, param$1) {
-            return validateEndorsement(partial_arg$7, param, param$1);
+            return validateRejection(partial_arg$7, param, param$1);
           });
     case 24 : 
         var acceptance$4 = param[0];
@@ -982,10 +982,10 @@ function validateEvent(param) {
                 return validateProposal(undefined, partial_arg$1, partial_arg, proposal$5, state, param);
               });
           });
-    case 28 : 
+    case 27 : 
         var partial_arg$9 = param[0];
         return (function (param, param$1) {
-            return validateEndorsement(partial_arg$9, param, param$1);
+            return validateRejection(partial_arg$9, param, param$1);
           });
     case 29 : 
         var acceptance$5 = param[0];
@@ -1058,18 +1058,13 @@ function validateEvent(param) {
             return /* Ok */0;
           });
     case 44 : 
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              /* tuple */[
-                "Venture__Validation.re",
-                625,
-                2
-              ]
-            ];
+        return (function (_state, _pubKey) {
+            return /* Ok */0;
+          });
     default:
       var partial_arg$15 = param[0];
       return (function (param, param$1) {
-          return validateRejection(partial_arg$15, param, param$1);
+          return validateEndorsement(partial_arg$15, param, param$1);
         });
   }
 }

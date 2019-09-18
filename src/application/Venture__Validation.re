@@ -759,6 +759,7 @@ let validateEvent =
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | IncomeUnlocked(_) => ((_state, _pubKey) => Ok)
   | TransactionConfirmed(_) => ((_state, _pubKey) => Ok)
+  | TransactionNoLongerDetected(_) => ((_state, _pubKey) => Ok)
   | PartnerPubKeyAdded(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutAborted(_) => ((_state, _pubKey) => Ok)
