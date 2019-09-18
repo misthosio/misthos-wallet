@@ -33,11 +33,8 @@ let getUTXOs = (config, addresses) =>
         "https://"
         ++ config.subdomain
         ++ "blockchain.info/unspent?format=json&active="
-        ++ addresses->(
-                        List.reduceU("", (. res, address) =>
-                          res ++ "|" ++ address
-                        )
-                      )
+        ++ addresses
+           ->(List.reduceU("", (. res, address) => res ++ "|" ++ address))
         ++ "&cors=true",
       )
       |> then_(Fetch.Response.json)
@@ -55,56 +52,57 @@ let getUTXOs = (config, addresses) =>
 let getTransactionInfo = (config, transactions) =>
   Js.Promise.(
     all(
-      transactions->(
-                      Set.String.reduceU([], (. res, txId) =>
-                        [
-                          Fetch.fetch(
-                            "https://"
-                            ++ config.subdomain
-                            ++ "blockchain.info/rawtx/"
-                            ++ txId
-                            ++ "?format=json&cors=true",
-                          )
-                          |> then_(Fetch.Response.json)
-                          |> then_(raw =>
-                               (
-                                 Json.Decode.{
-                                   txId,
-                                   blockHeight:
-                                     raw
-                                     |> optional(
-                                          field("block_height", float_),
-                                        ),
-                                   unixTime:
-                                     raw |> optional(field("time", float_)),
-                                 }: WalletTypes.txInfo
-                               )
-                               |> resolve
-                             ),
-                          ...res,
-                        ]
-                      )
-                    )
+      transactions
+      ->(
+          Set.String.reduceU([], (. res, txId) =>
+            [
+              Fetch.fetch(
+                "https://"
+                ++ config.subdomain
+                ++ "blockchain.info/rawtx/"
+                ++ txId
+                ++ "?format=json&cors=true",
+              )
+              |> then_(Fetch.Response.json)
+              |> then_(raw =>
+                   Some(
+                     Json.Decode.{
+                       txId,
+                       blockHeight:
+                         raw |> optional(field("block_height", float_)),
+                       unixTime: raw |> optional(field("time", float_)),
+                     }: WalletTypes.txInfo,
+                   )
+                   |> resolve
+                 )
+              |> catch(_ => None |> resolve),
+              ...res,
+            ]
+          )
+        )
       |> List.toArray,
     )
-    |> then_(res => res |> List.fromArray |> resolve)
+    |> then_(res =>
+         res->(Array.keepMap(res => res)) |> List.fromArray |> resolve
+       )
   );
 let getTransactionHex = (config, transactions) =>
   Js.Promise.(
     all(
-      transactions->(
-                      Array.mapU((. txId) =>
-                        Fetch.fetch(
-                          "https://"
-                          ++ config.subdomain
-                          ++ "blockchain.info/rawtx/"
-                          ++ txId
-                          ++ "?format=hex&cors=true",
-                        )
-                        |> then_(Fetch.Response.text)
-                        |> then_(hex => (txId, hex) |> resolve)
-                      )
-                    ),
+      transactions
+      ->(
+          Array.mapU((. txId) =>
+            Fetch.fetch(
+              "https://"
+              ++ config.subdomain
+              ++ "blockchain.info/rawtx/"
+              ++ txId
+              ++ "?format=hex&cors=true",
+            )
+            |> then_(Fetch.Response.text)
+            |> then_(hex => (txId, hex) |> resolve)
+          )
+        ),
     )
   );
 let getCurrentBlockHeight = (config, ()) =>

@@ -51,26 +51,30 @@ function getTransactionInfo(config, transactions) {
   return Promise.all(Belt_List.toArray(Belt_SetString.reduceU(transactions, /* [] */0, (function (res, txId) {
                           return /* :: */[
                                   fetch(config[/* url */0] + ("/tx/" + txId)).then((function (prim) {
-                                            return prim.json();
-                                          })).then((function (raw) {
-                                          return Promise.resolve(/* record */[
-                                                      /* txId */txId,
-                                                      /* blockHeight */Json_decode.field("status", (function (param) {
-                                                              return Json_decode.optional((function (param) {
-                                                                            return Json_decode.field("block_height", Json_decode.$$float, param);
-                                                                          }), param);
-                                                            }), raw),
-                                                      /* unixTime */Json_decode.field("status", (function (param) {
-                                                              return Json_decode.optional((function (param) {
-                                                                            return Json_decode.field("block_time", Json_decode.$$float, param);
-                                                                          }), param);
-                                                            }), raw)
-                                                    ]);
+                                              return prim.json();
+                                            })).then((function (raw) {
+                                            return Promise.resolve(/* record */[
+                                                        /* txId */txId,
+                                                        /* blockHeight */Json_decode.field("status", (function (param) {
+                                                                return Json_decode.optional((function (param) {
+                                                                              return Json_decode.field("block_height", Json_decode.$$float, param);
+                                                                            }), param);
+                                                              }), raw),
+                                                        /* unixTime */Json_decode.field("status", (function (param) {
+                                                                return Json_decode.optional((function (param) {
+                                                                              return Json_decode.field("block_time", Json_decode.$$float, param);
+                                                                            }), param);
+                                                              }), raw)
+                                                      ]);
+                                          })).catch((function (param) {
+                                          return Promise.resolve(undefined);
                                         })),
                                   res
                                 ];
                         })))).then((function (res) {
-                return Promise.resolve(Belt_List.fromArray(res));
+                return Promise.resolve(Belt_List.fromArray(Belt_Array.keepMap(res, (function (res) {
+                                      return res;
+                                    }))));
               }));
 }
 

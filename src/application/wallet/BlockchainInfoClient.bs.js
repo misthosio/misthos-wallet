@@ -63,22 +63,26 @@ function getTransactionInfo(config, transactions) {
   return Promise.all(Belt_List.toArray(Belt_SetString.reduceU(transactions, /* [] */0, (function (res, txId) {
                           return /* :: */[
                                   fetch("https://" + (config[/* subdomain */0] + ("blockchain.info/rawtx/" + (txId + "?format=json&cors=true")))).then((function (prim) {
-                                            return prim.json();
-                                          })).then((function (raw) {
-                                          return Promise.resolve(/* record */[
-                                                      /* txId */txId,
-                                                      /* blockHeight */Json_decode.optional((function (param) {
-                                                              return Json_decode.field("block_height", Json_decode.$$float, param);
-                                                            }), raw),
-                                                      /* unixTime */Json_decode.optional((function (param) {
-                                                              return Json_decode.field("time", Json_decode.$$float, param);
-                                                            }), raw)
-                                                    ]);
+                                              return prim.json();
+                                            })).then((function (raw) {
+                                            return Promise.resolve(/* record */[
+                                                        /* txId */txId,
+                                                        /* blockHeight */Json_decode.optional((function (param) {
+                                                                return Json_decode.field("block_height", Json_decode.$$float, param);
+                                                              }), raw),
+                                                        /* unixTime */Json_decode.optional((function (param) {
+                                                                return Json_decode.field("time", Json_decode.$$float, param);
+                                                              }), raw)
+                                                      ]);
+                                          })).catch((function (param) {
+                                          return Promise.resolve(undefined);
                                         })),
                                   res
                                 ];
                         })))).then((function (res) {
-                return Promise.resolve(Belt_List.fromArray(res));
+                return Promise.resolve(Belt_List.fromArray(Belt_Array.keepMap(res, (function (res) {
+                                      return res;
+                                    }))));
               }));
 }
 

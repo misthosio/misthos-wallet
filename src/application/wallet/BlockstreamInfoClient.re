@@ -54,7 +54,7 @@ let getTransactionInfo = (config, transactions) =>
               Fetch.fetch(config.url ++ "/tx/" ++ txId)
               |> then_(Fetch.Response.json)
               |> then_(raw =>
-                   (
+                   Some(
                      Json.Decode.{
                        txId,
                        blockHeight:
@@ -69,17 +69,20 @@ let getTransactionInfo = (config, transactions) =>
                               "status",
                               optional(field("block_time", float_)),
                             ),
-                     }: WalletTypes.txInfo
+                     }: WalletTypes.txInfo,
                    )
                    |> resolve
-                 ),
+                 )
+              |> catch(_ => None |> resolve),
               ...res,
             ]
           )
         )
       |> List.toArray,
     )
-    |> then_(res => res |> List.fromArray |> resolve)
+    |> then_(res =>
+         res->(Array.keepMap(res => res)) |> List.fromArray |> resolve
+       )
   );
 
 let getCurrentBlockHeight = (config, ()) =>
