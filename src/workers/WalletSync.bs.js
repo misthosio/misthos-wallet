@@ -155,8 +155,12 @@ function scanTransactions(collector) {
   var addresses = collector[/* addresses */0];
   return Promise.all(/* tuple */[
                 NetworkClient.transactionInputs(addresses[/* network */0])(addresses[/* exposedAddresses */2]),
-                Curry._1(NetworkClient.currentBlockHeight(addresses[/* network */0]), /* () */0)
+                Curry._1(NetworkClient.currentBlockHeight(addresses[/* network */0]), /* () */0),
+                Curry._1(NetworkClient.transactionInfo(addresses[/* network */0]), Belt_Set.reduceU(WalletInfoCollector.allUnspentInputs(collector[/* walletInfo */2]), Belt_SetString.empty, (function (res, input) {
+                            return Belt_SetString.add(res, input[/* txId */0]);
+                          })))
               ]).then((function (param) {
+                var reConfirmedTxs = param[2];
                 var blockHeight = param[1];
                 var utxos = param[0];
                 return Curry._1(NetworkClient.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */2], Belt_Array.mapU(Belt_Set.toArray(utxos), (function (param) {
@@ -166,6 +170,7 @@ function scanTransactions(collector) {
                                           utxos,
                                           txInfos,
                                           blockHeight,
+                                          reConfirmedTxs,
                                           collector
                                         ]);
                             }));
@@ -193,10 +198,23 @@ function detectIncomeFromVenture(ventureId, eventLog) {
   var param = "Sychronizing wallet state for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'");
   WorkerUtils.logMessage(logLabel, param);
   return scanTransactions(collectData(eventLog)).then((function (param) {
-                var match = param[3];
+                var match = param[4];
+                var walletInfo = match[/* walletInfo */2];
                 var transactions = match[/* transactions */1];
-                notifyOfUnlockedInputs(ventureId, param[2], transactions, match[/* walletInfo */2]);
+                notifyOfUnlockedInputs(ventureId, param[2], transactions, walletInfo);
                 broadcastPayouts(transactions);
+                var previouslyKnownUtxoIds = Belt_Set.reduceU(WalletInfoCollector.allUnspentInputs(walletInfo), Belt_SetString.empty, (function (res, input) {
+                        return Belt_SetString.add(res, input[/* txId */0]);
+                      }));
+                var reConfirmedTxIds = Belt_List.reduceU(param[3], Belt_SetString.empty, (function (res, param) {
+                        return Belt_SetString.add(res, param[/* txId */0]);
+                      }));
+                var lostEvents = Belt_SetString.reduceU(Belt_SetString.diff(previouslyKnownUtxoIds, reConfirmedTxIds), /* [] */0, (function (res, txId) {
+                        return /* :: */[
+                                Curry._1($$Event.Transaction[/* NoLongerDetected */1][/* make */0], txId),
+                                res
+                              ];
+                      }));
                 var utxos = filterUTXOs(transactions[/* knownIncomeTxs */3], param[0]);
                 var events = Belt_List.mapU(Belt_Set.toList(utxos), (function (utxo) {
                         return Curry._5($$Event.Income[/* Detected */1][/* make */0], utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
@@ -211,7 +229,7 @@ function detectIncomeFromVenture(ventureId, eventLog) {
                       }));
                 var tmp;
                 var exit = 0;
-                if (events || match$1) {
+                if (events || match$1 || lostEvents) {
                   exit = 1;
                 } else {
                   tmp = /* () */0;
@@ -224,7 +242,7 @@ function detectIncomeFromVenture(ventureId, eventLog) {
                           events,
                           /* [] */0,
                           match$1,
-                          /* [] */0
+                          lostEvents
                         ]));
                 }
                 return Promise.resolve(tmp);

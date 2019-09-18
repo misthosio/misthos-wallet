@@ -126,14 +126,21 @@ let make = () => {
   walletInfo: WalletInfoCollector.make(),
 };
 
-let scanTransactions = ({addresses, transactions} as collector) =>
+let scanTransactions = ({addresses, transactions, walletInfo} as collector) =>
   Js.Promise.(
-    all2((
+    all3((
       addresses.exposedAddresses
       |> NetworkClient.transactionInputs(addresses.network),
       NetworkClient.currentBlockHeight(addresses.network, ()),
+      (walletInfo |> WalletInfoCollector.allUnspentInputs)
+      ->(
+          Set.reduceU(Set.String.empty, (. res, input: Network.txInput) =>
+            input.txId |> Set.String.add(res)
+          )
+        )
+      |> NetworkClient.transactionInfo(addresses.network),
     ))
-    |> then_(((utxos, blockHeight)) =>
+    |> then_(((utxos, blockHeight, reConfirmedTxs)) =>
          (
            utxos
            ->Set.toArray
@@ -149,7 +156,8 @@ let scanTransactions = ({addresses, transactions} as collector) =>
            )
          |> NetworkClient.transactionInfo(addresses.network)
          |> then_(txInfos =>
-              (utxos, txInfos, blockHeight, collector) |> resolve
+              (utxos, txInfos, blockHeight, reConfirmedTxs, collector)
+              |> resolve
             )
        )
   );
@@ -183,10 +191,41 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
     eventLog
     |> collectData
     |> scanTransactions
-    |> then_(((utxos, txInfos, blockHeight, {transactions, walletInfo})) => {
+    |> then_(
+         (
+           (
+             utxos,
+             txInfos,
+             blockHeight,
+             reConfirmedTxs,
+             {transactions, walletInfo},
+           ),
+         ) => {
          walletInfo
          |> notifyOfUnlockedInputs(ventureId, blockHeight, transactions);
          transactions |> broadcastPayouts;
+         let previouslyKnownUtxoIds =
+           (walletInfo |> WalletInfoCollector.allUnspentInputs)
+           ->(
+               Set.reduceU(Set.String.empty, (. res, input: Network.txInput) =>
+                 input.txId |> Set.String.add(res)
+               )
+             );
+         let reConfirmedTxIds =
+           reConfirmedTxs
+           ->(
+               List.reduceU(
+                 Set.String.empty, (. res, {txId}: WalletTypes.txInfo) =>
+                 txId |> Set.String.add(res)
+               )
+             );
+         let lostEvents =
+           Set.String.diff(previouslyKnownUtxoIds, reConfirmedTxIds)
+           ->(
+               Set.String.reduceU([], (. res, txId) =>
+                 [Event.Transaction.NoLongerDetected.make(~txId), ...res]
+               )
+             );
          let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
            (utxos |> Set.toList)
@@ -221,9 +260,10 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
                    }
                  )
                ),
+             lostEvents,
            ) {
-           | ([], []) => ()
-           | (_, confs) =>
+           | ([], [], []) => ()
+           | (_, confs, _) =>
              postMessage(
                VentureWorkerMessage.SyncWallet(
                  ventureId,
@@ -232,7 +272,7 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
                  events,
                  [],
                  confs,
-                 [],
+                 lostEvents,
                ),
              )
            }
