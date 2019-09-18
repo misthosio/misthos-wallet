@@ -34,6 +34,7 @@ type incoming =
       list(Event.Income.Detected.t),
       list(Event.Income.Unlocked.t),
       list(Event.Transaction.Confirmed.t),
+      list(Event.Transaction.NoLongerDetected.t),
     )
   | SyncTabs(ventureId, array(EventLog.item));
 
@@ -328,6 +329,7 @@ let encodeIncoming =
       incomeEvents,
       unlockEvents,
       confs,
+      lost,
     ) =>
     Json.Encode.(
       object_([
@@ -343,6 +345,10 @@ let encodeIncoming =
         (
           "transactionConfirmations",
           list(Event.Transaction.Confirmed.encode, confs),
+        ),
+        (
+          "lostTransactions",
+          list(Event.Transaction.NoLongerDetected.encode, lost),
         ),
       ])
     )
@@ -480,6 +486,14 @@ let decodeIncoming = raw => {
              list(Event.Transaction.Confirmed.decode),
            )
          );
+    let lost =
+      raw
+      |> Json.Decode.(
+           field(
+             "lostTransactions",
+             list(Event.Transaction.NoLongerDetected.decode),
+           )
+         );
     SyncWallet(
       ventureId,
       broadcasts,
@@ -487,6 +501,7 @@ let decodeIncoming = raw => {
       incomeEvents,
       unlockEvents,
       confs,
+      lost,
     );
   | "NewItemsDetected" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);

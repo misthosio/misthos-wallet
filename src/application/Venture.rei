@@ -99,6 +99,7 @@ module Cmd: {
         list(Event.Income.Detected.t),
         list(Event.Income.Unlocked.t),
         list(Event.Transaction.Confirmed.t),
+        list(Event.Transaction.NoLongerDetected.t),
         t
       ) =>
       Js.Promise.t(result);

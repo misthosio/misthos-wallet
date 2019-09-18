@@ -544,6 +544,18 @@ module Transaction = {
         unixTime: raw |> field("unixTime", Utils.decodeFloat),
       };
   };
+  module NoLongerDetected = {
+    type t = {txId: string};
+    let make = (~txId) => {txId: txId};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("TransactionNoLongerDetected")),
+          ("txId", string(event.txId)),
+        ])
+      );
+    let decode = raw => Json.Decode.{txId: raw |> field("txId", string)};
+  };
 };
 
 type t =
@@ -590,7 +602,8 @@ type t =
   | IncomeAddressExposed(Income.AddressExposed.t)
   | IncomeDetected(Income.Detected.t)
   | IncomeUnlocked(Income.Unlocked.t)
-  | TransactionConfirmed(Transaction.Confirmed.t);
+  | TransactionConfirmed(Transaction.Confirmed.t)
+  | TransactionNoLongerDetected(Transaction.NoLongerDetected.t);
 
 exception BadData(string);
 

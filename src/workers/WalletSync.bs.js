@@ -70,6 +70,7 @@ function notifyOfUnlockedInputs(ventureId, blockHeight, param, walletInfo) {
                   /* [] */0,
                   /* [] */0,
                   events,
+                  /* [] */0,
                   /* [] */0
                 ]));
   } else {
@@ -94,6 +95,7 @@ function broadcastPayouts(param) {
                                   /* [] */0,
                                   /* [] */0,
                                   /* [] */0,
+                                  /* [] */0,
                                   /* [] */0
                                 ]));
                         } else {
@@ -105,6 +107,7 @@ function broadcastPayouts(param) {
                                           Curry._2($$Event.Payout[/* Broadcast */11][/* make */0], processId, result[0]),
                                           /* [] */0
                                         ],
+                                        /* [] */0,
                                         /* [] */0,
                                         /* [] */0,
                                         /* [] */0,
@@ -121,6 +124,7 @@ function broadcastPayouts(param) {
                                           Curry._2($$Event.Payout[/* BroadcastFailed */13][/* make */0], processId, errorMessage),
                                           /* [] */0
                                         ],
+                                        /* [] */0,
                                         /* [] */0,
                                         /* [] */0,
                                         /* [] */0
@@ -219,7 +223,8 @@ function detectIncomeFromVenture(ventureId, eventLog) {
                           /* [] */0,
                           events,
                           /* [] */0,
-                          match$1
+                          match$1,
+                          /* [] */0
                         ]));
                 }
                 return Promise.resolve(tmp);

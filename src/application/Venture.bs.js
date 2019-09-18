@@ -476,7 +476,7 @@ function exec$1(partnerId, newItems, venture) {
 
 var SynchronizeLogs = /* module */[/* exec */exec$1];
 
-function exec$2(broadcasts, broadcastFailures, incomeEvents, unlockedEvents, txConfs, venture) {
+function exec$2(broadcasts, broadcastFailures, incomeEvents, unlockedEvents, txConfs, lostTxs, venture) {
   logMessage("Synchronizing wallet");
   var __x = List.fold_left((function (param, $$event) {
           return apply(true, param[1], /* IncomeDetected */Block.__(41, [$$event]), param[0]);
@@ -493,9 +493,12 @@ function exec$2(broadcasts, broadcastFailures, incomeEvents, unlockedEvents, txC
   var __x$3 = List.fold_left((function (param, $$event) {
           return apply(true, param[1], /* PayoutBroadcastFailed */Block.__(36, [$$event]), param[0]);
         }), __x$2, broadcastFailures);
+  var __x$4 = List.fold_left((function (param, $$event) {
+          return apply(true, param[1], /* TransactionConfirmed */Block.__(43, [$$event]), param[0]);
+        }), __x$3, txConfs);
   return persist(undefined, List.fold_left((function (param, $$event) {
-                      return apply(true, param[1], /* TransactionConfirmed */Block.__(43, [$$event]), param[0]);
-                    }), __x$3, txConfs)).then((function (param) {
+                      return apply(true, param[1], /* TransactionNoLongerDetected */Block.__(44, [$$event]), param[0]);
+                    }), __x$4, lostTxs)).then((function (param) {
                 if (param.tag) {
                   return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
                 } else {

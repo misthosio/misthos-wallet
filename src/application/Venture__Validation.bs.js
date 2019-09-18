@@ -357,6 +357,15 @@ function apply(param, state) {
     case 29 : 
     case 39 : 
         return newrecord;
+    case 44 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              /* tuple */[
+                "Venture__Validation.re",
+                81,
+                2
+              ]
+            ];
     default:
       return newrecord;
   }
@@ -839,10 +848,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal, state, param);
               });
           });
-    case 2 : 
+    case 3 : 
         var partial_arg = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg, param, param$1);
+            return validateEndorsement(partial_arg, param, param$1);
           });
     case 4 : 
         var acceptance = param[0];
@@ -872,10 +881,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$1, state, param);
               });
           });
-    case 8 : 
+    case 9 : 
         var partial_arg$2 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$2, param, param$1);
+            return validateEndorsement(partial_arg$2, param, param$1);
           });
     case 10 : 
         var acceptance$1 = param[0];
@@ -901,10 +910,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$2, state, param);
               });
           });
-    case 13 : 
+    case 14 : 
         var partial_arg$4 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$4, param, param$1);
+            return validateEndorsement(partial_arg$4, param, param$1);
           });
     case 15 : 
         var acceptance$2 = param[0];
@@ -925,10 +934,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$3, state, param);
               });
           });
-    case 17 : 
+    case 18 : 
         var partial_arg$5 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$5, param, param$1);
+            return validateEndorsement(partial_arg$5, param, param$1);
           });
     case 19 : 
         var acceptance$3 = param[0];
@@ -954,10 +963,10 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$4, state, param);
               });
           });
-    case 22 : 
+    case 23 : 
         var partial_arg$7 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$7, param, param$1);
+            return validateEndorsement(partial_arg$7, param, param$1);
           });
     case 24 : 
         var acceptance$4 = param[0];
@@ -982,10 +991,10 @@ function validateEvent(param) {
                 return validateProposal(undefined, partial_arg$1, partial_arg, proposal$5, state, param);
               });
           });
-    case 27 : 
+    case 28 : 
         var partial_arg$9 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$9, param, param$1);
+            return validateEndorsement(partial_arg$9, param, param$1);
           });
     case 29 : 
         var acceptance$5 = param[0];
@@ -1057,10 +1066,19 @@ function validateEvent(param) {
         return (function (_state, _pubKey) {
             return /* Ok */0;
           });
+    case 44 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              /* tuple */[
+                "Venture__Validation.re",
+                624,
+                2
+              ]
+            ];
     default:
       var partial_arg$15 = param[0];
       return (function (param, param$1) {
-          return validateEndorsement(partial_arg$15, param, param$1);
+          return validateRejection(partial_arg$15, param, param$1);
         });
   }
 }

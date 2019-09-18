@@ -44,87 +44,76 @@ let notifyOfUnlockedInputs =
   | [] => ()
   | events =>
     postMessage(
-      VentureWorkerMessage.SyncWallet(ventureId, [], [], [], events, []),
+      VentureWorkerMessage.SyncWallet(ventureId, [], [], [], events, [], []),
     )
   };
 
 let broadcastPayouts =
     ({ventureId, network, notYetBroadcastPayouts}: TransactionCollector.t) =>
   Js.Promise.(
-    notYetBroadcastPayouts->(
-                              Map.forEachU(
-                                (.
-                                  processId,
-                                  {txId, payoutTx: {txHex}}: Event.Payout.Finalized.t,
-                                ) =>
-                                txHex
-                                |> Bitcoin.Transaction.fromHex
-                                |> NetworkClient.broadcastTransaction(
-                                     network,
-                                   )
-                                |> then_(result =>
-                                     (
-                                       switch (result) {
-                                       | WalletTypes.Ok(txId) =>
-                                         postMessage(
-                                           VentureWorkerMessage.SyncWallet(
-                                             ventureId,
-                                             [
-                                               Event.Payout.Broadcast.make(
-                                                 ~processId,
-                                                 ~txId,
-                                               ),
-                                             ],
-                                             [],
-                                             [],
-                                             [],
-                                             [],
-                                           ),
-                                         )
-                                       | WalletTypes.AlreadyInBlockchain =>
-                                         postMessage(
-                                           VentureWorkerMessage.SyncWallet(
-                                             ventureId,
-                                             [
-                                               Event.Payout.Broadcast.make(
-                                                 ~processId,
-                                                 ~txId,
-                                               ),
-                                             ],
-                                             [],
-                                             [],
-                                             [],
-                                             [],
-                                           ),
-                                         )
-                                       | WalletTypes.Error(errorMessage) =>
-                                         Utils.printError(
-                                           "Broadcasting transaction failed",
-                                           errorMessage,
-                                         );
-                                         postMessage(
-                                           VentureWorkerMessage.SyncWallet(
-                                             ventureId,
-                                             [],
-                                             [
-                                               Event.Payout.BroadcastFailed.make(
-                                                 ~processId,
-                                                 ~errorMessage,
-                                               ),
-                                             ],
-                                             [],
-                                             [],
-                                             [],
-                                           ),
-                                         );
-                                       | WalletTypes.FetchError(_error) => ()
-                                       }
-                                     )
-                                     |> resolve
-                                   )
-                                |> catchAndLogError
-                              )
-                            )
+    notYetBroadcastPayouts
+    ->(
+        Map.forEachU(
+          (. processId, {txId, payoutTx: {txHex}}: Event.Payout.Finalized.t) =>
+          txHex
+          |> Bitcoin.Transaction.fromHex
+          |> NetworkClient.broadcastTransaction(network)
+          |> then_(result =>
+               (
+                 switch (result) {
+                 | WalletTypes.Ok(txId) =>
+                   postMessage(
+                     VentureWorkerMessage.SyncWallet(
+                       ventureId,
+                       [Event.Payout.Broadcast.make(~processId, ~txId)],
+                       [],
+                       [],
+                       [],
+                       [],
+                       [],
+                     ),
+                   )
+                 | WalletTypes.AlreadyInBlockchain =>
+                   postMessage(
+                     VentureWorkerMessage.SyncWallet(
+                       ventureId,
+                       [Event.Payout.Broadcast.make(~processId, ~txId)],
+                       [],
+                       [],
+                       [],
+                       [],
+                       [],
+                     ),
+                   )
+                 | WalletTypes.Error(errorMessage) =>
+                   Utils.printError(
+                     "Broadcasting transaction failed",
+                     errorMessage,
+                   );
+                   postMessage(
+                     VentureWorkerMessage.SyncWallet(
+                       ventureId,
+                       [],
+                       [
+                         Event.Payout.BroadcastFailed.make(
+                           ~processId,
+                           ~errorMessage,
+                         ),
+                       ],
+                       [],
+                       [],
+                       [],
+                       [],
+                     ),
+                   );
+                 | WalletTypes.FetchError(_error) => ()
+                 }
+               )
+               |> resolve
+             )
+          |> catchAndLogError
+        )
+      )
   );
 type collector = {
   addresses: AddressCollector.t,
@@ -177,11 +166,12 @@ let collectData = log =>
      );
 
 let filterUTXOs = (knownTxs, utxos) =>
-  utxos->(
-           Set.keepU((. {txId}: Network.txInput) =>
-             !knownTxs->(Set.String.has(txId))
-           )
-         );
+  utxos
+  ->(
+      Set.keepU((. {txId}: Network.txInput) =>
+        !knownTxs->(Set.String.has(txId))
+      )
+    );
 
 let detectIncomeFromVenture = (ventureId, eventLog) => {
   logMessage(
@@ -214,24 +204,23 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
          (
            switch (
              events,
-             txInfos->(
-                        List.keepMapU(
-                          (.
-                            {txId, blockHeight, unixTime}: WalletTypes.txInfo,
-                          ) =>
-                          switch (blockHeight, unixTime) {
-                          | (Some(blockHeight), Some(unixTime)) =>
-                            Some(
-                              Event.Transaction.Confirmed.make(
-                                ~txId,
-                                ~blockHeight,
-                                ~unixTime,
-                              ),
-                            )
-                          | _ => None
-                          }
-                        )
-                      ),
+             txInfos
+             ->(
+                 List.keepMapU(
+                   (. {txId, blockHeight, unixTime}: WalletTypes.txInfo) =>
+                   switch (blockHeight, unixTime) {
+                   | (Some(blockHeight), Some(unixTime)) =>
+                     Some(
+                       Event.Transaction.Confirmed.make(
+                         ~txId,
+                         ~blockHeight,
+                         ~unixTime,
+                       ),
+                     )
+                   | _ => None
+                   }
+                 )
+               ),
            ) {
            | ([], []) => ()
            | (_, confs) =>
@@ -243,6 +232,7 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
                  events,
                  [],
                  confs,
+                 [],
                ),
              )
            }
@@ -253,8 +243,9 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
 };
 
 let syncWallets = (ventures: VentureId.map(EventLog.t)) =>
-  ventures->(
-              Map.forEachU((. id, log) =>
-                detectIncomeFromVenture(id, log) |> catchAndLogError
-              )
-            );
+  ventures
+  ->(
+      Map.forEachU((. id, log) =>
+        detectIncomeFromVenture(id, log) |> catchAndLogError
+      )
+    );

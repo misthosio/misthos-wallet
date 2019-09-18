@@ -679,7 +679,13 @@ function encodeIncoming(param) {
                                   "transactionConfirmations",
                                   Json_encode.list($$Event.Transaction[/* Confirmed */0][/* encode */1], param[5])
                                 ],
-                                /* [] */0
+                                /* :: */[
+                                  /* tuple */[
+                                    "lostTransactions",
+                                    Json_encode.list($$Event.Transaction[/* NoLongerDetected */1][/* encode */1], param[6])
+                                  ],
+                                  /* [] */0
+                                ]
                               ]
                             ]
                           ]
@@ -885,13 +891,18 @@ function decodeIncoming(raw) {
         var confs = Json_decode.field("transactionConfirmations", (function (param) {
                 return Json_decode.list(partial_arg$4, param);
               }), raw);
+        var partial_arg$5 = $$Event.Transaction[/* NoLongerDetected */1][/* decode */2];
+        var lost = Json_decode.field("lostTransactions", (function (param) {
+                return Json_decode.list(partial_arg$5, param);
+              }), raw);
         return /* SyncWallet */Block.__(17, [
                   ventureId$16,
                   broadcasts,
                   broadcastFailures,
                   incomeEvents,
                   unlockEvents,
-                  confs
+                  confs,
+                  lost
                 ]);
     case "UpdateSession" : 
         var blockstackItems = Json_decode.field("blockstackItems", WorkerLocalStorage.decodeItems, raw);

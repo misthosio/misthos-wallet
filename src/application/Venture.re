@@ -387,6 +387,7 @@ module Cmd = {
           incomeEvents,
           unlockedEvents,
           txConfs,
+          lostTxs,
           venture,
         ) => {
       logMessage("Synchronizing wallet");
@@ -437,6 +438,17 @@ module Cmd = {
                   ),
              _,
              txConfs,
+           )
+        |> List.fold_left(
+             ((v, collector), event) =>
+               v
+               |> apply(
+                    ~systemEvent=true,
+                    ~collector,
+                    TransactionNoLongerDetected(event),
+                  ),
+             _,
+             lostTxs,
            )
         |> persist
         |> then_(

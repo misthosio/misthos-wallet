@@ -23,6 +23,7 @@ var AccountSettings = require("../wallet/AccountSettings.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var CustodianKeyChain = require("../wallet/CustodianKeyChain.bs.js");
 var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function make(ventureName, creatorId, creatorPubKey, defaultAccountSettings, metaPolicy, initialPolicies, network) {
   return /* record */[
@@ -1111,7 +1112,40 @@ var Confirmed = /* module */[
   /* decode */decode$19
 ];
 
-var Transaction = /* module */[/* Confirmed */Confirmed];
+function make$14(txId) {
+  return /* record */[/* txId */txId];
+}
+
+function encode$20($$event) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "TransactionNoLongerDetected"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "txId",
+                  $$event[/* txId */0]
+                ],
+                /* [] */0
+              ]
+            ]);
+}
+
+function decode$20(raw) {
+  return /* record */[/* txId */Json_decode.field("txId", Json_decode.string, raw)];
+}
+
+var NoLongerDetected = /* module */[
+  /* make */make$14,
+  /* encode */encode$20,
+  /* decode */decode$20
+];
+
+var Transaction = /* module */[
+  /* Confirmed */Confirmed,
+  /* NoLongerDetected */NoLongerDetected
+];
 
 var BadData = Caml_exceptions.create("Event.BadData");
 
@@ -1219,7 +1253,7 @@ function makePayoutRejected(processId, rejectorId) {
   return /* PayoutRejected */Block.__(27, [Curry._2(Rejected$5[/* make */0], processId, rejectorId)]);
 }
 
-function encode$20(param) {
+function encode$21(param) {
   switch (param.tag | 0) {
     case 0 : 
         return encode(param[0]);
@@ -1309,6 +1343,15 @@ function encode$20(param) {
         return encode$18(param[0]);
     case 43 : 
         return encode$19(param[0]);
+    case 44 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              /* tuple */[
+                "Event.re",
+                797,
+                2
+              ]
+            ];
     
   }
 }
@@ -1343,7 +1386,7 @@ function isSystemEvent(param) {
 
 var UnknownEvent = Caml_exceptions.create("Event.UnknownEvent");
 
-function decode$20(raw) {
+function decode$21(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "AccountCreationAccepted" : 
@@ -1684,10 +1727,10 @@ exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;
 exports.makePayoutEndorsed = makePayoutEndorsed;
 exports.makePayoutRejected = makePayoutRejected;
-exports.encode = encode$20;
+exports.encode = encode$21;
 exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;
-exports.decode = decode$20;
+exports.decode = decode$21;
 exports.getIncomeAddressExposedExn = getIncomeAddressExposedExn;
 exports.getAccountKeyChainIdentifiedExn = getAccountKeyChainIdentifiedExn;
 exports.getAccountKeyChainActivatedExn = getAccountKeyChainActivatedExn;
