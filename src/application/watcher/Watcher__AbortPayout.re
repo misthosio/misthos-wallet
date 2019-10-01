@@ -28,33 +28,34 @@ let make =
          AccountKeyChain.Collection.empty,
        );
   let requiredSigs = ref(Network.inputMap());
-  usedInputs->(
-                Array.forEachWithIndexU((. idx, input: Network.txInput) => {
-                  let keyChain =
-                    keyChains
-                    |> AccountKeyChain.Collection.lookup(
-                         input.coordinates |> Address.Coordinates.accountIdx,
-                         input.coordinates |> Address.Coordinates.keyChainIdent,
-                       );
-                  requiredSigs :=
-                    (requiredSigs^)
-                    ->(
-                        Map.set(
-                          input,
-                          {
-                            custodians:
-                              keyChain.custodianKeyChains->(List.map(fst))
-                              |> List.toArray
-                              |> Set.mergeMany(UserId.emptySet),
-                            requiredCoSigners:
-                              txWrapper.inputs->(Array.getExn(idx)).sequence
-                              != Bitcoin.Transaction.defaultSequence ?
-                                1 : keyChain.nCoSigners,
-                          },
-                        )
-                      );
-                })
-              );
+  usedInputs
+  ->(
+      Array.forEachWithIndexU((. idx, input: Network.txInput) => {
+        let keyChain =
+          keyChains
+          |> AccountKeyChain.Collection.lookup(
+               input.coordinates |> Address.Coordinates.accountIdx,
+               input.coordinates |> Address.Coordinates.keyChainIdent,
+             );
+        requiredSigs :=
+          (requiredSigs^)
+          ->(
+              Map.set(
+                input,
+                {
+                  custodians:
+                    keyChain.custodianKeyChains->(List.map(fst))
+                    |> List.toArray
+                    |> Set.mergeMany(UserId.emptySet),
+                  requiredCoSigners:
+                    txWrapper.inputs->(Array.getExn(idx)).sequence
+                    != Bitcoin.Transaction.defaultSequence ?
+                      1 : keyChain.nCoSigners,
+                },
+              )
+            );
+      })
+    );
   let anyInputNotSignable = currentCustodians =>
     (requiredSigs^)
     ->Map.valuesToArray
