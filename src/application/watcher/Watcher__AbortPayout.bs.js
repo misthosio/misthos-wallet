@@ -223,6 +223,19 @@ function make(proposal, log) {
                         return 0;
                       }
                     }
+                case 44 : 
+                    var missingTx = $$event[0][/* txId */0];
+                    if (Belt_Set.some(env$1[3], (function (param) {
+                              return param[/* txId */0] === missingTx;
+                            }))) {
+                      self$1[result][0] = /* tuple */[
+                        self$1[systemIssuer][0],
+                        /* PayoutAborted */Block.__(30, [Curry._1($$Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[0])])
+                      ];
+                      return /* () */0;
+                    } else {
+                      return 0;
+                    }
                 default:
                   return /* () */0;
               }

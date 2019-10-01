@@ -185,6 +185,14 @@ let make =
               })
             );
         };
+      | TransactionNoLongerDetected({txId: missingTx}) =>
+        if (inputs->(Set.some(({txId}) => txId == missingTx))) {
+          result :=
+            Some((
+              systemIssuer^,
+              PayoutAborted(Payout.Aborted.fromProposal(proposal)),
+            ));
+        }
       | _ => ()
       };
     };
