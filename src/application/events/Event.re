@@ -944,6 +944,8 @@ let decode = raw => {
   | "IncomeUnlocked" => IncomeUnlocked(Income.Unlocked.decode(raw))
   | "TransactionConfirmed" =>
     TransactionConfirmed(Transaction.Confirmed.decode(raw))
+  | "TransactionNoLongerDetected" =>
+    TransactionNoLongerDetected(Transaction.NoLongerDetected.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };

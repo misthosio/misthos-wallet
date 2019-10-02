@@ -1468,6 +1468,8 @@ function decode$21(raw) {
         return /* PayoutSigned */Block.__(32, [decode$8(raw)]);
     case "TransactionConfirmed" : 
         return /* TransactionConfirmed */Block.__(43, [decode$19(raw)]);
+    case "TransactionNoLongerDetected" : 
+        return /* TransactionNoLongerDetected */Block.__(44, [decode$20(raw)]);
     case "VentureCreated" : 
         return /* VentureCreated */Block.__(0, [decode(raw)]);
     default:
