@@ -866,6 +866,7 @@ let isSystemEvent =
   | IncomeDetected(_)
   | IncomeUnlocked(_)
   | TransactionConfirmed(_)
+  | TransactionNoLongerDetected(_)
   | PayoutFinalized(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
