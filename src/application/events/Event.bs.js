@@ -1370,6 +1370,7 @@ function isSystemEvent(param) {
     case 41 : 
     case 42 : 
     case 43 : 
+    case 44 : 
         return true;
     default:
       return false;
