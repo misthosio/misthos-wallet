@@ -33,7 +33,7 @@
     "babel-jest": "23.6.0",
     "babel-loader": "8.0.5",
     "babel-preset-env": "1.7.0",
-    "bs-platform": "5.0.6",
+    "bs-platform": "5.2.1",
     "css-loader": "1.0.1",
     "file-loader": "2.0.0",
     "html-loader": "0.5.5",
