@@ -11,7 +11,6 @@ var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var BitcoindClient = require("./BitcoindClient.bs.js");
-var SmartbitClient = require("./SmartbitClient.bs.js");
 var BlockchainInfoClient = require("./BlockchainInfoClient.bs.js");
 var BlockstreamInfoClient = require("./BlockstreamInfoClient.bs.js");
 
@@ -203,8 +202,6 @@ var Testnet = /* module */[
 
 var ClientA = BlockstreamInfoClient.make(BlockstreamInfoClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
 
-var ClientA$1 = BlockchainInfoClient.make(BlockchainInfoClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
-
 var Client$2 = (function (ClientB) {
       var network = ClientA[/* network */0];
       var getUTXOs = function (addresses) {
@@ -266,68 +263,7 @@ var Client$2 = (function (ClientB) {
               /* getCurrentBlockHeight */getCurrentBlockHeight,
               /* broadcastTransaction */broadcastTransaction
             ];
-    })((function (ClientB) {
-          var network = ClientA$1[/* network */0];
-          var getUTXOs = function (addresses) {
-            return Curry._1(ClientA$1[/* getUTXOs */1], addresses).then((function (utxos) {
-                            return Curry._1(ClientB[/* getUTXOs */1], addresses).then((function (moreUtxos) {
-                                            return Promise.resolve(Belt_Set.union(utxos, moreUtxos));
-                                          })).catch((function (param) {
-                                          return Promise.resolve(utxos);
-                                        }));
-                          })).catch((function (param) {
-                          return Curry._1(ClientB[/* getUTXOs */1], addresses);
-                        }));
-          };
-          var getTransactionInfo = function (txIds) {
-            return Curry._1(ClientA$1[/* getTransactionInfo */2], txIds).then((function (txInfos) {
-                            var match = Belt_List.size(txInfos) !== Belt_SetString.size(txIds);
-                            if (match) {
-                              return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
-                            } else {
-                              return Promise.resolve(txInfos);
-                            }
-                          })).catch((function (param) {
-                          return Curry._1(ClientB[/* getTransactionInfo */2], txIds);
-                        }));
-          };
-          var getTransactionHex = function (txIds) {
-            return Curry._1(ClientA$1[/* getTransactionHex */3], txIds).then((function (txHex) {
-                            var match = txHex.length !== txIds.length;
-                            if (match) {
-                              return Curry._1(ClientB[/* getTransactionHex */3], txIds);
-                            } else {
-                              return Promise.resolve(txHex);
-                            }
-                          })).catch((function (param) {
-                          return Curry._1(ClientB[/* getTransactionHex */3], txIds);
-                        }));
-          };
-          var getCurrentBlockHeight = function (param) {
-            return Curry._1(ClientA$1[/* getCurrentBlockHeight */4], /* () */0).catch((function (param) {
-                          return Curry._1(ClientB[/* getCurrentBlockHeight */4], /* () */0);
-                        }));
-          };
-          var broadcastTransaction = function (tx) {
-            return Curry._1(ClientA$1[/* broadcastTransaction */5], tx).then((function (param) {
-                            if (typeof param === "number" || param.tag) {
-                              return Curry._1(ClientB[/* broadcastTransaction */5], tx);
-                            } else {
-                              return Promise.resolve(/* Ok */Block.__(0, [param[0]]));
-                            }
-                          })).catch((function (param) {
-                          return Curry._1(ClientB[/* broadcastTransaction */5], tx);
-                        }));
-          };
-          return /* module */[
-                  /* network */network,
-                  /* getUTXOs */getUTXOs,
-                  /* getTransactionInfo */getTransactionInfo,
-                  /* getTransactionHex */getTransactionHex,
-                  /* getCurrentBlockHeight */getCurrentBlockHeight,
-                  /* broadcastTransaction */broadcastTransaction
-                ];
-        })(SmartbitClient.make(SmartbitClient.mainnetConfig, BitcoinjsLib.networks.bitcoin)));
+    })(BlockchainInfoClient.make(BlockchainInfoClient.mainnetConfig, BitcoinjsLib.networks.bitcoin));
 
 var network$2 = Client$2[/* network */0];
 

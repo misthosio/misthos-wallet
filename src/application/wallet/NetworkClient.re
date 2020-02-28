@@ -132,20 +132,10 @@ module Mainnet =
               )
         ),
         (
-          WithFallback(
-            (
-              val BlockchainInfoClient.make(
-                    BlockchainInfoClient.mainnetConfig,
-                    Bitcoin.Networks.bitcoin,
-                  )
-            ),
-            (
-              val SmartbitClient.make(
-                    SmartbitClient.mainnetConfig,
-                    Bitcoin.Networks.bitcoin,
-                  )
-            ),
-          )
+          val BlockchainInfoClient.make(
+                BlockchainInfoClient.mainnetConfig,
+                Bitcoin.Networks.bitcoin,
+              )
         ),
       )
     ),
