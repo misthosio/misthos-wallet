@@ -36,7 +36,7 @@ jobs:
 
 - name: install-deps
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: deps, trigger: true}
     - {get: pipeline-tasks}
     - {put: deps-version, params: {bump: minor}}
@@ -60,7 +60,7 @@ jobs:
 
 - name: test
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: repo, trigger: true}
     - {get: bundled-deps, trigger: true}
     - {get: pipeline-tasks}
@@ -80,14 +80,14 @@ jobs:
       - name: bundled-code
       run:
         path: pipeline-tasks/ci/tasks/run-tests.sh
-  - aggregate:
+  - in_parallel:
     - put: misthos-code
       params:
         file: bundled-code/misthos-code-*.tgz
 
 - name: build
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: repo, passed: [test]}
     - {get: misthos-code, trigger: true, passed: [test]}
     - {get: build-version }
@@ -112,7 +112,7 @@ jobs:
 
 - name: web-build
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: repo, passed: [test]}
     - {get: misthos-code, trigger: true, passed: [test]}
     - {get: build-version }
@@ -137,7 +137,7 @@ jobs:
 
 - name: deploy-staging
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-build, trigger: true, passed: [build]}
     - {get: repo, trigger: false, passed: [build]}
     - {get: build-version, trigger: false, passed: [build], params: { bump: final}}
@@ -160,7 +160,7 @@ jobs:
     params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
 - name: deploy-web-staging
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-web-build, trigger: true, passed: [web-build]}
     - {get: repo, trigger: false, passed: [web-build]}
     - {get: build-version, trigger: false, passed: [web-build]}
@@ -185,7 +185,7 @@ jobs:
 
 - name: trigger-testnet
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-build, trigger: false, passed: [deploy-staging]}
     - {get: misthos-web-build, trigger: false, passed: [deploy-web-staging]}
     - {get: build-version, trigger: false, passed: [deploy-staging, deploy-web-staging] }
@@ -194,7 +194,7 @@ jobs:
 
 - name: deploy-testnet
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-build, trigger: true, passed: [trigger-testnet] }
     - {get: build-version, trigger: false, passed: [trigger-testnet] }
     - {get: repo, trigger: false, passed: [trigger-testnet] }
@@ -218,7 +218,7 @@ jobs:
 
 - name: deploy-web-testnet
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-web-build, trigger: true, passed: [trigger-testnet]}
     - {get: repo, trigger: false, passed: [trigger-testnet]}
     - {get: build-version, trigger: false, passed: [trigger-testnet]}
@@ -243,7 +243,7 @@ jobs:
 
 - name: trigger-prod
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-build, trigger: true, passed: [deploy-testnet]}
     - {get: misthos-web-build, trigger: false, passed: [deploy-web-testnet]}
     - {get: build-version, trigger: false, passed: [deploy-testnet, deploy-web-testnet] }
@@ -252,7 +252,7 @@ jobs:
 
 - name: deploy-prod
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-build, trigger: true, passed: [trigger-prod] }
     - {get: build-version, trigger: false, passed: [trigger-prod] }
     - {get: repo, trigger: false, passed: [trigger-prod] }
@@ -276,7 +276,7 @@ jobs:
 
 - name: deploy-web-prod
   plan:
-  - aggregate:
+  - in_parallel:
     - {get: misthos-web-build, trigger: true, passed: [trigger-prod]}
     - {get: repo, trigger: false, passed: [trigger-prod]}
     - {get: build-version, trigger: false, passed: [trigger-prod]}
