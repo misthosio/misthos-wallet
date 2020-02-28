@@ -10,7 +10,7 @@ let () =
       Js.Promise.(
         BlockchainInfoClient.getUTXOs(
           BlockchainInfoClient.mainnetConfig,
-          ["3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r"],
+          ["1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"],
         )
         |> then_(res =>
              expect(res |> Belt.Set.size) |> toBeGreaterThan(200) |> resolve
@@ -43,20 +43,6 @@ let () =
                   ),
                 |])
              |> resolve
-           )
-      )
-    );
-    testPromise(~timeout=50000, "getTransactionInfo", () =>
-      Js.Promise.(
-        BlockchainInfoClient.getTransactionInfo(
-          BlockchainInfoClient.mainnetConfig,
-          [|
-            "a937d96ffed8be9c29291d45e54e00f1dc393439b9679cd10802b4d552a1b386",
-          |]
-          |> Belt.Set.String.fromArray,
-        )
-        |> then_(res =>
-             expect(res |> Belt.List.size) |> toEqual(0) |> resolve
            )
       )
     );

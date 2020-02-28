@@ -10,7 +10,7 @@ let () =
       Js.Promise.(
         BlockstreamInfoClient.getUTXOs(
           BlockstreamInfoClient.mainnetConfig,
-          ["3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r"],
+          ["1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"],
         )
         |> then_(res =>
              expect(res |> Belt.Set.size) |> toBeGreaterThan(200) |> resolve

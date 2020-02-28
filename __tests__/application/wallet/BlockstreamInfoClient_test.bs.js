@@ -13,7 +13,7 @@ Helpers.enableHttpRequests(/* () */0);
 Jest.describe("BlockstreamInfoClient", (function (param) {
         Jest.testPromise("getUTXOs", 50000, (function (param) {
                 return BlockstreamInfoClient.getUTXOs(BlockstreamInfoClient.mainnetConfig, /* :: */[
-                              "3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r",
+                              "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
                               /* [] */0
                             ]).then((function (res) {
                               return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](200, Jest.Expect[/* expect */0](Belt_Set.size(res))));
