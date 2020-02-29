@@ -11,6 +11,7 @@ let wrapWithDiv = data =>
   <MTypography component={`String("div")} variant=`Body1> data </MTypography>;
 
 module Details = MaterialUi.ExpansionPanelDetails;
+
 let environment = Environment.get();
 
 module T = FaqText;
