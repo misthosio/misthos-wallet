@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 set -e
 
 tar -zxvf misthos-code/misthos-code-*.tgz > /dev/null
