@@ -111,7 +111,7 @@ function broadcastTransaction(config, transaction) {
   var txHex = transaction.toHex();
   var formData = new FormData();
   formData.append("tx", txHex);
-  return fetch("https://" + (config[/* subdomain */0] + "blockchain.info/pushtx?cors=true"), Fetch.RequestInit[/* make */0](/* Post */2, undefined, Caml_option.some(formData), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
+  return fetch("https://" + (config[/* subdomain */0] + "blockchain.info/pushtx?cors=true"), Fetch.RequestInit[/* make */0](/* Post */2, undefined, Caml_option.some(formData), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
                   return prim.text();
                 })).then((function (responseText) {
                 var responseText$1 = responseText.toLowerCase();

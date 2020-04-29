@@ -102,7 +102,7 @@ function getTransactionHex(config, transactions) {
 function broadcastTransaction(config, transaction) {
   var txHex = transaction.toHex();
   var txId = transaction.getId();
-  return fetch(config[/* url */0] + "/tx", Fetch.RequestInit[/* make */0](/* Post */2, undefined, Caml_option.some(txHex), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
+  return fetch(config[/* url */0] + "/tx", Fetch.RequestInit[/* make */0](/* Post */2, undefined, Caml_option.some(txHex), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
                     return prim.text();
                   })).then((function (res) {
                   if (res === txId) {
