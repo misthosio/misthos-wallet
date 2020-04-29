@@ -169,7 +169,7 @@ Jest.describe("build", (function (param) {
                               ]));
               }));
         Jest.test("raises when there aren't enough funds", (function (param) {
-                return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function (param) {
+                return Jest.Expect[/* toThrow */19](Jest.Expect[/* expectFn */1]((function (param) {
                                   return PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                                               /* tuple */[
                                                 "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
@@ -285,7 +285,7 @@ Jest.describe("build", (function (param) {
                                         ], Jest.Expect[/* expect */0](summary));
                             }));
                       return Jest.test("Spending more than max will throw an exception", (function (param) {
-                                    return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function (param) {
+                                    return Jest.Expect[/* toThrow */19](Jest.Expect[/* expectFn */1]((function (param) {
                                                       return PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                                                                   /* tuple */[
                                                                     "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
