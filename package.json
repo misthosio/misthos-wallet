@@ -7,7 +7,7 @@
     "@jsiebern/bs-material-ui": "0.4.3-beta.2",
     "@ledgerhq/hw-app-btc": "4.24.0",
     "@ledgerhq/hw-transport-u2f": "4.24.0",
-    "@material-ui/core": "3.5.1",
+    "@material-ui/core": "3.9.4",
     "autosuggest-highlight": "3.1.1",
     "bignumber.js": "8.0.2",
     "bitcoin-ops": "1.4.1",
