@@ -65,16 +65,16 @@ let updateOtherTabs = msg => {
   L.localStorage |> L.setItem("tab-sync", encodedMsg |> Json.stringify);
 };
 
-external toStorageEvent: Dom.event => Webapi.Dom.StorageEvent.t = "%identity";
+external toStorageEvent: Dom.event => StorageEventRe.t = "%identity";
 
 let handler = (send, msg) => {
   let storageEvent = msg |> toStorageEvent;
-  switch (storageEvent |> Webapi.Dom.StorageEvent.key) {
+  switch (storageEvent |> StorageEventRe.key) {
   | "tab-sync" =>
     try (
       TabSync(
         storageEvent
-        |> Webapi__Dom__StorageEvent.newValue
+        |> StorageEventRe.newValue
         |> Js.Nullable.toOption
         |> Js.Option.getExn
         |> Json.parseOrRaise
@@ -101,8 +101,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
   didMount: ({onUnmount, state, send}) => {
     loadVentureAndIndex(session, currentRoute, state) |> ignore;
     let eventListener = handler(send);
-    Webapi.Dom.window
-    |> Webapi.Dom.Window.addEventListener("storage", eventListener);
+    DomRe.window |> WindowRe.addEventListener("storage", eventListener);
     DataWorkerClient.terminate(state.dataWorker^);
     let worker =
       DataWorkerClient.make(~onMessage=message =>
@@ -116,8 +115,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       );
     state.ventureWorker := worker;
     onUnmount(() => {
-      Webapi.Dom.window
-      |> Webapi.Dom.Window.removeEventListener("storage", eventListener);
+      DomRe.window |> WindowRe.removeEventListener("storage", eventListener);
       DataWorkerClient.terminate(state.dataWorker^);
       PersistWorkerClient.terminate(state.persistWorker^);
       VentureWorkerClient.terminate(state.ventureWorker^);
