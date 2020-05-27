@@ -25,7 +25,7 @@
     "react-dom": "16.6.3",
     "react-jss": "8.6.1",
     "reason-reroute": "callstackincubator/reroute#15/head",
-    "uuid": "7.0.3"
+    "uuid": "3.4.0"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "0.5.1",

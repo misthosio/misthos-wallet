@@ -3,7 +3,6 @@
 
 var BTC = require("../../src/application/wallet/BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
-var Uuid = require("uuid");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
@@ -15,6 +14,7 @@ var $$String = require("bs-platform/lib/js/string.js");
 var $$Crypto = require("crypto");
 var Address = require("../../src/application/wallet/Address.bs.js");
 var Network = require("../../src/application/wallet/Network.bs.js");
+var V4 = require("uuid/v4");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
@@ -242,7 +242,7 @@ function accountKeyChainActivated($staropt$star, custodian, identifier) {
 var incomeAddressExposed = $$Event.Income[/* AddressExposed */0][/* make */0];
 
 function incomeDetected(address, coordinates) {
-  return Curry._5($$Event.Income[/* Detected */1][/* make */0], 0, coordinates, address, Uuid.v4(), BTC.fromSatoshis(/* int64 */[
+  return Curry._5($$Event.Income[/* Detected */1][/* make */0], 0, coordinates, address, V4(), BTC.fromSatoshis(/* int64 */[
                   /* hi */0,
                   /* lo */10000000
                 ]));
