@@ -21,7 +21,7 @@ function makeAuthHeaders(param) {
 }
 
 function rpcCall(config, jsonRPC) {
-  return fetch(config[/* bitcoindUrl */0], Fetch.RequestInit[/* make */0](/* Post */2, Caml_option.some(makeAuthHeaders(config)), Caml_option.some(jsonRPC), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
+  return fetch(config[/* bitcoindUrl */0], Fetch.RequestInit[/* make */0](/* Post */2, Caml_option.some(makeAuthHeaders(config)), Caml_option.some(jsonRPC), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined)(/* () */0)).then((function (prim) {
                 return prim.json();
               }));
 }
