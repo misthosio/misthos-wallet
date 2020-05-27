@@ -1311,12 +1311,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@jsiebern/bs-material-ui@0.4.3-beta.2":
-  version "0.4.3-beta.2"
-  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.4.3-beta.2.tgz#7501fd36277246ee22e91a0d8e967e0ad87f6d13"
-  integrity sha512-fnpPf9QorLn8VvHPpDUkl0XnhFM+/fXhepDi5LsHJquDiN09ZJKm0cfWYeOqFpoX7/byA/GgeDH/2pPVwK1xIw==
-  dependencies:
-    object-hash "^1.2.0"
+"@jsiebern/bs-material-ui@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-1.3.0.tgz#e23398540c1754245356a2ef7bcc8a62beb566db"
+  integrity sha512-YfzGVqZXA8Zm4uG3bi0hor0LGTUfBiVhOcAR9mNR/4ijKAUVaG6+BNQQ+5tgFX5W1I2vh+QR/qbMqBaLR5Yw2g==
 
 "@ledgerhq/hw-app-btc@4.24.0":
   version "4.24.0"
@@ -7935,11 +7933,6 @@ object-copy@^0.1.0:
     copy-descriptor "^0.1.0"
     define-property "^0.2.5"
     kind-of "^3.0.3"
-
-object-hash@^1.2.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.3.1.tgz#fde452098a951cb145f039bb7d455449ddc126df"
-  integrity sha512-OSuu/pU4ENM9kmREg0BdNrUDIl1heYa4mBZacJc+vVWz4GtAwu7jO8s4AIt2aGRUTqxykpWzI3Oqnsm13tTMDA==
 
 object-keys@^1.0.11:
   version "1.0.12"
