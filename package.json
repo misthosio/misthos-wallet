@@ -20,9 +20,9 @@
     "formdata-polyfill": "3.0.19",
     "json-stable-stringify": "1.0.1",
     "raven-js": "3.27.2",
-    "react": "16.6.3",
+    "react": "16.14.0",
     "react-autosuggest": "9.4.3",
-    "react-dom": "16.6.3",
+    "react-dom": "16.14.0",
     "react-jss": "8.6.1",
     "reason-reroute": "callstackincubator/reroute#15/head",
     "uuid": "3.3.3"
