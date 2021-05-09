@@ -5,7 +5,7 @@
   "dependencies": {
     "@glennsl/bs-json": "5.0.2",
     "@jsiebern/bs-material-ui": "0.4.3-beta.2",
-    "@ledgerhq/hw-app-btc": "4.24.0",
+    "@ledgerhq/hw-app-btc": "5.51.1",
     "@ledgerhq/hw-transport-u2f": "4.24.0",
     "@material-ui/core": "3.5.1",
     "autosuggest-highlight": "3.1.1",
