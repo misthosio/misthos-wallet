@@ -31,7 +31,7 @@
     "@glennsl/bs-jest": "0.5.1",
     "babel-core": "6.26.3",
     "babel-jest": "23.6.0",
-    "babel-loader": "8.0.5",
+    "babel-loader": "8.3.0",
     "babel-preset-env": "1.7.0",
     "bs-platform": "5.0.6",
     "css-loader": "1.0.1",
